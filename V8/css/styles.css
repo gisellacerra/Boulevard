@@ -1,0 +1,838 @@
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        /* Estilo para la barra negra */
+        .navbar {
+            background-color: #000; /* Color de fondo negro */
+            color: white; /* Color del texto */
+            text-align: center; /* Centrar el texto */
+            width: 100%; /* Ocupa todo el ancho de la ventana */
+            padding: 10px;
+            z-index: 1000; /* Asegura que esté encima de otros elementos */
+            top: -1; /*distancia superior*/
+            z-index: 1; /*posiciona el elemento sobre los demás*/
+        }
+
+    
+
+        /* Estilo para la primera sección */
+        .section1 {
+            background-image: url('../images/fondo.webp'); 
+            background-color: #F4EFE7; /* Color de fondo */
+            background-size: cover; /* La imagen cubrirá toda la sección */
+            background-position: center; /* La imagen se centrará */
+            color: white; /* Color del texto */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            }
+
+            .section1 .logo-identidad {
+            display:inline-block;
+            transform:translatex(5px) translatey(-80px);
+            }
+
+
+        /* Estilo para la segunda sección */  
+        .section2 {
+            background-size: cover; /* La imagen cubrirá toda la sección */
+            background-color: #f2f2f2; /* Color de fondo */
+            color: #222222;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-direction: column;
+        }
+
+      
+
+        #titulo {
+        font-size: 60px;
+        font-family: 'Roboto Slab', serif;
+        margin-bottom: 10px;
+        margin-right: 0;
+        margin-left: 0;
+        margin-top: 30px;
+        font-weight: 600;
+        }
+
+
+        .section2 button{
+            border-style:none;
+            margin-bottom: 20px;
+        }
+
+        .epigrafe {
+
+            font-family: 'Roboto Slab', serif;
+            font-size: 19px;
+            max-width: 40rem; 
+            text-align: center;
+            margin-top: 20px;
+            color: #a2a2a2;
+        }
+
+        .parrafo {
+            text-align: left;
+            line-height: 55px;
+        }
+
+        #texto {
+            font-family: 'Roboto Slab', serif;
+            font-size: 18px;
+            text-align: left;
+            margin-top: 10px;
+            max-width: 60rem;
+            font-weight: 400;
+            line-height: 26px;
+        }
+
+        #subtitulo {
+            font-family: 'Roboto Slab', serif;
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 0;
+            margin-top: 10px;
+        }
+          
+        .mapa {
+            margin: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+
+
+        /* Estilo para la tercera sección */
+        
+
+        .section3 {
+            background-color: #deeeef;  
+            text-align: left;
+            justify-content: flex-start;
+            align-items: center;
+            flex-direction: column;
+            display: flex;
+            
+        }
+
+        .section3 .contenedor {
+            width: 100%;
+            margin: 0 auto;
+            padding-bottom: 50px;
+            padding-top: 30px;
+            padding-left: 280px;
+            padding-right: 280px;
+            color: #222222;
+        }
+
+        .section3 .pregunta {
+            cursor: pointer;
+            font-family: 'Roboto Slab', serif;
+            font-size: 21px;
+            padding-top: 25px;
+            font-weight: 500;
+            transition: 0.4s;
+        }
+
+        .section3 .respuesta {
+            font-family: 'Roboto Slab', serif;
+            display: none;
+            font-size: 16px;
+            font-weight: 400;
+            margin-top: 15px;
+        }
+       
+        .section3 .contenedor #subtitulo2 {
+            font-family: 'Roboto Slab', serif;
+            font-size: 34px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            margin-top: 10px;
+            text-align: center ;
+            line-height: 36px;
+        }
+      
+
+   /* Estilo para la cuarta sección */
+   .section4 {
+ 
+            background-color: #fff; 
+            color: #222222;
+            text-align: center;
+            flex-direction: column;
+        }
+
+        p {
+            margin: 15px;
+        }
+    
+.section4 .contenedor {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    /*padding: 0px 130px 70px 130px;*/
+        }       
+
+.section4 .contenedor2 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 130px;
+           padding: 0px 130px 20px 130px;
+        }
+
+.section4 .card{
+            width: 25%;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+   
+}
+      
+
+.section4 #boton {
+    background: #ea983e;
+    font-family: 'Roboto';
+    width: 100px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    overflow: hidden; /* Opcional: evita que los pseudo-elementos sobresalgan */  
+  }
+
+  .section4 .card a {
+    color: #000;
+}
+
+  .section4 #boton:hover {
+    background: #f8c58c;
+    color: rgb(25,25,25);
+  }
+
+  .section4 .card2{
+    display: flex;
+    
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    background-color: #F4EFE7;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+    box-sizing: border-box;
+}  
+
+.section4 .card-body{
+    padding: 5px 70px 70px 70px;
+}
+
+
+.section4 .card:hover {
+    transform: scale(1.05);
+}
+
+.section4 .text-center-card {
+    font-family: 'Fredericka the Great', serif;
+    font-size: 60px;
+    color: #ea983e;
+    line-height: 1.2;
+    background-size: 100%; 
+    margin-bottom: 10px;
+    padding: 9px;
+    padding-top: 20px; 
+    letter-spacing: 0.3em; 
+    box-shadow: 0px 0px;
+}
+
+
+.section4 .titulo-card {
+    font-family: 'Roboto Slab';
+    font-size: 25px;
+    color:#EA983E;
+    font-weight: 600;
+
+}
+
+.section4 .card-text{
+    font-family: 'Roboto Slab';
+    line-height: 1.5;
+    font-size: 18px;
+    font-weight: 400;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical; 
+}
+
+
+.section4 .card-image {
+   opacity: 0.8; 
+   margin-top: 20px;
+    left: 0;
+    height: auto;
+    max-width: 100%; /* La imagen nunca será más ancha que su contenedor */
+    display: block;
+}
+
+.section4 .card2-image {
+    opacity: 0.8; 
+    margin-top: 20px;
+     left: 0;
+     height: auto;
+     max-width: 100%; /* La imagen nunca será más ancha que su contenedor */
+     display: block;
+ }
+
+
+
+ .section5 .contenedor {
+    width: 100%;
+    margin: 0 auto;
+    padding-bottom: 50px;
+    padding-left: 280px;
+    padding-right: 280px;
+    
+ }
+
+
+
+ 
+
+
+
+
+/* ----------------------  MEDIA QUERY -----------------------  */
+
+/* @media (min-width: 1204px)  /* MONITORES */
+/* @media (min-width: 769px) and (max-width: 992px)  /* TABLETS Y MONITOR ESCRIORIO */
+/* @media (min-width: 577px) and (max-width: 768px) /* TABLETS Y MOBIL GRANDE */
+/* @media (min-width: 340px) and (max-width: 375px) /* MOBIL CHICO */
+/* @media only screen and (max-width: 412px) /* MOBIL MEDIANO */
+
+
+        /* MONITORES */
+         /* Para pantallas de 1024 mínimo y hasta 1920 */
+        @media (min-width: 1024px) and (max-width: 1920px) {
+    
+            .section1 {
+                height: 100vh;
+            }
+            .section1 .logo-identidad {
+                width: 80%;
+                }
+            .section2 {
+                height: 100%;
+            }
+            .section4 {
+                height: 100%;
+            }
+
+          
+        }
+
+        /* MOBIL CHICO  */
+        /* Para pantallas de 340 o maximo 375  */
+            
+        @media (min-width: 340px) and (max-width: 375px) {
+
+            .section1 {
+            height: 50vh;
+            }
+
+            .section1 .logo-identidad {
+            display:inline-block;
+            transform:translatex(5px) translatey(-30px);
+            }
+
+            .section2 {
+            height: 80%;
+            padding: 0 35px;
+            }
+
+
+            .section2 #titulo {
+            font-size: 38px;
+            font-family: 'Roboto Slab', serif;
+            line-height: 39px;
+            margin: 20px;
+            margin-bottom: 10px;
+            margin-top: 8px;
+            font-weight: 600;
+            text-align: center;
+            }
+
+            .section2 #copete{
+            font-size: 17px;
+            line-height: 1.2em;
+            width:100%;
+            transform:translatex(0px) translatey(-15px);
+            font-weight:400 !important;
+            }
+
+            .section2 #texto {
+            font-family: 'Roboto Slab', serif;
+            font-size: 16px;
+            text-align: left;
+            font-weight: 400;
+            line-height: 21px;
+            }
+
+            .section2 .epigrafe {
+            line-height:  21px;  
+            }
+
+            .section2 .mapa {
+            display: none;
+
+            }
+
+
+            
+        .section3 .pregunta {
+            cursor: pointer;
+            font-family: 'Roboto Slab', serif;
+            font-size: 17px;
+            line-height: 20px;
+            padding-top: 25px;
+            font-weight: 500;
+            transition: 0.4s;
+        }
+
+        .section3 .respuesta {
+            cursor: pointer;
+            font-family: 'Roboto Slab', serif;
+            font-size: 12px;
+            line-height: 17px;
+            padding-top: 25px;
+            font-weight: 400;
+            transition: 0.4s;
+        }
+
+            .section3 .contenedor {
+            width: 100%;
+            margin: 0 auto;
+            padding-bottom: 50px;
+            padding-top: 30px;
+            padding-left: 40px;
+            padding-right: 40px;
+
+            }
+
+            .section4 .contenedor {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            padding: 25px;
+            }
+
+            .section4 .titulo-card {
+                font-family: 'Roboto Slab';
+                font-size: 21px;
+                color:#EA983E;
+                font-weight: 600;
+                line-height: 22px;
+            }
+
+            .section4 .card-text{
+                font-family: 'Roboto Slab';
+                line-height: 1.5;
+                font-size: 16px;
+                line-height: 20px;
+                font-weight: 400;
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-box-orient: vertical; 
+            }
+
+
+            .section4 .card-image {
+                width: 90%;
+             }
+
+
+            .section4 .card {
+            width: 175%;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            }
+
+            .section4 .card-body{
+                padding: 30px;
+            }
+            
+         
+
+            .section4 .contenedor2 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 10px;
+            }
+
+
+            .section4 .card-body{
+                padding: 30px 10px 30px 10px ;
+            }
+
+            
+            .section5 .contenedor {
+                display: none;
+            }
+
+        }
+
+
+          /* MOBIL CHICO HORIZONTAL  */
+        /* Para pantallas de 700 o maximo 900  */
+            
+        @media (min-width: 700px) and (max-width: 900px) {
+
+            .section1 {
+            height: 80vh;
+            }
+
+            .section1 .logo-identidad {
+            display:inline-block;
+            transform:translatex(5px) translatey(-30px);
+            width: 60%;
+            }
+
+            .section2 {
+            height: 80%;
+            padding: 0 35px;
+            }
+
+
+            .section2 #titulo {
+            font-size: 38px;
+            font-family: 'Roboto Slab', serif;
+            line-height: 39px;
+            margin: 20px;
+            margin-bottom: 10px;
+            margin-top: 8px;
+            font-weight: 600;
+            text-align: center;
+            }
+
+            .section2 #copete{
+            font-size: 17px;
+            line-height: 1.2em;
+            width:100%;
+            transform:translatex(0px) translatey(-15px);
+            font-weight:400 !important;
+            }
+
+            .section2 #texto {
+            font-family: 'Roboto Slab', serif;
+            font-size: 16px;
+            text-align: left;
+            font-weight: 400;
+            line-height: 21px;
+            }
+
+            .section2 .mapa {
+            display: none;
+
+            }
+
+
+            
+        .section3 .pregunta {
+            cursor: pointer;
+            font-family: 'Roboto Slab', serif;
+            font-size: 17px;
+            line-height: 20px;
+            padding-top: 25px;
+            font-weight: 500;
+            transition: 0.4s;
+        }
+
+        .section3 .respuesta {
+            cursor: pointer;
+            font-family: 'Roboto Slab', serif;
+            font-size: 12px;
+            line-height: 17px;
+            padding-top: 25px;
+            font-weight: 400;
+            transition: 0.4s;
+        }
+
+            .section3 .contenedor {
+            width: 100%;
+            margin: 0 auto;
+            padding-bottom: 50px;
+            padding-top: 30px;
+            padding-left: 40px;
+            padding-right: 40px;
+
+            }
+
+            .section4 .contenedor {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            padding: 25px;
+            }
+
+            .section4 .titulo-card {
+                font-family: 'Roboto Slab';
+                font-size: 21px;
+                color:#EA983E;
+                font-weight: 600;
+                line-height: 22px;
+            }
+
+            .section4 .card-text{
+                font-family: 'Roboto Slab';
+                line-height: 1.5;
+                font-size: 16px;
+                line-height: 20px;
+                font-weight: 400;
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-box-orient: vertical; 
+            }
+
+
+            .section4 .card-image {
+                width: 40%;
+             }
+
+             .section4 .card3-image {
+                width: 90%;
+             }
+
+            .section4 .card {
+            width: 175%;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            }
+
+            .section4 .card-body{
+                padding: 30px;
+            }
+            
+         
+
+            .section4 .contenedor2 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 10px;
+            }
+        
+
+            .section4 .contenedor2 .card-image {
+                width: 20%;
+            }
+
+            .section5 .contenedor {
+                display: none;
+            }
+        
+        }
+
+
+            
+    
+
+            /* MOBIL MEDIANO  */
+             /* Para pantallas de 375 o maximo 420 */
+            
+             @media (min-width: 376px) and (max-width: 420px) {
+
+            .section1 {
+            height: 50vh;
+            }
+
+            .section1 .logo-identidad {
+            display:inline-block;
+            transform:translatex(5px) translatey(-30px);
+            }
+
+            /* Estilo para la segunda sección */  
+            .section2 {
+            height: 80%;
+            padding: 0 35px;
+            }
+
+            .section2 #procesos-judiciales {
+            margin-top: 10px;
+            }
+
+            .section2 #titulo {
+            font-size: 38px;
+            font-family: 'Roboto Slab', serif;
+            line-height: 39px;
+            margin: 20px;
+            margin-bottom: 10px;
+            margin-top: 8px;
+            font-weight: 600;
+            text-align: center;
+            }
+
+            .section2 #copete{
+            font-size: 17px;
+            line-height: 1.2em;
+            width:100%;
+            transform:translatex(0px) translatey(-15px);
+            font-weight:400 !important;
+            }
+
+            .section2 #texto {
+            font-family: 'Roboto Slab', serif;
+            font-size: 16px;
+            text-align: left;
+            font-weight: 400;
+            line-height: 21px;
+            }
+
+            .section2 .mapa {
+            display: none;
+
+            }
+
+            .section4 .card-body{
+                padding: 30px 10px 30px 10px ;
+            }
+
+
+            
+        .section3 .pregunta {
+            cursor: pointer;
+            font-family: 'Roboto Slab', serif;
+            font-size: 17px;
+            line-height: 20px;
+            padding-top: 25px;
+            font-weight: 500;
+            transition: 0.4s;
+        }
+
+        .section3 .respuesta {
+            cursor: pointer;
+            font-family: 'Roboto Slab', serif;
+            font-size: 12px;
+            line-height: 17px;
+            padding-top: 25px;
+            font-weight: 400;
+            transition: 0.4s;
+        }
+
+            .section3 .contenedor {
+            width: 100%;
+            margin: 0 auto;
+            padding-bottom: 50px;
+            padding-top: 30px;
+            padding-left: 40px;
+            padding-right: 40px;
+
+            }
+
+            .section4 .contenedor {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            padding: 25px;
+            }
+
+            .section4 .titulo-card {
+                font-family: 'Roboto Slab';
+                font-size: 21px;
+                color:#EA983E;
+                font-weight: 600;
+                line-height: 22px;
+            }
+
+            .section4 .card-text{
+                font-family: 'Roboto Slab';
+                line-height: 1.5;
+                font-size: 16px;
+                line-height: 20px;
+                font-weight: 400;
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-box-orient: vertical; 
+            }
+
+
+            .section4 .card-image {
+                width: 40%;
+             }
+
+             .section4 .card3-image {
+                width: 90%;
+             }
+
+            .section4 .card {
+            width: 175%;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            }
+
+            .section4 .card-body{
+                padding: 5px 10px 30px 10px ;
+            }
+            
+         
+            .section4 .contenedor2 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 10px;
+            }
+
+
+            .section5 .contenedor {
+                display: none;
+            }
+
+        
+    }
+
