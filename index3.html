@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería Vertical Swipe</title>
+    <style>
+        /* Estilos básicos */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100dvh;
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+
+        /* Contenedor del carrusel */
+        .carousel-container {
+            width: 100vw;
+            height: 100dvh; /* Ajuste para ocupar la pantalla dinámica */
+            overflow: hidden;
+            position: relative;
+            touch-action: pan-x;
+        }
+
+        /* Carrusel que contiene las imágenes */
+        .carousel {
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s ease;
+        }
+
+        /* Imágenes en el carrusel */
+        .carousel img {
+            width: 100vw;
+            height: 100dvh; /* Cada imagen ocupa exactamente la altura de la pantalla */
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel-container">
+        <div class="carousel">
+            <img src="https://images.pexels.com/photos/1459505/pexels-photo-1459505.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Imagen 1">
+            <img src="https://images.pexels.com/photos/433989/pexels-photo-433989.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Imagen 2">
+            <img src="https://images.pexels.com/photos/1461264/pexels-photo-1461264.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Imagen 3">
+            <img src="https://images.pexels.com/photos/804605/pexels-photo-804605.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Imagen 4">
+            <img src="https://images.pexels.com/photos/137140/pexels-photo-137140.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Imagen 5">
+        </div>
+    </div>
+
+    <script>
+        // Variables para controlar el carrusel y el efecto de desplazamiento vertical
+        const carousel = document.querySelector('.carousel');
+        let currentTranslate = 0;
+        let currentIndex = 0;
+        const totalImages = 5; // Total de imágenes en el carrusel
+
+        // Actualizar la posición del carrusel
+        function updateCarousel() {
+            currentTranslate = currentIndex * -window.innerHeight;
+            carousel.style.transform = `translateY(${currentTranslate}px)`;
+        }
+
+        // Función para cambiar de imagen en función del movimiento
+        function moveUp() {
+            if (currentIndex < totalImages - 1) {
+                currentIndex++;
+                updateCarousel();
+            }
+        }
+
+        function moveDown() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCarousel();
+            }
+        }
+
+        // Soporte de swipe para dispositivos táctiles
+        let startY;
+        function touchStart(event) {
+            startY = event.touches[0].clientY;
+        }
+
+        function touchMove(event) {
+            const deltaY = event.touches[0].clientY - startY;
+            carousel.style.transition = 'none';
+            carousel.style.transform = `translateY(${currentTranslate + deltaY}px)`;
+        }
+
+        function touchEnd(event) {
+            const movedBy = event.changedTouches[0].clientY - startY;
+
+            // Cambiar de imagen si se ha deslizado al menos 100px
+            if (movedBy < -100 && currentIndex < totalImages - 1) {
+                moveUp();
+            } else if (movedBy > 100 && currentIndex > 0) {
+                moveDown();
+            }
+            carousel.style.transition = 'transform 0.4s ease';
+        }
+
+        // Agregar eventos de toque
+        carousel.addEventListener('touchstart', touchStart);
+        carousel.addEventListener('touchmove', touchMove);
+        carousel.addEventListener('touchend', touchEnd);
+    </script>
+</body>
+</html>
