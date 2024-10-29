@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería Touch Swipe</title>
+    <style>
+        /* Estilos básicos */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+
+        /* Contenedor del carrusel */
+        .carousel-container {
+            width: 100vw;
+            height: 60vh;
+            overflow: hidden;
+            position: relative;
+            touch-action: pan-y;
+        }
+
+        /* Carrusel que contiene las imágenes */
+        .carousel {
+            display: flex;
+            transition: transform 0.4s ease;
+        }
+
+        /* Imágenes en el carrusel */
+        .carousel img {
+            width: 100vw;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel-container">
+        <div class="carousel">
+            <img src="https://content.elmueble.com/medio/2020/06/01/00449673_e86b723e_600x900.jpg" alt="Imagen 1">
+            <img src="https://content.elmueble.com/medio/2020/06/01/cocina-lineal-blanco-roto-con-isla-00501609-o_f962f9e6_600x772.jpg" alt="Imagen 2">
+            <img src="https://content.elmueble.com/medio/2020/06/01/cocina-alargada-con-pared-de-cristal-00493850_3a75574b_600x754.jpg" alt="Imagen 3">
+        </div>
+    </div>
+
+    <script>
+        // Variables para controlar el carrusel y el efecto swipe
+        const carousel = document.querySelector('.carousel');
+        let startX, currentTranslate = 0, prevTranslate = 0, currentIndex = 0;
+
+        // Funciones para manejar el inicio del toque
+        function touchStart(index) {
+            return function(event) {
+                startX = event.touches[0].clientX;
+                currentIndex = index;
+                carousel.style.transition = 'none';
+            }
+        }
+
+        // Función de movimiento del toque
+        function touchMove(event) {
+            const currentX = event.touches[0].clientX;
+            const deltaX = currentX - startX;
+            currentTranslate = prevTranslate + deltaX;
+            carousel.style.transform = `translateX(${currentTranslate}px)`;
+        }
+
+        // Función para finalizar el movimiento
+        function touchEnd() {
+            carousel.style.transition = 'transform 0.4s ease';
+            const movedBy = currentTranslate - prevTranslate;
+
+            // Cambiar imagen si se ha deslizado al menos 100px
+            if (movedBy < -100 && currentIndex < 2) currentIndex += 1;
+            if (movedBy > 100 && currentIndex > 0) currentIndex -= 1;
+
+            currentTranslate = currentIndex * -window.innerWidth;
+            prevTranslate = currentTranslate;
+            carousel.style.transform = `translateX(${currentTranslate}px)`;
+        }
+
+        // Eventos para detectar los toques
+        carousel.addEventListener('touchstart', touchStart(currentIndex));
+        carousel.addEventListener('touchmove', touchMove);
+        carousel.addEventListener('touchend', touchEnd);
+    </script>
+</body>
+</html>
+
