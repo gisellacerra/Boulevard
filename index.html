@@ -57,30 +57,43 @@ body {
 <div class="container" id="cards"></div>
 
 <script>
-const URL = "https://docs.google.com/spreadsheets/d/1ftMlZ_tTzMZ0suW5sKYLbj9q8r57RoZq0nnz5Z8Hxyw/edit?usp=sharing";
+const url = "https://docs.google.com/spreadsheets/d/1ftMlZ_tTzMZ0suW5sKYLbj9q8r57RoZq0nnz5Z8Hxyw/gviz/tq?tqx=out:json";
 
-fetch(URL)
-  .then(res => res.json())
-  .then(data => {
+fetch(url)
+  .then(res => res.text())
+  .then(text => {
+    const json = JSON.parse(text.substring(47).slice(0, -2));
+
+    const rows = json.table.rows;
+
+    const data = rows.map(row => ({
+      titulo: row.c[0]?.v,
+      descripcion: row.c[1]?.v,
+      imagen: row.c[2]?.v,
+      color: row.c[3]?.v
+    }));
+
+    console.log(data);
+
     const container = document.getElementById("cards");
 
     data.forEach(item => {
       const card = document.createElement("div");
       card.className = "card";
-      card.style.borderBottomColor = item.color;
 
       card.innerHTML = `
         <img src="${item.imagen}">
         <div class="card-content">
-          <h2>${item.titulo}</h2>
+          <h3>${item.titulo}</h3>
           <p>${item.descripcion}</p>
         </div>
+        <div class="barra" style="background:${item.color}"></div>
       `;
 
       container.appendChild(card);
     });
+
   });
-</script>
 
 </body>
 </html>
