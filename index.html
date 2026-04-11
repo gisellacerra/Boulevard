@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-<title>Comunicaciones Slider</title>
+<title>Scroll</title>
 
 <style>
 
@@ -18,7 +18,7 @@ body {
 /* ===== WRAPPER ===== */
 .slider {
   position: relative;
-  padding: 0 80px;
+  padding: 40px 80px;
 }
 
 /* ===== CONTENEDOR ===== */
@@ -29,7 +29,6 @@ body {
   scroll-behavior: smooth;
   scrollbar-width: none;
   align-items: flex-start;
-
   scroll-snap-type: x mandatory;
 }
 
@@ -40,22 +39,18 @@ body {
 /* ===== CARD ===== */
 .card {
   flex: 0 0 280px;
-
-  scroll-snap-align: start;       /* 👈 CLAVE */
-  scroll-snap-stop: always;       /* 👈 CLAVE */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 
   background: #f9f9f9;
   border: 1px solid #ddd;
   border-bottom: 4px solid #17487f;
-
   border-radius: 8px 8px 0 0;
   overflow: hidden;
 
   text-decoration: none;
   color: inherit;
   display: block;
-
-  transition: 0.3s;
 }
 
 /* ===== IMAGEN ===== */
@@ -88,10 +83,8 @@ body {
   display: inline-block;
   margin-top: 10px;
   font-size: 12px;
-
   background: #17487f;
   color: white;
-
   padding: 6px 12px;
   border-radius: 4px;
 }
@@ -105,8 +98,8 @@ body {
 
   background: transparent;
   border: none;
-
   color: #17487f;
+
   cursor: pointer;
 
   width: 80px;
@@ -118,16 +111,50 @@ body {
 
   font-size: 60px;
   font-weight: bold;
-  line-height: 1;
 }
 
 .arrow.left { left: 10px; }
 .arrow.right { right: 10px; }
 
+/* ===== TABLET ===== */
+@media (max-width: 1024px) and (min-width: 601px) {
+
+  .container {
+    flex-wrap: wrap;
+    overflow-x: hidden;
+    justify-content: center;
+  }
+
+  .card {
+    flex: 1 1 calc(50% - 20px);
+    max-width: none;
+  }
+
+  .arrow {
+    display: none;
+  }
+}
+
 /* ===== MOBILE ===== */
 @media (max-width: 600px) {
+
   .slider {
     padding: 20px;
+  }
+
+  .container {
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 100%;
+    flex: none;
+  }
+
+  .arrow {
+    display: none;
   }
 }
 
@@ -189,7 +216,7 @@ fetch(url)
   })
   .catch(err => console.error(err));
 
-/* ===== SCROLL INTELIGENTE ===== */
+/* ===== SCROLL CONTROL ===== */
 const slider = document.getElementById("cards");
 
 function getStep() {
