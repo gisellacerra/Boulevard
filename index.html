@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-<title>Comunicaciones_50</title>
+<title>Comunicaciones_52</title>
 
 <style>
 
@@ -29,7 +29,7 @@ body {
   flex: 1 1 300px;
   max-width: 300px;
   background: white;
-  border-bottom: 5px solid;
+  border-bottom: 4px solid #17487f;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   border-bottom-left-radius: 0;
@@ -161,7 +161,6 @@ fetch(url)
       const titulo = row.c[0]?.v;
       const descripcion = row.c[1]?.v;
       const imagen = row.c[2]?.v;
-      const color = row.c[3]?.v;
       const link = row.c[4]?.v;
 
       if (!titulo) return;
@@ -176,7 +175,6 @@ fetch(url)
       }
 
       card.classList.add("card");
-      card.style.borderColor = color;
 
       card.innerHTML = `
         <img src="${imagen}">
