@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-<title>Scroll_1</title>
+<title>Scroll_2</title>
 
 <style>
 
@@ -224,14 +224,14 @@ fetch(url)
 
     document.querySelector(".left").onclick = () => {
       slider.scrollBy({
-        left: -getStep() * 3, /* 👈 3 cards */
+        left: -getStep() * 5, 
         behavior: "smooth"
       });
     };
 
     document.querySelector(".right").onclick = () => {
       slider.scrollBy({
-        left: getStep() * 3,
+        left: getStep() * 5,
         behavior: "smooth"
       });
     };
