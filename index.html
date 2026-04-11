@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-<title>Scroller_01_4_26</title>
+<title>Scroller_02_4_26</title>
 
 <style>
 
@@ -98,12 +98,17 @@ body {
   transform: translateY(-50%);
   z-index: 10;
 
-  background: transparent;
-  border: none;
-  cursor: pointer;
+  width: 20px;
+  height: 20px;
 
-  width: 80px;
-  height: 80px;
+  border: solid #17487f;
+  border-width: 0 4px 4px 0;
+
+  display: inline-block;
+  padding: 8px;
+
+  background: transparent;
+  cursor: pointer;
 }
 
 /* Líneas */
@@ -120,29 +125,15 @@ body {
 }
 
 /* DERECHA */
-.arrow.right::before {
-  top: 40%;
-  left: 50%;
-  transform: translate(-30%, -50%) rotate(45deg);
-}
-
-.arrow.right::after {
-  top: 40%;
-  left: 50%;
-  transform: translate(-30%, -50%) rotate(-45deg);
+.arrow.right {
+  right: 20px;
+  transform: translateY(-50%) rotate(-45deg);
 }
 
 /* IZQUIERDA */
-.arrow.left::before {
-  top: 50%;
-  left: 50%;
-  transform: translate(-70%, -50%) rotate(-45deg);
-}
-
-.arrow.left::after {
-  top: 50%;
-  left: 50%;
-  transform: translate(-70%, -50%) rotate(45deg);
+.arrow.left {
+  left: 20px;
+  transform: translateY(-50%) rotate(135deg);
 }
 
 /* Posición */
