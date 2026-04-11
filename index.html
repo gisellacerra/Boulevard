@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-<title>Scroll_7</title>
+<title>Scroll_8</title>
 
 <style>
 
@@ -104,54 +104,58 @@ body {
   height: 80px;
 }
 
-/* Dibujo de la flecha */
-/* Flecha base */
+/* ===== FLECHAS  ===== */
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  width: 80px;
+  height: 80px;
+}
+
+/* Líneas */
 .arrow::before,
 .arrow::after {
   content: "";
   position: absolute;
 
   width: 30px;
-  height: 6px; /* grosor */
+  height: 6px;
 
   background: #17487f;
-
-  border-radius: 10px; /* 👈 extremos redondeados */
+  border-radius: 10px;
 }
 
-/* Derecha */
+/* 👉 DERECHA */
 .arrow.right::before {
   transform: rotate(45deg);
   top: 35%;
-  left: 25%;
+  left: 30%;
 }
 
 .arrow.right::after {
   transform: rotate(-45deg);
   top: 55%;
-  left: 25%;
+  left: 30%;
 }
 
-/* Izquierda */
+/* 👉 IZQUIERDA */
 .arrow.left::before {
   transform: rotate(-45deg);
   top: 35%;
-  left: 25%;
+  left: 30%;
 }
 
 .arrow.left::after {
   transform: rotate(45deg);
   top: 55%;
-  left: 25%;
-}
-
-/* Dirección */
-.arrow.right::before {
-  transform: rotate(-45deg);
-}
-
-.arrow.left::before {
-  transform: rotate(135deg);
+  left: 30%;
 }
 
 /* Posición */
