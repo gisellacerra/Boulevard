@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-<title>Scroller_</title>
+<title>Scroller_prueba</title>
 
 <style>
 
@@ -223,23 +223,20 @@ body {
 
 <script>
 
-const url = "https://script.google.com/macros/s/AKfycbws--S8ZqvQ2OAb6bn998_EP_5jd20bjClEoL1lMUUDNA7HA5sRc78Cu7SisQQndQtw/exec?token=Comunicacion_PJ";
+const url = "https://docs.google.com/spreadsheets/d/1ftMlZ_tTzMZ0suW5sKYLbj9q8r57RoZq0nnz5Z8Hxyw/gviz/tq?tqx=out:json";
 
 fetch(url)
-  .then(res => res.text())
-  .then(text => {
+  .then(res => res.json())
+  .then(rows => {
 
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rows = json.table.rows;
     const container = document.getElementById("cards");
 
-    rows.forEach((row, index) => {
-      if (index === 0) return;
+rows.forEach(row => {
 
-      const titulo = row.c[0]?.v;
-      const descripcion = row.c[1]?.v;
-      const imagen = row.c[2]?.v;
-      const link = row.c[4]?.v;
+  const titulo = row.Titulo;
+  const descripcion = row.Descripcion;
+  const imagen = row.Imagen;
+  const link = row.Link;
 
       if (!titulo) return;
 
