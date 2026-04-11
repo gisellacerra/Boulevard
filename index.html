@@ -89,7 +89,7 @@ body {
   border-radius: 4px;
 }
 
-/* ===== FLECHAS (CHEVRON CSS) ===== */
+/* ===== FLECHAS CORREGIDAS ===== */
 .arrow {
   position: absolute;
   top: 50%;
@@ -116,28 +116,30 @@ body {
   background: #17487f;
   border-radius: 10px;
 
-  top: 50%;
   left: 50%;
-
   transform-origin: center;
 }
 
-/* 👉 DERECHA (perfecta) */
+/* DERECHA */
 .arrow.right::before {
-  transform: translate(-50%, -50%) rotate(45deg);
+  top: 42%;
+  transform: translateX(-50%) rotate(45deg);
 }
 
 .arrow.right::after {
-  transform: translate(-50%, -50%) rotate(-45deg);
+  top: 58%;
+  transform: translateX(-50%) rotate(-45deg);
 }
 
-/* 👉 IZQUIERDA */
+/* IZQUIERDA */
 .arrow.left::before {
-  transform: translate(-50%, -50%) rotate(-45deg);
+  top: 42%;
+  transform: translateX(-50%) rotate(-45deg);
 }
 
 .arrow.left::after {
-  transform: translate(-50%, -50%) rotate(45deg);
+  top: 58%;
+  transform: translateX(-50%) rotate(45deg);
 }
 
 /* Posición */
@@ -157,7 +159,6 @@ body {
     flex: 1 1 calc(50% - 20px);
     max-width: none;
   }
-  
 
   .arrow {
     display: none;
@@ -177,8 +178,9 @@ body {
   }
 
   .ver-mas {
-  font-size: 13px;
-}
+    font-size: 13px;
+  }
+
   .card {
     width: 100%;
     max-width: 100%;
@@ -202,9 +204,6 @@ body {
     font-size: 14px;
     line-height: 1.5;
   }
-
-
-
 }
 
 </style>
@@ -213,8 +212,8 @@ body {
 <body>
 
 <div class="slider">
-<button class="arrow left"></button>
-<button class="arrow right"></button>
+  <button class="arrow left"></button>
+  <button class="arrow right"></button>
 
   <div class="container" id="cards"></div>
 </div>
@@ -262,7 +261,7 @@ fetch(url)
       container.appendChild(card);
     });
 
-    /* ===== SCROLL CONTROL (AHORA SÍ FUNCIONA) ===== */
+    /* ===== SCROLL ===== */
     const slider = document.getElementById("cards");
 
     function getStep() {
@@ -273,7 +272,7 @@ fetch(url)
 
     document.querySelector(".left").onclick = () => {
       slider.scrollBy({
-        left: -getStep() * 5, 
+        left: -getStep() * 5,
         behavior: "smooth"
       });
     };
