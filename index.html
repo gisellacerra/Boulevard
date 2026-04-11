@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-<title>Comunicaciones_52</title>
+<title>Comunicaciones</title>
 
 <style>
 
@@ -21,7 +21,10 @@ body {
   overflow-x: auto;
   scroll-behavior: smooth;
   gap: 20px;
-  padding: 40px;
+
+  padding: 40px 20px;
+  margin-top: 30px; /* 👈 separación del navegador */
+
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
 }
@@ -30,7 +33,7 @@ body {
   display: none;
 }
 
-/* ===== FLECHAS ===== */
+/* ===== BOTONES ===== */
 .scroll-btn {
   position: fixed;
   top: 50%;
@@ -50,21 +53,23 @@ body {
 
 /* ===== CARD ===== */
 .card {
-  flex: 0 0 300px; /* 👈 CLAVE */
+  flex: 0 0 300px;
   max-width: 300px;
+
+  display: flex;
+  flex-direction: column; /* 👈 permite altura dinámica */
+
   background: white;
   border-bottom: 4px solid #17487f;
 
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-
+  border-radius: 8px 8px 0 0;
   overflow: hidden;
+
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   transition: 0.3s;
 
   text-decoration: none;
   color: inherit;
-  display: block;
 
   scroll-snap-align: start;
 }
@@ -84,6 +89,8 @@ body {
 /* ===== CONTENIDO ===== */
 .card-content {
   padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .card h2 {
@@ -102,7 +109,6 @@ body {
 
 /* ===== BOTÓN ===== */
 .ver-mas {
-  display: inline-block;
   margin-top: 15px;
 
   font-family: 'Roboto', sans-serif;
@@ -113,6 +119,8 @@ body {
 
   padding: 8px 16px;
   border-radius: 6px;
+
+  display: inline-block;
 }
 
 /* ===== EFECTOS ===== */
@@ -124,16 +132,29 @@ body {
   filter: brightness(0.7);
 }
 
-/* ===== MOBILE (opcional: vertical) ===== */
+/* ===== MOBILE ===== */
 @media (max-width: 600px) {
   .container {
     flex-direction: column;
     overflow-x: hidden;
+    margin-top: 20px;
   }
 
   .card {
     width: 100%;
     max-width: 100%;
+  }
+
+  .card img {
+    height: 140px;
+  }
+
+  .card h2 {
+    font-size: 20px;
+  }
+
+  .card p {
+    font-size: 14px;
   }
 }
 
