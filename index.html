@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-<title>Scroller_02_4_26</title>
+<title>Scroller_03</title>
 
 <style>
 
@@ -40,7 +40,6 @@ body {
 .card {
   flex: 0 0 280px;
   scroll-snap-align: start;
-  scroll-snap-stop: always;
 
   background: #f9f9f9;
   border: 1px solid #ddd;
@@ -76,8 +75,7 @@ body {
   font-size: 14px;
   color: #555;
   font-family: 'Roboto', sans-serif;
-  line-height: 1.4; /* 👈 desktop mejorado */
-  text-wrap: balance;
+  line-height: 1.4;
 }
 
 /* ===== BOTÓN ===== */
@@ -91,37 +89,21 @@ body {
   border-radius: 4px;
 }
 
-/* ===== FLECHAS PERFECTAS ===== */
+/* ===== FLECHAS (SOLUCIÓN FINAL) ===== */
 .arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   z-index: 10;
 
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 
   border: solid #17487f;
   border-width: 0 4px 4px 0;
 
-  display: inline-block;
-  padding: 8px;
-
-  background: transparent;
   cursor: pointer;
-}
-
-/* Líneas */
-.arrow::before,
-.arrow::after {
-  content: "";
-  position: absolute;
-
-  width: 24px;
-  height: 4px;
-
-  background: #17487f;
-  border-radius: 10px;
+  background: transparent;
 }
 
 /* DERECHA */
@@ -136,10 +118,6 @@ body {
   transform: translateY(-50%) rotate(135deg);
 }
 
-/* Posición */
-.arrow.left { left: 10px; }
-.arrow.right { right: 10px; }
-
 /* ===== TABLET ===== */
 @media (max-width: 1024px) and (min-width: 601px) {
 
@@ -151,7 +129,6 @@ body {
 
   .card {
     flex: 1 1 calc(50% - 20px);
-    max-width: none;
   }
 
   .arrow {
@@ -174,30 +151,11 @@ body {
 
   .card {
     width: 100%;
-    max-width: 100%;
     flex: none;
   }
 
   .arrow {
     display: none;
-  }
-
-  .card img {
-    height: 140px;
-  }
-
-  .card h2 {
-    font-size: 20px;
-    line-height: 1.2;
-  }
-
-  .card p {
-    font-size: 14px;
-    line-height: 1.35; /* 👈 móvil natural */
-  }
-
-  .ver-mas {
-    font-size: 13px;
   }
 }
 
@@ -220,20 +178,11 @@ const url = "https://script.google.com/macros/s/AKfycbyLIuyS-H5RMuX0Nrcv51rqZ8Ub
 fetch(url)
   .then(res => res.json())
   .then(rows => {
-    console.log(rows);
-
-
-
 
     const container = document.getElementById("cards");
 
-rows.forEach(row => {
-
-const titulo = row.titulo;
-const descripcion = row.descripcion;
-const imagen = row.imagen;
-const link = row.link;
-
+    rows.forEach(row => {
+      const { titulo, descripcion, imagen, link } = row;
       if (!titulo) return;
 
       const card = document.createElement(link ? "a" : "div");
@@ -257,11 +206,11 @@ const link = row.link;
       container.appendChild(card);
     });
 
-    /* ===== SCROLL ===== */
     const slider = document.getElementById("cards");
 
     function getStep() {
       const card = document.querySelector(".card");
+      if (!card) return 300;
       const gap = parseInt(getComputedStyle(slider).gap) || 20;
       return card.offsetWidth + gap;
     }
@@ -282,9 +231,6 @@ const link = row.link;
 
   })
   .catch(err => console.error(err));
-
-
-  
 
 </script>
 
