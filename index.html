@@ -223,11 +223,15 @@ body {
 
 <script>
 
-const url = "https://docs.google.com/spreadsheets/d/1ftMlZ_tTzMZ0suW5sKYLbj9q8r57RoZq0nnz5Z8Hxyw/gviz/tq?tqx=out:json";
+const url = "https://script.google.com/macros/s/AKfycbyLIuyS-H5RMuX0Nrcv51rqZ8UbOng2tvfdQdAoyFZkCDVDPdjG8MHgy-QwMrVQb-Ox/exec?token=Comunicacion_PJ";
 
 fetch(url)
   .then(res => res.json())
   .then(rows => {
+    console.log(rows);
+
+
+
 
     const container = document.getElementById("cards");
 
@@ -286,6 +290,9 @@ rows.forEach(row => {
 
   })
   .catch(err => console.error(err));
+
+
+  
 
 </script>
 
