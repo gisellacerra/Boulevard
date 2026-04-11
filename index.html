@@ -228,11 +228,17 @@ function getStep() {
 }
 
 document.querySelector(".left").onclick = () => {
-  slider.scrollBy({ left: -getStep(), behavior: "smooth" });
+  slider.scrollBy({
+    left: -slider.clientWidth * 0.8,
+    behavior: "smooth"
+  });
 };
 
 document.querySelector(".right").onclick = () => {
-  slider.scrollBy({ left: getStep(), behavior: "smooth" });
+  slider.scrollBy({
+    left: slider.clientWidth * 0.8,
+    behavior: "smooth"
+  });
 };
 
 </script>
