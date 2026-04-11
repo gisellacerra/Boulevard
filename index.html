@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-<title>Scroll_6</title>
+<title>Scroll_7</title>
 
 <style>
 
@@ -105,17 +105,44 @@ body {
 }
 
 /* Dibujo de la flecha */
-.arrow::before {
+/* Flecha base */
+.arrow::before,
+.arrow::after {
   content: "";
-  display: block;
-  width: 25px;
-  height: 25px;
+  position: absolute;
 
-  border-right: 6px solid #17487f;
-  border-bottom: 6px solid #17487f;
+  width: 30px;
+  height: 6px; /* grosor */
 
-  border-radius: 30px; 
-  margin: auto;
+  background: #17487f;
+
+  border-radius: 10px; /* 👈 extremos redondeados */
+}
+
+/* Derecha */
+.arrow.right::before {
+  transform: rotate(45deg);
+  top: 35%;
+  left: 25%;
+}
+
+.arrow.right::after {
+  transform: rotate(-45deg);
+  top: 55%;
+  left: 25%;
+}
+
+/* Izquierda */
+.arrow.left::before {
+  transform: rotate(-45deg);
+  top: 35%;
+  left: 25%;
+}
+
+.arrow.left::after {
+  transform: rotate(45deg);
+  top: 55%;
+  left: 25%;
 }
 
 /* Dirección */
@@ -182,6 +209,7 @@ body {
 
   .card h2 {
     font-size: 20px;
+    font-weight: 500;
   }
 
   .card p {
