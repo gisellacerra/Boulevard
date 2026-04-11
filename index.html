@@ -18,28 +18,55 @@ body {
 /* ===== CONTENEDOR ===== */
 .container {
   display: flex;
-  flex-wrap: wrap;
+  overflow-x: auto;
+  scroll-behavior: smooth;
   gap: 20px;
   padding: 40px;
-  align-items: flex-start;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
 }
+
+.container::-webkit-scrollbar {
+  display: none;
+}
+
+/* ===== FLECHAS ===== */
+.scroll-btn {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+
+  background: #17487f;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.left { left: 10px; }
+.right { right: 10px; }
 
 /* ===== CARD ===== */
 .card {
-  flex: 1 1 300px;
+  flex: 0 0 300px; /* 👈 CLAVE */
   max-width: 300px;
   background: white;
   border-bottom: 4px solid #17487f;
+
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
+
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   transition: 0.3s;
+
   text-decoration: none;
   color: inherit;
   display: block;
+
+  scroll-snap-align: start;
 }
 
 .card:hover {
@@ -73,23 +100,22 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-/* ===== BOTÓN VER MÁS ===== */
+/* ===== BOTÓN ===== */
 .ver-mas {
   display: inline-block;
   margin-top: 15px;
 
   font-family: 'Roboto', sans-serif;
-  font-weight: 500;
   font-size: 12px;
-  background: #1399af;
+
+  background: #17487f;
   color: #fff;
+
   padding: 8px 16px;
   border-radius: 6px;
-
-  text-decoration: none;
 }
 
-/* ===== EFECTOS CLICKABLE ===== */
+/* ===== EFECTOS ===== */
 .card.clickable {
   cursor: pointer;
 }
@@ -98,43 +124,16 @@ body {
   filter: brightness(0.7);
 }
 
-/* ===== RESPONSIVE ===== */
-
-/* Tablets */
-@media (max-width: 1024px) and (min-width: 601px) {
-  .container {
-    justify-content: center;
-  }
-
-  .card {
-    flex: 1 1 calc(50% - 20px);
-    max-width: none;
-  }
-}
-
-/* Móviles */
+/* ===== MOBILE (opcional: vertical) ===== */
 @media (max-width: 600px) {
   .container {
     flex-direction: column;
-    padding: 20px;
+    overflow-x: hidden;
   }
 
   .card {
     width: 100%;
     max-width: 100%;
-    flex: none;
-  }
-
-  .card img {
-    height: 140px;
-  }
-
-  .card h2 {
-    font-size: 20px;
-  }
-
-  .card p {
-    font-size: 14px;
   }
 }
 
@@ -143,9 +142,15 @@ body {
 
 <body>
 
+<!-- BOTONES -->
+<button class="scroll-btn left">◀</button>
+<button class="scroll-btn right">▶</button>
+
+<!-- CONTENEDOR -->
 <div class="container" id="cards"></div>
 
 <script>
+
 const url = "https://docs.google.com/spreadsheets/d/1ftMlZ_tTzMZ0suW5sKYLbj9q8r57RoZq0nnz5Z8Hxyw/gviz/tq?tqx=out:json";
 
 fetch(url)
@@ -191,6 +196,18 @@ fetch(url)
 
   })
   .catch(err => console.error(err));
+
+/* ===== SCROLL ===== */
+const container = document.getElementById("cards");
+
+document.querySelector(".left").onclick = () => {
+  container.scrollBy({ left: -320, behavior: "smooth" });
+};
+
+document.querySelector(".right").onclick = () => {
+  container.scrollBy({ left: 320, behavior: "smooth" });
+};
+
 </script>
 
 </body>
