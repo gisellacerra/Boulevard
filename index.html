@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-<title>Scroller_04</title>
+<title>Scroller_05</title>
 
 <style>
 
@@ -18,7 +18,7 @@ body {
 /* ===== WRAPPER ===== */
 .slider {
   position: relative;
-  padding: 40px 80px;
+  padding: 40px 40px; /* 👈 corregido (antes 80px rompía el layout) */
 }
 
 /* ===== CONTENEDOR ===== */
@@ -36,9 +36,9 @@ body {
   display: none;
 }
 
-/* ===== CARD ===== */
+/* ===== CARD (4 EXACTAS) ===== */
 .card {
-  flex: 0 0 280px;
+  flex: 0 0 calc((100% - 60px) / 4); /* 👈 CLAVE */
   scroll-snap-align: start;
 
   background: #f9f9f9;
@@ -89,7 +89,7 @@ body {
   border-radius: 4px;
 }
 
-/* ===== FLECHAS (SOLUCIÓN FINAL) ===== */
+/* ===== FLECHAS ===== */
 .arrow {
   position: absolute;
   top: 50%;
@@ -106,20 +106,18 @@ body {
   background: transparent;
 }
 
-/* DERECHA */
 .arrow.right {
-  right: 20px;
+  right: 10px;
   transform: translateY(-50%) rotate(-45deg);
 }
 
-/* IZQUIERDA */
 .arrow.left {
-  left: 20px;
+  left: 10px;
   transform: translateY(-50%) rotate(135deg);
 }
 
-/* ===== TABLET ===== */
-@media (max-width: 1024px) and (min-width: 601px) {
+/* ===== TABLET (2 columnas) ===== */
+@media (max-width: 1024px) {
 
   .container {
     flex-wrap: wrap;
@@ -127,16 +125,16 @@ body {
     justify-content: center;
   }
 
-.card {
-  flex: 0 0 calc((100% - 60px) / 4);
-}
+  .card {
+    flex: 0 0 calc((100% - 20px) / 2);
+  }
 
   .arrow {
     display: none;
   }
 }
 
-/* ===== MOBILE ===== */
+/* ===== MOBILE (1 columna) ===== */
 @media (max-width: 600px) {
 
   .slider {
@@ -146,12 +144,10 @@ body {
   .container {
     flex-direction: column;
     overflow-x: hidden;
-    padding: 20px;
   }
 
   .card {
-    width: 100%;
-    flex: none;
+    flex: 0 0 100%;
   }
 
   .arrow {
@@ -217,14 +213,14 @@ fetch(url)
 
     document.querySelector(".left").onclick = () => {
       slider.scrollBy({
-        left: -getStep() * 3,
+        left: -getStep() * 4, /* 👈 ahora salta de a 4 */
         behavior: "smooth"
       });
     };
 
     document.querySelector(".right").onclick = () => {
       slider.scrollBy({
-        left: getStep() * 3,
+        left: getStep() * 4,
         behavior: "smooth"
       });
     };
