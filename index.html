@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-<title>Scroller_05</title>
+<title>Scroller_06</title>
 
 <style>
 
@@ -18,7 +18,15 @@ body {
 /* ===== WRAPPER ===== */
 .slider {
   position: relative;
-  padding: 40px 40px; /* 👈 corregido (antes 80px rompía el layout) */
+  padding: 40px 40px;
+}
+
+.arrow.right {
+  right: 40px; 
+}
+
+.arrow.left {
+  left: 40px;
 }
 
 /* ===== CONTENEDOR ===== */
@@ -107,12 +115,12 @@ body {
 }
 
 .arrow.right {
-  right: 10px;
+  right: 40px;
   transform: translateY(-50%) rotate(-45deg);
 }
 
 .arrow.left {
-  left: 10px;
+  left: 40px;
   transform: translateY(-50%) rotate(135deg);
 }
 
