@@ -229,14 +229,14 @@ function getStep() {
 
 document.querySelector(".left").onclick = () => {
   slider.scrollBy({
-    left: -slider.clientWidth * 1.2,
+    left: -getStep() * 3,
     behavior: "smooth"
   });
 };
 
 document.querySelector(".right").onclick = () => {
   slider.scrollBy({
-    left: slider.clientWidth * 1.2,
+    left: getStep() * 3,
     behavior: "smooth"
   });
 };
