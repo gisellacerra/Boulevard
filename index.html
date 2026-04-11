@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-<title>Scroll_8</title>
+<title>Scroll</title>
 
 <style>
 
@@ -104,21 +104,6 @@ body {
   height: 80px;
 }
 
-/* ===== FLECHAS  ===== */
-.arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-
-  background: transparent;
-  border: none;
-  cursor: pointer;
-
-  width: 80px;
-  height: 80px;
-}
-
 /* Líneas */
 .arrow::before,
 .arrow::after {
@@ -130,32 +115,29 @@ body {
 
   background: #17487f;
   border-radius: 10px;
+
+  top: 50%;
+  left: 50%;
+
+  transform-origin: center;
 }
 
-/* 👉 DERECHA */
+/* 👉 DERECHA (perfecta) */
 .arrow.right::before {
-  transform: rotate(45deg);
-  top: 35%;
-  left: 30%;
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .arrow.right::after {
-  transform: rotate(-45deg);
-  top: 55%;
-  left: 30%;
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 /* 👉 IZQUIERDA */
 .arrow.left::before {
-  transform: rotate(-45deg);
-  top: 35%;
-  left: 30%;
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .arrow.left::after {
-  transform: rotate(45deg);
-  top: 55%;
-  left: 30%;
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 /* Posición */
