@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-<title>Scroll_</title>
+<title>Scroll_1</title>
 
 <style>
 
@@ -213,33 +213,31 @@ fetch(url)
       container.appendChild(card);
     });
 
+    /* ===== SCROLL CONTROL (AHORA SÍ FUNCIONA) ===== */
+    const slider = document.getElementById("cards");
+
+    function getStep() {
+      const card = document.querySelector(".card");
+      const gap = parseInt(getComputedStyle(slider).gap) || 20;
+      return card.offsetWidth + gap;
+    }
+
+    document.querySelector(".left").onclick = () => {
+      slider.scrollBy({
+        left: -getStep() * 3, /* 👈 3 cards */
+        behavior: "smooth"
+      });
+    };
+
+    document.querySelector(".right").onclick = () => {
+      slider.scrollBy({
+        left: getStep() * 3,
+        behavior: "smooth"
+      });
+    };
+
   })
   .catch(err => console.error(err));
-
-/* ===== SCROLL CONTROL ===== */
-const slider = document.getElementById("cards");
-
-function getStep() {
-  const card = document.querySelector(".card");
-  if (!card) return 300;
-
-  const gap = parseInt(getComputedStyle(slider).gap) || 20;
-  return card.offsetWidth + gap;
-}
-
-document.querySelector(".left").onclick = () => {
-  slider.scrollBy({
-    left: -getStep() * 5,
-    behavior: "smooth"
-  });
-};
-
-document.querySelector(".right").onclick = () => {
-  slider.scrollBy({
-    left: getStep() * 5,
-    behavior: "smooth"
-  });
-};
 
 </script>
 
