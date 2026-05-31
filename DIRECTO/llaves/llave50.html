@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Llave +50 - VI Torneo Nacional de Newcom</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  min-width:1920px;
+  min-height:1080px;
+  overflow:auto;
+  color:white;
+  font-family:'Oswald',sans-serif;
+
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.58) 0%, rgba(0,0,0,.18) 34%, rgba(0,0,0,.10) 100%),
+    url('wallpaper.jpg');
+
+  background-size:cover;
+  background-position:center center;
+  background-attachment:fixed;
+}
+
+.page{
+  display:flex;
+  min-height:1080px;
+  position:relative;
+  z-index:2;
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:300px;
+  min-height:1080px;
+  padding:35px 26px;
+  margin-right: 25px;
+  position:sticky;
+  top:0;
+  left:0;
+  overflow:hidden;
+  border-right:2px solid #008f3b;
+  flex-shrink:0;
+background:
+
+  linear-gradient(
+    90deg,
+    rgba(0,0,0,.92) 0%,
+    rgba(0,0,0,.82) 45%,
+    rgba(0,0,0,.55) 100%
+  ),
+
+  url("wallpaper-newcom.jpg");
+
+}
+
+.titulo-grande{
+  position:relative;
+  z-index:2;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:78px;
+  line-height:.83;
+  letter-spacing:-1px;
+  text-transform:uppercase;
+  color:white;
+  text-shadow:0 3px 8px rgba(0,0,0,.45);
+}
+
+.titulo-grande .amarillo{color:#f0d100;}
+
+.linea{
+  position:relative;
+  z-index:2;
+  width:120px;
+  height:7px;
+  background:#f0d100;
+  margin:26px 0 24px 0;
+}
+
+.label{
+  position:relative;
+  z-index:2;
+  font-family:'Oswald',sans-serif;
+  font-size:30px;
+  line-height:.9;
+  font-weight:300;
+  margin-top:62px;
+  margin-bottom:18px;
+  color:white;
+  text-transform:uppercase;
+}
+
+.categoria{
+  position:relative;
+  z-index:2;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:52px;
+  line-height:.9;
+  color:#f0d100;
+  margin-bottom:28px;
+}
+
+.fecha{
+  position:relative;
+  z-index:2;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:32px;
+  line-height:.92;
+  color:#31d158;
+  margin-top:20px;
+}
+
+.anio{
+  font-family:'Oswald',sans-serif;
+  font-size:22px;
+  font-weight:300;
+  color:#fff;
+  margin-top:16px;
+}
+
+.lugar{
+  position:relative;
+  z-index:2;
+  font-family:'Oswald',sans-serif;
+  font-size:28px;
+  line-height:1.2;
+  font-weight:300;
+  color:#fff;
+  margin-top:18px;
+}
+
+.logo-bottom{
+  position:relative;
+  display:block;
+  width:calc(100% - 20px);
+  margin:32px 10px 0 10px;
+  height:auto;
+  object-fit:contain;
+  z-index:2;
+}
+
+/* MAIN */
+.main{
+  flex:1;
+  padding:34px 42px 80px 42px;
+  overflow:visible;
+}
+
+.bracket{
+  display:flex;
+  align-items:flex-start;
+  gap:60px;
+  min-width:max-content;
+  position:relative;
+}
+
+.connectors{
+  position:absolute;
+  left:0;
+  top:0;
+  pointer-events:none;
+  overflow:visible;
+  z-index:1;
+}
+
+.connector-line{
+  fill:none;
+  stroke:#00b050;
+  stroke-width:2;
+  stroke-linecap:square;
+  stroke-linejoin:miter;
+  filter:drop-shadow(0 0 4px rgba(0,176,80,.45));
+}
+
+.ronda{
+  width:245px;
+  flex-shrink:0;
+  position:relative;
+  z-index:2;
+}
+
+.ronda h3{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:39px;
+  text-align:center;
+  color:#f0d100;
+  letter-spacing:1px;
+  margin-bottom:0;
+  font-weight:400;
+  height:54px;
+  line-height:44px;
+}
+
+.match{
+  position:absolute;
+  left:0;
+  width:245px;
+  height:78px;
+  background:linear-gradient(180deg,rgba(10,10,10,.94),rgba(3,3,3,.94));
+  border:2px solid #008f3b;
+  border-radius:8px;
+  padding:5px;
+  box-shadow:0 0 12px rgba(0,176,80,.25);
+  z-index:3;
+}
+
+.numero-partido{
+  position:absolute;
+  left:-50px;
+  top:50%;
+  transform:translateY(-50%);
+  font-family:'Bebas Neue',sans-serif;
+  font-size:32px;
+  color:white;
+  font-weight:400;
+  width:32px;
+  text-align:right;
+}
+
+.team{
+  height:33px;
+  padding:5px 10px;
+  display:flex;
+  align-items:center;
+  font-size:20px;
+  line-height:1.05;
+  font-weight:300;
+  border-bottom:1px solid rgba(255,255,255,.15);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.team:last-child{border-bottom:none;}
+
+.ganador{
+  background:linear-gradient(90deg,rgba(240,209,0,.24),rgba(240,209,0,.04));
+  color:#f0d100;
+  border-radius:4px;
+  font-weight:300;
+}
+
+.plata-team{
+  background:linear-gradient(90deg,#f2f2f2,#a4a4a4);
+  color:#111;
+  border-radius:4px;
+  font-weight:300;
+}
+
+.bronce-team{
+  background:linear-gradient(90deg,#cd7f32,#8c4f18);
+  color:white;
+  border-radius:4px;
+  font-weight:300;
+}
+
+.bye{opacity:.45;}
+
+/* PREMIOS */
+.final-box{
+  width:250px;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  position:relative;
+  z-index:2;
+    padding-top:597px !important;
+  transform:translateY(-35px);
+}
+
+
+.copa{
+  font-size:64px;
+  margin-bottom:18px;
+}
+
+.premios-box{width:240px;}
+
+.premio{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:10px;
+  padding:12px 14px;
+  border-radius:10px;
+  margin-bottom:14px;
+  font-size:18px;
+  font-weight:500;
+  text-align:left;
+  box-shadow:0 10px 22px rgba(0,0,0,.4);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.medalla{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  flex-shrink:0;
+  font-size:14px;
+  font-weight:700;
+  color:#111;
+  box-shadow:inset 0 2px 3px rgba(255,255,255,.55),0 3px 6px rgba(0,0,0,.35);
+}
+
+.medalla-oro{background:linear-gradient(145deg,#fff176,#f0d100,#9d7500);}
+.medalla-plata{background:linear-gradient(145deg,#ffffff,#c9c9c9,#777);}
+.medalla-bronce{background:linear-gradient(145deg,#f0a45b,#cd7f32,#6e3b11);color:white;}
+
+.oro{background:linear-gradient(90deg,#f0d100,#b99100);color:#111;}
+.plata{background:linear-gradient(90deg,#f7f7f7,#9f9f9f);color:#111;}
+.bronce{background:linear-gradient(90deg,#cd7f32,#8c4f18);color:white;}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <aside class="sidebar">
+    <div class="titulo-grande">
+      <span class="amarillo">VI</span><br>
+      TORNEO<br>
+      NACIONAL<br>
+      DE<br>
+      <span class="amarillo">NEWCOM</span>
+    </div>
+
+    <div class="linea"></div>
+
+    <div class="label">CATEGORÍA</div>
+    <div class="categoria">MIXTO +50</div>
+
+    <div class="fecha">
+      24, 25 Y 26<br>
+      DE NOVIEMBRE
+      <div class="anio">2026</div>
+    </div>
+
+    <div class="lugar">
+      VIEDMA<br>
+      RÍO NEGRO
+    </div>
+  </aside>
+
+  <main class="main">
+    <div id="bracket" class="bracket"></div>
+  </main>
+
+</div>
+
+<script>
+const URL_JSON =
+"https://script.google.com/macros/s/AKfycbxNrZvOz_lT8mhYrmHs4n_ZYu1Y2v1nJqlY5zqklA1UTe_vV4kOuYi9mTfn8P91eKg/exec";
+
+const CATEGORIA = "50";
+
+const MATCH_H = 78;
+const BASE_GAP = 14;
+const HEADER_H = 54;
+
+function normalizar(valor){
+  return String(valor || "").replace("+","").trim();
+}
+
+function potenciaSiguiente(n){
+  return Math.pow(2,Math.ceil(Math.log2(n)));
+}
+
+function nombreRonda(cantidad){
+  if(cantidad === 16) return "16AVOS";
+  if(cantidad === 8) return "OCTAVOS";
+  if(cantidad === 4) return "CUARTOS";
+  if(cantidad === 2) return "SEMIFINAL";
+  if(cantidad === 1) return "FINAL";
+  return "RONDA";
+}
+
+function buscarGanador(resultados,ronda,partido){
+  return resultados.find(r =>
+    normalizar(r.categoria) === CATEGORIA &&
+    String(r.ronda).trim().toUpperCase() === ronda &&
+    String(r.partido).trim() === String(partido)
+  )?.ganador || "";
+}
+
+function crearPrimeraRonda(equipos){
+  const total = potenciaSiguiente(equipos.length);
+  const byes = total - equipos.length;
+  const lista = equipos.map(e => e.equipo);
+
+  for(let i=0;i<byes;i++){
+    lista.push("BYE");
+  }
+
+  const partidos = [];
+
+  for(let i=0;i<lista.length;i+=2){
+    partidos.push({
+      a:lista[i],
+      b:lista[i+1],
+      ganador:lista[i+1] === "BYE" ? lista[i] : ""
+    });
+  }
+
+  return partidos;
+}
+
+function construirRondas(equipos,resultados){
+  const rondas = [crearPrimeraRonda(equipos)];
+  let cantidad = rondas[0].length;
+
+  while(cantidad > 1){
+    cantidad = cantidad / 2;
+    const nueva = [];
+
+    for(let i=0;i<cantidad;i++){
+      nueva.push({a:"",b:"",ganador:""});
+    }
+
+    rondas.push(nueva);
+  }
+
+  for(let r=0;r<rondas.length;r++){
+    const codigo = "R" + (r+1);
+
+    for(let p=0;p<rondas[r].length;p++){
+      const manual = buscarGanador(resultados,codigo,p+1);
+
+      if(manual){
+        rondas[r][p].ganador = manual;
+      }
+
+      const ganador = rondas[r][p].ganador;
+
+      if(ganador && rondas[r+1]){
+        const siguiente = Math.floor(p/2);
+        const lado = p % 2 === 0 ? "a" : "b";
+        rondas[r+1][siguiente][lado] = ganador;
+      }
+    }
+  }
+
+  return rondas;
+}
+
+function calcularCentros(rondas){
+  const centros = [];
+
+  centros[0] = rondas[0].map((_,i) =>
+    HEADER_H + MATCH_H / 2 + i * (MATCH_H + BASE_GAP)
+  );
+
+  for(let r=1;r<rondas.length;r++){
+    centros[r] = rondas[r].map((_,i) => {
+      const arriba = centros[r-1][i*2];
+      const abajo = centros[r-1][i*2 + 1] ?? arriba;
+      return (arriba + abajo) / 2;
+    });
+  }
+
+  return centros;
+}
+
+function obtenerSubcampeon(ultima){
+  if(!ultima || !ultima.ganador) return "";
+  if(ultima.a === ultima.ganador) return ultima.b || "";
+  if(ultima.b === ultima.ganador) return ultima.a || "";
+  return "";
+}
+
+function obtenerTercerPuesto(rondas){
+  if(rondas.length < 2) return "";
+
+  const semifinales = rondas[rondas.length - 2];
+  const perdedores = [];
+
+  semifinales.forEach(s => {
+    if(!s.ganador) return;
+    if(s.a && s.a !== s.ganador) perdedores.push(s.a);
+    if(s.b && s.b !== s.ganador) perdedores.push(s.b);
+  });
+
+  return perdedores[0] || "";
+}
+
+function claseEquipo(nombre,ganador,subcampeon,tercerPuesto,nombreRondaActual){
+  const clases = [];
+  if(nombre === "BYE") clases.push("bye");
+  if(ganador && nombre === ganador) clases.push("ganador");
+if(nombreRondaActual === "FINAL" && subcampeon && nombre === subcampeon){
+  clases.push("plata-team");
+}
+
+if(nombreRondaActual === "SEMIFINAL" && tercerPuesto && nombre === tercerPuesto){
+  clases.push("bronce-team");
+}
+  return clases.join(" ");
+}
+
+function generarVisual(rondas){
+  const contenedor = document.getElementById("bracket");
+  contenedor.innerHTML = "";
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svg.classList.add("connectors");
+  contenedor.appendChild(svg);
+
+  const centros = calcularCentros(rondas);
+  const ultima = rondas[rondas.length - 1][0];
+  const subcampeon = obtenerSubcampeon(ultima);
+  const tercerPuesto = obtenerTercerPuesto(rondas);
+
+  rondas.forEach((ronda, rIndex) => {
+    const div = document.createElement("div");
+    div.className = "ronda";
+    const lastCenter = centros[rIndex][centros[rIndex].length - 1] || HEADER_H;
+    div.style.height = `${lastCenter + MATCH_H/2}px`;
+
+    div.innerHTML =
+      `<h3>${nombreRonda(ronda.length)}</h3>` +
+      ronda.map((p,i) => {
+        const top = centros[rIndex][i] - MATCH_H / 2;
+        return `
+          <div class="match" data-round-index="${rIndex}" data-match-index="${i}" style="top:${top}px">
+            ${nombreRonda(ronda.length) === "16AVOS" ? `<span class="numero-partido">${i+1}</span>` : ""}
+
+            <div class="team ${claseEquipo(
+  p.a,
+  p.ganador,
+  subcampeon,
+  tercerPuesto,
+  nombreRonda(ronda.length)
+)}">
+  <span>${p.a || "Pendiente"}</span>
+</div>
+
+<div class="team ${claseEquipo(
+  p.b,
+  p.ganador,
+  subcampeon,
+  tercerPuesto,
+  nombreRonda(ronda.length)
+)}">
+  <span>${p.b || "Pendiente"}</span>
+</div>
+          </div>
+        `;
+      }).join("");
+
+    contenedor.appendChild(div);
+  });
+
+  const finalBox = document.createElement("div");
+  finalBox.className = "final-box";
+  const finalCenter = centros[centros.length - 1][0] || 360;
+  finalBox.style.paddingTop = `${Math.max(0, finalCenter - 120)}px`;
+
+  finalBox.innerHTML = `
+    <div class="copa">🏆</div>
+
+    <div class="premios-box">
+      <div class="premio oro"><span class="medalla medalla-oro">1°</span>${ultima.ganador || "CAMPEÓN"}</div>
+      <div class="premio plata"><span class="medalla medalla-plata">2°</span>${subcampeon || "2° PUESTO"}</div>
+      <div class="premio bronce"><span class="medalla medalla-bronce">3°</span>${tercerPuesto || "3° PUESTO"}</div>
+    </div>
+  `;
+
+  contenedor.appendChild(finalBox);
+
+  requestAnimationFrame(dibujarLineas);
+}
+
+function dibujarLineas(){
+  const contenedor = document.getElementById("bracket");
+  const svg = contenedor.querySelector("svg.connectors");
+  const rondas = Array.from(contenedor.querySelectorAll(".ronda"));
+  if(!svg || rondas.length < 2) return;
+
+  const contRect = contenedor.getBoundingClientRect();
+  const width = contenedor.scrollWidth;
+  const height = contenedor.scrollHeight;
+
+  svg.setAttribute("width",width);
+  svg.setAttribute("height",height);
+  svg.setAttribute("viewBox",`0 0 ${width} ${height}`);
+  svg.innerHTML = "";
+
+  for(let r=0;r<rondas.length-1;r++){
+    const actuales = Array.from(rondas[r].querySelectorAll(".match"));
+    const siguientes = Array.from(rondas[r+1].querySelectorAll(".match"));
+
+    for(let j=0;j<siguientes.length;j++){
+      const arriba = actuales[j*2];
+      const abajo = actuales[j*2+1];
+      const next = siguientes[j];
+
+      if(!arriba || !next) continue;
+
+      const a = arriba.getBoundingClientRect();
+      const b = abajo ? abajo.getBoundingClientRect() : a;
+      const n = next.getBoundingClientRect();
+
+      const x1 = a.right - contRect.left;
+      const y1 = a.top + a.height/2 - contRect.top;
+
+      const x1b = b.right - contRect.left;
+      const y2 = b.top + b.height/2 - contRect.top;
+
+      const xNext = n.left - contRect.left;
+      const yNext = n.top + n.height/2 - contRect.top;
+
+      const joinX = Math.min(xNext - 18, Math.max(x1, x1b) + Math.max(20,(xNext - Math.max(x1,x1b))/2));
+
+      const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+      path.setAttribute("class","connector-line");
+      path.setAttribute(
+        "d",
+        `M ${x1} ${y1} H ${joinX}
+         M ${x1b} ${y2} H ${joinX}
+         M ${joinX} ${y1} V ${y2}
+         M ${joinX} ${yNext} H ${xNext}`
+      );
+
+      svg.appendChild(path);
+    }
+  }
+}
+
+window.addEventListener("resize",dibujarLineas);
+window.addEventListener("scroll",dibujarLineas,{passive:true});
+
+async function cargar(){
+  try{
+    const r = await fetch(URL_JSON + "?nocache=" + new Date().getTime());
+    const data = await r.json();
+
+    const equipos = data.equipos.filter(e => normalizar(e.categoria) === CATEGORIA);
+    const resultados = Array.isArray(data.resultados) ? data.resultados : [];
+
+    if(equipos.length < 2){
+      document.getElementById("bracket").innerHTML = "<div style='font-size:34px;color:#888'>Faltan equipos</div>";
+      return;
+    }
+
+    generarVisual(construirRondas(equipos,resultados));
+
+  }catch(error){
+    console.error(error);
+    document.getElementById("bracket").innerHTML = "<div style='font-size:34px;color:#888'>Error al cargar datos</div>";
+  }
+}
+
+cargar();
+setInterval(cargar,5000);
+</script>
+
+</body>
+</html>
