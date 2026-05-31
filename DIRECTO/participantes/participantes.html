@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Participantes</title>
+
+<style>
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+body{
+  width:1920px;
+  height:1080px;
+  background:#111;
+  font-family:Arial,sans-serif;
+  color:white;
+  overflow:hidden;
+}
+
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:40px;
+  padding:30px;
+}
+
+.logo{
+  width:140px;
+  height:140px;
+  object-fit:contain;
+}
+
+.titulo{ text-align:center; }
+
+.titulo h1{
+  font-size:58px;
+  color:#f0d100;
+  margin-bottom:10px;
+}
+
+.titulo h2{
+  font-size:28px;
+  color:white;
+}
+
+.organiza{
+  font-size:22px;
+  color:#6dc54a;
+  margin-top:10px;
+}
+
+.contenedor{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  padding:30px 80px;
+}
+
+.categoria{
+  background:#1b1b1b;
+  border:4px solid #008f3b;
+  border-radius:20px;
+  padding:30px;
+  min-height:520px;
+}
+
+.categoria h3{
+  text-align:center;
+  font-size:42px;
+  color:#f0d100;
+  margin-bottom:20px;
+}
+
+.lista{
+  columns:2;
+  font-size:24px;
+  line-height:1.9;
+}
+
+.lista div{ margin-bottom:8px; }
+
+.mensaje{
+  color:#aaa;
+  font-size:22px;
+  text-align:center;
+  margin-top:40px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <img src="logo_boulevard.png" class="logo">
+
+  <div class="titulo">
+    <h1 id="torneo">VI TORNEO NACIONAL DE NEWCOM</h1>
+    <h2 id="fecha">24, 25 y 26 DE NOVIEMBRE</h2>
+    <h2 id="lugar">VIEDMA · RÍO NEGRO</h2>
+    <div class="organiza" id="organizador">
+      Organiza Club Social y Deportivo Boulevard
+    </div>
+  </div>
+
+  <img src="logo_color.png" class="logo">
+</div>
+
+<div class="contenedor">
+
+  <div class="categoria">
+    <h3>CATEGORÍA +50</h3>
+    <div id="equipos50" class="lista"></div>
+  </div>
+
+  <div class="categoria">
+    <h3>CATEGORÍA +60</h3>
+    <div id="equipos60" class="lista"></div>
+  </div>
+
+</div>
+
+<script>
+const URL_JSON =
+"https://script.google.com/macros/s/AKfycbw68rAlWeRFf3_JXzCkoWcPXA_SiYdYm8MdbCQzleYKHBf57xVfOyYotS3X1WB3ojO4/exec";
+
+function normalizarCategoria(valor){
+  return String(valor || "")
+    .replace("+", "")
+    .replace("Categoría", "")
+    .replace("categoria", "")
+    .trim();
+}
+
+async function cargar(){
+  try {
+    const r = await fetch(URL_JSON);
+const data = await r.json();
+
+    console.log("DATA:", data);
+    console.log("EQUIPOS:", data.equipos);
+
+    if(data.config){
+      document.getElementById("torneo").innerText =
+        data.config.torneo || "VI TORNEO NACIONAL DE NEWCOM";
+
+      document.getElementById("fecha").innerText =
+        data.config.fecha || "24, 25 y 26 DE NOVIEMBRE";
+
+      document.getElementById("lugar").innerText =
+        (data.config.ciudad || "VIEDMA") + " · " + (data.config.provincia || "RÍO NEGRO");
+
+      document.getElementById("organizador").innerText =
+        "Organiza " + (data.config.organizador || "Club Social y Deportivo Boulevard");
+    }
+
+    const equipos = Array.isArray(data.equipos) ? data.equipos : [];
+
+    const equipos50 = equipos.filter(e =>
+      normalizarCategoria(e.categoria) === "50"
+    );
+
+    const equipos60 = equipos.filter(e =>
+      normalizarCategoria(e.categoria) === "60"
+    );
+
+    document.getElementById("equipos50").innerHTML =
+      equipos50.length
+        ? equipos50.map(e => `<div>• ${e.equipo}</div>`).join("")
+        : `<div class="mensaje">No hay equipos +50 cargados</div>`;
+
+    document.getElementById("equipos60").innerHTML =
+      equipos60.length
+        ? equipos60.map(e => `<div>• ${e.equipo}</div>`).join("")
+        : `<div class="mensaje">No hay equipos +60 cargados</div>`;
+
+  } catch(err){
+    console.error("ERROR:", err);
+
+    document.getElementById("equipos50").innerHTML =
+      `<div class="mensaje">Error cargando datos</div>`;
+
+    document.getElementById("equipos60").innerHTML =
+      `<div class="mensaje">Revisar URL JSON</div>`;
+  }
+}
+
+cargar();
+setInterval(cargar, 5000);
+</script>
+
+</body>
+</html>
