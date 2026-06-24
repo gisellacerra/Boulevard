@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Buffet Deportivo Boulevard</title>
+    <style>
+        /* Estilos básicos */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100dvh;
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+
+        /* Contenedor del carrusel */
+        .carousel-container {
+            width: 100vw;
+            height: 100dvh; /* Ajuste para ocupar la pantalla dinámica */
+            overflow: hidden;
+            position: relative;
+             touch-action: manipulation;
+        }
+
+        /* Carrusel que contiene las imágenes */
+        .carousel {
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s ease;
+        }
+
+        /* Imágenes en el carrusel */
+        .carousel img {
+            width: 100vw;
+            height: 100dvh; /* Cada imagen ocupa exactamente la altura de la pantalla */
+            object-fit: cover;
+        }
+
+    </style>
+</head>
+<body>
+<audio id="bgMusic" autoplay loop muted preload="auto">
+    <source src="https://1ea8580e3d.imgdist.com/pub/bfra/gmzf6j8o/knq/6un/00k/Playlist_2.mp3" type="audio/mpeg">
+</audio>
+
+
+
+    <div class="carousel-container">
+        <div class="carousel">
+            <img src="https://1ea8580e3d.imgdist.com/pub/bfra/gmzf6j8o/peq/zju/rdc/1_.jpg" alt="Imagen 1">
+            <img src="https://1ea8580e3d.imgdist.com/pub/bfra/gmzf6j8o/qd0/w3h/36s/2.jpg" alt="Imagen 2">
+            <img src="https://1ea8580e3d.imgdist.com/pub/bfra/gmzf6j8o/mcg/up4/qlq/3.jpg" alt="Imagen 3">
+            <img src="https://1ea8580e3d.imgdist.com/pub/bfra/gmzf6j8o/zre/hou/6ye/4.jpg" alt="Imagen 4">
+            <img src="https://1ea8580e3d.imgdist.com/pub/bfra/gmzf6j8o/g04/lsg/9tu/5.jpg" alt="Imagen 5">
+            <img src="https://1ea8580e3d.imgdist.com/pub/bfra/gmzf6j8o/mqh/9bt/g98/6.jpg" alt="Imagen 6">
+            <img src="https://1ea8580e3d.imgdist.com/pub/bfra/gmzf6j8o/bqf/y4s/gk5/7_.jpg" alt="Imagen 7">
+            <img src="https://1ea8580e3d.imgdist.com/pub/bfra/gmzf6j8o/z19/xuq/oe2/8.jpg" alt="Imagen 8">
+            <img src="https://1ea8580e3d.imgdist.com/pub/bfra/gmzf6j8o/a7k/6zg/jhj/9_.jpg" alt="Imagen 9">
+            <img src="https://1ea8580e3d.imgdist.com/pub/bfra/gmzf6j8o/z2u/h3m/kz0/10_.jpg" alt="Imagen 10">
+            <img src="https://1ea8580e3d.imgdist.com/pub/bfra/gmzf6j8o/l8n/ymu/4oh/11.jpg" alt="Imagen 11">
+            <img src="https://1ea8580e3d.imgdist.com/pub/bfra/gmzf6j8o/yb0/t7c/e18/12.jpg" alt="Imagen 12">
+             <img src="https://1ea8580e3d.imgdist.com/pub/bfra/gmzf6j8o/j5r/myb/gvc/13.jpg" alt="Imagen 13">
+             <img src="https://1ea8580e3d.imgdist.com/pub/bfra/gmzf6j8o/ew4/19v/nck/14.jpg" alt="Imagen 14">
+             
+            
+    
+        </div>
+    </div>
+
+    <script>
+//Audio
+const music = document.getElementById('bgMusic');
+
+
+// Algunos navegadores requieren interacción del usuario
+document.addEventListener('touchstart', () => {
+    music.play().catch(() => {});
+}, { once: true });
+
+document.addEventListener('click', () => {
+    music.play().catch(() => {});
+}, { once: true });
+
+
+    const carousel = document.querySelector('.carousel');
+
+    let currentTranslate = 0;
+    let currentIndex = 0;
+   const totalImages = document.querySelectorAll('.carousel img').length;
+
+    function updateCarousel() {
+        currentTranslate = currentIndex * -window.innerHeight;
+        carousel.style.transform = `translateY(${currentTranslate}px)`;
+    }
+
+    function moveUp() {
+        if (currentIndex < totalImages - 1) {
+            currentIndex++;
+        } else {
+            currentIndex = 0; // vuelve al inicio
+        }
+
+        carousel.style.transition = 'transform 0.5s ease';
+        updateCarousel();
+    }
+
+    function moveDown() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            carousel.style.transition = 'transform 0.5s ease';
+            updateCarousel();
+        }
+    }
+
+    let startY = 0;
+    let isDragging = false;
+
+    function touchStart(event) {
+        startY = event.touches[0].clientY;
+        isDragging = false;
+    }
+
+    function touchMove(event) {
+        const deltaY = event.touches[0].clientY - startY;
+
+        if (Math.abs(deltaY) > 10) {
+            isDragging = true;
+        }
+
+        carousel.style.transition = 'none';
+        carousel.style.transform =
+            `translateY(${currentTranslate + deltaY}px)`;
+    }
+
+    function touchEnd(event) {
+        const movedBy = event.changedTouches[0].clientY - startY;
+
+        carousel.style.transition = 'transform 0.5s ease';
+
+        // TOQUE SIMPLE
+        if (!isDragging || Math.abs(movedBy) < 10) {
+            moveUp();
+            return;
+        }
+
+        // SWIPE ARRIBA
+        if (movedBy < -80) {
+            moveUp();
+        }
+        // SWIPE ABAJO
+        else if (movedBy > 80) {
+            moveDown();
+        }
+        // Vuelve a la posición actual
+        else {
+            updateCarousel();
+        }
+    }
+
+    carousel.addEventListener('touchstart', touchStart, { passive: true });
+    carousel.addEventListener('touchmove', touchMove, { passive: true });
+    carousel.addEventListener('touchend', touchEnd);
+
+
+
+    // Ajustar si cambia el tamaño de pantalla
+    window.addEventListener('resize', updateCarousel);
+
+
+</script>
+</body>
+</html>
