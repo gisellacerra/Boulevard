@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#007d35">
+<title>Club Social y Deportivo Boulevard</title>
+
+<style>
+:root{
+  --verde:#007d35;
+  --verde2:#005a27;
+  --amarillo:#ffd400;
+  --negro:#111111;
+  --blanco:#ffffff;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html{
+  background:#fff;
+}
+
+body{
+  min-height:100dvh;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#fff;
+  color:#171717;
+  overflow-x:hidden;
+}
+
+button,
+a{
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* SPLASH */
+.splash{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:24px;
+  min-height:100dvh;
+  padding:30px;
+  color:#fff;
+  text-align:center;
+  background:
+    radial-gradient(circle at 50% 38%,rgba(255,212,0,.17),transparent 28%),
+    linear-gradient(145deg,#050505,#071f12 45%,#007d35);
+  transition:opacity .65s ease,visibility .65s ease;
+}
+
+.splash.oculta{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.splash img{
+  width:min(35vw,100px);
+  filter:drop-shadow(0 16px 24px rgba(0,0,0,.35));
+  animation:entrada 1s ease both;
+}
+
+.splash h1{
+  font-size:clamp(20px,5.1vw,29px);
+  line-height:1.08;
+  text-transform:uppercase;
+}
+
+
+.splash p{
+  font-size:18px;
+  letter-spacing:0px;
+  color:rgba(255, 255, 255, 0.82);
+}
+
+@keyframes entrada{
+  from{
+    opacity:0;
+    transform:scale(.78);
+  }
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
+/* APP */
+.app{
+  width:100%;
+  max-width:760px;
+  min-height:100dvh;
+  margin:auto;
+  padding-bottom:116px;
+}
+
+.app.oculta{
+  visibility:hidden;
+}
+
+/* HEADER */
+header{
+  position:sticky;
+  top:0;
+  z-index:20;
+  display:grid;
+  grid-template-columns:48px 1fr 48px;
+  align-items:center;
+  gap:12px;
+  min-height:92px;
+  padding:
+    calc(14px + env(safe-area-inset-top))
+    18px
+    14px;
+  background:rgba(255,255,255,.95);
+  border-bottom:1px solid rgba(0,0,0,.06);
+  backdrop-filter:blur(14px);
+}
+
+.icon-btn{
+  width:46px;
+  height:46px;
+  border:0;
+  border-radius:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--verde);
+  background:transparent;
+  cursor:pointer;
+}
+
+.icon-btn svg{
+  width:30px;
+  height:30px;
+}
+
+.header-espacio{
+  width:46px;
+  height:46px;
+}
+
+.marca{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-width:0;
+}
+
+.marca img{
+  width:min(100%,305px);
+  max-height:65px;
+  object-fit:contain;
+}
+
+/* CONTENIDO */
+main{
+  padding:20px 16px 26px;
+}
+
+/* SLIDER */
+.hero{
+  position:relative;
+  min-height:500px;
+  overflow:hidden;
+  border-radius:24px;
+  background:#111;
+  box-shadow:0 12px 32px rgba(0,0,0,.14);
+  touch-action:pan-y;
+}
+
+.hero-track{
+  display:flex;
+  width:100%;
+  height:500px;
+  transition:transform .55s cubic-bezier(.22,.72,.24,1);
+}
+
+.slide{
+  position:relative;
+  min-width:100%;
+  height:500px;
+  overflow:hidden;
+}
+
+.slide>img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.slide-1>img{
+  object-position:center 45%;
+}
+
+.slide-2>img{
+  object-position:center 50%;
+}
+
+.slide::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:
+    linear-gradient(
+      0deg,
+      rgba(0,0,0,.04),
+      rgba(0,0,0,.14) 7%,
+      rgba(0,0,0,.86) 90%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(0,69,30,.34),
+      transparent 60%
+    )
+}
+
+.slide-2::before{
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,.03),
+      rgba(0,0,0,.16) 34%,
+      rgba(0,0,0,.82) 100%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(0,90,38,.36),
+      transparent 65%
+    );
+}
+
+.slide-contenido{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:2;
+    padding:34px 24px 48px;
+    color:#fff;
+    text-align:center;
+}
+
+.slide-1 .slide-contenido{
+    transform:translateY(5px);
+}
+
+.etiqueta{
+  display:inline-block;
+  margin-bottom:12px;
+  padding:8px 13px;
+  border:1px solid rgba(255,255,255,.32);
+  border-radius:999px;
+  color:var(--amarillo);
+  background:rgba(0,0,0,.28);
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:1.3px;
+  text-transform:uppercase;
+  backdrop-filter:blur(8px);
+}
+
+.slide h2{
+font-size: clamp(28px, 7vw, 44px);
+  line-height:.98;
+  text-transform:uppercase;
+  text-shadow:0 5px 18px rgba(0,0,0,.55);
+}
+
+.fecha{
+  margin-top:16px;
+  color:var(--amarillo);
+  font-size:clamp(23px,6vw,34px);
+  line-height:1.08;
+  font-weight:500;
+text-shadow: 0 5px 5px rgba(0, 0, 0, .85);
+}
+
+.lugar{
+  margin-top:14px;
+  font-size:18px;
+  font-weight:700;
+  text-transform:uppercase;
+}
+
+.organiza{
+  margin-top:8px;
+  color:rgba(255,255,255,.9);
+  font-size:14px;
+  line-height:1.4;
+  text-transform:uppercase;
+  text-shadow: 0 3px 3px rgba(0, 0, 0, .85);
+}
+
+.titulo-calado{
+
+    display:block;
+    width:min(50%,520px);
+    margin:18px auto 0;
+    height:auto;
+    object-fit:contain;
+    filter:drop-shadow(0 4px 10px rgba(0,0,0,.45));
+}
+
+.slide-2 h2{
+  color:var(--amarillo);
+}
+
+.slide-2 .frase{
+  max-width:430px;
+  margin:14px auto 0;
+  color:#fff;
+  font-size:18px;
+  line-height:1.45;
+  font-weight:700;
+  text-transform:uppercase;
+}
+
+.slide-2 .club{
+  margin-top:11px;
+  color:rgba(255,255,255,.88);
+  font-size:15px;
+  letter-spacing:.6px;
+  text-transform:uppercase;
+}
+
+.btn-inscripcion{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    margin-top:22px;
+    margin-bottom:18px;
+
+    padding:14px 34px;
+
+    background:#fff;
+
+    color:#262626;
+
+    font-size:18px;
+    font-weight:700;
+
+    text-transform:uppercase;
+    letter-spacing:.5px;
+
+    text-decoration:none;
+
+    border-radius:12px;
+
+    box-shadow:0 8px 20px rgba(0,125,53,.35);
+
+    transition:.25s;
+}
+
+.btn-inscripcion:hover{
+
+    background:#fff;
+
+    transform:translateY(-2px);
+
+}
+
+.btn-inscripcion:active{
+
+    transform:translateY(1px);
+
+}
+
+.puntos{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:20px;
+  z-index:5;
+  display:flex;
+  justify-content:center;
+  gap:9px;
+}
+
+.punto{
+  width:13px;
+  height:13px;
+  border:1px solid rgba(255,255,255,.9);
+  border-radius:50%;
+  cursor:pointer;
+  transition:transform .2s ease,background .2s ease;
+}
+
+.punto.activo{
+  background:var(--amarillo);
+  border-color:var(--amarillo);
+  transform:scale(1.12);
+}
+
+/* BIENVENIDA */
+.bienvenida{
+  position:relative;
+  display:grid;
+  grid-template-columns:76px 1fr;
+  gap:20px;
+  align-items:start;
+  margin-top:24px;
+  padding:28px 24px;
+  overflow:hidden;
+  border:1px solid rgba(0,0,0,.07);
+  border-radius:24px;
+  background:#fff;
+  box-shadow:0 10px 28px rgba(0,0,0,.08);
+}
+
+.bienvenida::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:7px;
+  background:linear-gradient(var(--verde),var(--amarillo));
+}
+
+.bienvenida-icono{
+  width:70px;
+  height:70px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:22px;
+  color:#fff;
+  background:linear-gradient(145deg,var(--verde),var(--verde2));
+}
+
+.bienvenida-icono svg{
+  width:37px;
+  height:37px;
+}
+
+.bienvenida h3{
+  margin-bottom:8px;
+  font-size:28px;
+}
+
+.bienvenida p{
+  font-size:17px;
+  line-height:1.55;
+  color:#333;
+}
+
+/* NAVEGACIÓN INFERIOR */
+nav{
+    position:fixed;
+    left:50%;
+    bottom:0;
+    transform:translateX(-50%);
+    z-index:30;
+    width:min(100%,760px);
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    padding:10px 0 calc(8px + env(safe-area-inset-bottom));
+    background:#007B00;
+    border-top:none;
+    box-shadow:none;
+}
+
+.nav-item{
+    min-width:0;
+    min-height:68px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    gap:8px;
+    padding:4px 2px;
+
+    color:#ffffff;
+    background:transparent;
+
+    text-decoration:none;
+    text-align:center;
+    text-transform:uppercase;
+
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:13px;
+    line-height:1;
+    font-weight:700;
+
+    border:none;
+    border-radius:0;
+    box-shadow:none;
+
+    transition:none;
+}
+
+.nav-item:hover,
+.nav-item:focus,
+.nav-item:active,
+.nav-item.activo{
+    color:#ffffff;
+    background:transparent;
+    outline:none;
+}
+
+.nav-item img{
+    width:40px;
+    height:40px;
+    object-fit:contain;
+    display:block;
+    flex:none;
+}
+
+.nav-item span{
+    display:block;
+    width:100%;
+    color:#ffffff;
+    white-space:nowrap;
+}
+
+
+/* PANEL LATERAL */
+.panel-menu{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  visibility:hidden;
+  opacity:0;
+  background:rgba(0,0,0,.46);
+  transition:.25s ease;
+}
+
+.panel-menu.abierto{
+  visibility:visible;
+  opacity:1;
+}
+
+.panel{
+  width:min(84vw,340px);
+  height:100%;
+  padding:
+    calc(28px + env(safe-area-inset-top))
+    24px
+    30px;
+  color:#fff;
+  background:linear-gradient(180deg,var(--verde2),#071a0e);
+  transform:translateX(-100%);
+  transition:transform .3s ease;
+}
+
+.panel-menu.abierto .panel{
+  transform:translateX(0);
+}
+
+.panel img{
+  width:120px;
+  display:block;
+  margin:0 auto 22px;
+}
+
+.panel h2{
+  color:var(--amarillo);
+  text-align:center;
+  text-transform:uppercase;
+}
+
+.panel p{
+  margin-top:10px;
+  color:rgba(255,255,255,.78);
+  line-height:1.5;
+  text-align:center;
+}
+
+@media(max-width:430px){
+  header{
+    grid-template-columns:43px 1fr 43px;
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  .hero,
+  .hero-track,
+  .slide{
+        min-height: 45px;
+        height: 425px;
+  }
+
+  .slide-contenido{
+    padding-left:18px;
+    padding-right:18px;
+  }
+
+  .bienvenida{
+    grid-template-columns:58px 1fr;
+    gap:14px;
+    padding:24px 18px 24px 22px;
+  }
+
+  .bienvenida-icono{
+    width:56px;
+    height:56px;
+    border-radius:18px;
+  }
+
+  .bienvenida h3{
+    font-size:24px;
+  }
+
+  .bienvenida p{
+    font-size:15px;
+  }
+
+  .nav-item{
+    font-size:12px;
+  }
+
+  .nav-item img{
+    width:36px;
+    height:36px;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<section id="splash" class="splash">
+  <img
+    src="assets/logos/logo-boulevard.png"
+    alt="Club Boulevard">
+
+  <h1>
+    Club Social y Deportivo
+    <br>Boulevard
+  </h1>
+
+  <p>Viedma · Río Negro</p>
+</section>
+
+<div id="app" class="app oculta">
+
+  <header>
+    <button
+      id="abrirMenu"
+      class="icon-btn"
+      aria-label="Abrir menú">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round">
+
+        <path d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+
+    <div class="marca">
+      <img
+        src="assets/logos/logo-torneo.png"
+        alt="VI Torneo Nacional de Newcom 2026">
+    </div>
+
+    <div class="header-espacio" aria-hidden="true"></div>
+  </header>
+
+  <main>
+
+    <section
+      id="hero"
+      class="hero"
+      aria-label="Novedades del Club Boulevard">
+
+      <div id="heroTrack" class="hero-track">
+
+        <article class="slide slide-1">
+
+          <img
+            src="assets/imagenes/portada.jpg"
+            alt="Partido de Newcom en el Club Boulevard">
+
+          <div class="slide-contenido">
+
+            <div class="etiqueta">
+              Viedma 2026
+            </div>
+
+           <img
+    src="assets/logos/titulo_calado.png"
+    alt="VI Torneo Nacional de Newcom"
+    class="titulo-calado">
+
+            <div class="fecha">
+              24, 25 y 26 de NOVIEMBRE
+            </div>
+
+            <a href="*"
+   class="btn-inscripcion"
+   target="_blank"
+   rel="noopener">
+    INSCRIPCIÓN
+</a>
+
+    
+
+            <div class="organiza">
+              Organiza: <br>Club Social y Deportivo Boulevard
+            </div>
+
+          </div>
+        </article>
+
+        <article class="slide slide-2">
+          <img
+            src="assets/imagenes/portada2.jpg"
+            alt="Segunda portada del Club Boulevard">
+        </article>
+
+        <article class="slide slide-3">
+          <img
+            src="assets/imagenes/portada3.jpg"
+            alt="Tercera portada del Club Boulevard">
+        </article>
+
+        <article class="slide slide-4">
+          <img
+            src="assets/imagenes/portada4.jpg"
+            alt="Cuarta portada del Club Boulevard">
+        </article>
+
+        <article class="slide slide-5">
+          <img
+            src="assets/imagenes/portada5.jpg"
+            alt="Quinta portada del Club Boulevard">
+        </article>
+
+        <article class="slide slide-6">
+          <img
+            src="assets/imagenes/portada6.jpg"
+            alt="Sexta portada del Club Boulevard">
+        </article>
+
+        <article class="slide slide-7">
+          <img
+            src="assets/imagenes/portada7.jpg"
+            alt="Séptima portada del Club Boulevard">
+        </article>
+
+      </div>
+
+      <div class="puntos" aria-label="Seleccionar portada">
+        <button class="punto activo" data-slide="0" aria-label="Mostrar primera portada"></button>
+        <button class="punto" data-slide="1" aria-label="Mostrar segunda portada"></button>
+        <button class="punto" data-slide="2" aria-label="Mostrar tercera portada"></button>
+        <button class="punto" data-slide="3" aria-label="Mostrar cuarta portada"></button>
+        <button class="punto" data-slide="4" aria-label="Mostrar quinta portada"></button>
+        <button class="punto" data-slide="5" aria-label="Mostrar sexta portada"></button>
+        <button class="punto" data-slide="6" aria-label="Mostrar séptima portada"></button>
+      </div>
+
+    </section>
+
+    <section class="bienvenida">
+
+      <div class="bienvenida-icono">
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round">
+
+          <path d="M3 11v2M6 9v6M9 7v10M12 5v14M15 8v8M18 10v4M21 11v2"/>
+        </svg>
+
+      </div>
+
+      <div>
+        <h3>¡Bienvenidos!</h3>
+
+        <p>
+          Toda la información del torneo en un solo lugar.
+          Consultá horarios, resultados y seguí las llaves
+          de las categorías +50 y +60.
+        </p>
+      </div>
+
+    </section>
+
+  </main>
+
+  <nav aria-label="Navegación principal">
+
+    <a class="nav-item" href="menu.html">
+    <img src="assets/iconos/menu.png" alt="">
+    <span>MENÚ</span>
+</a>
+
+ <a class="nav-item" href="horarios.html">
+    <img src="assets/iconos/horario.png" alt="">
+    <span>HORARIOS</span>
+</a>
+
+    <a class="nav-item" href="llaves.html">
+    <img src="assets/iconos/llaves.png" alt="">
+    <span>LLAVES</span>
+</a>
+
+    <a class="nav-item" href="llave60.html">
+    <img src="assets/iconos/streaming.png" alt="">
+    <span>STREAMING</span>
+</a>
+
+  </nav>
+
+</div>
+
+<div id="panelMenu" class="panel-menu">
+
+  <aside class="panel">
+
+    <img
+      src="assets/logos/logo-boulevard.png"
+      alt="">
+
+    <h2>Club Social <br>y Deportivo Boulevard</h2>
+
+    <p>
+      Próximamente agregaremos más secciones
+      institucionales.
+    </p>
+
+  </aside>
+
+</div>
+
+<script>
+const splash = document.getElementById("splash");
+const app = document.getElementById("app");
+const abrirMenu = document.getElementById("abrirMenu");
+const panelMenu = document.getElementById("panelMenu");
+
+const hero = document.getElementById("hero");
+const heroTrack = document.getElementById("heroTrack");
+const slides = Array.from(
+  document.querySelectorAll(".slide")
+);
+
+const puntos = Array.from(
+  document.querySelectorAll(".punto")
+);
+
+let slideActual = 0;
+let temporizadorSlider;
+
+function mostrarSlide(indice){
+
+  const total = slides.length;
+
+  slideActual =
+    (indice + total) % total;
+
+  heroTrack.style.transform =
+    `translateX(-${slideActual * 100}%)`;
+
+  puntos.forEach((punto, indicePunto) => {
+    punto.classList.toggle(
+      "activo",
+      indicePunto === slideActual
+    );
+  });
+}
+
+function siguienteSlide(){
+  mostrarSlide(slideActual + 1);
+}
+
+function iniciarAutomatico(){
+  clearInterval(temporizadorSlider);
+
+  temporizadorSlider =
+    setInterval(siguienteSlide,10000);
+}
+
+puntos.forEach(punto => {
+
+  punto.addEventListener("click",() => {
+
+    mostrarSlide(
+      Number(punto.dataset.slide)
+    );
+
+    iniciarAutomatico();
+  });
+
+});
+
+hero.addEventListener(
+  "touchstart",
+  evento => {
+
+    inicioX =
+      evento.touches[0].clientX;
+
+    desplazamientoX = 0;
+    arrastrando = true;
+
+    heroTrack.style.transition = "none";
+  },
+  {passive:true}
+);
+
+
+hero.addEventListener(
+  "touchstart",
+  evento => {
+
+    // No cambiar si se toca un botón o enlace
+    if (evento.target.closest("a, button")) return;
+
+    const rect = hero.getBoundingClientRect();
+    const x = evento.touches[0].clientX - rect.left;
+
+    if (x < rect.width / 2) {
+      mostrarSlide(slideActual - 1);
+    } else {
+      mostrarSlide(slideActual + 1);
+    }
+
+    iniciarAutomatico();
+
+  },
+  { passive: true }
+);
+
+window.addEventListener("load",() => {
+
+  setTimeout(() => {
+
+    splash.classList.add("oculta");
+    app.classList.remove("oculta");
+
+    iniciarAutomatico();
+
+  },2200);
+
+});
+
+abrirMenu.addEventListener("click",() => {
+  panelMenu.classList.add("abierto");
+});
+
+panelMenu.addEventListener("click",evento => {
+
+  if(evento.target === panelMenu){
+    panelMenu.classList.remove("abierto");
+  }
+
+});
+
+document.addEventListener("keydown",evento => {
+
+  if(evento.key === "Escape"){
+    panelMenu.classList.remove("abierto");
+  }
+
+});
+</script>
+
+</body>
+</html>
