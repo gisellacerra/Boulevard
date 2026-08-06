@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Llaves | Club Boulevard</title>
+<style>
+:root{--verde:#086518;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#f4f4f4;color:#111}
+.app{max-width:760px;min-height:100dvh;margin:auto;padding-bottom:116px}
+header{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:48px 1fr 48px;align-items:center;gap:12px;min-height:92px;padding:calc(14px + env(safe-area-inset-top)) 18px 14px;background:rgba(255,255,255,.95);border-bottom:1px solid rgba(0,0,0,.06);backdrop-filter:blur(14px)}
+.icon-btn{display:flex;align-items:center;justify-content:center;color:#111;text-decoration:none}
+.icon-btn svg{width:30px;height:30px}
+.marca{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-width:0;
+}
+
+.marca img{
+    display:block;
+    width:auto;
+    height:58px;
+    max-width:100%;
+    object-fit:contain;
+}
+.boton{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(100%, 200px);
+    height: 58px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #0a7a2a, #086518);
+    color: #fff;
+    text-decoration: none;
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: .3px;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, .18), 0 3px 8px rgba(0, 0, 0, .14);
+    transition: .20s ease;
+}
+
+.boton:hover{
+    transform:translateY(-2px);
+    box-shadow:
+        0 14px 28px rgba(0,0,0,.22),
+        0 5px 12px rgba(0,0,0,.16);
+}
+
+.boton:active{
+    transform:translateY(1px);
+    box-shadow:
+        0 6px 12px rgba(0,0,0,.18);
+}
+main{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:40px 20px;gap:22px;min-height:calc(100dvh - 208px)}
+nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,760px);display:grid;grid-template-columns:repeat(5,1fr);padding:10px 0 calc(8px + env(safe-area-inset-bottom));background:var(--verde)}
+.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;color:#fff;min-height:68px;font-size:13px;font-weight:700}
+.nav-item img{width:40px;height:40px;filter:brightness(0) invert(1)}
+.nav-item span{font-size:9px}
+.nav-item.activo img{
+    filter:brightness(0) saturate(100%)
+           invert(83%) sepia(91%) saturate(1128%)
+           hue-rotate(8deg) brightness(104%) contrast(102%);
+}
+
+.nav-item.activo span{
+    color:#F3DF00;
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+<a class="icon-btn" href="index.html" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a>
+<div class="marca"><a href="index.html"><img src="assets/logos/logo-torneo.png" alt="Logo"></a></div>
+<div></div>
+</header>
+<main>
+<a class="boton" href="llave50.html">Llave +50</a>
+<a class="boton" href="llave60.html">Llave +60</a>
+</main>
+<nav aria-label="Navegación principal">
+<a class="nav-item" href="bufet.html"><img src="assets/iconos/menu.png"><span>BUFET</span></a>
+<a class="nav-item" href="horarios.html"><img src="assets/iconos/horario.png"><span>HORARIOS</span></a>
+<a class="nav-item activo" href="llaves.html"><img src="assets/iconos/llaves.png"><span>LLAVES</span></a>
+<a class="nav-item" href="llave60.html"><img src="assets/iconos/streaming.png"><span>STREAMING</span></a>
+<a class="nav-item" href="alojamiento.html"><img src="assets/iconos/hotel.png"><span>ALOJAMIENTO</span></a>
+</nav>
+</div>
+</body></html>
