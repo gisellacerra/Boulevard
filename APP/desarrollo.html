@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#086518">
+<title>Desarrollo | Club Boulevard</title>
+<style>
+:root{--verde:#086518;--verde2:#005a27;--amarillo:#F3DF00;--negro:#111;}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:#fff}
+body{min-height:100dvh;font-family:Arial,Helvetica,sans-serif;color:#171717}
+a{-webkit-tap-highlight-color:transparent}
+.app{width:100%;max-width:760px;min-height:100dvh;margin:auto;padding-bottom:116px;background:#fff}
+header{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:48px 1fr 48px;align-items:center;gap:12px;min-height:92px;padding:calc(14px + env(safe-area-inset-top)) 18px 14px;background:rgba(255,255,255,.96);border-bottom:1px solid rgba(0,0,0,.06);backdrop-filter:blur(14px)}
+.icon-btn{width:46px;height:46px;display:flex;align-items:center;justify-content:center;color:#111;text-decoration:none}
+.icon-btn svg{width:30px;height:30px;display:block}
+.marca{min-width:0;display:flex;align-items:center;justify-content:center}.marca a{display:flex;align-items:center;justify-content:center}.marca img{display:block;width:min(100%,305px);max-height:65px;object-fit:contain}.header-espacio{width:46px;height:46px}
+main{padding:30px 18px 36px}.pagina{max-width:590px;margin:0 auto}.pagina h1{text-align:center;font-size:clamp(28px,7vw,40px);line-height:1;text-transform:uppercase;margin-bottom:24px}.pagina p{font-size:17px;line-height:1.6;color:#333;margin:0 0 18px}.pagina strong{color:#111}.intro{text-align:center;color:#555!important;margin-bottom:28px!important}
+.contactos{display:grid;gap:12px}.contacto-card{padding:18px;border:1px solid #e5e5e5;border-radius:16px;background:#fff}.contacto-nombre{font-size:18px;font-weight:800;margin-bottom:5px}.contacto-card a{color:var(--verde);font-size:18px;font-weight:700;text-decoration:none}.contacto-nota{display:block;margin-top:5px;color:#666;font-size:14px;line-height:1.35}
+.desarrollo-destacado{padding:18px 18px 4px;text-align: center;background:#f6f8f6;border-radius:0 14px 14px 0;margin-bottom:22px}.cta{margin-top:26px;padding:20px;border-radius:16px;background:#f3f7f4;text-align:center}.cta a{color:#de0000;font-size:21px;font-weight:500;text-decoration:none}.firma{font-weight:00}.cierre{text-align:center;font-weight:800;margin-top:28px!important}
+nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:30;width:min(100%,760px);display:grid;grid-template-columns:repeat(6,minmax(0,1fr));padding:10px 0 calc(8px + env(safe-area-inset-bottom));background:#086518}.nav-item{min-width:0;min-height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:4px 2px;color:#fff;text-decoration:none;text-align:center;text-transform:uppercase;font-size:13px;font-weight:700}.nav-item img,.nav-svg{width:40px;height:40px;display:block;object-fit:contain;flex:none}.nav-item img{filter:brightness(0) invert(1)}.nav-svg{color:#fff;fill:none}.nav-item span{width:100%;color:#fff;white-space:nowrap;font-size:9px}.nav-item.activo span,.nav-item.activo .nav-svg{color:var(--amarillo)}
+@media(max-width:430px){header{grid-template-columns:43px 1fr 43px;padding-left:12px;padding-right:12px}.nav-item img,.nav-item .nav-svg{width:36px;height:36px}.pagina p{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <a class="icon-btn" href="index.html" aria-label="Volver al inicio">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 5L8.5 12L15.5 19"/></svg>
+  </a>
+  <div class="marca"><a href="index.html" aria-label="Ir al inicio"><img src="assets/logos/logo-torneo.png" alt="VI Torneo Nacional de Newcom 2026"></a></div>
+  <div class="header-espacio" aria-hidden="true"></div>
+</header>
+<main><section class="pagina">
+<div class="desarrollo-destacado"><p><strong>Todo el torneo, en un solo lugar.</strong></p></div>
+<p>Creamos una aplicación web pensada para que jugadores, equipos y público puedan seguir el torneo de manera simple y desde cualquier dispositivo.</p>
+<p>Lo más importante: la información <strong>se actualiza en vivo</strong>.</p>
+<p>A medida que avanza el torneo, vas a poder consultar resultados, horarios y llaves directamente desde tu teléfono, <strong>sin buscar planillas, archivos ni esperar nuevas publicaciones</strong>.</p>
+<p>Un desarrollo propio, creado por una integrante de Boulevard, para que podamos disfrutarlo entre todos.</p>
+<div class="cta"><p><strong>¿Querés algo así para tu torneo?</strong></p><p>Contactame: <a href="tel:+5492920411544">2920 411544</a></p><p class="firma">Gisella</p></div>
+</section></main>
+<nav aria-label="Navegación principal">
+
+    <a class="nav-item" href="bufet.html">
+      <img src="assets/iconos/menu.png" alt="">
+      <span>BUFET</span>
+    </a>
+
+    <a class="nav-item" href="equipos.html">
+      <svg class="nav-svg" viewBox="0 0 100 100" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="50" cy="50" r="43"/>
+    <path d="M20 19 C38 31 48 44 50 61"/>
+    <path d="M49 7 C60 22 68 39 69 55"/>
+    <path d="M50 61 C65 66 80 66 92 59"/>
+    <path d="M50 61 C39 72 32 84 31 91"/>
+    <path d="M18 79 C30 75 40 69 50 61"/>
+  </svg>
+      <span>EQUIPOS</span>
+    </a>
+
+    <a class="nav-item" href="horarios.html">
+      <img src="assets/iconos/horario.png" alt="">
+      <span>HORARIOS</span>
+    </a>
+
+    <a class="nav-item" href="llaves.html">
+      <img src="assets/iconos/llaves.png" alt="">
+      <span>LLAVES</span>
+    </a>
+
+    <a class="nav-item" href="https://www.youtube.com/@flumediaTV" target="_blank" rel="noopener">
+      <img src="assets/iconos/streaming.png" alt="">
+      <span>STREAMING</span>
+    </a>
+
+    <a class="nav-item" href="alojamiento.html">
+      <img src="assets/iconos/hotel.png" alt="">
+      <span>ALOJAMIENTO</span>
+    </a>
+
+  </nav>
+</div>
+</body>
+</html>

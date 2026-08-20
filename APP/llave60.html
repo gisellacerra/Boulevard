@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Llave Mixto +60 - VI Torneo Nacional de Newcom</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --verde:#00b85a;
+  --verde-oscuro:#008c43;
+  --amarillo:#f4e300;
+  --negro:#0d0d0d;
+  --blanco:#fff;
+  --gris:#8c8c8c;
+  --rojo:#ff3b30;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+html{background:#111}
+
+body{
+  min-height:100svh;
+  color:var(--blanco);
+  font-family:'Oswald',Arial,sans-serif;
+  overflow-x:hidden;
+  background:
+    linear-gradient(180deg,rgba(20,20,20,.58),rgba(20,20,20,.22) 35%,rgba(8,8,8,.66)),
+    url("../assets/fondos/wallpaper.jpg") center/cover fixed no-repeat;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(90deg,rgba(0,0,0,.22),rgba(255,255,255,.08),rgba(0,0,0,.12));
+}
+
+.app{
+  position:relative;
+  z-index:1;
+  width:min(100%,520px);
+  min-height:100svh;
+  margin:0 auto;
+  padding:18px 16px 34px;
+}
+
+.header{
+  text-align:center;
+  padding:4px 0 20px;
+}
+
+.logo{
+  display:block;
+  width:min(68%,270px);
+  max-height:72px;
+  object-fit:contain;
+  margin:0 auto 8px;
+  filter:drop-shadow(0 3px 8px rgba(0,0,0,.55));
+}
+
+.categoria-label{
+  font-size:16px;
+  padding: 0 0 10px;
+  font-weight:300;
+  letter-spacing:.3px;
+  color:rgba(255,255,255,.72);
+  text-transform:uppercase;
+}
+
+.titulo{
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  gap:9px;
+  margin-top:1px;
+  font-family:'Bebas Neue',sans-serif;
+  text-transform:uppercase;
+  line-height:.95;
+  text-shadow:0 4px 12px rgba(0,0,0,.72);
+}
+
+.titulo span:first-child{font-size:46px;color:#fff}
+.titulo span:last-child{font-size:48px;color:#f8ff00}
+
+.estado{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:6px;
+  margin-top:7px;
+  font-size:20px;
+  padding: 0 0 10px;
+  font-weight:300;
+  color:rgba(255,255,255,.72);
+  text-transform:uppercase;
+}
+
+.vivo{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  color:var(--rojo);
+  font-weight:600;
+}
+
+.vivo::before{
+  content:"";
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--rojo);
+  animation:pulso 1.15s infinite;
+}
+
+@keyframes pulso{50%{opacity:.35;transform:scale(.82)}}
+
+.navegacion-ronda{
+  display:grid;
+  grid-template-columns:50px 1fr 50px;
+  align-items:center;
+  gap:12px;
+  margin:16px 0 20px;
+}
+
+.nav-btn{
+  width:46px;
+  height:46px;
+  border:0;
+  border-radius:15px;
+  background:transparent;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:38px;
+  line-height:1;
+  cursor:pointer;
+  box-shadow:none;
+  transition:transform .15s ease,opacity .15s ease;
+}
+
+.nav-btn:active{transform:scale(.94)}
+.nav-btn:disabled{opacity:.28;cursor:default}
+.nav-btn.derecha{justify-self:end;border:0;}
+
+.ronda-centro{text-align:center;min-width:0}
+
+.ronda-titulo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:28px;
+  line-height:1;
+  font-weight: 200;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  text-shadow:0 3px 8px rgba(0,0,0,.6);
+}
+
+.indicadores{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:7px;
+  margin-top:7px;
+}
+
+.punto{
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  border:0;
+  background:#666;
+  cursor:pointer;
+}
+
+.punto.activo{background:var(--amarillo)}
+
+.contenido{
+  min-height:420px;
+  transition:opacity .16s ease,transform .16s ease;
+}
+
+.contenido.cambiando{opacity:.18;transform:translateX(8px)}
+
+.lista-partidos{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.partido{
+  background:rgba(9,9,9,.96);
+  border:2px solid var(--verde);
+  border-radius:13px;
+  padding:16px 16px 14px;
+  box-shadow:0 7px 20px rgba(0,0,0,.28),0 0 10px rgba(0,184,90,.12);
+}
+
+.partido-numero{
+  margin-bottom:5px;
+  font-size:18px;
+  font-weight:300;
+  color:#a9a9a9;
+}
+
+.equipo{
+  min-height:42px;
+  display:flex;
+  align-items:center;
+  min-width:0;
+  padding:8px 7px;
+  font-size:22px;
+  line-height:1.05;
+  font-weight:300;
+  white-space:normal;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  border-radius:4px;
+}
+
+.equipo + .equipo{
+  border-top:1px solid rgba(255,255,255,.14);
+}
+
+.equipo.ganador{
+  color:var(--amarillo);
+  font-weight:400;
+  text-shadow:0 0 12px rgba(243,223,0,.22);
+  background:none;
+}
+
+.equipo.pendiente{
+  color:#8b8b8b;
+  font-weight:300;
+}
+.equipo.bye{opacity:.45}
+
+.mensaje{
+  padding:32px 18px;
+  text-align:center;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:12px;
+  background:rgba(0,0,0,.55);
+  color:#d0d0d0;
+  font-size:16px;
+}
+
+.podio{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+  padding-top:4px;
+}
+
+.copa{text-align:center;font-size:62px;filter:drop-shadow(0 5px 8px rgba(0,0,0,.45))}
+
+.puesto{
+  display:grid;
+  grid-template-columns:45px 1fr;
+  align-items:center;
+  gap:12px;
+  min-height:68px;
+  padding:10px 14px;
+  border-radius:12px;
+  box-shadow:0 8px 20px rgba(0,0,0,.32);
+  color:#111;
+  font-size:18px;
+  font-weight:600;
+}
+
+.puesto.oro{background:linear-gradient(90deg,#fff273,#d6b400)}
+.puesto.plata{background:linear-gradient(90deg,#fff,#9d9d9d)}
+.puesto.bronce{background:linear-gradient(90deg,#eda35d,#92501c);color:#fff}
+
+.medalla{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.42);
+  font-weight:700;
+}
+
+.actualizado{
+  margin-top:18px;
+  text-align:center;
+  color:rgba(255,255,255,.52);
+  font-size:20px;
+  font-weight:300;
+}
+
+@media (min-width:700px){
+  .app{padding-top:30px}
+  .titulo span:first-child{font-size:54px}
+  .titulo span:last-child{font-size:56px}
+  .partido{padding:16px 18px}
+}
+
+@media (max-width:370px){
+  .app{padding-left:11px;padding-right:11px}
+  .titulo span:first-child{font-size:40px}
+  .titulo span:last-child{font-size:42px}
+  .navegacion-ronda{grid-template-columns:44px 1fr 44px;gap:6px}
+  .nav-btn{width:40px;height:40px}
+}
+
+
+/* Integración con layout de la app */
+body{background:#111;}
+.app{padding:0 0 116px!important;width:100%;max-width:760px;}
+header{
+position:sticky;top:0;z-index:50;
+display:grid;grid-template-columns:48px 1fr 48px;
+align-items:center;gap:12px;
+min-height:92px;
+padding:calc(14px + env(safe-area-inset-top)) 18px 14px;
+background:rgba(255,255,255,.95);
+border-bottom:1px solid rgba(0,0,0,.06);
+backdrop-filter:blur(14px);
+}
+.icon-btn{color:#111;text-decoration:none;display:flex;align-items:center;justify-content:center}
+.icon-btn svg{width:30px;height:30px}
+.marca{display:flex;justify-content:center}
+.marca img{width:min(100%,305px);max-height:65px}
+.contenido{padding:0 16px 20px;}
+.actualizado{padding-bottom:12px;}
+
+/* NAVEGACIÓN INFERIOR — MISMO ESTILO QUE ALOJAMIENTO.HTML */
+
+.nav-item{
+  transition:.25s;
+}
+
+.nav-item img{
+  filter:brightness(0) invert(1);
+}
+
+.nav-item span{
+  color:#fff;
+}
+
+/* BOTÓN ACTIVO */
+
+.nav-item.activo img{
+  filter:
+    brightness(0)
+    saturate(100%)
+    invert(83%)
+    sepia(91%)
+    saturate(1128%)
+    hue-rotate(8deg)
+    brightness(104%)
+    contrast(102%);
+}
+
+.nav-item.activo span{
+  color:#F3DF00;
+}
+
+nav{
+  position:fixed;
+  left:50%;
+  bottom:0;
+
+  transform:translateX(-50%);
+
+  z-index:100;
+
+  width:min(100%,760px);
+
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+
+  padding:
+    10px 0
+    calc(8px + env(safe-area-inset-bottom));
+
+  background:#086518;
+}
+
+.nav-item{
+  min-width:0;
+  min-height:68px;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  gap:8px;
+
+  padding:4px 2px;
+
+  color:#fff;
+
+  text-decoration:none;
+  text-align:center;
+  text-transform:uppercase;
+
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:13px;
+  line-height:1;
+  font-weight:700;
+}
+
+.nav-item img{
+  width:40px;
+  height:40px;
+
+  display:block;
+  object-fit:contain;
+
+  filter:brightness(0) invert(1);
+}
+
+.nav-item span{
+  display:block;
+  width:100%;
+
+  color:#fff;
+
+  white-space:nowrap;
+
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:9px;
+  line-height:1;
+  font-weight:700;
+}
+
+@media(max-width:430px){
+  .nav-item img{
+    width:36px;
+    height:36px;
+  }
+}
+
+
+
+/* Corrección de scroll táctil */
+.contenido{
+  touch-action:pan-y;
+  overflow-anchor:none;
+}
+
+.lista-partidos,
+.partido{
+  overflow-anchor:none;
+}
+
+html{
+  scroll-behavior:auto;
+}
+
+
+
+/* NOTIFICACIONES */
+.notificaciones-btn{position:relative}
+.contador-notificaciones{
+  position:absolute;
+  top:3px;
+  right:1px;
+  min-width:20px;
+  height:20px;
+  padding:0 5px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:2px solid #fff;
+  border-radius:999px;
+  color:#fff;
+  background:#d71920;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:11px;
+  line-height:1;
+  font-weight:600;
+}
+.contador-notificaciones.oculto{display:none}
+
+.panel-notificaciones{
+  position:fixed;
+  inset:0;
+  z-index:120;
+  visibility:hidden;
+  opacity:0;
+  background:rgba(0,0,0,.46);
+  transition:.25s ease;
+  font-family:Arial,Helvetica,sans-serif;
+}
+.panel-notificaciones.abierto{
+  visibility:visible;
+  opacity:1;
+}
+.notificaciones-contenido{
+  position:absolute;
+  top:0;
+  right:0;
+  width:min(92vw,420px);
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  color:#171717;
+  background:#f2f2f2;
+  box-shadow:-12px 0 32px rgba(0,0,0,.22);
+  transform:translateX(100%);
+  transition:transform .3s ease;
+}
+.panel-notificaciones.abierto .notificaciones-contenido{
+  transform:translateX(0);
+}
+.notificaciones-cabecera{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:calc(18px + env(safe-area-inset-top)) 18px 16px;
+  color:#fff;
+  background:#007d35;
+}
+.notificaciones-cabecera h2{
+  margin:0;
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:22px;
+  line-height:1.2;
+  font-weight:700;
+  text-transform:none;
+}
+.cerrar-notificaciones{
+  width:42px;
+  height:42px;
+  border:0;
+  border-radius:14px;
+  color:#fff;
+  background:rgba(255,255,255,.14);
+  font-size:30px;
+  line-height:1;
+  cursor:pointer;
+}
+.lista-notificaciones{
+  flex:1;
+  overflow-y:auto;
+  padding:16px;
+}
+.notificacion{
+  margin-bottom:12px;
+  padding:18px;
+  border:1px solid rgba(0,0,0,.07);
+  border-radius:18px;
+  color:#171717;
+  background:#fff;
+  box-shadow:0 6px 18px rgba(0,0,0,.06);
+}
+.notificacion h3{
+  margin:0 0 7px;
+  color:#111;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:20px;
+  line-height:1.25;
+  font-weight:700;
+  text-transform:none;
+}
+.notificacion p{
+  margin:0;
+  color:#333;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:15px;
+  line-height:1.5;
+}
+.notificacion-fecha{
+  display:block;
+  margin-top:10px;
+  color:#777;
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+}
+.notificacion-enlace{
+  display:inline-flex;
+  margin-top:13px;
+  padding:10px 14px;
+  border-radius:10px;
+  color:#fff;
+  background:#007d35;
+  font-size:13px;
+  font-weight:700;
+  text-decoration:none;
+  text-transform:uppercase;
+}
+.estado-notificaciones{
+  padding:28px 18px;
+  color:#555;
+  text-align:center;
+  line-height:1.5;
+}
+
+
+/* ===== CABECERA UNIFICADA — MISMO MODELO QUE INDEX ===== */
+header:not(.encabezado),
+.app-header{
+  min-height:92px !important;
+  height:auto !important;
+  display:grid !important;
+  grid-template-columns:48px minmax(0,1fr) 48px !important;
+  align-items:center !important;
+  gap:12px !important;
+  padding:calc(14px + env(safe-area-inset-top)) 18px 14px !important;
+  background:#fff !important;
+  border-bottom:1px solid rgba(0,0,0,.06) !important;
+  box-shadow:none !important;
+}
+
+header:not(.encabezado) .icon-btn,
+.app-header .icon-btn,
+#abrirNotificaciones{
+  width:46px !important;
+  height:46px !important;
+  min-width:46px !important;
+  min-height:46px !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  outline:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  color:#111 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+#abrirNotificaciones svg{
+  width:30px !important;
+  height:30px !important;
+  display:block !important;
+}
+
+header:not(.encabezado) .marca,
+.app-header .marca{
+  width:100% !important;
+  min-width:0 !important;
+  height:65px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+header:not(.encabezado) .marca a,
+.app-header .marca a{
+  width:100% !important;
+  height:65px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+header:not(.encabezado) .marca img,
+.app-header .marca img,
+.app-header .logo-app{
+  width:min(100%,305px) !important;
+  height:65px !important;
+  max-width:305px !important;
+  max-height:65px !important;
+  object-fit:contain !important;
+  object-position:center !important;
+  margin:0 auto !important;
+  display:block !important;
+}
+
+@media(max-width:430px){
+  header:not(.encabezado),
+  .app-header{
+    grid-template-columns:43px minmax(0,1fr) 43px !important;
+    padding-left:12px !important;
+    padding-right:12px !important;
+  }
+
+  header:not(.encabezado) .icon-btn,
+  .app-header .icon-btn,
+  #abrirNotificaciones{
+    width:43px !important;
+    height:46px !important;
+    min-width:43px !important;
+  }
+}
+
+
+/* EQUIPOS EN MENÚ INFERIOR */
+.nav-item .nav-svg{
+  width:40px;
+  height:40px;
+  display:block;
+  flex:none;
+  color:#fff;
+}
+.nav-item.activo .nav-svg{
+  color:#F3DF00;
+}
+@media(max-width:430px){
+  .nav-item .nav-svg{
+    width:36px;
+    height:36px;
+  }
+}
+
+
+/* Pelota de Newcom: mismo peso visual que los demás iconos */
+.nav-svg{
+  width:40px;
+  height:40px;
+  display:block;
+  flex:none;
+  color:#fff;
+  fill:none;
+}
+.nav-item.activo .nav-svg{color:#F3DF00;}
+@media(max-width:430px){.nav-item .nav-svg{width:36px;height:36px;}}
+</style>
+</head>
+
+<body>
+<div class="app">
+  <header>
+
+    <a
+      class="icon-btn"
+      href="index.html"
+      aria-label="Volver al inicio">
+
+      <svg
+    viewBox="0 0 24 24"
+    width="28"
+    height="28"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg">
+
+    <path
+        d="M15.5 5L8.5 12L15.5 19"
+        stroke="#1F1F1F"
+        stroke-width="2.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+</svg>
+
+    </a>
+
+ <div class="marca">
+    <a href="index.html" aria-label="Ir al inicio">
+        <img
+            src="assets/logos/logo-torneo.png"
+            alt="VI Torneo Nacional de Newcom 2026">
+    </a>
+</div>
+
+
+    <button id="abrirNotificaciones" class="icon-btn notificaciones-btn"
+      type="button" aria-label="Abrir notificaciones" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <span id="contadorNotificaciones" class="contador-notificaciones oculto">0</span>
+    </button>
+
+  </header>
+
+  <section class="navegacion-ronda" aria-label="Navegación entre rondas">
+    <button id="anterior" class="nav-btn" type="button" aria-label="Ronda anterior">‹</button>
+  <div class="ronda-centro">
+
+    <div class="categoria-label">Categoría</div>
+
+    <div class="titulo">
+        <span>MIXTO</span>
+        <span>+60</span>
+    </div>
+
+    <div class="estado">
+        ACTUALIZACIÓN:
+        <span class="vivo">EN VIVO</span>
+    </div>
+
+    <h2 id="rondaTitulo" class="ronda-titulo">16AVOS</h2>
+
+    <div id="indicadores" class="indicadores"></div>
+
+</div>
+    <button id="siguiente" class="nav-btn derecha" type="button" aria-label="Ronda siguiente">›</button>
+  </section>
+
+  <main id="contenido" class="contenido">
+    <div class="mensaje">Cargando llave...</div>
+    
+  </main>
+
+  <div id="actualizado" class="actualizado"></div>
+
+
+<nav aria-label="Navegación principal">
+
+    <a class="nav-item" href="bufet.html">
+      <img src="assets/iconos/menu.png" alt="">
+      <span>BUFET</span>
+    </a>
+
+    <a class="nav-item" href="equipos.html">
+      <svg class="nav-svg" viewBox="0 0 100 100" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="50" cy="50" r="43"/>
+    <path d="M20 19 C38 31 48 44 50 61"/>
+    <path d="M49 7 C60 22 68 39 69 55"/>
+    <path d="M50 61 C65 66 80 66 92 59"/>
+    <path d="M50 61 C39 72 32 84 31 91"/>
+    <path d="M18 79 C30 75 40 69 50 61"/>
+  </svg>
+      <span>EQUIPOS</span>
+    </a>
+
+    <a class="nav-item" href="horarios.html">
+      <img src="assets/iconos/horario.png" alt="">
+      <span>HORARIOS</span>
+    </a>
+
+    <a class="nav-item activo" href="llaves.html">
+      <img src="assets/iconos/llaves.png" alt="">
+      <span>LLAVES</span>
+    </a>
+
+    <a class="nav-item" href="https://www.youtube.com/@flumediaTV" target="_blank" rel="noopener">
+      <img src="assets/iconos/streaming.png" alt="">
+      <span>STREAMING</span>
+    </a>
+
+    <a class="nav-item" href="alojamiento.html">
+      <img src="assets/iconos/hotel.png" alt="">
+      <span>ALOJAMIENTO</span>
+    </a>
+
+  </nav>
+</div>
+
+
+<div id="panelNotificaciones" class="panel-notificaciones">
+  <aside class="notificaciones-contenido" aria-labelledby="tituloNotificaciones">
+    <div class="notificaciones-cabecera">
+      <h2 id="tituloNotificaciones">Notificaciones</h2>
+      <button id="cerrarNotificaciones" class="cerrar-notificaciones"
+        type="button" aria-label="Cerrar notificaciones">×</button>
+    </div>
+    <div id="listaNotificaciones" class="lista-notificaciones">
+      <p class="estado-notificaciones">Cargando notificaciones…</p>
+    </div>
+  </aside>
+</div>
+
+<script>
+const URL_JSON = "https://script.google.com/macros/s/AKfycbwAZygEDd7if7oeF6jCFZOJeMsyEquTRW4xamKNyIhirIB18VUx034PQ7IJZeAjJWL8/exec";
+const CATEGORIA = "60";
+const ORDEN_RONDAS = ["16AVOS","OCTAVOS","CUARTOS","SEMIFINAL","FINAL"];
+
+let rondas = ORDEN_RONDAS.map(() => []);
+let rondaActual = 0;
+let inicioSwipeX = 0;
+let inicioSwipeY = 0;
+
+const contenido = document.getElementById("contenido");
+const rondaTitulo = document.getElementById("rondaTitulo");
+const indicadores = document.getElementById("indicadores");
+const btnAnterior = document.getElementById("anterior");
+const btnSiguiente = document.getElementById("siguiente");
+const actualizado = document.getElementById("actualizado");
+
+function normalizar(valor){
+  return String(valor ?? "").replace("+","").trim();
+}
+
+function escapar(texto){
+  return String(texto ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function obtenerPartidos(resultados,nombreRonda){
+  return resultados
+    .filter(item =>
+      normalizar(item.categoria) === CATEGORIA &&
+      String(item.ronda || "").trim().toUpperCase() === nombreRonda
+    )
+    .sort((a,b) => Number(a.partido || 0) - Number(b.partido || 0))
+    .map(item => ({
+      numero:Number(item.partido || 0),
+      a:String(item.equipo_A || "").trim(),
+      b:String(item.equipo_B || "").trim(),
+      ganador:String(item.ganador || "").trim()
+    }));
+}
+
+function nombreVisible(nombre){
+  const mapa = {
+    "16AVOS":"16AVOS",
+    "OCTAVOS":"OCTAVOS",
+    "CUARTOS":"CUARTOS",
+    "SEMIFINAL":"SEMIFINAL",
+    "FINAL":"FINAL"
+  };
+  return mapa[nombre] || nombre;
+}
+
+function claseEquipo(nombre,ganador){
+  const clases=["equipo"];
+  if(!nombre) clases.push("pendiente");
+  if(String(nombre).toUpperCase()==="BYE") clases.push("bye");
+  if(nombre && ganador && nombre===ganador) clases.push("ganador");
+  return clases.join(" ");
+}
+
+function equipoHTML(nombre,ganador){
+  const texto = nombre || "Pendiente";
+  return `<div class="${claseEquipo(nombre,ganador)}">${escapar(texto)}</div>`;
+}
+
+function obtenerSubcampeon(){
+  const final = rondas[4]?.[0];
+  if(!final?.ganador) return "";
+  return final.a === final.ganador ? final.b : final.a;
+}
+
+function obtenerTercero(){
+  const semifinales = rondas[3] || [];
+  const perdedores=[];
+  semifinales.forEach(p => {
+    if(!p.ganador) return;
+    if(p.a && p.a!==p.ganador) perdedores.push(p.a);
+    if(p.b && p.b!==p.ganador) perdedores.push(p.b);
+  });
+  return perdedores[0] || "";
+}
+
+function renderIndicadores(){
+  indicadores.innerHTML = ORDEN_RONDAS.map((_,i) =>
+    `<button class="punto ${i===rondaActual?'activo':''}" type="button" aria-label="Ir a ${nombreVisible(ORDEN_RONDAS[i])}" data-ronda="${i}"></button>`
+  ).join("");
+
+  indicadores.querySelectorAll(".punto").forEach(punto => {
+    punto.addEventListener("click",() => cambiarRonda(Number(punto.dataset.ronda)));
+  });
+}
+
+function renderPartidos(partidos){
+  if(!partidos.length){
+    return `<div class="mensaje">Todavía no hay partidos cargados para esta ronda.</div>`;
+  }
+
+  return `<div class="lista-partidos">${partidos.map((p,i) => `
+    <article class="partido">
+      <div class="partido-numero">Partido ${p.numero || i+1}</div>
+      ${equipoHTML(p.a,p.ganador)}
+      ${equipoHTML(p.b,p.ganador)}
+    </article>
+  `).join("")}</div>`;
+}
+
+function renderFinal(){
+  const final = rondas[4]?.[0] || {};
+  const campeon = final.ganador || "Campeón pendiente";
+  const subcampeon = obtenerSubcampeon() || "2° puesto pendiente";
+  const tercero = obtenerTercero() || "3° puesto pendiente";
+
+  const partidoFinal = rondas[4]?.length ? renderPartidos(rondas[4]) : "";
+
+  return `${partidoFinal}
+    <section class="podio" style="margin-top:${partidoFinal?'22px':'0'}">
+      <div class="copa">🏆</div>
+      <div class="puesto oro"><span class="medalla">1°</span><span>${escapar(campeon)}</span></div>
+      <div class="puesto plata"><span class="medalla">2°</span><span>${escapar(subcampeon)}</span></div>
+      <div class="puesto bronce"><span class="medalla">3°</span><span>${escapar(tercero)}</span></div>
+    </section>`;
+}
+
+function renderRonda(){
+  const nombre = ORDEN_RONDAS[rondaActual];
+
+  rondaTitulo.textContent = nombreVisible(nombre);
+  btnAnterior.disabled = rondaActual === 0;
+  btnSiguiente.disabled = rondaActual === ORDEN_RONDAS.length - 1;
+
+  renderIndicadores();
+
+  contenido.innerHTML =
+    rondaActual === 4
+      ? renderFinal()
+      : renderPartidos(rondas[rondaActual]);
+}
+
+function cambiarRonda(indice){
+  const nuevo = Math.max(0,Math.min(ORDEN_RONDAS.length-1,indice));
+  if(nuevo===rondaActual) return;
+  contenido.classList.add("cambiando");
+  setTimeout(() => {
+    rondaActual=nuevo;
+    renderRonda(false);
+    contenido.classList.remove("cambiando");
+  },140);
+}
+
+btnAnterior.addEventListener("click",() => cambiarRonda(rondaActual-1));
+btnSiguiente.addEventListener("click",() => cambiarRonda(rondaActual+1));
+
+document.addEventListener("keydown",e => {
+  if(e.key==="ArrowLeft") cambiarRonda(rondaActual-1);
+  if(e.key==="ArrowRight") cambiarRonda(rondaActual+1);
+});
+
+contenido.addEventListener("touchstart",e => {
+  inicioSwipeX = e.changedTouches[0].clientX;
+  inicioSwipeY = e.changedTouches[0].clientY;
+},{passive:true});
+
+contenido.addEventListener("touchend",e => {
+  const diferenciaX = e.changedTouches[0].clientX - inicioSwipeX;
+  const diferenciaY = e.changedTouches[0].clientY - inicioSwipeY;
+
+  /* Solo cambia de ronda cuando el gesto es claramente horizontal.
+     Un desplazamiento vertical debe quedar reservado para el scroll. */
+  if(Math.abs(diferenciaX) < 55) return;
+  if(Math.abs(diferenciaX) <= Math.abs(diferenciaY)) return;
+
+  cambiarRonda(rondaActual + (diferenciaX < 0 ? 1 : -1));
+},{passive:true});
+
+async function cargar(){
+  try{
+    const respuesta = await fetch(`${URL_JSON}?nocache=${Date.now()}`,{cache:"no-store"});
+    if(!respuesta.ok) throw new Error(`HTTP ${respuesta.status}`);
+    const data = await respuesta.json();
+    const resultados = Array.isArray(data.resultados) ? data.resultados : [];
+    const scrollAnterior = window.scrollY;
+
+    rondas = ORDEN_RONDAS.map(nombre => obtenerPartidos(resultados,nombre));
+    renderRonda(false);
+
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top:scrollAnterior,
+        left:0,
+        behavior:"auto"
+      });
+    });
+
+    actualizado.textContent = `Última actualización: ${new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"})}`;
+  }catch(error){
+    console.error(error);
+    contenido.innerHTML = `<div class="mensaje">No se pudieron cargar los datos. Verificá la conexión e intentá nuevamente.</div>`;
+    actualizado.textContent = "Error de actualización";
+  }
+}
+
+cargar();
+setInterval(cargar,5000);
+</script>
+
+<script>
+(() => {
+  const URL_NOTIFICACIONES =
+    "https://script.google.com/macros/s/AKfycbwAZygEDd7if7oeF6jCFZOJeMsyEquTRW4xamKNyIhirIB18VUx034PQ7IJZeAjJWL8/exec";
+
+  const CLAVE_NOTIFICACIONES_LEIDAS =
+    "boulevard_notificaciones_leidas_v2";
+
+  const abrir = document.getElementById("abrirNotificaciones");
+  const cerrar = document.getElementById("cerrarNotificaciones");
+  const panel = document.getElementById("panelNotificaciones");
+  const lista = document.getElementById("listaNotificaciones");
+  const contador = document.getElementById("contadorNotificaciones");
+
+  if(!abrir || !cerrar || !panel || !lista || !contador) return;
+
+  let notificacionesActuales = [];
+
+  function notifEscaparHTML(valor=""){
+    return String(valor)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function crearIdNotificacion(item){
+    if(
+      item.idNotificacion !== undefined &&
+      item.idNotificacion !== null &&
+      String(item.idNotificacion).trim() !== ""
+    ){
+      return String(item.idNotificacion).trim();
+    }
+
+    if(
+      item.id !== undefined &&
+      item.id !== null &&
+      String(item.id).trim() !== ""
+    ){
+      return String(item.id).trim();
+    }
+
+    return [
+      item.titulo ?? item.Titulo ?? "",
+      item.mensaje ?? item.Mensaje ?? item.descripcion ?? "",
+      item.fecha ?? item.Fecha ?? "",
+      item.enlace ?? item.Enlace ?? item.url ?? ""
+    ].join("|").trim();
+  }
+
+  function obtenerIdsLeidos(){
+    try{
+      const guardados =
+        JSON.parse(localStorage.getItem(CLAVE_NOTIFICACIONES_LEIDAS) || "[]");
+
+      return new Set(
+        Array.isArray(guardados)
+          ? guardados.map(String)
+          : []
+      );
+    }catch(error){
+      console.warn("No se pudieron recuperar las notificaciones leídas:",error);
+      return new Set();
+    }
+  }
+
+  function guardarIdsLeidos(ids){
+    try{
+      localStorage.setItem(
+        CLAVE_NOTIFICACIONES_LEIDAS,
+        JSON.stringify(Array.from(ids))
+      );
+    }catch(error){
+      console.warn("No se pudieron guardar las notificaciones leídas:",error);
+    }
+  }
+
+  function actualizarContadorNoLeidas(){
+    const idsLeidos = obtenerIdsLeidos();
+
+    const cantidadNoLeidas =
+      notificacionesActuales.filter(
+        item => !idsLeidos.has(item.idNotificacion)
+      ).length;
+
+    contador.textContent = String(cantidadNoLeidas);
+    contador.setAttribute(
+      "aria-label",
+      `${cantidadNoLeidas} notificaciones no leídas`
+    );
+    contador.classList.toggle("oculto",cantidadNoLeidas === 0);
+  }
+
+  function marcarNotificacionesComoLeidas(){
+    if(notificacionesActuales.length === 0) return;
+
+    const idsLeidos = obtenerIdsLeidos();
+
+    notificacionesActuales.forEach(item => {
+      idsLeidos.add(item.idNotificacion);
+    });
+
+    guardarIdsLeidos(idsLeidos);
+    actualizarContadorNoLeidas();
+  }
+
+  function renderizarNotificaciones(datos){
+    const base =
+      Array.isArray(datos)
+        ? datos
+        : Array.isArray(datos.notificaciones)
+          ? datos.notificaciones
+          : [];
+
+    notificacionesActuales = base
+      .map(item => ({
+        idNotificacion: crearIdNotificacion(item),
+        titulo: item.titulo ?? item.Titulo ?? "Aviso",
+        mensaje:
+          item.mensaje ??
+          item.Mensaje ??
+          item.descripcion ??
+          "",
+        fecha: item.fecha ?? item.Fecha ?? "",
+        enlace:
+          item.enlace ??
+          item.Enlace ??
+          item.url ??
+          "",
+        activa:
+          item.activa ??
+          item.Activa ??
+          item.publicar ??
+          true
+      }))
+      .filter(item => {
+        const activa = String(item.activa).trim().toLowerCase();
+        return !["no","false","0","inactiva","inactivo"].includes(activa);
+      });
+
+    actualizarContadorNoLeidas();
+
+    if(notificacionesActuales.length === 0){
+      lista.innerHTML =
+        '<p class="estado-notificaciones">No hay notificaciones nuevas.</p>';
+      return;
+    }
+
+    lista.innerHTML =
+      notificacionesActuales.map(item => {
+        const enlace = item.enlace
+          ? `
+            <a class="notificacion-enlace"
+              href="${notifEscaparHTML(item.enlace)}"
+              target="_blank"
+              rel="noopener">Ver más</a>
+          `
+          : "";
+
+        const fecha = item.fecha
+          ? `<span class="notificacion-fecha">${notifEscaparHTML(item.fecha)}</span>`
+          : "";
+
+        return `
+          <article class="notificacion">
+            <h3>${notifEscaparHTML(item.titulo)}</h3>
+            <p>${notifEscaparHTML(item.mensaje)}</p>
+            ${fecha}
+            ${enlace}
+          </article>
+        `;
+      }).join("");
+  }
+
+  async function cargarNotificaciones(){
+    try{
+      const respuesta =
+        await fetch(`${URL_NOTIFICACIONES}?t=${Date.now()}`,{cache:"no-store"});
+
+      if(!respuesta.ok){
+        throw new Error(`HTTP ${respuesta.status}`);
+      }
+
+      renderizarNotificaciones(await respuesta.json());
+      return true;
+
+    }catch(error){
+      console.error(error);
+      lista.innerHTML =
+        '<p class="estado-notificaciones">No se pudieron cargar las notificaciones.</p>';
+      return false;
+    }
+  }
+
+  async function abrirPanel(){
+    panel.classList.add("abierto");
+    abrir.setAttribute("aria-expanded","true");
+
+    const cargaCorrecta = await cargarNotificaciones();
+
+    if(cargaCorrecta){
+      marcarNotificacionesComoLeidas();
+    }
+  }
+
+  function cerrarPanel(){
+    marcarNotificacionesComoLeidas();
+    panel.classList.remove("abierto");
+    abrir.setAttribute("aria-expanded","false");
+  }
+
+  abrir.addEventListener("click",abrirPanel);
+  cerrar.addEventListener("click",cerrarPanel);
+
+  panel.addEventListener("click",evento => {
+    if(evento.target === panel){
+      cerrarPanel();
+    }
+  });
+
+  document.addEventListener("keydown",evento => {
+    if(evento.key === "Escape" && panel.classList.contains("abierto")){
+      cerrarPanel();
+    }
+  });
+
+  cargarNotificaciones();
+  setInterval(cargarNotificaciones,60000);
+})();
+</script>
+
+</body>
+</html>
