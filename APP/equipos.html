@@ -770,6 +770,104 @@ header:not(.encabezado) .marca img,
   text-align:center;
 }
 
+.posiciones-bloque{
+  width:100%;
+  max-width:560px;
+  margin:38px auto 0;
+}
+.posiciones-titulo{
+  margin:0 0 16px;
+  color:#086518;
+  font-size:25px;
+  line-height:1.1;
+  font-weight:800;
+  text-align:center;
+  text-transform:uppercase;
+}
+.puntuacion-info{
+  margin-bottom:22px;
+  padding:17px 16px;
+  border-left:5px solid #086518;
+  border-radius:5px;
+  background:#e7f1bc;
+}
+.puntuacion-info h3{
+  margin:0 0 11px;
+  color:#1e1e1e;
+  font-size:16px;
+  line-height:1.25;
+}
+.puntuacion-info ul{
+  margin:0;
+  padding-left:20px;
+}
+.puntuacion-info li{
+  margin:6px 0;
+  font-size:13px;
+  line-height:1.35;
+}
+.tabla-posiciones-categoria{
+  margin-bottom:24px;
+  overflow:hidden;
+  border-radius:5px;
+  box-shadow:0 1px 5px rgba(0,0,0,.10);
+}
+.tabla-posiciones-categoria h3{
+  margin:0;
+  padding:10px 14px;
+  color:#fff;
+  background:#086518;
+  font-size:18px;
+  line-height:1;
+  font-weight:600;
+  text-transform:uppercase;
+}
+.tabla-posiciones{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+  background:#fff;
+}
+.tabla-posiciones th{
+  padding:10px 3px;
+  color:#5f5f5f;
+  background:#e7f1bc;
+  font-size:10px;
+  line-height:1.1;
+  letter-spacing:.02em;
+  text-transform:uppercase;
+}
+.tabla-posiciones td{
+  padding:11px 3px;
+  border-top:1px solid #e8e8e8;
+  font-size:13px;
+  line-height:1.15;
+  text-align:center;
+}
+.tabla-posiciones th:nth-child(1),
+.tabla-posiciones td:nth-child(1){width:9%;}
+.tabla-posiciones th:nth-child(2),
+.tabla-posiciones td:nth-child(2){
+  width:43%;
+  padding-left:7px;
+  text-align:left;
+}
+.tabla-posiciones th:nth-child(n+3),
+.tabla-posiciones td:nth-child(n+3){width:12%;}
+.tabla-posiciones td:last-child{
+  color:#086518;
+  font-weight:800;
+}
+.posicion-numero{
+  font-weight:800;
+}
+.estado-posiciones{
+  padding:25px 16px;
+  color:#666;
+  background:#fff;
+  text-align:center;
+}
+
 
 /* EQUIPOS EN MENÚ INFERIOR */
 .nav-item .nav-svg{
@@ -866,6 +964,24 @@ nav .nav-item .nav-svg{width:30px !important;height:30px !important;}
     <section id="listaEquipos" class="lista-equipos">
       <div class="estado-equipos">Cargando equipos…</div>
     </section>
+
+    <section class="posiciones-bloque" aria-labelledby="tituloPosiciones">
+      <h2 id="tituloPosiciones" class="posiciones-titulo">Tabla de posiciones</h2>
+
+      <div class="puntuacion-info">
+        <h3>Puntuación en la Tabla de Posiciones de un Torneo</h3>
+        <ul>
+          <li><strong>3 puntos</strong> al equipo que gana el partido.</li>
+          <li><strong>2 puntos</strong> al equipo que pierde en el tie-break (1–2 en sets).</li>
+          <li><strong>1 punto</strong> al equipo que pierde sin ganar ningún set (0–2 en sets).</li>
+          <li><strong>0 puntos</strong> en caso de no presentarse (Walkover / W.O.).</li>
+        </ul>
+      </div>
+
+      <div id="tablasPosiciones">
+        <div class="estado-posiciones">Cargando posiciones…</div>
+      </div>
+    </section>
   </main>
 
 
@@ -932,6 +1048,7 @@ const URL_DATOS =
   "https://script.google.com/macros/s/AKfycbwgWvZ-g7Hw1R7204cVDnCqCsN-VaqnJtDxVOueepb-dFMz8gdU3AalvBc0bJZKQOtv/exec";
 
 const listaEquipos = document.getElementById("listaEquipos");
+const tablasPosiciones = document.getElementById("tablasPosiciones");
 
 function escaparHTML(valor=""){
   return String(valor)
@@ -995,6 +1112,135 @@ function renderizarEquipos(equipos){
   `).join("");
 }
 
+function normalizarTexto(valor){
+  return String(valor || "")
+    .trim()
+    .toLocaleLowerCase("es")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function categoriaComparable(valor){
+  return normalizarTexto(valor).replace(/[^0-9a-z]/g, "");
+}
+
+function calcularPosiciones(equipos, historial){
+  const categorias = {};
+
+  (equipos || []).forEach(item => {
+    const categoria = String(item.categoria || "").trim();
+    const claveCategoria = categoriaComparable(categoria);
+    const equipo = String(item.equipo || "").trim();
+    if(!equipo) return;
+
+    if(!categorias[claveCategoria]){
+      categorias[claveCategoria] = {
+        nombre:categoria,
+        equipos:new Map()
+      };
+    }
+
+    categorias[claveCategoria].equipos.set(normalizarTexto(equipo), {
+      equipo:equipo,
+      pj:0,
+      pg:0,
+      pp:0,
+      pts:0
+    });
+  });
+
+  (historial || []).forEach(partido => {
+    const categoria = String(partido.categoria || "").trim();
+    const claveCategoria = categoriaComparable(categoria);
+    if(!categorias[claveCategoria]) return;
+
+    const tabla = categorias[claveCategoria].equipos;
+    const nombreLocal = String(partido.equipo_local || "").trim();
+    const nombreVisitante = String(partido.equipo_visitante || "").trim();
+    const claveLocal = normalizarTexto(nombreLocal);
+    const claveVisitante = normalizarTexto(nombreVisitante);
+
+    if(!tabla.has(claveLocal) || !tabla.has(claveVisitante)) return;
+
+    const local = tabla.get(claveLocal);
+    const visitante = tabla.get(claveVisitante);
+    const setsLocal = Number(partido.sets_local || 0);
+    const setsVisitante = Number(partido.sets_visitante || 0);
+    const claveGanador = normalizarTexto(partido.ganador);
+    const esWO = partido.walkover === true ||
+      ["si","sí","true","1"].includes(normalizarTexto(partido.walkover));
+
+    if(setsLocal < 2 && setsVisitante < 2) return;
+
+    const ganador = claveGanador === claveLocal ? local :
+      claveGanador === claveVisitante ? visitante :
+      setsLocal > setsVisitante ? local : visitante;
+    const perdedor = ganador === local ? visitante : local;
+    const setsPerdedor = perdedor === local ? setsLocal : setsVisitante;
+
+    ganador.pj++;
+    ganador.pg++;
+    ganador.pts += 3;
+
+    perdedor.pj++;
+    perdedor.pp++;
+    perdedor.pts += esWO ? 0 : (setsPerdedor === 1 ? 2 : 1);
+  });
+
+  return categorias;
+}
+
+function renderizarPosiciones(equipos, historial){
+  const categorias = calcularPosiciones(equipos, historial);
+  const claves = Object.keys(categorias).sort((a,b) =>
+    Number(a.replace(/\D/g,"")) - Number(b.replace(/\D/g,""))
+  );
+
+  if(claves.length === 0){
+    tablasPosiciones.innerHTML =
+      '<div class="estado-posiciones">Todavía no hay equipos para mostrar.</div>';
+    return;
+  }
+
+  tablasPosiciones.innerHTML = claves.map(clave => {
+    const grupo = categorias[clave];
+    const filas = [...grupo.equipos.values()].sort((a,b) =>
+      b.pts - a.pts ||
+      b.pg - a.pg ||
+      a.equipo.localeCompare(b.equipo, "es")
+    );
+
+    return `
+      <section class="tabla-posiciones-categoria">
+        <h3>${escaparHTML(nombreCategoria(grupo.nombre))}</h3>
+        <table class="tabla-posiciones">
+          <thead>
+            <tr>
+              <th>Pos.</th>
+              <th>Equipo</th>
+              <th>PJ</th>
+              <th>PG</th>
+              <th>PP</th>
+              <th>Pts.</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filas.map((fila, indice) => `
+              <tr>
+                <td class="posicion-numero">${indice + 1}</td>
+                <td>${escaparHTML(fila.equipo)}</td>
+                <td>${fila.pj}</td>
+                <td>${fila.pg}</td>
+                <td>${fila.pp}</td>
+                <td>${fila.pts}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </section>`;
+  }).join("");
+}
+
 async function cargarEquipos(){
   try{
     const respuesta = await fetch(
@@ -1006,11 +1252,14 @@ async function cargarEquipos(){
 
     const datos = await respuesta.json();
     renderizarEquipos(datos.equipos || []);
+    renderizarPosiciones(datos.equipos || [], datos.historial || []);
 
   }catch(error){
     console.error(error);
     listaEquipos.innerHTML =
       '<div class="estado-equipos">No se pudieron cargar los equipos.</div>';
+    tablasPosiciones.innerHTML =
+      '<div class="estado-posiciones">No se pudieron cargar las posiciones.</div>';
   }
 }
 
