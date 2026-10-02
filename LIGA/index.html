@@ -1,0 +1,962 @@
+<!doctype html>
+
+<html lang="es">
+
+<head>
+
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Fixture Newcom</title>
+
+
+
+
+
+<style>
+
+*{box-sizing:border-box} body{margin:0;background:#f3f4f6;font-family:Arial,Helvetica,sans-serif;color:#222}
+
+.app{width:min(1180px,96%);margin:30px auto} .filtros{background:#fff;border-radius:12px;padding:18px 20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,.08);display:grid;grid-template-columns:1fr 1fr;gap:18px}
+
+.grupo-filtro label{display:block;font-size:13px;font-weight:700;margin-bottom:7px} select{width:100%;height:44px;border:1px solid #bbb;border-radius:7px;background:#fff;padding:0 12px;font-size:15px}
+
+.bloque-dia{margin-bottom:28px} .titulo-dia{background:#17487F;color:#fff;font-size:19px;font-weight:700;padding:12px 15px}
+
+.tabla-scroll{overflow-x:auto} table{width:100%;min-width:800px;border-collapse:collapse;table-layout:fixed;background:#fff}
+
+th,td{border:1px solid #d0d0d0;text-align:center;vertical-align:middle} th{background:#d9d9d9;height:40px;padding:5px;font-size:13px} td{height:48px;padding:5px 7px;font-size:13px;line-height:1.15}
+
+.col-numero{width:45px} .col-horario{width:110px} .partido{font-weight:600} .libre{font-weight:400;color:#555;background:#fff}
+
+.estado{background:#fff;padding:30px;text-align:center;border-radius:10px}
+
+@media(max-width:700px){body{background:#fff}.app{width:100%;margin:0;padding:12px}.filtros{grid-template-columns:1fr;gap:12px;border-radius:8px;box-shadow:none;border:1px solid #ddd}.titulo-dia{font-size:16px}table{min-width:680px}th,td{font-size:11px}.col-numero{width:36px}.col-horario{width:90px}}
+
+
+
+
+
+.cabecera-calendario{
+
+  width:100%;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:12px;
+
+  margin:28px auto 12px;
+
+  font-family:'Roboto', Arial, sans-serif;
+
+}
+
+
+
+.titulo-calendario{
+
+  color:#023daa;
+
+  font-size:clamp(22px, 3vw, 45px);
+
+  line-height:1;
+
+  font-weight:900;
+
+  letter-spacing:-0.5px;
+
+  white-space:nowrap;
+
+}
+
+
+
+.estado-vivo{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:12px;
+
+  color:#399739;
+
+  font-size:16px;
+
+  font-weight:700;
+
+  letter-spacing:1px;
+
+  white-space:nowrap;
+
+}
+
+
+
+.punto-vivo{
+
+  flex:0 0 auto;
+
+  width:12px;
+
+  height:12px;
+
+  border-radius:50%;
+
+  background:#e52323;
+
+  animation:pulso-vivo 1.5s infinite;
+
+}
+
+
+
+.campana-wrap{
+
+  position:relative;
+
+  flex:0 0 auto;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+}
+
+
+
+.campana-btn{
+
+  position:relative;
+
+  width:42px;
+
+  height:42px;
+
+  padding:4px;
+
+  margin:0;
+
+  border:0;
+
+  background:transparent;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  cursor:pointer;
+
+}
+
+
+
+.campana-btn svg{
+
+  display:block;
+
+  width:30px;
+
+  height:30px;
+
+  fill:none;
+
+  stroke:#131313;
+
+  stroke-width:1.8;
+
+  stroke-linecap:round;
+
+  stroke-linejoin:round;
+
+}
+
+
+
+.campana-badge{
+
+  position:absolute;
+
+  top:-2px;
+
+  right:-3px;
+
+  min-width:17px;
+
+  height:17px;
+
+  padding:0 4px;
+
+  border-radius:10px;
+
+  background:#e52323;
+
+  color:#fff;
+
+  font-size:10px;
+
+  font-weight:700;
+
+  line-height:17px;
+
+  text-align:center;
+
+}
+
+
+
+@keyframes pulso-vivo{
+
+  0%{
+
+    box-shadow:0 0 0 0 rgba(229,35,35,.45);
+
+  }
+
+  70%{
+
+    box-shadow:0 0 0 7px rgba(229,35,35,0);
+
+  }
+
+  100%{
+
+    box-shadow:0 0 0 0 rgba(229,35,35,0);
+
+  }
+
+}
+
+
+
+@media(max-width:600px){
+
+
+
+  .cabecera-calendario{
+
+    gap:7px;
+
+    margin-top:20px;
+
+  }
+
+
+
+  .titulo-calendario{
+
+    font-size:clamp(19px, 6vw, 26px);
+
+  }
+
+
+
+  .estado-vivo{
+
+    gap:4px;
+
+    font-size:8px;
+
+    letter-spacing:.5px;
+
+  }
+
+
+
+  .punto-vivo{
+
+    width:7px;
+
+    height:7px;
+
+  }
+
+
+
+  .campana-btn{
+
+    width:27px;
+
+    height:27px;
+
+  }
+
+
+
+  .campana-btn svg{
+
+    width:19px;
+
+    height:19px;
+
+  }
+
+}
+
+
+
+.titulo-liga{
+
+  width:fit-content;
+
+  max-width:90%;
+
+  margin:30px auto 28px;
+
+  color:#131313;
+
+  font-family:'Roboto', Arial, sans-serif;
+
+}
+
+
+
+.titulo-liga h1{
+
+  margin:0;
+
+  text-align:center;
+
+  font-size:40px;
+
+  line-height:1.1;
+
+  font-weight:700;
+
+}
+
+
+
+.subtitulo-liga{
+
+  margin-top:7px;
+
+  text-align:center;
+
+  font-size:18px;
+
+  line-height:1;
+
+  font-weight:300;
+
+  letter-spacing:5px;
+
+}
+
+
+
+.credito-liga{
+
+  margin-top:24px;
+
+  text-align:right;
+
+  font-size:13px;
+
+  line-height:1.3;
+
+  font-weight:300;
+
+  color:#777;
+
+}
+
+
+
+
+
+/* ===== RESPONSIVE + INFO DE CATEGORÍA ===== */
+
+.partido[data-categoria]{
+
+  position:relative;
+
+  cursor:help;
+
+}
+
+.partido:not(:empty)[data-categoria]::after{
+
+  content:attr(data-categoria);
+
+  position:absolute;
+
+  left:50%;
+
+  bottom:calc(100% + 8px);
+
+  transform:translateX(-50%) translateY(4px);
+
+  z-index:50;
+
+  min-width:max-content;
+
+  max-width:190px;
+
+  padding:7px 10px;
+
+  border-radius:6px;
+
+  background:#3a3a3a;
+
+  color:#fff;
+
+  font-size:12px;
+
+  font-weight:600;
+
+  line-height:1.2;
+
+  white-space:normal;
+
+  opacity:0;
+
+  visibility:hidden;
+
+  pointer-events:none;
+
+  transition:opacity .15s ease, transform .15s ease;
+
+  box-shadow:0 3px 10px rgba(0,0,0,.22);
+
+}
+
+.partido:not(:empty)[data-categoria]::before{
+
+  content:"";
+
+  position:absolute;
+
+  left:50%;
+
+  bottom:100%;
+
+  transform:translateX(-50%);
+
+  border:6px solid transparent;
+
+  border-top-color:#3a3a3a;
+
+  opacity:0;
+
+  visibility:hidden;
+
+  z-index:51;
+
+}
+
+.partido:not(:empty)[data-categoria]:hover::after,
+
+.partido:not(:empty)[data-categoria]:hover::before,
+
+.partido.mostrar-info::after,
+
+.partido.mostrar-info::before{
+
+  opacity:1;
+
+  visibility:visible;
+
+}
+
+.partido:not(:empty)[data-categoria]:hover::after,
+
+.partido.mostrar-info::after{
+
+  transform:translateX(-50%) translateY(0);
+
+}
+
+
+
+@media(max-width:700px){
+
+  .tabla-scroll{overflow-x:visible}
+
+  table{min-width:0;width:100%;table-layout:fixed}
+
+  th,td{word-break:normal;overflow-wrap:anywhere}
+
+  .col-numero{width:7%}
+
+  .col-horario{width:15%}
+
+  th:nth-child(3),th:nth-child(4),th:nth-child(5){width:26%}
+
+  td{height:auto;min-height:45px;padding:7px 3px;font-size:10px;line-height:1.15}
+
+  th{font-size:9px;padding:6px 2px}
+
+  .titulo-dia{font-size:15px;padding:10px}
+
+  .partido:not(:empty)[data-categoria]::after{
+
+    position:fixed;
+
+    left:50%;
+
+    bottom:22px;
+
+    transform:translateX(-50%);
+
+    max-width:calc(100vw - 30px);
+
+    font-size:13px;
+
+    padding:9px 13px;
+
+  }
+
+  .partido:not(:empty)[data-categoria]::before{display:none}
+
+}
+
+
+
+
+
+
+
+
+/* Panel de avisos: cerrado por defecto */
+.panel-avisos{
+  display:none;
+  position:absolute;
+  z-index:1000;
+  top:43px;
+  right:0;
+  width:300px;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 8px 28px rgba(0,0,0,.18);
+  overflow:hidden;
+}
+.panel-avisos.abierto{display:block;}
+.panel-avisos-titulo{
+  padding:12px 15px;
+  background:#cd0834;
+  color:#fff;
+  font-family:'Roboto',Arial,sans-serif;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.8px;
+}
+.aviso-item{
+  padding:12px 15px;
+  border-bottom:1px solid #9b9b9b;
+  font-family:'Roboto',Arial,sans-serif;
+}
+.aviso-item:last-child{border-bottom:0;}
+.aviso-item strong{display:block;margin-bottom:4px;color:#1e1e1e;font-size:17px;}
+.aviso-item span{display:block;color:#666;font-size:14px;line-height:1.35;}
+@media(max-width:600px){
+  .panel-avisos{
+    position:fixed;
+    top:30%;
+    bottom:auto;
+    left:15px;
+    right:15px;
+    width:auto;
+    max-height:55vh;
+    overflow-y:auto;
+    border: 1px solid #cd0834;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body><div class="app">
+<div class="cabecera-calendario">
+
+
+
+  <div class="titulo-calendario">
+
+    CALENDARIO PARTIDOS
+
+  </div>
+
+
+
+  <div class="estado-vivo">
+
+    <span class="punto-vivo"></span>
+
+    <span>EN VIVO</span>
+
+  </div>
+
+
+
+  <div class="campana-wrap">
+
+
+
+    <button
+
+      class="campana-btn"
+
+      id="campanaAvisos"
+
+      type="button"
+
+      aria-label="Ver avisos"
+
+    >
+
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>
+
+      </svg>
+
+
+
+      <span class="campana-badge" id="contadorAvisos" hidden>0</span>
+
+    </button>
+
+
+
+    <div class="panel-avisos" id="panelAvisos">
+      <div class="panel-avisos-titulo">AVISOS</div>
+      <div id="listaAvisos"></div>
+    </div>
+
+
+
+  </div>
+
+
+
+</div>
+
+<div class="titulo-liga">
+<h1>
+  Liga Municipal de Newcom <span id="anioLiga"></span>
+</h1>
+
+  <div class="subtitulo-liga">VIEDMA</div>
+
+
+
+<div class="credito-liga">
+  Desarrollo propio de 
+  <a href="mailto:gvcerra@gmail.com">Gisella Cerra</a>
+  para <strong>Coki</strong> (Club Social y Deportivo Boulevard)
+</div>
+
+</div>
+
+
+
+
+
+
+<div class="filtros">
+
+<div class="grupo-filtro"><label for="equipo">Seleccioná tu equipo</label><select id="equipo" disabled><option>Cargando equipos...</option></select></div>
+
+<div class="grupo-filtro"><label for="categoria">Seleccioná la categoría</label><select id="categoria"><option value="">Todas las categorías</option><option>Femenino +50</option><option>Femenino +60</option><option>Mixto +50</option><option>Mixto +60</option><option>Mixto +68</option><option>Recreativo</option></select></div>
+
+</div>
+
+<main id="fixture"><div class="estado">Cargando fixture...</div></main>
+
+</div>
+
+
+
+
+
+
+
+
+
+<script>
+
+const API_URL="https://script.google.com/macros/s/AKfycbxWxUr0ylVf8v-3e3oT-EU7WO_NmuKZSw92UxRVfWE7saXRP2Mg1OEE6qV6uRcOqeS5eQ/exec";
+
+let DATOS=null, COLORES={};
+
+
+
+document.addEventListener('DOMContentLoaded', cargar);
+
+
+
+async function cargar(){
+
+ try{
+
+  const r=await fetch(API_URL,{cache:'no-store'});
+
+  const d=await r.json();
+
+  if(!d.ok) throw new Error(d.error||'Error de datos');
+
+  DATOS=d;
+
+  prepararEquipos(d.equipos);
+    renderAvisos(d.avisos || []);
+
+  dibujar(d.partidos);
+
+  document.getElementById('equipo').addEventListener('change',filtrar);
+
+  document.getElementById('categoria').addEventListener('change',filtrar);
+
+ }catch(e){console.error(e);document.getElementById('fixture').innerHTML='<div class="estado">No fue posible cargar el fixture.</div>';}
+
+}
+
+
+function renderAvisos(avisos){
+  const lista = document.getElementById('listaAvisos');
+  const badge = document.getElementById('contadorAvisos');
+  const campana = document.getElementById('campanaAvisos');
+
+  if(!lista || !badge || !campana) return;
+
+  lista.innerHTML = '';
+
+  if(!avisos.length){
+    badge.hidden = true;
+    return;
+  }
+
+  badge.textContent = avisos.length;
+  badge.hidden = false;
+
+  avisos.forEach(aviso => {
+
+    const item = document.createElement('div');
+    item.className = 'aviso-item';
+
+    if(aviso.mensaje){
+      const mensaje = document.createElement('span');
+      mensaje.textContent = aviso.mensaje;
+      item.appendChild(mensaje);
+    }
+
+    lista.appendChild(item);
+  });
+}
+
+function prepararEquipos(lista){
+
+ const sel=document.getElementById('equipo');
+
+ const nombres=[...new Set(lista.map(x=>x.nombre))].sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base'}));
+
+ sel.innerHTML='<option value="">Todos los equipos</option>';
+
+ nombres.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});
+
+ lista.forEach(x=>COLORES[clave(x.nombre,x.categoria)]=x.color||'#fff');
+
+ sel.disabled=false;
+
+}
+
+
+
+function dibujar(partidos){
+
+ const f=document.getElementById('fixture'); f.innerHTML='';
+
+ const dias={};
+
+ partidos.forEach(p=>{
+
+  const dia=String(p.dia||'').trim();
+
+  const numero=String(p.numero||'').trim();
+
+  const horario=String(p.horario||'').trim();
+
+  // Ignora encabezados repetidos, filas vacías o registros residuales de la hoja.
+
+  if(!dia || norm(dia)==='dia' || norm(numero)==='nº' || norm(numero)==='n°' || norm(numero)==='n' || norm(horario)==='horario') return;
+
+  (dias[dia]??=[]).push(p);
+
+ });
+
+ Object.entries(dias).forEach(([dia,ps])=>{
+
+  const s=document.createElement('section');s.className='bloque-dia';
+
+  s.innerHTML=`<div class="titulo-dia">${esc(dia)}</div><div class="tabla-scroll"><table><thead><tr><th class="col-numero">Nº</th><th class="col-horario">HORARIO</th><th>CANCHA 1</th><th>CANCHA 2</th><th>CANCHA 3</th></tr></thead><tbody></tbody></table></div>`;
+
+  const tb=s.querySelector('tbody');
+
+  ps.forEach(p=>{
+
+   const tr=document.createElement('tr');
+
+   tr.innerHTML=`<td>${esc(p.numero)}</td><td>${esc(p.horario)}</td>`;
+
+   (p.canchas||[]).forEach(c=>tr.appendChild(celda(c)));
+
+   tb.appendChild(tr);
+
+  });
+
+  f.appendChild(s);
+
+ });
+
+ filtrar();
+
+}
+
+
+
+function celda(c){
+
+ const td=document.createElement('td');
+
+ c=c||{};
+
+ const e1=(c.equipo1||'').trim(), e2=(c.equipo2||'').trim(), cat=(c.categoria||'').trim();
+
+ if(!e1&&!e2){td.className='libre';td.textContent='libre';return td;}
+
+ td.className='partido';
+
+ td.dataset.e1=e1; td.dataset.e2=e2; td.dataset.categoria=cat; td.dataset.catOriginal=cat;
+
+ td.dataset.texto=`${e1} vs ${e2}`;
+
+ td.textContent=td.dataset.texto;
+
+ return td;
+
+}
+
+
+
+function filtrar(){
+
+ const eq=document.getElementById('equipo').value;
+
+ const cat=document.getElementById('categoria').value;
+
+ document.querySelectorAll('.partido').forEach(td=>{
+
+  const coincideEquipo=!eq||td.dataset.e1===eq||td.dataset.e2===eq;
+
+  const coincideCat=!cat||td.dataset.catOriginal===cat;
+
+  if(coincideEquipo&&coincideCat){
+
+   td.dataset.categoria=td.dataset.catOriginal;
+   td.textContent=td.dataset.texto;
+
+   const color=eq ? COLORES[clave(eq,td.dataset.categoria)] : COLORES[clave(td.dataset.e1,td.dataset.categoria)];
+
+   pintar(td,color||'#fff');
+
+  }else{
+
+   td.textContent='';
+   td.removeAttribute('data-categoria');
+   td.classList.remove('mostrar-info');
+
+   td.style.backgroundColor='#fff'; td.style.color='#222'; td.style.boxShadow='none';
+
+  }
+
+ });
+
+}
+
+
+
+function pintar(el,color){
+
+ el.style.backgroundColor=color;
+
+ el.style.color=colorTexto(color);
+
+ el.style.boxShadow='none';
+
+}
+
+function clave(e,c){return norm(e)+'|'+norm(c)}
+
+function norm(x){return String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim()}
+
+function colorTexto(h){if(!/^#[0-9a-f]{6}$/i.test(h))return '#111';const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return ((r*299+g*587+b*114)/1000)<145?'#fff':'#111'}
+
+function esc(x){return String(x??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+
+
+
+/* En pantallas táctiles, tocar un partido muestra su categoría. */
+
+document.addEventListener('click', function(e){
+
+  const celda = e.target.closest('.partido[data-categoria]');
+
+  document.querySelectorAll('.partido.mostrar-info').forEach(function(el){
+
+    if(el !== celda) el.classList.remove('mostrar-info');
+
+  });
+
+  if(celda && window.matchMedia('(hover: none)').matches){
+
+    celda.classList.toggle('mostrar-info');
+
+    e.stopPropagation();
+
+  }
+
+});
+
+
+
+const campana = document.getElementById('campanaAvisos');
+
+const panelAvisos = document.getElementById('panelAvisos');
+
+
+
+campana.addEventListener('click', function(e){
+
+  e.stopPropagation();
+
+  panelAvisos.classList.toggle('abierto');
+
+});
+
+
+
+document.addEventListener('click', function(e){
+
+  if(!panelAvisos.contains(e.target)){
+
+    panelAvisos.classList.remove('abierto');
+
+  }
+
+});
+
+document.getElementById('anioLiga').textContent =
+  new Date().getFullYear();
+
+
+
+</script></body></html>
