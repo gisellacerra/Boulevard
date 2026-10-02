@@ -758,7 +758,22 @@ function renderAvisos(avisos){
     if(aviso.mensaje){
       const mensaje = document.createElement('span');
       mensaje.className = 'texto-aviso';
-      mensaje.textContent = aviso.mensaje;
+const texto = aviso.mensaje;
+
+if(texto.includes('Gisella Cerra')){
+  const partes = texto.split('Gisella Cerra');
+
+  mensaje.appendChild(document.createTextNode(partes[0]));
+
+  const enlace = document.createElement('a');
+  enlace.href = 'mailto:gvcerra@gmail.com';
+  enlace.textContent = 'Gisella Cerra';
+
+  mensaje.appendChild(enlace);
+  mensaje.appendChild(document.createTextNode(partes.slice(1).join('Gisella Cerra')));
+}else{
+  mensaje.textContent = texto;
+}
       item.appendChild(mensaje);
     }
 
