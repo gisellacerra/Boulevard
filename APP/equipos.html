@@ -1001,7 +1001,7 @@ nav .nav-item .nav-svg{width:30px !important;height:30px !important;}
     <path d="M50 61 C39 72 32 84 31 91"/>
     <path d="M18 79 C30 75 40 69 50 61"/>
   </svg>
-      <span>EQUIPOS</span>
+      <span>EQUIPOS<br>Y POSICIONES</span>
     </a>
 
     <a class="nav-item" href="horarios.html">
@@ -1145,6 +1145,9 @@ function calcularPosiciones(equipos, historial){
       pj:0,
       pg:0,
       pp:0,
+      sg:0,
+      sp:0,
+      ds:0,
       pts:0
     });
   });
@@ -1178,6 +1181,14 @@ function calcularPosiciones(equipos, historial){
     const perdedor = ganador === local ? visitante : local;
     const setsPerdedor = perdedor === local ? setsLocal : setsVisitante;
 
+    local.sg += setsLocal;
+    local.sp += setsVisitante;
+    local.ds = local.sg - local.sp;
+
+    visitante.sg += setsVisitante;
+    visitante.sp += setsLocal;
+    visitante.ds = visitante.sg - visitante.sp;
+
     ganador.pj++;
     ganador.pg++;
     ganador.pts += 3;
@@ -1189,6 +1200,32 @@ function calcularPosiciones(equipos, historial){
 
   return categorias;
 }
+
+function ganadorEnfrentamientoDirecto(a,b,historial,categoria){
+  const claveA = normalizarTexto(a.equipo);
+  const claveB = normalizarTexto(b.equipo);
+  const claveCategoria = categoriaComparable(categoria);
+
+  const enfrentamientos = (historial || []).filter(partido => {
+    if(categoriaComparable(partido.categoria) !== claveCategoria) return false;
+
+    const local = normalizarTexto(partido.equipo_local);
+    const visitante = normalizarTexto(partido.equipo_visitante);
+
+    return (
+      (local === claveA && visitante === claveB) ||
+      (local === claveB && visitante === claveA)
+    );
+  });
+
+  if(enfrentamientos.length !== 1) return 0;
+
+  const ganador = normalizarTexto(enfrentamientos[0].ganador);
+  if(ganador === claveA) return -1;
+  if(ganador === claveB) return 1;
+  return 0;
+}
+
 
 function renderizarPosiciones(equipos, historial){
   const categorias = calcularPosiciones(equipos, historial);
@@ -1204,11 +1241,26 @@ function renderizarPosiciones(equipos, historial){
 
   tablasPosiciones.innerHTML = claves.map(clave => {
     const grupo = categorias[clave];
-    const filas = [...grupo.equipos.values()].sort((a,b) =>
-      b.pts - a.pts ||
-      b.pg - a.pg ||
-      a.equipo.localeCompare(b.equipo, "es")
-    );
+    const filas = [...grupo.equipos.values()].sort((a,b) => {
+      const porPuntos = b.pts - a.pts;
+      if(porPuntos) return porPuntos;
+
+      const porGanados = b.pg - a.pg;
+      if(porGanados) return porGanados;
+
+      const porDiferenciaSets = b.ds - a.ds;
+      if(porDiferenciaSets) return porDiferenciaSets;
+
+      const directo = ganadorEnfrentamientoDirecto(
+        a,
+        b,
+        historial,
+        grupo.nombre
+      );
+      if(directo) return directo;
+
+      return a.equipo.localeCompare(b.equipo, "es");
+    });
 
     return `
       <section class="tabla-posiciones-categoria">
