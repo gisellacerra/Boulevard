@@ -902,6 +902,21 @@ header:not(.encabezado) .marca img,
 /* Iconos del menú inferior: tamaño unificado */
 nav .nav-item img,
 nav .nav-item .nav-svg{width:30px !important;height:30px !important;}
+
+/* PRUEBA DE DESEMPATES: columnas SG / SP / DS visibles */
+.tabla-posiciones th:nth-child(1),
+.tabla-posiciones td:nth-child(1){width:7%;}
+.tabla-posiciones th:nth-child(2),
+.tabla-posiciones td:nth-child(2){
+  width:35%;
+  padding-left:7px;
+  text-align:left;
+}
+.tabla-posiciones th:nth-child(n+3),
+.tabla-posiciones td:nth-child(n+3){width:auto;}
+.tabla-posiciones th,
+.tabla-posiciones td{font-size:11px;}
+
 </style>
 
 </head>
@@ -1273,6 +1288,9 @@ function renderizarPosiciones(equipos, historial){
               <th>PJ</th>
               <th>PG</th>
               <th>PP</th>
+              <th>SG</th>
+              <th>SP</th>
+              <th>DS</th>
               <th>Pts.</th>
             </tr>
           </thead>
@@ -1284,6 +1302,9 @@ function renderizarPosiciones(equipos, historial){
                 <td>${fila.pj}</td>
                 <td>${fila.pg}</td>
                 <td>${fila.pp}</td>
+                <td>${fila.sg}</td>
+                <td>${fila.sp}</td>
+                <td>${fila.ds > 0 ? "+" + fila.ds : fila.ds}</td>
                 <td>${fila.pts}</td>
               </tr>
             `).join("")}
