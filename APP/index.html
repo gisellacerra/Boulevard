@@ -1539,6 +1539,11 @@ let eventoInstalacion = null;
 const instalarOverlay = document.getElementById('instalarOverlay');
 const instalarApp = document.getElementById('instalarApp');
 const instalarAhoraNo = document.getElementById('instalarAhoraNo');
+const instalarTitulo = document.getElementById('instalarTitulo');
+
+if (instalarTitulo && !window.matchMedia('(max-width: 767px)').matches) {
+  instalarTitulo.textContent = '¡Instalá esta APP en tu computadora!';
+}
 
 const estaInstalada = () =>
   window.matchMedia('(display-mode: standalone)').matches ||
@@ -1572,7 +1577,10 @@ window.addEventListener('appinstalled', () => {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js').catch(console.error);
+    navigator.serviceWorker.register('./service-worker.js', {
+      scope: './',
+      updateViaCache: 'none'
+    }).catch(console.error);
   });
 }
 
@@ -1580,3 +1588,4 @@ if ('serviceWorker' in navigator) {
 
 </body>
 </html>
+
