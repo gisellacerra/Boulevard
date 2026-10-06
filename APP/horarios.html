@@ -1167,6 +1167,71 @@ header:not(.encabezado) .marca img,
 /* Iconos del menú inferior: tamaño unificado */
 nav .nav-item img,
 nav .nav-item .nav-svg{width:30px !important;height:30px !important;}
+
+/* ===== PARTIDOS DE HOY — DISEÑO 2 ===== */
+.encabezado{padding:20px 14px 12px;}
+.titulo{font-size:44px;}
+.contenido{display:block;padding:10px 14px 20px;}
+.lista-partidos{padding:0;}
+.cabecera-sets,.panel-canchas{display:none!important;}
+.filas{display:flex!important;flex-direction:column;gap:12px;height:auto!important;}
+.fila{
+  display:block;
+  min-height:0;
+  padding:0;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:10px;
+  background:rgba(0,0,0,.28);
+}
+.partido-cabecera{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 12px;
+  border-bottom:1px solid rgba(255,255,255,.13);
+}
+.partido-hora{font-size:21px;font-weight:600;color:#fff;}
+.partido-cancha{font-size:12px;font-weight:400;color:rgba(255,255,255,.65);text-transform:uppercase;}
+.partido-cancha strong{margin-left:5px;font-size:18px;color:#fff;font-weight:600;}
+.partido-sets-head,.partido-equipo{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 38px 38px 38px;
+  column-gap:2px;
+  align-items:center;
+}
+.partido-sets-head{
+  padding:6px 11px 2px;
+  color:rgba(255,255,255,.52);
+  font-size:10px;font-weight:600;text-align:center;
+}
+.partido-equipo{
+  padding:8px 11px;
+  border-bottom:1px solid rgba(255,255,255,.10);
+}
+.partido-equipo:last-child{border-bottom:0;}
+.partido-nombre{
+  min-width:0;padding-right:8px;
+  font-size:17px;line-height:1.08;font-weight:300;
+  white-space:normal;
+}
+.partido-equipo.ganador .partido-nombre,
+.partido-equipo.ganador .partido-set{
+  color:var(--amarillo);
+  font-weight:500;
+}
+.partido-set{
+  text-align:center;
+  font-size:20px;line-height:1;font-weight:400;color:#fff;
+}
+.partido-set.vacio{color:rgba(255,255,255,.22);}
+@media(max-width:767px){
+  .encabezado{padding:18px 12px 10px;}
+  .titulo{font-size:25px!important;line-height:1!important;}
+  .dia-partidos{font-size:14px;}
+  .estado-carga{font-size:16px;margin-top:7px;}
+  .contenido{display:block!important;padding:8px 12px 20px!important;}
+  .lista-partidos{padding:0!important;}
+}
+
 </style>
 </head>
 
@@ -1430,52 +1495,52 @@ function valorMarcador(set,lado){
 function renderizar(partidos){
   const filas = document.getElementById("filas");
   const canchas = document.getElementById("canchas");
-
-const visibles = partidos.slice(0,MAX_PARTIDOS);
+  const visibles = partidos.slice(0,MAX_PARTIDOS);
 
   if(!visibles.length){
     filas.innerHTML = '<div class="sin-datos">Todavía no hay partidos cargados.</div>';
-    canchas.innerHTML = "";
+    if(canchas) canchas.innerHTML = "";
     return;
   }
-
-  filas.style.gridTemplateRows = `repeat(${visibles.length},1fr)`;
-  canchas.style.gridTemplateRows = `repeat(${visibles.length},1fr)`;
 
   filas.innerHTML = visibles.map(p => {
     const resultado = datosResultado(p);
     const [s1,s2,tb] = resultado.sets;
 
+    const setHTML = (set,lado) => {
+      const valor = valorMarcador(set,lado);
+      return `<div class="partido-set ${valor === "" ? "vacio" : ""}">${valor === "" ? "—" : valor}</div>`;
+    };
+
     return `
       <article class="fila">
-
-        <div class="hora">${limpiar(p.hora)}</div>
-
-        <div class="equipo ${resultado.ganador === "local" ? "ganador" : ""}">
-          ${limpiar(p.equipo_local)}
+        <div class="partido-cabecera">
+          <div class="partido-hora">${limpiar(p.hora)}</div>
+          <div class="partido-cancha">CANCHA <strong>${limpiar(p.cancha)}</strong></div>
         </div>
 
-        <div class="${claseMarcador(s1,"local")}">${valorMarcador(s1,"local")}</div>
-        <div class="${claseMarcador(s2,"local")}">${valorMarcador(s2,"local")}</div>
-        <div class="${claseMarcador(tb,"local")}">${valorMarcador(tb,"local")}</div>
-
-      
-
-        <div class="equipo ${resultado.ganador === "visitante" ? "ganador" : ""}">
-          ${limpiar(p.equipo_visitante)}
+        <div class="partido-sets-head" aria-hidden="true">
+          <div></div><div>S1</div><div>S2</div><div>TB</div>
         </div>
 
-        <div class="${claseMarcador(s1,"visitante")}">${valorMarcador(s1,"visitante")}</div>
-        <div class="${claseMarcador(s2,"visitante")}">${valorMarcador(s2,"visitante")}</div>
-        <div class="${claseMarcador(tb,"visitante")}">${valorMarcador(tb,"visitante")}</div>
+        <div class="partido-equipo ${resultado.ganador === "local" ? "ganador" : ""}">
+          <div class="partido-nombre">${limpiar(p.equipo_local)}</div>
+          ${setHTML(s1,"local")}
+          ${setHTML(s2,"local")}
+          ${setHTML(tb,"local")}
+        </div>
 
+        <div class="partido-equipo ${resultado.ganador === "visitante" ? "ganador" : ""}">
+          <div class="partido-nombre">${limpiar(p.equipo_visitante)}</div>
+          ${setHTML(s1,"visitante")}
+          ${setHTML(s2,"visitante")}
+          ${setHTML(tb,"visitante")}
+        </div>
       </article>
     `;
   }).join("");
 
-  canchas.innerHTML = visibles.map(p => `
-    <div class="cancha">${limpiar(p.cancha)}</div>
-  `).join("");
+  if(canchas) canchas.innerHTML = "";
 }
 
 async function cargar(){
