@@ -933,6 +933,14 @@ nav .nav-item span{
 .tabla-posiciones th,
 .tabla-posiciones td{font-size:11px;}
 
+
+/* Sección actual del menú: texto e icono amarillos */
+nav .nav-item.activo,
+nav .nav-item.activo span,
+nav .nav-item.activo .nav-svg{color:#F3DF00;}
+nav .nav-item.activo img{
+  filter:brightness(0) saturate(100%) invert(83%) sepia(91%) saturate(1128%) hue-rotate(8deg) brightness(104%) contrast(102%);
+}
 </style>
 
 </head>
@@ -1023,7 +1031,7 @@ nav .nav-item span{
       <span>HORARIO<BR>PARTIDOS</span>
     </a>
 
-      <a class="nav-item" href="equipos.html">
+      <a class="nav-item activo" href="equipos.html" aria-current="page">
       <svg class="nav-svg" viewBox="0 0 100 100" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="50" cy="50" r="43"/>
     <path d="M20 19 C38 31 48 44 50 61"/>
