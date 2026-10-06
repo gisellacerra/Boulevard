@@ -650,6 +650,14 @@ nav .nav-item .nav-svg{
 nav .nav-item span{
   margin-top:0;
 }
+
+/* Sección actual del menú: texto e icono amarillos */
+nav .nav-item.activo,
+nav .nav-item.activo span,
+nav .nav-item.activo .nav-svg{color:#F3DF00;}
+nav .nav-item.activo img{
+  filter:brightness(0) saturate(100%) invert(83%) sepia(91%) saturate(1128%) hue-rotate(8deg) brightness(104%) contrast(102%);
+}
 </style>
 </head>
 
@@ -831,7 +839,7 @@ nav .nav-item span{
       <span>LLAVES</span>
     </a>
 
-     <a class="nav-item" href="bufet.html">
+     <a class="nav-item activo" href="bufet.html" aria-current="page">
       <img src="assets/iconos/menu.png" alt="">
       <span>BUFET</span>
     </a>
