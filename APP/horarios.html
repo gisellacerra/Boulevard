@@ -1177,7 +1177,8 @@ nav .nav-item .nav-svg{width:30px !important;height:30px !important;}
 .filas{display:flex!important;flex-direction:column;gap:12px;height:auto!important;}
 .fila{
   display:block;
-  min-height:0;
+  height:auto !important;
+  min-height:0 !important;
   padding:0;
   overflow:hidden;
   border:1px solid rgba(255,255,255,.16);
@@ -1593,17 +1594,20 @@ if (data.config?.dia_hoy) {
 
     renderizar(partidos);
 
+    estadoCarga.innerHTML =
+      'ACTUALIZACIÓN: <span class="en-vivo">EN VIVO</span>';
 
   }catch(error){
     console.error("Error al cargar los partidos:",error);
 
-    document.getElementById("filas").innerHTML =
-      '<div class="sin-datos">ERROR AL CARGAR LOS DATOS</div>';
+    // Si falla una actualización puntual, conservamos en pantalla
+    // la última información válida y reintentamos automáticamente.
+    if(!document.querySelector("#filas .fila")){
+      document.getElementById("filas").innerHTML =
+        '<div class="sin-datos">Actualizando partidos…</div>';
+    }
 
-    document.getElementById("canchas").innerHTML = "";
-
-    estadoCarga.textContent =
-      "Revisar URL de Apps Script";
+    estadoCarga.textContent = "ACTUALIZANDO…";
   }
 }
 
