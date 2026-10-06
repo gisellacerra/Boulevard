@@ -1484,7 +1484,7 @@ async function cargar(){
   try{
     const separador = URL_JSON.includes("?") ? "&" : "?";
     const respuesta = await fetch(
-      URL_JSON + separador + "nocache=" + Date.now(),
+      URL_JSON + separador + "seccion=horarios&nocache=" + Date.now(),
       {cache:"no-store"}
     );
 
@@ -1782,3 +1782,4 @@ setInterval(cargar,ACTUALIZAR_CADA_MS);
 
 </body>
 </html>
+
