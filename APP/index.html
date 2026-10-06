@@ -730,37 +730,6 @@ nav{
 }
 
 
-.menu-inferior .nav-item{
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-start !important;
-    align-items:center;
-    gap:6px;
-}
-
-/* Zona de iconos: todos ocupan exactamente el mismo espacio */
-.menu-inferior .nav-item img,
-.menu-inferior .nav-item .nav-svg{
-    width:30px !important;
-    height:30px !important;
-    flex:0 0 30px;
-    object-fit:contain;
-}
-
-/* Zona de texto */
-.menu-inferior .nav-item span{
-    display:flex;
-    align-items:flex-start;
-    justify-content:center;
-    text-align:center;
-    width:100%;
-    margin:0;
-}
-
-
-  
-  
-
 /* ===== CABECERA UNIFICADA — MISMO MODELO QUE INDEX ===== */
 header:not(.encabezado),
 .app-header{
@@ -884,9 +853,25 @@ header:not(.encabezado) .marca img,
 }
 .nav-item.activo .nav-svg{color:#F3DF00;}
 @media(max-width:430px){.nav-item .nav-svg{width:36px;height:36px;}}
-/* Iconos del menú inferior: tamaño unificado */
+/* Iconos del menú inferior: alineados arriba y texto debajo */
+nav .nav-item{
+  justify-content:flex-start !important;
+  padding-top:4px;
+}
+
 nav .nav-item img,
-nav .nav-item .nav-svg{width:30px !important;height:30px !important;}
+nav .nav-item .nav-svg{
+  width:30px !important;
+  height:30px !important;
+  min-height:30px !important;
+  flex:0 0 30px !important;
+  object-fit:contain;
+  margin:0 auto !important;
+}
+
+nav .nav-item span{
+  margin-top:0;
+}
 
 /* ===== INSTALACION PWA ===== */
 .instalar-overlay{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(0,0,0,.52);}
