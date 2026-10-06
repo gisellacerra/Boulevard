@@ -899,9 +899,25 @@ header:not(.encabezado) .marca img,
 }
 .nav-item.activo .nav-svg{color:#F3DF00;}
 @media(max-width:430px){.nav-item .nav-svg{width:30px;height:30px;}}
-/* Iconos del menú inferior: tamaño unificado */
+/* Iconos del menú inferior: alineados arriba y texto debajo */
+nav .nav-item{
+  justify-content:flex-start !important;
+  padding-top:4px;
+}
+
 nav .nav-item img,
-nav .nav-item .nav-svg{width:30px !important;height:30px !important;}
+nav .nav-item .nav-svg{
+  width:30px !important;
+  height:30px !important;
+  min-height:30px !important;
+  flex:0 0 30px !important;
+  object-fit:contain;
+  margin:0 auto !important;
+}
+
+nav .nav-item span{
+  margin-top:0;
+}
 
 /* PRUEBA DE DESEMPATES: columnas SG / SP / DS visibles */
 .tabla-posiciones th:nth-child(1),
@@ -1577,3 +1593,4 @@ setInterval(cargarEquipos,60000);
 </body>
 
 </html>
+
