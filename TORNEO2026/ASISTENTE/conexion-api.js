@@ -6,6 +6,18 @@
   const SCRIPT_ID='AKfycbxEo9D7klkUJ7ZiSrRCB3ljr0VHNOdpG6Q7DpZ2FCEGhaqRRYpQTMrjLslR3PiWPWxZow';
   const SCOPES='https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive';
   let token='', client;
+  let authorized=false;
+  const pending=[];
+  function flushPending(){
+    while(pending.length){
+      const task=pending.shift();
+      runAPI(task.func,task.args).then(task.resolve,task.reject);
+    }
+  }
+  function queuedAPI(func,args){
+    if(authorized)return runAPI(func,args);
+    return new Promise((resolve,reject)=>pending.push({func,args,resolve,reject}));
+  }
   const overlay=document.createElement('div');
   overlay.id='newcom-auth';
   overlay.style.cssText='position:fixed;inset:0;z-index:999999;background:#f3f6f3;display:flex;align-items:center;justify-content:center;font-family:Arial,sans-serif;color:#18362e;padding:20px';
@@ -20,7 +32,9 @@
       // La verificación de cuenta debe estar también en Apps Script.
       runAPI('adminVerificarAccesoNewcom',[]).then(ok=>{
         if(ok!==true)throw Error('Esta cuenta no está autorizada para administrar el torneo.');
+        authorized=true;
         overlay.remove();
+        flushPending();
         document.dispatchEvent(new Event('newcom-autorizado'));
       }).catch(e=>{token='';status.textContent=e.message;});
     }});
@@ -42,12 +56,12 @@
       if(prop==='withSuccessHandler')return cb=>runner(cb,failure);
       if(prop==='withFailureHandler')return cb=>runner(success,cb);
       if(prop==='withUserObject')return ()=>runner(success,failure);
-      if(typeof prop==='string')return (...args)=>{runAPI(prop,args).then(r=>success?.(r)).catch(e=>failure?failure(e):console.error('Error de API:',e));};
+      if(typeof prop==='string')return (...args)=>{queuedAPI(prop,args).then(r=>success?.(r)).catch(e=>failure?failure(e):console.error('Error de API:',e));};
     }});
   }
   // Evitar que el código original realice llamadas antes de la autenticación.
   window.google=window.google||{};
   window.google.script=window.google.script||{};
   window.google.script.run=runner();
-  window.newcomAPI={run:runAPI,authenticated:()=>!!token};
+  window.newcomAPI={run:queuedAPI,authenticated:()=>authorized&&!!token};
 })();
