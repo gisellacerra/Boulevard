@@ -4,8 +4,10 @@
   'use strict';
   const CLIENT_ID='158432822961-m49sji0hneqt4u6rkobbngt08c8c2mhn.apps.googleusercontent.com';
   const SCRIPT_ID='AKfycbxEo9D7klkUJ7ZiSrRCB3ljr0VHNOdpG6Q7DpZ2FCEGhaqRRYpQTMrjLslR3PiWPWxZow';
-  const SCOPES='https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive';
+  const SCOPES='https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email';
   let token='', client;
+  let tokenExpiresAt=0;
+  let renewal=null;
   let authorized=false;
   const pending=[];
   function flushPending(){
@@ -27,8 +29,10 @@
     if(!window.google?.accounts?.oauth2){setTimeout(ready,100);return;}
     client=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPES,callback:response=>{
       const status=document.getElementById('newcom-login-status');
-      if(response.error){status.textContent='No se pudo autorizar: '+response.error;return;}
-      token=response.access_token;
+      if(response.error){if(renewal){renewal.reject(Error(response.error));renewal=null;}if(status)status.textContent='No se pudo autorizar: '+response.error;return;}
+      token=response.access_token || '';
+      tokenExpiresAt=Date.now()+Math.max(0,(Number(response.expires_in)||3500)-90)*1000;
+      if(renewal){renewal.resolve(token);renewal=null;}
       // La verificación de cuenta debe estar también en Apps Script.
       runAPI('adminVerificarAccesoNewcom',[]).then(ok=>{
         if(ok!==true)throw Error('Esta cuenta no está autorizada para administrar el torneo.');
@@ -36,13 +40,22 @@
         overlay.remove();
         flushPending();
         document.dispatchEvent(new Event('newcom-autorizado'));
-      }).catch(e=>{token='';status.textContent=e.message;});
+      }).catch(e=>{token='';authorized=false;if(status)status.textContent=e.message;});
     }});
     const b=document.getElementById('newcom-login');if(b){b.disabled=false;b.textContent='Ingresar con Google';}
   };
   ready();
   async function runAPI(func,parameters){
-    if(!token)throw Error('Iniciá sesión para continuar.');
+    if(!token || Date.now()>=tokenExpiresAt){
+      if(!authorized)throw Error('Iniciá sesión para continuar.');
+      if(!renewal){
+        renewal={};
+        renewal.promise=new Promise((resolve,reject)=>{renewal.resolve=resolve;renewal.reject=reject;});
+        try{client.requestAccessToken({prompt:''});}catch(e){renewal.reject(e);renewal=null;throw e;}
+      }
+      await renewal.promise;
+      if(!token)throw Error('No se pudo renovar la sesión de Google.');
+    }
     const response=await fetch('https://script.googleapis.com/v1/scripts/'+encodeURIComponent(SCRIPT_ID)+':run',{
       method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({function:func,parameters,devMode:false})
     });
