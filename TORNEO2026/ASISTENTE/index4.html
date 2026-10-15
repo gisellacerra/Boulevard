@@ -133,7 +133,7 @@ td:has(> [data-edit-team]) {
 /* Menú fijo, sin scroll interno: contenido principal desplaza normalmente. */
 @media (min-width:651px){
  .app > aside{position:relative;top:auto;height:auto;min-height:100vh;align-self:stretch;overflow:visible;width:275px;padding:14px 12px 10px;}
- .app > aside .brand{padding:5px 10px 70px;font-size:17px;}
+ .app > aside .brand{padding:5px 10px 70px;font-size:17px;margin-top: 20px;}
  .app > aside nav{display:grid;gap:1px;overflow:visible;flex:none;}
  .app > aside nav button{display:flex;align-items:center;gap:10px;padding:8px 10px;font-size:14px;line-height:1.2;min-height:38px;}
  .app > aside .credit{margin-top:auto;padding:11px 10px 3px;font-size:11.5px;line-height:1.55;white-space:nowrap;}
@@ -572,8 +572,7 @@ body[data-nc-theme="light"] .app > aside .credit strong {
 @media (min-width:761px) {
   .app > aside {
     position:sticky !important;
-    top:80px !important;
-    height:calc(100vh - 80px) !important;
+    height:calc(100vh - 0px) !important;
     min-height:0 !important;
     overflow-y:auto !important;
     align-self:flex-start !important;
@@ -599,7 +598,7 @@ body[data-nc-theme="light"] .app > aside .credit strong {
 /* Adaptación visual de index1 al index3, sin cambiar lógica ni datos. */
 .nc-light-header{display:none!important}
 .app{min-height:100vh!important}
-.app>aside{background:#181818!important;color:#f4f4f4!important;border-right:1px solid #303030!important;padding:14px 12px 10px!important;width:344px!important;min-width:344px!important}
+.app>aside{background:#181818!important;color:#f4f4f4!important;border-right:1px solid #303030!important;padding:14px 12px 10px!important;width:300px!important;min-width:300px!important}
 .app>aside .brand{display:block!important;padding:5px 16px 0!important}
 .app>aside .brand-logo{display:block!important;width:100%!important;max-width:none!important;margin:0!important;height:auto!important}
 .app>aside .brand-photo{display:none!important}
