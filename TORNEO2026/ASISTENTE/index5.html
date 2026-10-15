@@ -709,6 +709,36 @@ body[data-nc-theme="dark"] #view .nc-quick:hover svg {
     align-self:stretch !important;
   }
 }
+
+/* Corrección final: SOLO filete en hover, nunca fondo amarillo. */
+#view .nc-stat:hover, #view .nc-quick:hover,
+#view .nc-stat:focus-visible, #view .nc-quick:focus-visible {
+  border:2px solid #bbf04a !important;
+  background:#fff !important;
+  background-color:#fff !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+body[data-nc-theme="dark"] #view .nc-stat:hover,
+body[data-nc-theme="dark"] #view .nc-quick:hover,
+body[data-nc-theme="dark"] #view .nc-stat:focus-visible,
+body[data-nc-theme="dark"] #view .nc-quick:focus-visible {
+  background:#191d1f !important;
+  background-color:#191d1f !important;
+}
+/* Créditos en flujo normal, inmediatamente después del menú, también al expandir secciones. */
+.app > aside {display:flex !important;flex-direction:column !important;}
+.app > aside nav#nav {flex-shrink:0 !important;}
+.app > aside .credit {
+  display:block !important;
+  position:static !important;
+  margin-top:16px !important;
+  margin-bottom:0 !important;
+  flex:none !important;
+  top:auto !important;
+  bottom:auto !important;
+  transform:none !important;
+}
 </style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
