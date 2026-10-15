@@ -267,6 +267,47 @@ button.secondary{background:#fff}
 <style>
 .h37-panel{overflow:hidden}.h37-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:15px}.h37-details{border:1px solid #d7e4db;border-radius:12px;overflow:hidden;background:#fff}.h37-details>summary{cursor:pointer;padding:15px 17px;color:#134a38;font-weight:600;list-style:none;display:flex;align-items:center;gap:10px}.h37-details>summary::-webkit-details-marker{display:none}.h37-details>summary:before{content:'▸';font-size:16px}.h37-details[open]>summary:before{content:'▾'}.h37-count{border-radius:99px;background:#e8f4ec;padding:2px 9px;font-size:12px}.h37-content{padding:12px 15px 16px;border-top:1px solid #e6eee9;display:grid;gap:12px}.h37-item{border:1px solid #e0eae3;border-radius:12px;padding:16px;background:#fbfdfb}.h37-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.h37-type{font-size:12px;font-weight:600;color:#15704d}.h37-item h3{font-size:17px;margin:5px 0;color:#163c32}.h37-meta{font-size:13px;color:#5a6d65}.h37-status{font-size:12px;font-weight:600;padding:5px 10px;border:1px solid;border-radius:99px;white-space:nowrap}.h37-reason{margin-top:14px}.h37-reason>span,.h37-scores span{font-size:12px;color:#68796e}.h37-reason p{margin:4px 0 0;font-size:14px;color:#253f35;overflow-wrap:anywhere}.h37-note{font-size:12px;color:#66786d;margin-top:12px;border-top:1px solid #e7eee9;padding-top:10px}.h37-scores{display:flex;gap:16px;align-items:center;margin-top:14px;flex-wrap:wrap}.h37-scores>div{display:flex;flex-direction:column;gap:4px}.h37-scores strong{font-size:15px;color:#173d31}.h37-arrow{font-size:20px;color:#237f58!important}@media(max-width:600px){.h37-top{flex-wrap:wrap}.h37-head{align-items:flex-start}.h37-item{padding:13px}}
 </style>
+
+<style id="nc-normalizacion-final-20261015">
+/* Paneles: encabezados institucionales verdes, legibles en ambos temas. */
+#view .panel.newcom-panel > h2.newcom-panel-heading,
+body[data-nc-theme="dark"] #view .panel.newcom-panel > h2.newcom-panel-heading,
+body[data-nc-theme="light"] #view .panel.newcom-panel > h2.newcom-panel-heading {
+ background:#18864f!important;color:#fff!important;
+}
+#view .panel.newcom-panel > h2.newcom-panel-heading svg {color:#fff!important;stroke:currentColor!important}
+/* Fixture: títulos y versus en negro, borde tenue para la jornada. */
+.fx-cabecera,.fx-cabecera strong,.fx-cabecera span,
+body[data-nc-theme="dark"] .fx-cabecera,
+body[data-nc-theme="dark"] .fx-cabecera strong,
+body[data-nc-theme="dark"] .fx-cabecera span {color:#000!important;opacity:1!important}
+.fx-vs,body[data-nc-theme="dark"] .fx-partido .fx-vs {color:#000!important}
+.fx-jornada,body[data-nc-theme="dark"] .fx-jornada {border:1px solid rgb(204 204 204)!important}
+/* Controles de texto, incluyendo registro de cambios: sin fondos blancos en tema oscuro. */
+body[data-nc-theme="dark"] #view input:not([type="checkbox"]):not([type="radio"]):not([type="color"]),
+body[data-nc-theme="dark"] #view select,
+body[data-nc-theme="dark"] #view textarea,
+body[data-nc-theme="dark"] #view .h37-details,
+body[data-nc-theme="dark"] #view .h37-details > summary,
+body[data-nc-theme="dark"] #view .h37-content {
+ background:#23292b!important;color:#f1f4f3!important;border-color:#455052!important;
+}
+body[data-nc-theme="dark"] #view .h37-details > summary::before {color:#f1f4f3!important}
+body[data-nc-theme="dark"] #view .h37-details .h37-count {color:#f1f4f3!important;background:#35413c!important}
+/* En modo claro, sustituir el acento lima por verde institucional. */
+body[data-nc-theme="light"] {accent-color:#18864f}
+body[data-nc-theme="light"] input[type="radio"],
+body[data-nc-theme="light"] input[type="checkbox"] {accent-color:#18864f!important}
+body[data-nc-theme="light"] .fx-modo,
+body[data-nc-theme="light"] .fx-modo:has(input:checked) {border-color:#18864f!important}
+body[data-nc-theme="light"] #nav .menu38-grupo::after {border-color:#18864f!important}
+body[data-nc-theme="light"] #nav .menu38-grupo:hover,
+body[data-nc-theme="light"] #nav .menu38-grupo:focus,
+body[data-nc-theme="light"] #nav .menu38-acordeon[open] > .menu38-grupo {color:#18864f!important}
+body[data-nc-theme="light"] button.primary,
+body[data-nc-theme="light"] .primary {background:#18864f!important;border-color:#18864f!important;color:#fff!important}
+</style>
+
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="conexion-api.js?v=20261013-2"></script>
 <style id="newcom-encabezados-unificados">
@@ -944,7 +985,7 @@ function renderFixtureEtapa10(){const f=programaFechas();const confirmadas=zonas
   const pendientes=sinFecha.length?`<div class="notice">${sinFecha.length} partido(s) sin fecha asignada. Completá su programación para que aparezcan en las jornadas. ${sinFecha.map(p=>esc(p.local)+' vs '+esc(p.visitante)).join(' · ')}</div>`:'';
   const tabla=fixture.length?selector+`<div class="fx-jornadas">${jornadas}</div>`+pendientes+`<div id="fxPublicacion" class="section"></div>`:'<div class="empty">Primero actualizá las zonas confirmadas y generá el fixture.</div>';
 const alertas=errores.length?`<div class="notice"><strong>Revisar antes de publicar</strong><ul>${errores.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'<p class="status">'+(fixture.length?'No se detectaron conflictos de superposición.':'El control se activará al generar partidos.')+'</p>';
- return panel('Etapa 10 · Programación automática y edición manual',info)+panel('Partidos y horarios',tabla)+panel('Validación de la programación',alertas);
+ return panel('Programación automática y edición manual',info)+panel('Partidos y horarios',tabla)+panel('Validación de la programación',alertas);
 }
 function activarFixtureEtapa10(){const sr=$('#et11Refresh');if(sr)sr.onclick=consultarFixtureConfirmado;const sb=$('#et11Save');if(sb)sb.onclick=confirmarGuardarFixture;const r=$('#et10Refresh');if(r)r.onclick=consultarZonas;const g=$('#et10Generate');if(g)g.onclick=generarFixtureAutomatico;const otra=$('#et10Otra');if(otra)otra.onclick=generarFixtureAutomatico;document.querySelectorAll('[name=fxModo]').forEach(el=>el.onchange=()=>{fxModoDistribucion=el.value;fxResumenPropuesta='';render()});document.querySelectorAll('[data-fx-reserva]').forEach(el=>el.onchange=()=>{const comp=el.dataset.fxReserva;const lista=new Set(fxReservas[comp]||[]);if(el.checked)lista.add(el.value);else lista.delete(el.value);fxReservas[comp]=[...lista].sort((a,b)=>Number(a)-Number(b));});const c=$('#et10CSV');if(c)c.onclick=downloadFixtureCSV;document.querySelectorAll('[data-fi]').forEach(el=>el.onchange=()=>{fixture[Number(el.dataset.fi)][el.dataset.key]=el.value;saveDraft();render()});const fc=$('#fxFiltroCat');if(fc)fc.onchange=()=>{fxCategoriaSeleccionada=fc.value;render()};const fd=$('#fxFiltroDia');if(fd)fd.onchange=()=>{fxDiaSeleccionado=fd.value;render()};document.querySelectorAll('[data-fx-publicar]').forEach(b=>b.onclick=()=>{const day=b.dataset.fxPublicar;const target=$('#fxPublicacion');if(!target)return;target.innerHTML='<div class="panel"><h2>Revisión previa de publicación · '+esc(day)+'</h2><div id="dayPreview"></div></div>';const old=document.getElementById('dayToPublish');if(old)old.value=day;else{const input=document.createElement('input');input.type='hidden';input.id='dayToPublish';input.value=day;target.prepend(input)}exportDayPreview();target.scrollIntoView({behavior:'smooth',block:'start'});});}
 function roundRobin(names){let a=[...names];if(a.length%2)a.push(null);const rounds=[];for(let r=0;r<a.length-1;r++){const matches=[];for(let i=0;i<a.length/2;i++){if(a[i]&&a[a.length-1-i])matches.push([a[i],a[a.length-1-i]])}rounds.push(matches);a=[a[0],a[a.length-1],...a.slice(1,-1)]}return rounds}async function generateFixture(){const all=[];for(const cat of catList){for(const z of zones[cat]||[]){roundRobin(z.equipos).forEach((round,r)=>round.forEach(([local,visitante])=>all.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),categoria:cat,zona:z.nombre,ronda:r+1,local,visitante,fecha:'',hora:'',cancha:''})))}}if(!all.length){avisoIntegrado('Primero sorteá las zonas.');return}if(fixture.length&&!await dialogoEquipo('Confirmación','¿Reemplazar el fixture borrador existente?',true))return;fixture=all;saveDraft();render()}async function importTournamentJSON(raw){let data;try{data=JSON.parse(raw)}catch(e){avisoIntegrado('El archivo no contiene JSON válido.');return}if(!data||!Array.isArray(data.equipos)){avisoIntegrado('Se necesita una respuesta con la propiedad equipos (lista).');return}const incoming=data.equipos.filter(x=>x&&x.equipo&&x.categoria).map(x=>({nombre:String(x.equipo).trim(),categoria:String(x.categoria).trim().startsWith('+')?String(x.categoria).trim():'+'+String(x.categoria).trim(),localidad:String(x.ciudad||''),dt:'',telefono:'',hombres:0,mujeres:0}));if(!incoming.length){avisoIntegrado('No hay equipos válidos para importar.');return}if(!await dialogoEquipo('Confirmación','Se importarán '+incoming.length+' equipos a este navegador. Se reemplazarán los equipos del borrador y se limpiarán sus zonas y fixture. La tabla no se modificará. ¿Continuar?',true))return;teams=incoming;zones={};fixture=[];if(data.config&&typeof data.config==='object'){const c=data.config;const year=Number(c.anio||c.anio_torneo||c.ano);if(year>=2020&&year<=2100)settings.anio=year;}saveDraft();render();avisoIntegrado('Importados '+incoming.length+' equipos. Los campos de DT y jugadores quedan pendientes de completar.')}function importJSONFile(input){const f=input.files&&input.files[0];if(!f)return;f.text().then(importTournamentJSON).catch(()=>avisoIntegrado('No se pudo leer el archivo.'));input.value=''}async function importJSONURL(){const el=document.getElementById('sourceURL');const url=el?.value.trim()||'';if(!/^https:\/\//i.test(url)){avisoIntegrado('Ingresá una dirección HTTPS válida.');return}try{const response=await fetch(url,{redirect:'follow'});if(!response.ok)throw new Error('HTTP '+response.status);await importTournamentJSON(await response.text())}catch(e){avisoIntegrado('No fue posible leer la URL desde este navegador (puede deberse a restricciones CORS del servicio). Alternativa: guardá el JSON en un archivo y usá Importar archivo. '+e.message)}}
