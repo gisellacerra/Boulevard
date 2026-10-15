@@ -204,15 +204,18 @@ nav .nav-icon{width:18px;height:18px;flex:0 0 18px;vertical-align:middle;}
 #view .panel.newcom-panel > h2.newcom-panel-heading .newcom-heading-icon{display:block;flex:0 0 23px;width:23px;height:23px;color:#b9f34b;stroke:#b9f34b;opacity:1;visibility:visible}
 #view .panel.newcom-panel > h2.newcom-panel-heading span{display:block;color:#fff}
 @media(max-width:650px){#view .panel.newcom-panel > h2.newcom-panel-heading{font-size:17px;padding:15px 21px;gap:10px;min-height:55px}#view .panel.newcom-panel > h2.newcom-panel-heading .newcom-heading-icon{width:21px;height:21px;flex-basis:21px}}
-<<<<<<< HEAD
 
 /* Fotografía de cabecera debajo del logotipo y aire antes de las secciones. */
 .app > aside .brand{padding-bottom:32px;}
 .app > aside .brand-photo{display:block;width:100%;height:auto;aspect-ratio: 267 / 96;object-fit:cover;margin:15px 0 0;border-radius:0;}
 .app > aside nav{margin-top:26px;}
 @media(max-width:650px){.app > aside .brand{padding-bottom:12px}.app > aside .brand-photo{max-width:280px;margin-top:12px}.app > aside nav{margin-top:18px}}
-=======
->>>>>>> ca8bc2a8a0a760031df6545863bc82a3c8b0abcf
+/* Foto a sangre dentro del menú lateral: sin márgenes laterales, con 15px arriba. */
+.app > aside .brand{padding-left:0!important;padding-right:0!important;padding-bottom:0!important;}
+.app > aside .brand-logo{width:calc(100% - 20px);margin-left:10px;max-width:none;}
+.app > aside .brand-photo{display:block;width:100%;max-width:none;height:auto;aspect-ratio:267 / 96;object-fit:cover;margin:15px 0 0!important;border-radius:0;}
+.app > aside nav{margin-top:28px;}
+@media(max-width:650px){.app > aside .brand-photo{max-width:none;margin-top:15px!important}.app > aside nav{margin-top:22px}}
 </style>
 </head><body><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
@@ -255,11 +258,7 @@ nav .nav-icon{width:18px;height:18px;flex:0 0 18px;vertical-align:middle;}
         font-weight="600"
         letter-spacing="4">NEWCOM</text>
 
-<<<<<<< HEAD
 </svg><img class="brand-photo" src="cabecera.jpg" alt="Pelota de newcom junto a la red" loading="eager"><small>Administración privada · <span class="year"></span></small></div><nav id="nav"></nav><div class="credit"><strong>Desarrollo</strong>Gisella Cerra<br>Diseñadora en Comunicación Visual<br>Tel.: <a href="tel:2920411544">2920411544</a></div></aside><main><header class="top"><div><div class="eyebrow">PANEL DE ADMINISTRACIÓN</div><h1 id="heading">Inicio</h1><div class="nombre-torneo" id="tournamentTitle"><span class="torneo-edicion">VI</span> <span class="torneo-nombre">Torneo Nacional de Newcom 2026</span></div></div><span class="pill">● Administración privada</span></header><div id="view"></div></main></div>
-=======
-</svg><small>Administración privada · <span class="year"></span></small></div><nav id="nav"></nav><div class="credit"><strong>Desarrollo</strong>Gisella Cerra<br>Diseñadora en Comunicación Visual<br>Tel.: <a href="tel:2920411544">2920411544</a></div></aside><main><header class="top"><div><div class="eyebrow">PANEL DE ADMINISTRACIÓN</div><h1 id="heading">Inicio</h1><div class="nombre-torneo" id="tournamentTitle"><span class="torneo-edicion">VI</span> <span class="torneo-nombre">Torneo Nacional de Newcom 2026</span></div></div><span class="pill">● Administración privada</span></header><div id="view"></div></main></div>
->>>>>>> ca8bc2a8a0a760031df6545863bc82a3c8b0abcf
 <script>function formatoPrecioBufet(valor){const texto=String(valor??'').trim();if(!texto)return '';const numero=Number(texto.replace(/\$/g,'').replace(/\s/g,'').replace(/\./g,'').replace(',','.'));return Number.isFinite(numero)?'$ '+numero.toLocaleString('es-AR',{maximumFractionDigits:2}):texto;}</script>
 <script>
 (function(){
