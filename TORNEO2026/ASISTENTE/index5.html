@@ -740,6 +740,56 @@ body[data-nc-theme="dark"] #view .nc-quick:focus-visible {
   transform:none !important;
 }
 </style>
+<style id="nc-tarjetas-hover-contraste-definitivo">
+/* UX: el hover indica clic sin ocultar el contenido ni mover las tarjetas. */
+#view .nc-stat:hover, #view .nc-quick:hover,
+#view .nc-stat:focus-visible, #view .nc-quick:focus-visible {
+  border:2px solid #bbf04a !important;
+  transform:none !important;
+  box-shadow:none !important;
+  background:#fff !important;
+  background-color:#fff !important;
+  color:#17202b !important;
+}
+#view .nc-stat:hover .nc-stat-value,
+#view .nc-stat:hover .nc-stat-label,
+#view .nc-stat:hover .nc-stat-chevron,
+#view .nc-quick:hover span,
+#view .nc-quick:hover,
+#view .nc-stat:focus-visible .nc-stat-value,
+#view .nc-stat:focus-visible .nc-stat-label,
+#view .nc-quick:focus-visible {
+  color:#17202b !important;
+}
+#view .nc-stat:hover svg, #view .nc-quick:hover svg,
+#view .nc-stat:focus-visible svg, #view .nc-quick:focus-visible svg {
+  stroke:#17202b !important;
+}
+body[data-nc-theme="dark"] #view .nc-stat:hover,
+body[data-nc-theme="dark"] #view .nc-quick:hover,
+body[data-nc-theme="dark"] #view .nc-stat:focus-visible,
+body[data-nc-theme="dark"] #view .nc-quick:focus-visible {
+  background:#191d1f !important;
+  background-color:#191d1f !important;
+  color:#f1f5f2 !important;
+}
+body[data-nc-theme="dark"] #view .nc-stat:hover .nc-stat-value,
+body[data-nc-theme="dark"] #view .nc-stat:hover .nc-stat-label,
+body[data-nc-theme="dark"] #view .nc-stat:hover .nc-stat-chevron,
+body[data-nc-theme="dark"] #view .nc-quick:hover span,
+body[data-nc-theme="dark"] #view .nc-quick:hover,
+body[data-nc-theme="dark"] #view .nc-stat:focus-visible .nc-stat-value,
+body[data-nc-theme="dark"] #view .nc-stat:focus-visible .nc-stat-label,
+body[data-nc-theme="dark"] #view .nc-quick:focus-visible {
+  color:#f1f5f2 !important;
+}
+body[data-nc-theme="dark"] #view .nc-stat:hover svg,
+body[data-nc-theme="dark"] #view .nc-quick:hover svg,
+body[data-nc-theme="dark"] #view .nc-stat:focus-visible svg,
+body[data-nc-theme="dark"] #view .nc-quick:focus-visible svg {
+  stroke:#f1f5f2 !important;
+}
+</style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
