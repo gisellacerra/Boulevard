@@ -444,7 +444,27 @@ body[data-nc-theme="dark"] .nc-light-brand-text #nc-torneo-titulo{color:#18864f!
 body[data-nc-theme="dark"] #nav button:hover .nav-icon,body[data-nc-theme="dark"] #nav button.active .nav-icon{color:inherit!important;stroke:currentColor!important}
 .nc-dashboard .nc-cat{color:#000!important}
 .nc-dashboard .nc-tabs button,.nc-dashboard .nc-tabs button.is-selected,body[data-nc-theme="dark"] .nc-dashboard .nc-tabs button,body[data-nc-theme="dark"] .nc-dashboard .nc-tabs button.is-selected{color:#000!important}
-</style></head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
+</style>
+<style id="nc-ajustes-zonas-titulo-botones">
+/* Título institucional: edición única y tamaño solicitado */
+.nc-light-brand-text #nc-torneo-titulo{font-size:30px!important;font-weight:600!important;line-height:1.2!important;color:#18864f!important;}
+body[data-nc-theme="dark"] .nc-light-brand-text #nc-torneo-titulo{color:#18864f!important;}
+/* Botones primarios uniformes en todo el asistente */
+button.primary,.primary{letter-spacing:.01em!important;font-weight:400!important;font-size:15px!important;}
+/* Las columnas de asignación manual deben heredar el tema, sin fondos blancos en modo oscuro */
+body[data-nc-theme="dark"] #view .zone-board .zone-column{background:#191d1f!important;color:#f1f5f2!important;border-color:#4a5551!important;}
+body[data-nc-theme="dark"] #view .zone-board .zone-entry{background:#252c2b!important;color:#f1f5f2!important;border-color:#45504b!important;}
+body[data-nc-theme="dark"] #view .zone-board .zone-entry span,
+body[data-nc-theme="dark"] #view .zone-board .zone-column h3{color:#f1f5f2!important;}
+body[data-nc-theme="dark"] #view .zone-board .zone-column .muted{color:#bdc9c5!important;}
+body[data-nc-theme="dark"] #view .zone-board .zone-column.drag-over{background:#253a2c!important;border-color:#a8ed43!important;}
+body[data-nc-theme="dark"] #view .zone-board .zone-entry select{background:#23292b!important;color:#f1f5f2!important;border-color:#455052!important;}
+/* Modo claro: conservar las tarjetas claras del tema seleccionado */
+body[data-nc-theme="light"] #view .zone-board .zone-column{background:#fff!important;color:#17202b!important;border-color:#dfe4e7!important;}
+body[data-nc-theme="light"] #view .zone-board .zone-entry{background:#f8f9f9!important;color:#17202b!important;border-color:#dfe4e7!important;}
+@media(max-width:650px){.nc-light-brand-text #nc-torneo-titulo{font-size:clamp(19px,5vw,30px)!important;}}
+</style>
+</head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
      preserveAspectRatio="xMinYMin meet"
@@ -1895,7 +1915,7 @@ view.innerHTML=`<div class="nc-dashboard">${dayBar}
 <div class="nc-columns"><section class="nc-box"><div class="nc-box-head"><h2>Avisos recientes</h2><button class="nc-link" data-go="avisos">Ver todos ›</button></div>${noticeRows||'<div class="nc-empty">Todavía no hay avisos publicados.</div>'}</section><section class="nc-box"><div class="nc-box-head"><h2>Próximos encuentros</h2><button class="nc-link" data-go="fixture">Ver todos ›</button></div>${ps.slice(6,10).map(p=>`<div class="nc-feed-item">${svg('calendar')}<div>${esc(String(p.equipoA||p.local||'Equipo A'))} — ${esc(String(p.equipoB||p.visitante||'Equipo B'))}<small>${esc(String(p.hora||p.horario||'Horario por confirmar'))} · Cancha ${esc(String(p.cancha||'—'))}</small></div></div>`).join('')||'<div class="nc-empty">Los próximos encuentros aparecerán cuando esté disponible el fixture.</div>'}</section></div>
 </div>`;
 document.querySelectorAll('[data-nc-day]').forEach(b=>b.addEventListener('click',()=>{const d=new Date(selectedDay+'T12:00:00');d.setDate(d.getDate()+Number(b.dataset.ncDay));window.ncSelectedDay=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');render();}));
-const tituloTorneo=document.getElementById('nc-torneo-titulo');if(tituloTorneo){const nombre=String(settings.nombre||'Torneo Nacional de Newcom').trim();const edicion=String(settings.edicion||'').trim();const prefijo=/^(?:\d+\s*[°ºª]|[IVXLCDM]+\b)/i.test(nombre)?'':(edicion?((/^[IVXLCDM]+$/i.test(edicion)?({'VI':'6','V':'5','VII':'7','VIII':'8','IX':'9','X':'10'}[edicion.toUpperCase()]||edicion):edicion)+'° '):'');tituloTorneo.textContent=prefijo+nombre;}const season=document.getElementById('nc-season');if(season)season.textContent='▣  Temporada '+String(settings.anio||new Date().getFullYear());
+const tituloTorneo=document.getElementById('nc-torneo-titulo');if(tituloTorneo){const nombre=String(settings.nombre||'Torneo Nacional de Newcom').trim();const edicion=String(settings.edicion||'').trim();const nombreLimpio=nombre.replace(/(\d+)\s*[°ºª]{2,}/g,'$1°').replace(/\s{2,}/g,' ');const edicionLimpia=edicion.replace(/[°ºª]+/g,'').trim();const numeroEdicion=/^[IVXLCDM]+$/i.test(edicionLimpia)?({'VI':'6','V':'5','VII':'7','VIII':'8','IX':'9','X':'10'}[edicionLimpia.toUpperCase()]||edicionLimpia):edicionLimpia;const prefijo=/^(?:\d+\s*[°ºª]|[IVXLCDM]+\b)/i.test(nombreLimpio)?'':(numeroEdicion?numeroEdicion+'° ':'');tituloTorneo.textContent=(prefijo+nombreLimpio).replace(/(\d+)\s*[°ºª]{2,}/g,'$1°');}const season=document.getElementById('nc-season');if(season)season.textContent='▣  Temporada '+String(settings.anio||new Date().getFullYear());
 }
 
 
