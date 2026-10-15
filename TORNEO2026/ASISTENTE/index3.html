@@ -464,6 +464,56 @@ body[data-nc-theme="light"] #view .zone-board .zone-column{background:#fff!impor
 body[data-nc-theme="light"] #view .zone-board .zone-entry{background:#f8f9f9!important;color:#17202b!important;border-color:#dfe4e7!important;}
 @media(max-width:650px){.nc-light-brand-text #nc-torneo-titulo{font-size:clamp(19px,5vw,30px)!important;}}
 </style>
+
+<style id="nc-unificacion-controles-fixture">
+/* Tipografía consistente en todos los botones, incluidos los generados por JS. */
+button, button.primary, button.secondary, .primary, .secondary,
+#nav button, .nc-tabs button, .nc-quick, .action,
+.fx-pie button, input[type="file"]::file-selector-button {
+  font-size:13px!important;
+  font-weight:400!important;
+  letter-spacing:.01em!important;
+}
+/* Campos de entrada unificados: mismo aspecto que Observaciones. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]),
+select, textarea, .fx-edicion input, .fx-edicion select {
+  font-size:13px!important;
+  font-weight:400!important;
+  border-radius:9px!important;
+  box-shadow:none!important;
+}
+body[data-nc-theme="dark"] input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]),
+body[data-nc-theme="dark"] select,
+body[data-nc-theme="dark"] textarea,
+body[data-nc-theme="dark"] .fx-edicion input,
+body[data-nc-theme="dark"] .fx-edicion select {
+  background:#23292b!important;
+  color:#f1f4f3!important;
+  border:1px solid #455052!important;
+  color-scheme:dark;
+}
+body[data-nc-theme="dark"] input::placeholder,
+body[data-nc-theme="dark"] textarea::placeholder {color:#aab8b4!important;opacity:1}
+body[data-nc-theme="dark"] input:focus,
+body[data-nc-theme="dark"] select:focus,
+body[data-nc-theme="dark"] textarea:focus {outline:2px solid #a8ed43!important;outline-offset:1px}
+/* Tarjetas del fixture: evitar superficies blancas dentro del tema oscuro. */
+body[data-nc-theme="dark"] .fx-partido,
+body[data-nc-theme="dark"] .fx-jornada-vacia {
+  background:#23292b!important;
+  color:#f1f4f3!important;
+  border:1px solid #455052!important;
+}
+body[data-nc-theme="dark"] .fx-partido .fx-numero,
+body[data-nc-theme="dark"] .fx-partido .fx-equipo,
+body[data-nc-theme="dark"] .fx-partido .fx-edicion label,
+body[data-nc-theme="dark"] .fx-jornada-vacia {color:#f1f4f3!important}
+body[data-nc-theme="dark"] .fx-partido .fx-vs{color:#a8ed43!important}
+/* La insignia de categoría mantiene su color propio y texto negro. */
+body[data-nc-theme="dark"] .fx-partido .fx-etiqueta,
+body[data-nc-theme="dark"] .fx-partido .cat-distintivo {color:#000!important}
+body[data-nc-theme="dark"] .fx-pie button:not(.primary){background:#252c2b!important;color:#f1f4f3!important;border:1px solid #53605b!important}
+</style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
@@ -1449,7 +1499,7 @@ function posiciones13Render(){
   const filas=[...equipos.values()].sort((a,b)=>b.PTS-a.PTS||b.PG-a.PG||((b.SF-b.SC)-(a.SF-a.SC))||((b.PF-b.PC)-(a.PF-a.PC))||a.nombre.localeCompare(b.nombre,'es'));
   const tabla=`<div class="tablewrap"><table><thead><tr><th>Pos.</th><th>Equipo</th><th>PJ</th><th>PG</th><th>PP</th><th>SF</th><th>SC</th><th>Dif.</th><th>PF</th><th>PC</th><th>Puntos</th></tr></thead><tbody>${filas.map((e,i)=>`<tr><td>${i+1}</td><td><strong>${esc(e.nombre)}</strong></td><td>${e.PJ}</td><td>${e.PG}</td><td>${e.PP}</td><td>${e.SF}</td><td>${e.SC}</td><td>${e.SF-e.SC}</td><td>${e.PF}</td><td>${e.PC}</td><td><strong>${e.PTS}</strong></td></tr>`).join('')}</tbody></table></div>`;
   const fondo=fxColorCategoria(g.cat);
-  contenido+=`<section class="panel section"><h2 style="background:${fondo};color:#111;padding:10px;border-radius:8px">Categoría ${esc(g.cat)} · Zona ${esc(g.zona)}</h2><p class="status">${jugados} de ${g.partidos.length} partidos con resultado · ${completo?'Zona completa':'Clasificación provisoria'}</p>${tabla}${completo?'<p class="status">Resultados completos. Posiciones calculadas; cruces pendientes de confirmación.</p>':'<p class="muted">Faltan resultados: todavía no se confirman clasificados ni cruces.</p>'}</section>`;
+  contenido+=`<section class="panel section"><h2 style="background:color-mix(in srgb, ${fondo} 55%, white);color:#000!important;padding:10px;border-radius:8px">Categoría ${esc(g.cat)} · Zona ${esc(g.zona)}</h2><p class="status">${jugados} de ${g.partidos.length} partidos con resultado · ${completo?'Zona completa':'Clasificación provisoria'}</p>${tabla}${completo?'<p class="status">Resultados completos. Posiciones calculadas; cruces pendientes de confirmación.</p>':'<p class="muted">Faltan resultados: todavía no se confirman clasificados ni cruces.</p>'}</section>`;
  }
  return panel('Posiciones por zona',`<p class="muted">Cálculo automático, sin modificar datos. Orden: puntos, partidos ganados, diferencia de sets, diferencia de tantos y orden alfabético. Victoria: 3 puntos; derrota 1–2: 2; derrota 0–2: 1. No se calculan W.O. automáticamente.</p>${selector}`)+contenido+etapa14Render()+cruces15Render()+cruces16Render();
 }
@@ -1512,7 +1562,7 @@ function posiciones13Activar(){const b=$('#p13Actualizar');if(b)b.onclick=result
   const datos=etapa14Clasificacion();let html='';
   for(const d of datos){
    const nombre=d.cat+' · '+d.genero, fondo=fxColorCategoria(d.cat);
-   let bloque=`<h3 style="background:${fondo};color:#111;padding:10px;border-radius:8px">${esc(nombre)}</h3>`;
+   let bloque=`<h3 style="background:color-mix(in srgb, ${fondo} 55%, white);color:#000!important;padding:10px;border-radius:8px">${esc(nombre)}</h3>`;
    bloque+=`<p class="status">${d.completo?'Fase clasificatoria completa':'Clasificación provisoria · faltan '+d.grupos.reduce((n,g)=>n+g.pendientes,0)+' partidos'}</p>`;
    for(const g of d.grupos)bloque+=`<p class="muted">Zona ${esc(g.zona)}: ${g.ranking.map((e,i)=>(i+1)+'. '+esc(e.nombre)).join(' · ')}</p>`;
    const {semis,aviso}=etapa14Semis(d);
