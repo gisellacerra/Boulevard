@@ -197,7 +197,7 @@ body{font-family:Inter,Arial,sans-serif;color:#18212b}
 .app>aside .credit{color:#667780;border-top:1px solid #e1e5e4}
 .app>aside .credit strong{color:#24312b}
 .app>aside .menu38-grupo{color:#586b64!important}
-.app>aside details{border-color:rgb(96 96 96)!important}
+.app>aside details{border-color:#e3e7e5!important}
 main{width:100%;max-width:none!important;padding:26px 34px 48px!important;background:#f2f2f2!important}
 .top{margin-bottom:20px!important}
 .top .eyebrow{font-size:12px;color:#16834c;letter-spacing:.04em}
@@ -349,10 +349,7 @@ html,body{background:#f2f2f2!important;color:#17202b!important}
 .top .eyebrow{color:#16834c!important}
 .top h1{color:#161b24!important}
 .top .nombre-torneo{color:#526173!important}
-.top .pill{background: transparent;
-    color: #d5dfda !important;
-    border-color: #d5dfda !important;
-    margin-bottom: 5px;}
+.top .pill{background:#fff!important;color:#28724b!important;border-color:#d5dfda!important}
 .nc-stat,.nc-box,.nc-quick,.card,.panel,.as-modal,.fx-partido,.zone-entry,.zone-column{background:#fff!important;color:#17202b!important;border-color:#e1e4e7!important} 
 .nc-stat-value,.nc-box-head h2,.nc-quick,.card b,.panel h2{color:#161b24!important}
 .nc-stat-label,.nc-feed-item small,.muted,.status{color:#637186!important}
@@ -360,7 +357,7 @@ html,body{background:#f2f2f2!important;color:#17202b!important}
 .nc-compact td,table td,td,th{color:#263142!important;border-color:#e9edef!important}
 .nc-tabs button{background:#fff!important;color:#485468!important;border-color:#d9e0e4!important}
 .nc-tabs button.is-selected{background:#18864f!important;color:#fff!important;border-color:#18864f!important}
-.nc-link{color:rgb(217 217 217) !important}
+.nc-link{color:#087d47!important}
 input,select,textarea{background:#fff!important;color:#17202b!important;border-color:#cfd8d4!important}
 button.secondary,.action{background:#fff!important;color:#24312b!important;border-color:#d6e0da!important}
 button.primary,.primary{background:#18864f!important;color:#fff!important;border-color:#18864f!important}
@@ -407,7 +404,7 @@ html,body,.app,.app main,main,#view{background:var(--sp-bg)!important;color:var(
 .nc-light-header,.app>aside,.nc-box-head,.nc-feed-item{border-color:var(--sp-line)!important}
 .nc-stat-label,.nc-empty,.nc-feed-item small{color:var(--sp-muted)!important}
 .nc-quick svg,.nc-stat svg,.nc-feed-item svg{stroke:var(--sp-green)!important;fill:none!important}
-#heading{font-size:28px!important;color:var(--sp-text)!important;display: none}
+#heading{font-size:28px!important;color:var(--sp-text)!important}
 .top{margin-bottom:12px!important}
 .nc-daybar{display:grid;grid-template-columns:46px 1fr 46px;align-items:center;gap:10px;margin:0 0 16px;background:var(--sp-surface);border:1px solid var(--sp-line);border-radius:7px;padding:10px}
 .nc-daybar button{width:38px;height:38px;background:transparent!important;border:1px solid var(--sp-line)!important;color:var(--sp-text)!important;border-radius:6px;display:grid;place-items:center;cursor:pointer}
@@ -557,6 +554,45 @@ body[data-nc-theme="dark"] .fx-partido .fx-vs{color:#a8ed43!important}
 body[data-nc-theme="dark"] .fx-partido .fx-etiqueta,
 body[data-nc-theme="dark"] .fx-partido .cat-distintivo {color:#000!important}
 body[data-nc-theme="dark"] .fx-pie button:not(.primary){background:#252c2b!important;color:#f1f4f3!important;border:1px solid #53605b!important}
+
+/* Crédito de desarrollo: blanco legible y visible al pie del menú en ambos temas. */
+.app > aside .credit,
+body[data-nc-theme="dark"] .app > aside .credit,
+body[data-nc-theme="light"] .app > aside .credit {
+  color:#fff !important;
+  border-top:1px solid rgba(255,255,255,.55) !important;
+  background:#191d1f !important;
+}
+.app > aside .credit strong,
+.app > aside .credit a,
+body[data-nc-theme="dark"] .app > aside .credit strong,
+body[data-nc-theme="light"] .app > aside .credit strong {
+  color:#fff !important;
+}
+@media (min-width:761px) {
+  .app > aside {
+    position:sticky !important;
+    top:80px !important;
+    height:calc(100vh - 80px) !important;
+    min-height:0 !important;
+    overflow-y:auto !important;
+    align-self:flex-start !important;
+  }
+  .app > aside .credit {
+    position:sticky;
+    bottom:0;
+    margin-top:auto !important;
+    padding:12px 10px !important;
+    z-index:2;
+  }
+}
+@media (max-width:760px) {
+  .app > aside .credit {
+    display:block !important;
+    margin-top:12px !important;
+    padding:12px 10px !important;
+  }
+}
 </style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
