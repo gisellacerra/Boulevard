@@ -682,6 +682,34 @@ body[data-nc-theme="dark"] #view .nc-quick:hover svg {
   }
 }
 </style>
+<style id="nc-ajustes-index5-hover-creditos">
+/* Borde de hover sin relleno ni movimiento: se conserva el fondo de cada tarjeta. */
+#view .nc-stat, #view .nc-quick {box-sizing:border-box !important; transition:border-color .12s ease !important;}
+#view .nc-stat:hover, #view .nc-quick:hover,
+#view .nc-stat:focus-visible, #view .nc-quick:focus-visible {
+  border:2px solid #bbf04a !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+/* Desarrollo se desplaza con el documento y con el contenido del menú. */
+.app > aside .credit {
+  position:static !important;
+  top:auto !important;
+  bottom:auto !important;
+  z-index:auto !important;
+  flex-shrink:0 !important;
+}
+@media (min-width:761px) {
+  .app > aside {
+    position:relative !important;
+    top:auto !important;
+    height:auto !important;
+    min-height:100vh !important;
+    overflow:visible !important;
+    align-self:stretch !important;
+  }
+}
+</style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
@@ -2276,27 +2304,7 @@ try{render()}catch(error){console.error('Error al iniciar el administrador:',err
   else iniciar();
 })();
 </script>
-<script id="nc-espn-theme-script">(function(){const key='nc_assistant_theme';const set=(mode)=>{document.body.dataset.ncTheme=mode;const label=document.querySelector('#nc-theme-switch span');if(label)label.textContent=mode==='dark'?'Modo claro':'Modo oscuro';try{localStorage.setItem(key,mode)}catch(e){}};let initial='light';try{initial=localStorage.getItem(key)||'light'}catch(e){}set(initial);document.getElementById('nc-theme-switch')?.addEventListener('click',()=>set(document.body.dataset.ncTheme==='dark'?'light':'dark'));})();</script><script id="nc-tarjetas-hover-forzado">
-/* Los estilos inline !important prevalecen sobre las reglas de tema. */
-(function(){
- const selector='.nc-stat, .nc-quick';
- function apply(card,on){
-   const props=on?{'background':'#bbf04a','background-color':'#bbf04a','border-color':'#bbf04a','color':'#172218','box-shadow':'0 0 0 2px rgba(187,240,74,.65)'}:{};
-   for(const key of ['background','background-color','border-color','color','box-shadow']){
-     if(on)card.style.setProperty(key,props[key],'important');
-     else card.style.removeProperty(key);
-   }
-   card.querySelectorAll('svg, svg *, .nc-stat-value, .nc-stat-label, .nc-stat-chevron, span').forEach(el=>{
-     if(on){el.style.setProperty('color','#172218','important');if(el.closest('svg'))el.style.setProperty('stroke','#172218','important');}
-     else{el.style.removeProperty('color');el.style.removeProperty('stroke');}
-   });
- }
- document.addEventListener('pointerover',e=>{const card=e.target.closest?.(selector);if(card&&!card.contains(e.relatedTarget))apply(card,true)},true);
- document.addEventListener('pointerout',e=>{const card=e.target.closest?.(selector);if(card&&!card.contains(e.relatedTarget))apply(card,false)},true);
- document.addEventListener('focusin',e=>{const card=e.target.closest?.(selector);if(card)apply(card,true)});
- document.addEventListener('focusout',e=>{const card=e.target.closest?.(selector);if(card)apply(card,false)});
-})();
-</script>
+<script id="nc-espn-theme-script">(function(){const key='nc_assistant_theme';const set=(mode)=>{document.body.dataset.ncTheme=mode;const label=document.querySelector('#nc-theme-switch span');if(label)label.textContent=mode==='dark'?'Modo claro':'Modo oscuro';try{localStorage.setItem(key,mode)}catch(e){}};let initial='light';try{initial=localStorage.getItem(key)||'light'}catch(e){}set(initial);document.getElementById('nc-theme-switch')?.addEventListener('click',()=>set(document.body.dataset.ncTheme==='dark'?'light':'dark'));})();</script>
 </body></html>
 
 
