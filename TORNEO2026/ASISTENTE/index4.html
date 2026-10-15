@@ -632,6 +632,30 @@ main{padding:32px 40px 45px!important}
 .nc-stat:focus-visible,.nc-quick:focus-visible{outline:2px solid #bbf04a!important;outline-offset:3px!important}
 @media(prefers-reduced-motion:reduce){.nc-stat,.nc-quick{transition:none!important}.nc-stat:hover,.nc-quick:hover,.nc-stat:active,.nc-quick:active{transform:none!important}}
 </style>
+<style id="nc-hover-tarjetas-color-visible">
+/* Prioridad superior a #view .nc-stat y a los temas del tablero. */
+#view .nc-stat:hover,#view .nc-quick:hover,
+body[data-nc-theme="dark"] #view .nc-stat:hover,body[data-nc-theme="dark"] #view .nc-quick:hover,
+body[data-nc-theme="light"] #view .nc-stat:hover,body[data-nc-theme="light"] #view .nc-quick:hover {
+  background:#bbf04a!important;
+  background-color:#bbf04a!important;
+  border-color:#bbf04a!important;
+  color:#172218!important;
+  box-shadow:0 0 0 2px #bbf04a!important;
+}
+#view .nc-stat:hover .nc-stat-value,#view .nc-stat:hover .nc-stat-label,
+#view .nc-stat:hover .nc-stat-chevron,#view .nc-quick:hover span,
+body[data-nc-theme="dark"] #view .nc-stat:hover .nc-stat-value,
+body[data-nc-theme="dark"] #view .nc-stat:hover .nc-stat-label {
+  color:#172218!important;
+}
+#view .nc-stat:hover svg,#view .nc-quick:hover svg,
+body[data-nc-theme="dark"] #view .nc-stat:hover svg,
+body[data-nc-theme="dark"] #view .nc-quick:hover svg {
+  stroke:#172218!important;
+}
+#view .nc-stat:active,#view .nc-quick:active {background:#a8df37!important;background-color:#a8df37!important;}
+</style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
