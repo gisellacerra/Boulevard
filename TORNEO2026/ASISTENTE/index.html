@@ -18,7 +18,7 @@
 /* Confirmación propia del Asistente */
 .as-modal-overlay{position:fixed;inset:0;background:rgba(9,31,23,.58);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px}
 .as-modal{background:#fff;border-radius:16px;box-shadow:0 22px 65px rgba(0,0,0,.22);width:min(100%,640px);padding:27px;color:#18362e}
-.as-modal h2{margin:0 0 12px;font-size:21px}.as-modal p{font-size:14px;line-height:1.55;margin:8px 0}.as-modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;flex-wrap:wrap}
+.as-modal h2{margin:0 0 12px;font-size:21px}.as-modal p{font-size:14px;line-height:1.55;margin:8px 0}.as-modal .as-summary{font-weight:600;color:#177a51}.as-modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;flex-wrap:wrap}
 .as-modal button{min-width:110px}.as-modal button:focus-visible{outline:3px solid #b6d7c6;outline-offset:2px}
 
 /* Asignación manual de zonas */
@@ -35,7 +35,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .p13-categoria{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:600;white-space:nowrap}.p13-categoria select{width:auto;min-width:95px}.toolbar:has(#p13Filtro){align-items:center}
 
 /* Vista de jornadas — solo módulo Fixture */
-.fx-filtros{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin:16px 0 20px}.fx-filtros label{display:grid;gap:5px;font-size:12px;font-weight:600;color:#315a47}.fx-filtros select{min-width:150px}.fx-jornadas{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}.fx-cabecera{text-align:center;color:#fff;padding:12px 9px 15px}.fx-cabecera strong{font-size:18px;display:block}.fx-cabecera span{display:block;margin-top:6px;font-size:12px;opacity:.9}.fx-partidos{display:grid;gap:10px}.fx-partido{background:#fff;border-radius:10px;padding:14px 12px;color:#1c3027}.fx-partido-top{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px;font-weight:600}.fx-numero{font-size:12px;font-weight:600;color:#123e32;white-space:nowrap}.fx-partido-top .fx-etiqueta{background:#e8f4ec;border-radius:12px;padding:5px 9px;color:#111}.fx-encuentro{display:grid;grid-template-columns:minmax(0,1fr) 55px minmax(0,1fr);gap:8px;align-items:center;text-align:center;margin:15px 0}.fx-equipo{font-size:16px;font-weight:400;overflow-wrap:anywhere}.fx-vs{font-size:16px;font-weight:600;color:#9b5b4c}.fx-edicion{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}.fx-edicion label{display:grid;gap:5px;font-size:11px;font-weight:600;color:#536b5d}.fx-edicion input,.fx-edicion select{padding:8px 6px;font-size:12px;min-width:0}.cat-distintivo{display:inline-block;border-radius:9px;padding:5px 10px;font-weight:600;color:#111;white-space:nowrap}.cat-fila{color:#111}.cat-fila td{color:#111}.cat-fila:hover{filter:brightness(.985)}.fx-jornada-vacia{background:#fff;border-radius:9px;padding:20px;text-align:center;color:#61786b;font-size:13px}.fx-pie{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:13px 2px 3px;color:#fff;font-size:12px}.fx-pie button{background:#fff;color:#087653;border:0;border-radius:7px;padding:9px 11px;cursor:pointer;font-weight:600}.fx-pie button:disabled{opacity:.55;cursor:not-allowed}@media(max-width:850px){.fx-jornadas{grid-template-columns:1fr}}@media(max-width:500px){.fx-edicion{grid-template-columns:1fr 1fr}.fx-edicion label:first-child{grid-column:1/-1}}
+.fx-filtros{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin:16px 0 20px}.fx-filtros label{display:grid;gap:5px;font-size:12px;font-weight:600;color:#315a47}.fx-filtros select{min-width:150px}.fx-jornadas{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}.fx-jornada{border: 2px solid rgb(128 128 128);border-radius:13px;padding:9px;min-width:0}.fx-cabecera{text-align:center;color:#fff;padding:12px 9px 15px}.fx-cabecera strong{font-size:18px;display:block}.fx-cabecera span{display:block;margin-top:6px;font-size:12px;opacity:.9}.fx-partidos{display:grid;gap:10px}.fx-partido{background:#fff;border-radius:10px;padding:14px 12px;color:#1c3027}.fx-partido-top{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px;font-weight:600}.fx-numero{font-size:12px;font-weight:600;color:#123e32;white-space:nowrap}.fx-partido-top .fx-etiqueta{background:#e8f4ec;border-radius:12px;padding:5px 9px;color:#111}.fx-encuentro{display:grid;grid-template-columns:minmax(0,1fr) 55px minmax(0,1fr);gap:8px;align-items:center;text-align:center;margin:15px 0}.fx-equipo{font-size:16px;font-weight:400;overflow-wrap:anywhere}.fx-vs{font-size:16px;font-weight:600;color:#9b5b4c}.fx-edicion{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}.fx-edicion label{display:grid;gap:5px;font-size:11px;font-weight:600;color:#536b5d}.fx-edicion input,.fx-edicion select{padding:8px 6px;font-size:12px;min-width:0}.cat-distintivo{display:inline-block;border-radius:9px;padding:5px 10px;font-weight:600;color:#111;white-space:nowrap}.cat-fila{color:#111}.cat-fila td{color:#111}.cat-fila:hover{filter:brightness(.985)}.fx-jornada-vacia{background:#fff;border-radius:9px;padding:20px;text-align:center;color:#61786b;font-size:13px}.fx-pie{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:13px 2px 3px;color:#fff;font-size:12px}.fx-pie button{background:#fff;color:#087653;border:0;border-radius:7px;padding:9px 11px;cursor:pointer;font-weight:600}.fx-pie button:disabled{opacity:.55;cursor:not-allowed}@media(max-width:850px){.fx-jornadas{grid-template-columns:1fr}}@media(max-width:500px){.fx-edicion{grid-template-columns:1fr 1fr}.fx-edicion label:first-child{grid-column:1/-1}}
  .paleta-categorias{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:18px 0}.paleta-categoria{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border:1px solid #e1e9e3;border-radius:10px}.paleta-categoria input[type=color]{width:52px;height:38px;padding:3px;cursor:pointer}
 /* Campos de edición: tipografía regular, sin heredar negritas de etiquetas o paneles. */
 input:not([type="checkbox"]):not([type="radio"]), select, textarea,
@@ -122,7 +122,7 @@ td:has(> [data-edit-team]) {
 
 /* Opciones de distribución del fixture */
 .fx-modos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
-.fx-modo{    border: 1px solid rgb(128 128 128);border-radius:11px;padding:14px;cursor:pointer;display:flex;gap:10px;align-items:flex-start}
+.fx-modo{border:1px solid #bbf04a;border-radius:11px;padding:14px;cursor:pointer;display:flex;gap:10px;align-items:flex-start}
 .fx-modo:has(input:checked){border:2px solid #bbf04a}
 .fx-modo input{width:auto;margin-top:3px;flex:none}
 .fx-modo strong{display:block;margin-bottom:5px}.fx-reservas{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0}
@@ -606,7 +606,7 @@ body[data-nc-theme="dark"] .fx-partido .fx-numero,
 body[data-nc-theme="dark"] .fx-partido .fx-edicion label,
 body[data-nc-theme="dark"] .fx-jornada-vacia {color:#f1f4f3!important}
 body[data-nc-theme="dark"] .fx-partido .fx-vs{color:#f1f4f3!important}
-.fx-partido .fx-equipo{color:#f3f6f7!important}
+.fx-partido .fx-equipo{color:#bbf04a!important}
 /* La insignia de categoría mantiene su color propio y texto negro. */
 body[data-nc-theme="dark"] .fx-partido .fx-etiqueta,
 body[data-nc-theme="dark"] .fx-partido .cat-distintivo {color:#000!important}
@@ -885,8 +885,9 @@ body[data-nc-theme="dark"] .nc-daybar button:hover{border-color:#a5eb37!importan
 body[data-nc-theme="dark"] #view .nc-stat:is(:hover,:focus-visible),body[data-nc-theme="dark"] #view .nc-quick:is(:hover,:focus-visible){background:#191c1d!important;border:1px solid #a5eb37!important;box-shadow:none!important;transform:none!important}
 /* Categorías: respetar los colores de configuración (+50 verde, +60 azul, +68 coral). Solo agregar filete lima al pasar el mouse o enfocar. */
 body[data-nc-theme="dark"] .nc-tabs button{transition:border-color .12s ease,box-shadow .12s ease;outline-offset:2px}
-body[data-nc-theme="dark"] .nc-tabs button:is(:hover,:focus-visible){border:2px solid #a5eb37!important;box-shadow:0 0 0 2px #a5eb37!important;filter:brightness(1.04)}
+body[data-nc-theme="dark"] .nc-tabs button:is(:hover,:focus-visible){box-shadow:none!important;filter:brightness(1.04)}
 body[data-nc-theme="dark"] .nc-tabs button.is-selected:not(:hover):not(:focus-visible){box-shadow:none!important}
+.nc-dashboard .nc-tabs button{font-weight:600!important}
 </style>
 
 <style id="nc-ajustes-estadisticas-alerta-20261016">
@@ -1111,7 +1112,7 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
 .fx-propuesta-uno .fx-partido-top{display:flex;align-items:center;justify-content:flex-start;gap:12px;flex-wrap:nowrap;border-right:1px solid #405158;min-width:0;padding-right:10px}
 .fx-propuesta-uno .fx-numero{display:grid;place-items:center;min-width:34px;height:38px;background:#35474f;border-radius:9px;color:#f6f8fa;font-size:16px}
 .fx-propuesta-uno .fx-cat-info{display:flex;gap:9px;align-items:center;min-width:0}
-.fx-propuesta-uno .fx-cat-info .fx-etiqueta{font-size:15px;text-align:center}
+.fx-propuesta-uno .fx-cat-info .fx-etiqueta{font-size:17px;text-align:center}
 .fx-propuesta-uno .fx-cat-detalle{display:grid;gap:4px;color:#f5f7f9;font-size:12px}
 .fx-propuesta-uno .fx-cat-detalle small{font-size:11px;color:#c1cbd1}
 .fx-propuesta-uno .fx-encuentro{display:grid;grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr);gap:9px;align-items:center;margin:0;text-align:left}
@@ -1166,7 +1167,7 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
   <!-- Banda amarilla -->
   <rect x="0" y="56"
         width="147" height="26"
-        fill="#18864f"/>
+        fill="#bbf04a"/>
 
   <!-- NEWCOM -->
   <text x="73.5" y="75"
