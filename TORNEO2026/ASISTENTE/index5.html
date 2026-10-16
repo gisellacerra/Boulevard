@@ -442,6 +442,23 @@ body[data-nc-theme="dark"] input,body[data-nc-theme="dark"] select,body[data-nc-
 body[data-nc-theme="dark"] .menu38-grupo,body[data-nc-theme="dark"] .menu38-acordeon{background:transparent!important;color:var(--sp-text)!important}
 @media(max-width:680px){.nc-espn-controls{margin-left:5px}.nc-theme-button{font-size:0;padding:9px}.nc-theme-button svg{width:19px;height:19px}.nc-daybar-center strong{font-size:15px}}
 
+
+/* Campo para seleccionar archivos */
+input[type="file"] {
+  color: #ffffff !important;
+}
+
+/* Botón Seleccionar archivo */
+input[type="file"]::file-selector-button {
+  color: #ffffff !important;
+  border: 2px solid #ffffff;
+  border-radius: 10px;
+  background: transparent;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+
 /* CONTRASTE REVISADO: verde manzana en acciones, iconos legibles en ambos temas */
 body[data-nc-theme="dark"]{
  --sp-bg:#0e1112;--sp-surface:#191d1f;--sp-text:#f1f5f2;--sp-muted:#bdc9c5;--sp-line:#3b4442;--sp-green:#a8ed43;
