@@ -1046,7 +1046,30 @@ body[data-nc-theme="dark"] #r12ModalDialog .r12-set-fields input[type="number"]:
 body[data-nc-theme="dark"] .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields input:not([type="file"]),
 body[data-nc-theme="light"] .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields input:not([type="file"]){background:#fff!important;background-color:#fff!important;color:#17202b!important;-webkit-text-fill-color:#17202b!important;color-scheme:light!important}
 body[data-nc-theme="dark"] .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields input::placeholder{color:#64747a!important;-webkit-text-fill-color:#64747a!important}
-</style></head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
+</style>
+<style id="nc-unificacion-baja-y-avisos-v2">
+/* Baja: superficie clara y campos legibles, independiente del tema general. */
+body .as-modal-overlay .as-modal.nc-baja-modal{background:#f3f6f7!important;color:#17212b!important;border:1px solid #d4dfe2!important}
+body .as-modal-overlay .as-modal.nc-baja-modal h2,
+body .as-modal-overlay .as-modal.nc-baja-modal label{color:#17212b!important}
+body[data-nc-theme] .as-modal-overlay .as-modal.nc-baja-modal textarea,
+body .as-modal-overlay .as-modal.nc-baja-modal textarea,
+body .as-modal-overlay .as-modal.nc-baja-modal .field textarea{background:#fff!important;color:#17212b!important;-webkit-text-fill-color:#17212b!important;border:1px solid #bfcdd1!important;color-scheme:light!important;box-shadow:none!important}
+body .as-modal-overlay .as-modal.nc-baja-modal textarea:focus{outline:none!important;border-color:#8c9ca3!important;box-shadow:0 0 0 2px #d6dfe2!important}
+body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions{justify-content:flex-end!important}
+body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.secondary{background:#e8edef!important;color:#17212b!important;border:1px solid #bfcdd1!important}
+body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{background:#a3ef32!important;color:#17212b!important;border:1px solid #a3ef32!important}
+/* Avisos del fixture: mismos símbolos que los avisos del resultado. */
+#view .fx-important-alert,#view .fx-fixture-notice{position:relative!important;padding:13px 15px 13px 55px!important;border-radius:10px!important;min-height:50px!important;display:flex!important;align-items:center!important;flex-wrap:wrap!important;column-gap:4px!important}
+#view .fx-important-alert::before,#view .fx-fixture-notice::before{content:'!';position:absolute;left:16px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font-size:16px;font-weight:800;line-height:1;color:#fff!important}
+#view .fx-important-alert{background:#301c20!important;color:#ffb5bc!important;border:1px solid #e45b65!important;border-left:4px solid #e45b65!important}
+#view .fx-important-alert::before{background:#ee4653!important}
+#view .fx-important-alert strong{color:#ffd2d6!important}
+#view .fx-fixture-notice{background:#202b1c!important;color:#e3f3d4!important;border:1px solid #a3ef32!important;border-left:4px solid #a3ef32!important}
+#view .fx-fixture-notice::before{background:#78b52b!important}
+@media(max-width:600px){#view .fx-important-alert,#view .fx-fixture-notice{padding-left:48px!important}#view .fx-important-alert::before,#view .fx-fixture-notice::before{left:12px}}
+</style>
+</head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
      preserveAspectRatio="xMinYMin meet"
@@ -1965,7 +1988,7 @@ async function eliminarEquipoSheets(i){
  }).withFailureHandler(e=>avisoIntegrado('No se registró la baja: '+(e.message||e))).adminCambiarEstadoEquipo(t.id,'BAJA',motivo,{id:t.id,equipo:t.nombre,categoria:t.categoria,ciudad:t.localidad});
 }
 function pedirMotivoBaja(nombre){return new Promise(resolve=>{
- const capa=document.createElement('div');capa.className='as-modal-overlay';const caja=document.createElement('div');caja.className='as-modal';
+ const capa=document.createElement('div');capa.className='as-modal-overlay';const caja=document.createElement('div');caja.className='as-modal nc-baja-modal';
  const h=document.createElement('h2');h.textContent='Dar de baja: '+nombre;
  const l=document.createElement('label');l.className='field';l.textContent='Motivo de la baja';const area=document.createElement('textarea');area.rows=3;area.maxLength=500;area.required=true;l.append(area);
  const acciones=document.createElement('div');acciones.className='as-modal-actions';
