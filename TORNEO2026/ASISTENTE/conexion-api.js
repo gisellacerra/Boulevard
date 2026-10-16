@@ -6,6 +6,10 @@
   const SCOPES='https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email';
   let token='', client, tokenExpiresAt=0, renewal=null, authorized=false, verifying=false;
   const pending=[];
+  // La sesión dura como máximo lo que dura el token OAuth. No se guarda un refresh token.
+  const SESSION_KEY='newcom_google_access_v1';
+  function clearSavedSession(){try{sessionStorage.removeItem(SESSION_KEY);}catch(_e){}}
+  function saveSession(){try{sessionStorage.setItem(SESSION_KEY,JSON.stringify({token,expiresAt:tokenExpiresAt}));}catch(_e){}}
   const overlay=document.createElement('div');
   overlay.id='newcom-auth';
   overlay.style.cssText='position:fixed;inset:0;z-index:999999;background:#f3f6f3;display:flex;align-items:center;justify-content:center;font-family:Arial,sans-serif;color:#18362e;padding:20px';
@@ -30,7 +34,7 @@
       if(!client || verifying)return;
       verifying=true;
       showState(true,'Seleccioná tu cuenta de Google para continuar…');
-      try{client.requestAccessToken({prompt:'select_account'});}catch(e){verifying=false;showState(false,e.message||'No se pudo abrir Google.');}
+      try{client.requestAccessToken({prompt:''});}catch(e){verifying=false;showState(false,e.message||'No se pudo abrir Google.');}
     };
     if(client && !verifying)showState(false,'');
   }
@@ -44,21 +48,40 @@
       }
       token=response.access_token||'';
       tokenExpiresAt=Date.now()+Math.max(0,(Number(response.expires_in)||3500)-90)*1000;
-      if(renewal){renewal.resolve(token);renewal=null;return;}
+      if(renewal){saveSession();renewal.resolve(token);renewal=null;return;}
       verifying=true;
       showState(true,'Verificando acceso…');
       runAPI('adminVerificarAccesoNewcom',[]).then(ok=>{
         if(ok!==true)throw Error('Esta cuenta no está autorizada para administrar el torneo.');
         authorized=true;verifying=false;
+        saveSession();
         overlay.remove();
         flushPending();
         document.dispatchEvent(new Event('newcom-autorizado'));
       }).catch(e=>{
-        token='';authorized=false;verifying=false;
+        token='';authorized=false;verifying=false;clearSavedSession();
         showState(false,e.message||'No se pudo verificar el acceso.');
       });
     }});
-    if(overlay.isConnected && !verifying)showState(false,'');
+    // Al actualizar (F5), reutilizar el token temporal y volver a comprobar
+    // los permisos en el servidor antes de mostrar el asistente.
+    let saved=null;
+    try{saved=JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null');}catch(_e){clearSavedSession();}
+    if(saved && typeof saved.token==='string' && Number(saved.expiresAt)>Date.now()+30000){
+      token=saved.token;tokenExpiresAt=Number(saved.expiresAt);verifying=true;
+      showState(true,'Recuperando sesión…');
+      runAPI('adminVerificarAccesoNewcom',[]).then(ok=>{
+        if(ok!==true)throw Error('Acceso no autorizado.');
+        authorized=true;verifying=false;overlay.remove();flushPending();
+        document.dispatchEvent(new Event('newcom-autorizado'));
+      }).catch(()=>{
+        token='';authorized=false;verifying=false;clearSavedSession();
+        showState(false,'La sesión venció o no se pudo validar. Ingresá con Google.');
+      });
+    }else{
+      clearSavedSession();
+      if(overlay.isConnected && !verifying)showState(false,'');
+    }
   }
   ready();
   async function runAPI(func,parameters){
