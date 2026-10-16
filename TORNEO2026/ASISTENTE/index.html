@@ -1090,6 +1090,15 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
 .equipo-edit-modal .equipo-edit-close:focus-visible{outline:3px solid #17487f!important;outline-offset:3px}
 @media(max-width:480px){.nc-notice-card{padding:13px!important}.nc-notice-main{gap:10px}.equipo-edit-modal .equipo-edit-close{width:46px!important;height:46px!important;min-width:46px!important}}
 </style>
+<style id="nc-zonas-tres-columnas-estilo">
+/* Distribución de categorías en tres columnas, sin afectar otros formularios. */
+.nc-zonas-tres-columnas{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:16px!important;align-items:stretch}
+.nc-zonas-tres-columnas>.panel{min-width:0;margin:0!important;padding:20px!important}
+.nc-zonas-tres-columnas .field{max-width:150px!important;width:100%!important}
+.nc-zonas-tres-columnas .field input[type="number"]{width:100%!important;max-width:150px!important;box-sizing:border-box}
+@media(max-width:900px){.nc-zonas-tres-columnas{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:600px){.nc-zonas-tres-columnas{grid-template-columns:minmax(0,1fr)!important}}
+</style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
@@ -2569,7 +2578,7 @@ else if(active==='zonas'){
   const remotos=guardados.length?`<p class="status"><strong>Confirmado:</strong> ${[...new Set(guardados.map(r=>r.zona))].map(z=>`Zona ${esc(z)} (${guardados.filter(r=>r.zona===z).length})`).join(' · ')}</p>`:'';
   return panel(tituloCompetencia(cat),remotos+(actuales.length?tableroManual(cat):'<div class="empty">Elegí la cantidad y pulsá Preparar zonas.</div>'));
  }).join('');
- view.innerHTML=panel('Asignación manual de zonas · Sorteo presencial',informacion+(categoriasConEquipos.length?`<div class="form">${controles}</div>`:'<p class="muted">Todavía no hay equipos inscriptos. Las categorías aparecerán al registrar equipos.</p>'))+grupos;
+ view.innerHTML=panel('Asignación manual de zonas · Sorteo presencial',informacion+(categoriasConEquipos.length?`<div class="form nc-zonas-tres-columnas">${controles}</div>`:'<p class="muted">Todavía no hay equipos inscriptos. Las categorías aparecerán al registrar equipos.</p>'))+grupos;
  document.querySelectorAll('[data-prepare]').forEach(b=>b.onclick=()=>createZones(b.dataset.prepare,Number(document.getElementById('count'+b.dataset.prepare).value)));
  document.querySelectorAll('[data-confirm-zones]').forEach(b=>b.onclick=()=>confirmarZonas(b.dataset.confirmZones));
  activarTableroManual();const refresh=$('#refreshZonas');if(refresh)refresh.onclick=consultarZonas;
