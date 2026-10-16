@@ -626,7 +626,7 @@ main{padding:32px 40px 45px!important}
 <style id="nc-hover-tarjetas-index4">
 /* Solo indicadores y accesos rápidos de Inicio. */
 .nc-stat,.nc-quick{cursor:pointer!important;transition:border-color .16s ease,background-color .16s ease,box-shadow .16s ease,transform .12s ease!important}
-.nc-stat:hover,.nc-quick:hover{border-color:#bbf04a!important;background:color-mix(in srgb,#bbf04a 11%,var(--sp-surface,#fff))!important;box-shadow:inset 0 0 0 1px #bbf04a!important;transform:translateY(-2px)}
+.nc-stat:hover,.nc-quick:hover{border-color:#bbf04a!important;background:color-mix(in srgb,#bbf04a 11%,var(--sp-surface,#fff))!important;box-shadow:none!important;transform:translateY(-2px)}
 .nc-stat:hover svg,.nc-quick:hover svg,.nc-stat:focus-visible svg,.nc-quick:focus-visible svg{stroke:#bbf04a!important}
 .nc-stat:active,.nc-quick:active{transform:translateY(0) scale(.985)!important;background:color-mix(in srgb,#bbf04a 20%,var(--sp-surface,#fff))!important}
 .nc-stat:focus-visible,.nc-quick:focus-visible{outline:2px solid #bbf04a!important;outline-offset:3px!important}
@@ -641,7 +641,7 @@ body[data-nc-theme="light"] #view .nc-stat:hover,body[data-nc-theme="light"] #vi
   background-color:#bbf04a!important;
   border-color:#bbf04a!important;
   color:#172218!important;
-  box-shadow:0 0 0 2px #bbf04a!important;
+  box-shadow:none!important;
 }
 #view .nc-stat:hover .nc-stat-value,#view .nc-stat:hover .nc-stat-label,
 #view .nc-stat:hover .nc-stat-chevron,#view .nc-quick:hover span,
@@ -713,7 +713,7 @@ body[data-nc-theme="dark"] #view .nc-quick:hover svg {
 /* Corrección final: SOLO filete en hover, nunca fondo amarillo. */
 #view .nc-stat:hover, #view .nc-quick:hover,
 #view .nc-stat:focus-visible, #view .nc-quick:focus-visible {
-  border:2px solid #bbf04a !important;
+  border:1px solid #bbf04a !important;
   background:#fff !important;
   background-color:#fff !important;
   box-shadow:none !important;
@@ -744,7 +744,7 @@ body[data-nc-theme="dark"] #view .nc-quick:focus-visible {
 /* UX: el hover indica clic sin ocultar el contenido ni mover las tarjetas. */
 #view .nc-stat:hover, #view .nc-quick:hover,
 #view .nc-stat:focus-visible, #view .nc-quick:focus-visible {
-  border:2px solid #bbf04a !important;
+  border:1px solid #bbf04a !important;
   transform:none !important;
   box-shadow:none !important;
   background:#fff !important;
