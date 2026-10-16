@@ -846,6 +846,24 @@ body[data-nc-theme="dark"] #view .nc-quick:focus-visible svg {
   stroke:#f1f5f2 !important;
 }
 </style>
+<style id="nc-equipo-edit-campos-claros-final">
+/* Prioridad final: campos claros exclusivamente en Editar equipo. */
+body .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields input:not([type="file"]),
+body .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields select {
+  background-color:#f5f7f7!important; color:#20282b!important;
+  border:1px solid #c3cecc!important; color-scheme:light!important;
+  min-height:42px!important; padding:9px 13px!important;
+  -webkit-text-fill-color:#20282b!important;
+}
+body .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields input:-webkit-autofill {
+  -webkit-box-shadow:0 0 0 1000px #f5f7f7 inset!important;
+  -webkit-text-fill-color:#20282b!important;
+}
+body .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields input:focus,
+body .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields select:focus {
+  outline:2px solid #18864f!important;outline-offset:1px!important;
+}
+</style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
