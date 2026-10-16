@@ -1122,6 +1122,14 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
 .fx-propuesta-uno .fx-edicion input,.fx-propuesta-uno .fx-edicion select{width:100%;min-width:0;box-sizing:border-box;background:#15232a;color:#f6f8fa;border:1px solid #465a63;border-radius:8px;padding:8px 5px;color-scheme:dark;font-size:12px}
 @media(max-width:1050px){.fx-jornada-propuesta-uno .fx-propuesta-uno{grid-template-columns:minmax(180px,220px) minmax(0,1fr)}.fx-propuesta-uno .fx-edicion{grid-column:1/-1}}
 @media(max-width:620px){.fx-jornada-propuesta-uno{padding:10px}.fx-jornada-propuesta-uno .fx-propuesta-uno{grid-template-columns:1fr;gap:12px}.fx-propuesta-uno .fx-partido-top{border-right:0;border-bottom:1px solid #405158;padding-bottom:10px}.fx-propuesta-uno .fx-edicion{grid-column:auto}.fx-jornada-propuesta-uno .fx-cabecera{gap:7px}.fx-jornada-propuesta-uno .fx-cabecera strong{font-size:15px}}
+
+/* Ajuste de distribución: número compacto y VS desplazado a la izquierda */
+.fx-jornada-propuesta-uno .fx-propuesta-uno{grid-template-columns:minmax(170px,215px) minmax(220px,1fr) minmax(290px,1.1fr);gap:12px}
+.fx-propuesta-uno .fx-partido-top{gap:7px;padding-right:7px}
+.fx-propuesta-uno .fx-numero{min-width:24px;width:24px;height:32px;font-size:14px;background:transparent}
+.fx-propuesta-uno .fx-encuentro{grid-template-columns:minmax(0,.78fr) 28px minmax(0,1.22fr);gap:7px}
+@media(max-width:1050px){.fx-jornada-propuesta-uno .fx-propuesta-uno{grid-template-columns:minmax(170px,205px) minmax(0,1fr)}}
+@media(max-width:620px){.fx-jornada-propuesta-uno .fx-propuesta-uno{grid-template-columns:1fr}}
 </style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
