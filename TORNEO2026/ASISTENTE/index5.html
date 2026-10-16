@@ -269,6 +269,25 @@ button.secondary{background:#fff}
  .nc-equipos-scroll{scrollbar-width:thin}
 }
 
+
+/* Corrección: el editor de equipos siempre usa fondo claro, incluso con tema oscuro */
+body[data-nc-theme="dark"] .equipo-edit-modal,
+body[data-nc-theme="light"] .equipo-edit-modal {background:#ffffff!important;color:#17202b!important;}
+body[data-nc-theme="dark"] .equipo-edit-modal .equipo-edit-header,
+body[data-nc-theme="dark"] .equipo-edit-modal .equipo-edit-fields,
+body[data-nc-theme="dark"] .equipo-edit-modal .equipo-edit-form,
+body[data-nc-theme="dark"] .equipo-edit-modal .as-modal-actions {background:#ffffff!important;color:#17202b!important;}
+body[data-nc-theme="dark"] .equipo-edit-modal .field,
+body[data-nc-theme="dark"] .equipo-edit-modal h2 {color:#17202b!important;}
+body[data-nc-theme="dark"] .equipo-edit-modal input:not([type="checkbox"]):not([type="radio"]),
+body[data-nc-theme="dark"] .equipo-edit-modal select,
+body[data-nc-theme="light"] .equipo-edit-modal input:not([type="checkbox"]):not([type="radio"]),
+body[data-nc-theme="light"] .equipo-edit-modal select {background:#f7f9f9!important;color:#17252a!important;border:1px solid #bdc9c8!important;}
+body[data-nc-theme="dark"] .equipo-edit-modal input[type="file"],
+body[data-nc-theme="light"] .equipo-edit-modal input[type="file"] {background:#f7f9f9!important;color:#17252a!important;border:1px dashed #a9b8b4!important;}
+body[data-nc-theme="dark"] .equipo-edit-modal input[type="file"]::file-selector-button,
+body[data-nc-theme="light"] .equipo-edit-modal input[type="file"]::file-selector-button {background:#fff!important;color:#243239!important;border:1px solid #a7b7b1!important;}
+
 /* UX exclusiva del modal Editar equipo: no afecta otros formularios */
 .equipo-edit-overlay{padding:16px}
 .equipo-edit-modal{width:min(100%,760px);max-height:min(92dvh,900px);padding:0!important;overflow:hidden;display:flex;flex-direction:column;background:#fff!important;color:#17202b!important}
