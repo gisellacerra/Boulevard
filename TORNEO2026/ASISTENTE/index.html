@@ -1070,6 +1070,26 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
 #view .fx-fixture-notice::before{background:#78b52b!important}
 @media(max-width:600px){#view .fx-important-alert,#view .fx-fixture-notice{padding-left:48px!important}#view .fx-important-alert::before,#view .fx-fixture-notice::before{left:12px}}
 </style>
+<style id="nc-notice-card-and-close-2026">
+/* Tarjetas de notificaciones: diseño claro y compacto */
+.nc-notice-card{background:#f3f6f7!important;color:#18232b!important;border:1px solid #d5e1d8!important;border-left:1px solid #d5e1d8!important;border-radius:12px!important;padding:16px 18px!important;margin-bottom:12px!important}
+.nc-notice-main{display:flex;align-items:flex-start;gap:14px}
+.nc-notice-icon{flex:none;width:30px;height:30px;display:grid;place-items:center;background:#65af2b;color:white;border-radius:50%;font-weight:800;font-size:18px}
+.nc-notice-content{flex:1;min-width:0}
+.nc-notice-heading{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.nc-notice-heading b{font-size:16px;color:#18232b}
+.nc-notice-heading time{font-size:12px;color:#61717b}
+.nc-notice-content p{color:#283840!important;margin:8px 0!important;white-space:pre-wrap}
+.nc-notice-content a{color:#175b8e!important}
+.nc-notice-actions{display:flex!important;justify-content:flex-end!important;border-top:1px solid #d8e1e4;margin-top:13px!important;padding-top:12px!important;gap:8px!important}
+.nc-notice-actions button{background:#fff!important;color:#24313b!important;border:1px solid #c9d3d7!important;border-radius:8px!important;padding:8px 14px!important}
+.nc-notice-actions [data-notif-delete]{border-color:#df9da1!important;color:#c52d38!important}
+/* Cierre destacado del modal Editar equipo */
+.equipo-edit-modal .equipo-edit-close{width:48px!important;height:48px!important;min-width:48px!important;border-radius:50%!important;background:#a3ef32!important;color:#10241c!important;font-size:34px!important;font-weight:600!important;line-height:1!important;display:grid!important;place-items:center!important;padding:0!important;border:0!important;cursor:pointer}
+.equipo-edit-modal .equipo-edit-close:hover{background:#8cdb20!important}
+.equipo-edit-modal .equipo-edit-close:focus-visible{outline:3px solid #17487f!important;outline-offset:3px}
+@media(max-width:480px){.nc-notice-card{padding:13px!important}.nc-notice-main{gap:10px}.equipo-edit-modal .equipo-edit-close{width:46px!important;height:46px!important;min-width:46px!important}}
+</style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
@@ -2576,7 +2596,7 @@ else if(active==='config'){view.innerHTML=panel('Parámetros generales',`<form i
 
 
 
-else if(active==='avisos'){view.innerHTML=panel('Notificaciones',`<form id="noticeForm" class="form">${field('Título','titulo','text','','required')}<label class="field full">Mensaje<textarea name="mensaje" rows="4" required></textarea></label>${field('Fecha','fecha','date',new Date().toISOString().slice(0,10),'required')}${field('Enlace (opcional)','enlace','url','','placeholder="https://..."')}<div class="field full"><button class="primary" type="submit">Guardar notificación</button></div></form>`)+panel('Notificaciones registradas',notices.length?notices.map(n=>`<div class="notice"><b>${esc(n.titulo)}</b><p>${esc(n.mensaje)}</p><span class="status">${esc(n.fecha)}</span>${n.enlace?` <a href="${esc(n.enlace)}" target="_blank" rel="noopener">VER MÁS</a>`:''}<div class="toolbar"><button type="button" class="secondary" data-notif-edit="${n.fila}">Editar</button><button type="button" class="secondary" data-notif-delete="${n.fila}">Eliminar</button></div></div>`).join(''):'<div class="empty">No hay notificaciones.</div>')}
+else if(active==='avisos'){view.innerHTML=panel('Notificaciones',`<form id="noticeForm" class="form">${field('Título','titulo','text','','required')}<label class="field full">Mensaje<textarea name="mensaje" rows="4" required></textarea></label>${field('Fecha','fecha','date',new Date().toISOString().slice(0,10),'required')}${field('Enlace (opcional)','enlace','url','','placeholder="https://..."')}<div class="field full"><button class="primary" type="submit">Guardar notificación</button></div></form>`)+panel('Notificaciones registradas',notices.length?notices.map(n=>`<div class="notice nc-notice-card"><div class="nc-notice-main"><span class="nc-notice-icon" aria-hidden="true">!</span><div class="nc-notice-content"><div class="nc-notice-heading"><b>${esc(n.titulo)}</b><time>${esc(n.fecha)}</time></div><p>${esc(n.mensaje)}</p>${n.enlace?`<a href="${esc(n.enlace)}" target="_blank" rel="noopener">Ver más</a>`:''}</div></div><div class="toolbar nc-notice-actions"><button type="button" class="secondary" data-notif-edit="${n.fila}">Editar</button><button type="button" class="secondary" data-notif-delete="${n.fila}">Eliminar</button></div></div>`).join(''):'<div class="empty">No hay notificaciones.</div>')}
 
 
 
