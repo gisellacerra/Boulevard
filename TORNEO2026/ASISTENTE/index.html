@@ -970,7 +970,7 @@ body .equipo-edit-overlay .equipo-edit-modal .as-modal-actions .secondary{backgr
 #r12ModalDialog.nc-result-editor .nc-actions-right .secondary{background:#edf0f1!important;color:#17202b!important}
 #r12ModalDialog.nc-result-editor .nc-result-warning{background:#fff0f0!important;color:#aa232b!important;border:1px solid #ec7e83!important;border-left:4px solid #e33b45!important;border-radius:9px!important;margin:14px 0!important}
 /* Acciones de formularios alineadas a la derecha. */
-#view .toolbar:has(>button){justify-content:flex-start}
+#view .toolbar:has(>button){justify-content:flex-end}
 .as-modal-actions{justify-content:flex-end!important}
 </style><style id="r12-boceto-fiel-20261016">
 #r12ModalDialog.nc-result-editor{width:min(100%,680px)!important;max-height:94vh;overflow-y:auto;border-radius:14px;background:#fff!important;color:#152024!important;box-shadow:0 20px 70px #0005;font-family:Arial,sans-serif;color-scheme:light}
@@ -1036,7 +1036,17 @@ body .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields select {
   -webkit-text-fill-color:#17202b!important;color-scheme:light!important;
 }
 </style>
-</head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
+<style id="nc-campos-visibles-fix-final">
+body[data-nc-theme="dark"] #r12ModalDialog .r12-set-fields input[type="number"],
+body[data-nc-theme="light"] #r12ModalDialog .r12-set-fields input[type="number"]{
+background:#f3f6f7!important;background-color:#f3f6f7!important;color:#17202b!important;-webkit-text-fill-color:#17202b!important;color-scheme:light!important;
+}
+#r12ModalDialog .r12-set-fields input[type="number"]::placeholder,
+body[data-nc-theme="dark"] #r12ModalDialog .r12-set-fields input[type="number"]::placeholder{color:#64747a!important;-webkit-text-fill-color:#64747a!important;opacity:1!important;background:transparent!important}
+body[data-nc-theme="dark"] .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields input:not([type="file"]),
+body[data-nc-theme="light"] .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields input:not([type="file"]){background:#fff!important;background-color:#fff!important;color:#17202b!important;-webkit-text-fill-color:#17202b!important;color-scheme:light!important}
+body[data-nc-theme="dark"] .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields input::placeholder{color:#64747a!important;-webkit-text-fill-color:#64747a!important}
+</style></head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
      preserveAspectRatio="xMinYMin meet"
@@ -1920,7 +1930,7 @@ async function editarEquipo(i){
  const cuerpo=document.createElement('div');cuerpo.className='equipo-edit-fields';
  const campos=[['nombre','Nombre del equipo','text'],['localidad','Localidad','text'],['provincia','Provincia','select'],['dt','Director/a técnico/a','text'],['telefono','Teléfono','tel'],['hombres','Cantidad de hombres','number'],['mujeres','Cantidad de mujeres','number']];
  const controles={};
- for(const [clave,etiqueta,tipo] of campos){const l=document.createElement('label');l.className='field';l.textContent=etiqueta;const inp=document.createElement(tipo==='select'?'select':'input');inp.name=clave;if(tipo==='select'){const actual=String(t[clave]??'').trim();const opciones=actual&&!provinciasArgentinas.includes(actual)?[actual,...provinciasArgentinas]:provinciasArgentinas;for(const valor of ['',...opciones]){const opt=document.createElement('option');opt.value=valor;opt.textContent=valor||'Seleccionar provincia';opt.selected=valor===actual;inp.append(opt)}}else{inp.type=tipo;inp.value=String(t[clave]??(tipo==='number'?0:''));if(tipo==='number')inp.min='0';if(clave==='nombre')inp.required=true;}l.append(inp);cuerpo.append(l);controles[clave]=inp;}
+ for(const [clave,etiqueta,tipo] of campos){const l=document.createElement('label');l.className='field';l.textContent=etiqueta;const inp=document.createElement(tipo==='select'?'select':'input');inp.name=clave;if(tipo==='select'){const actual=String(t[clave]??'').trim();const opciones=actual&&!provinciasArgentinas.includes(actual)?[actual,...provinciasArgentinas]:provinciasArgentinas;for(const valor of ['',...opciones]){const opt=document.createElement('option');opt.value=valor;opt.textContent=valor||'Seleccionar provincia';opt.selected=valor===actual;inp.append(opt)}}else{inp.type=tipo;inp.value=String(t[clave]??(tipo==='number'?0:''));if(tipo==='number')inp.min='0';if(clave==='nombre')inp.required=true;}if(tipo!=='select'){inp.style.setProperty('background-color','#ffffff','important');inp.style.setProperty('color','#17202b','important');inp.style.setProperty('-webkit-text-fill-color','#17202b','important');inp.style.setProperty('color-scheme','light','important');inp.style.setProperty('border-color','#c9d4d8','important');}l.append(inp);cuerpo.append(l);controles[clave]=inp;}
  for(const [clave,etiqueta,valores] of [['categoria','Categoría',categoriasInscripcion],['genero','Género',generosInscripcion]]){const l=document.createElement('label');l.className='field';l.textContent=etiqueta;const select=document.createElement('select');select.name=clave;for(const valor of valores){const opt=document.createElement('option');opt.value=valor;opt.textContent=valor;opt.selected=valor===(t[clave]||(clave==='genero'?'Mixto':''));select.append(opt)}l.append(select);cuerpo.append(l);controles[clave]=select;}
  const escudoLabel=document.createElement('label');escudoLabel.className='field';escudoLabel.textContent='Escudo del equipo (opcional: agregar o reemplazar)';
  const escudoInput=document.createElement('input');escudoInput.type='file';escudoInput.accept='image/png,image/jpeg,image/webp';escudoInput.name='escudoArchivo';escudoLabel.append(escudoInput);cuerpo.append(escudoLabel);
@@ -2320,7 +2330,7 @@ function resultados12Render(){
  if(seleccion){
   const r=resultados12Existente(seleccion);
   const v=(key,i)=>esc(r?.[key]?.[i]??'');
-  const set=(nombre,id,a)=>`<section class="r12-set"><div class="r12-set-name ${nombre==='Set 1'?'r12-set-one':nombre==='Set 2'?'r12-set-two':'r12-set-tb'}">${nombre}</div><div class="r12-set-fields"><label><span>${esc(seleccion.local)}</span><input type="number" min="0" max="${nombre==='Tie Break'?12:17}" id="r12${id}l" value="${v(a,0)}" placeholder="Puntos"></label><label><span>${esc(seleccion.visitante)}</span><input type="number" min="0" max="${nombre==='Tie Break'?12:17}" id="r12${id}v" value="${v(a,1)}" placeholder="Puntos"></label></div></section>`;
+  const set=(nombre,id,a)=>`<section class="r12-set"><div class="r12-set-name ${nombre==='Set 1'?'r12-set-one':nombre==='Set 2'?'r12-set-two':'r12-set-tb'}">${nombre}</div><div class="r12-set-fields"><label><span>${esc(seleccion.local)}</span><input type="number" min="0" max="${nombre==='Tie Break'?12:17}" id="r12${id}l" value="${v(a,0)}" placeholder="Puntos" style="background:#f3f6f7!important;background-color:#f3f6f7!important;color:#17202b!important;-webkit-text-fill-color:#17202b!important;color-scheme:light!important"></label><label><span>${esc(seleccion.visitante)}</span><input type="number" min="0" max="${nombre==='Tie Break'?12:17}" id="r12${id}v" value="${v(a,1)}" placeholder="Puntos" style="background:#f3f6f7!important;background-color:#f3f6f7!important;color:#17202b!important;-webkit-text-fill-color:#17202b!important;color-scheme:light!important"></label></div></section>`;
   const infoIcon='<span class="r12-info-icon" aria-hidden="true">!</span>';
   const warnIcon='<span class="r12-warn-icon" aria-hidden="true">!</span>';
   editor=`<div id="r12ModalOverlay" class="as-modal-overlay" role="presentation" style="padding:12px;z-index:100001"><div id="r12ModalDialog" class="nc-result-editor" role="dialog" aria-modal="true" aria-label="${r?'Corregir':'Cargar'} resultado">
