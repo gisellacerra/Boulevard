@@ -268,6 +268,24 @@ button.secondary{background:#fff}
  .nc-equipos-tabla th,.nc-equipos-tabla td{padding:10px 9px}
  .nc-equipos-scroll{scrollbar-width:thin}
 }
+
+/* UX exclusiva del modal Editar equipo: no afecta otros formularios */
+.equipo-edit-overlay{padding:16px}
+.equipo-edit-modal{width:min(100%,760px);max-height:min(92dvh,900px);padding:0!important;overflow:hidden;display:flex;flex-direction:column;background:#fff!important;color:#17202b!important}
+.equipo-edit-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:19px 26px;border-bottom:1px solid #e3e8e7;flex-shrink:0}
+.equipo-edit-header h2{margin:0!important;font-size:22px!important;color:#17202b!important}
+.equipo-edit-modal .equipo-edit-close{border:0;background:#f1f4f3;color:#263431;border-radius:9px;min-width:38px;width:38px;height:38px;font-size:26px;line-height:1;cursor:pointer}
+.equipo-edit-form{display:flex;flex-direction:column;min-height:0;flex:1}
+.equipo-edit-fields{padding:22px 26px;overflow-y:auto;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 18px;align-content:start;scrollbar-gutter:stable}
+.equipo-edit-fields .field{min-width:0;gap:7px;font-size:13px!important;font-weight:650!important;color:#243239!important}
+.equipo-edit-fields .field:first-child,.equipo-edit-fields .field:last-child{grid-column:1/-1}
+.equipo-edit-fields input:not([type=file]),.equipo-edit-fields select{min-width:0;width:100%;min-height:44px;padding:10px 13px;border:1px solid #bdc9c8!important;border-radius:9px!important;background:#f7f9f9!important;color:#17252a!important;font-size:14px!important}
+.equipo-edit-fields input:focus,.equipo-edit-fields select:focus{outline:2px solid #78ba3d!important;outline-offset:1px}
+.equipo-edit-fields input[type=file]{min-width:0!important;width:100%;padding:10px!important;border:1px dashed #a9b8b4!important;border-radius:10px!important;background:#f7f9f9!important;color:#243239!important;font-size:13px!important}
+.equipo-edit-fields input[type=file]::file-selector-button{background:#fff!important;color:#243239!important;border:1px solid #a7b7b1!important;border-radius:8px;padding:9px 12px;margin-right:12px;cursor:pointer}
+.equipo-edit-modal .as-modal-actions{flex-shrink:0;margin:0!important;padding:15px 26px;border-top:1px solid #e3e8e7;background:#fff;display:flex;justify-content:flex-end;gap:12px}
+.equipo-edit-modal .as-modal-actions button{min-height:43px}
+@media(max-width:650px){.equipo-edit-overlay{padding:8px}.equipo-edit-modal{max-height:calc(100dvh - 16px);border-radius:12px}.equipo-edit-header{padding:15px 17px}.equipo-edit-fields{grid-template-columns:minmax(0,1fr);padding:17px;gap:14px;scrollbar-gutter:auto}.equipo-edit-fields .field{grid-column:1/-1}.equipo-edit-modal .as-modal-actions{padding:12px 17px}.equipo-edit-modal .as-modal-actions button{flex:1;min-width:0}}
 </style><style>
 /* Ajustes exclusivos de notificaciones registradas */
 .notice { padding: 18px 20px 20px; }
@@ -441,23 +459,6 @@ body[data-nc-theme="dark"] .nc-light-season,body[data-nc-theme="dark"] .nc-light
 body[data-nc-theme="dark"] input,body[data-nc-theme="dark"] select,body[data-nc-theme="dark"] textarea{background:#23292b!important;color:#f1f4f3!important;border-color:#455052!important}
 body[data-nc-theme="dark"] .menu38-grupo,body[data-nc-theme="dark"] .menu38-acordeon{background:transparent!important;color:var(--sp-text)!important}
 @media(max-width:680px){.nc-espn-controls{margin-left:5px}.nc-theme-button{font-size:0;padding:9px}.nc-theme-button svg{width:19px;height:19px}.nc-daybar-center strong{font-size:15px}}
-
-
-/* Campo para seleccionar archivos */
-input[type="file"] {
-  color: #ffffff !important;
-}
-
-/* Botón Seleccionar archivo */
-input[type="file"]::file-selector-button {
-  color: #ffffff !important;
-  border: 2px solid #ffffff;
-  border-radius: 10px;
-  background: transparent;
-  padding: 10px 14px;
-  cursor: pointer;
-}
-
 
 /* CONTRASTE REVISADO: verde manzana en acciones, iconos legibles en ambos temas */
 body[data-nc-theme="dark"]{
@@ -1708,19 +1709,22 @@ function leerEquiposPrivados(){
 
 async function editarEquipo(i){
  const t=teams[i];if(!t)return;
- const capa=document.createElement('div');capa.className='as-modal-overlay';
- const caja=document.createElement('div');caja.className='as-modal';caja.style.maxHeight='90vh';caja.style.overflow='auto';
+ const capa=document.createElement('div');capa.className='as-modal-overlay equipo-edit-overlay';
+ const caja=document.createElement('div');caja.className='as-modal equipo-edit-modal';caja.setAttribute('role','dialog');caja.setAttribute('aria-modal','true');caja.setAttribute('aria-label','Editar equipo');
+ const cabecera=document.createElement('div');cabecera.className='equipo-edit-header';
  const titulo=document.createElement('h2');titulo.textContent='Editar equipo';
- const form=document.createElement('form');
+ const cerrar=document.createElement('button');cerrar.type='button';cerrar.className='equipo-edit-close';cerrar.textContent='×';cerrar.setAttribute('aria-label','Cerrar');cerrar.onclick=()=>capa.remove();cabecera.append(titulo,cerrar);
+ const form=document.createElement('form');form.className='equipo-edit-form';
+ const cuerpo=document.createElement('div');cuerpo.className='equipo-edit-fields';
  const campos=[['nombre','Nombre del equipo','text'],['localidad','Localidad','text'],['provincia','Provincia','select'],['dt','Director/a técnico/a','text'],['telefono','Teléfono','tel'],['hombres','Cantidad de hombres','number'],['mujeres','Cantidad de mujeres','number']];
  const controles={};
- for(const [clave,etiqueta,tipo] of campos){const l=document.createElement('label');l.className='field';l.textContent=etiqueta;const inp=document.createElement(tipo==='select'?'select':'input');inp.name=clave;if(tipo==='select'){const actual=String(t[clave]??'').trim();const opciones=actual&&!provinciasArgentinas.includes(actual)?[actual,...provinciasArgentinas]:provinciasArgentinas;for(const valor of ['',...opciones]){const opt=document.createElement('option');opt.value=valor;opt.textContent=valor||'Seleccionar provincia';opt.selected=valor===actual;inp.append(opt)}}else{inp.type=tipo;inp.value=String(t[clave]??(tipo==='number'?0:''));if(tipo==='number')inp.min='0';if(clave==='nombre')inp.required=true;}l.append(inp);form.append(l);controles[clave]=inp;}
- for(const [clave,etiqueta,valores] of [['categoria','Categoría',categoriasInscripcion],['genero','Género',generosInscripcion]]){const l=document.createElement('label');l.className='field';l.textContent=etiqueta;const select=document.createElement('select');select.name=clave;for(const valor of valores){const opt=document.createElement('option');opt.value=valor;opt.textContent=valor;opt.selected=valor===(t[clave]||(clave==='genero'?'Mixto':''));select.append(opt)}l.append(select);form.append(l);controles[clave]=select;}
+ for(const [clave,etiqueta,tipo] of campos){const l=document.createElement('label');l.className='field';l.textContent=etiqueta;const inp=document.createElement(tipo==='select'?'select':'input');inp.name=clave;if(tipo==='select'){const actual=String(t[clave]??'').trim();const opciones=actual&&!provinciasArgentinas.includes(actual)?[actual,...provinciasArgentinas]:provinciasArgentinas;for(const valor of ['',...opciones]){const opt=document.createElement('option');opt.value=valor;opt.textContent=valor||'Seleccionar provincia';opt.selected=valor===actual;inp.append(opt)}}else{inp.type=tipo;inp.value=String(t[clave]??(tipo==='number'?0:''));if(tipo==='number')inp.min='0';if(clave==='nombre')inp.required=true;}l.append(inp);cuerpo.append(l);controles[clave]=inp;}
+ for(const [clave,etiqueta,valores] of [['categoria','Categoría',categoriasInscripcion],['genero','Género',generosInscripcion]]){const l=document.createElement('label');l.className='field';l.textContent=etiqueta;const select=document.createElement('select');select.name=clave;for(const valor of valores){const opt=document.createElement('option');opt.value=valor;opt.textContent=valor;opt.selected=valor===(t[clave]||(clave==='genero'?'Mixto':''));select.append(opt)}l.append(select);cuerpo.append(l);controles[clave]=select;}
  const escudoLabel=document.createElement('label');escudoLabel.className='field';escudoLabel.textContent='Escudo del equipo (opcional: agregar o reemplazar)';
- const escudoInput=document.createElement('input');escudoInput.type='file';escudoInput.accept='image/png,image/jpeg,image/webp';escudoInput.name='escudoArchivo';escudoLabel.append(escudoInput);form.append(escudoLabel);
+ const escudoInput=document.createElement('input');escudoInput.type='file';escudoInput.accept='image/png,image/jpeg,image/webp';escudoInput.name='escudoArchivo';escudoLabel.append(escudoInput);cuerpo.append(escudoLabel);
  const acciones=document.createElement('div');acciones.className='as-modal-actions';
  const cancelar=document.createElement('button');cancelar.type='button';cancelar.className='secondary';cancelar.textContent='Cancelar';cancelar.onclick=()=>capa.remove();
- const guardar=document.createElement('button');guardar.type='submit';guardar.className='primary';guardar.textContent='Guardar cambios';acciones.append(cancelar,guardar);form.append(acciones);caja.append(titulo,form);capa.append(caja);document.body.append(capa);controles.nombre.focus();
+ const guardar=document.createElement('button');guardar.type='submit';guardar.className='primary';guardar.textContent='Guardar cambios';acciones.append(cancelar,guardar);form.append(cuerpo,acciones);caja.append(cabecera,form);capa.append(caja);document.body.append(capa);controles.nombre.focus();
  form.onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(form));const archivoEscudo=d.escudoArchivo;delete d.escudoArchivo;let escudoNuevo=null;if(archivoEscudo instanceof File&&archivoEscudo.size){try{escudoNuevo=await prepararEscudo(archivoEscudo)}catch(error){await dialogoEquipo('Escudo inválido',String(error.message||error));return}}const nuevo={id:t.id,escudo:t.escudo||'',...d,nombre:d.nombre.trim(),localidad:d.localidad.trim(),provincia:(d.provincia||'').trim(),dt:d.dt.trim(),telefono:d.telefono.trim(),hombres:Number(d.hombres),mujeres:Number(d.mujeres)};
  if(!nuevo.nombre||![nuevo.hombres,nuevo.mujeres].every(n=>Number.isInteger(n)&&n>=0)||nuevo.hombres+nuevo.mujeres<1){await dialogoEquipo('Revisá los datos','Completá el nombre e ingresá al menos un jugador.');return}
  if(teams.some((x,j)=>j!==i&&x.nombre.toLowerCase()===nuevo.nombre.toLowerCase()&&x.categoria===nuevo.categoria&&(x.genero||'Mixto')===nuevo.genero)){await dialogoEquipo('Equipo duplicado','Ya existe en esa categoría y género.');return}
