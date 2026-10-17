@@ -1163,8 +1163,14 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
 @media(max-width:650px){.fx3 .fx3-dia{padding:14px}.fx3 .fx3-dia .fx3-campos label.field{font-size:12px;gap:8px}.fx3 .fx3-dia .fx3-campos label.field input{flex:1 1 100px;min-width:0}}
 </style>
 <style id="nc-vista-fixture-solo-modulo">
-.nc-partidos-panel{margin-bottom:20px;padding:18px;border:1px solid var(--line,#354955);border-radius:14px;background:var(--card,#172b35)}
+.nc-partidos-panel{margin-bottom:20px;padding:18px;border:1px solid var(--line,#354955);border-radius:14px;background:#191c1d}
 .nc-partidos-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}.nc-partidos-bar h3{margin:0}.nc-partidos-dias{display:flex;gap:7px;flex-wrap:wrap}.nc-partidos-dia{padding:8px 12px;border:1px solid #637985;border-radius:8px;background:transparent;color:inherit;cursor:pointer}.nc-partidos-dia.activo{background:#167d62;color:white;border-color:#167d62}
+.nc-partidos-contenido{display:flex;align-items:center;gap:11px;min-height:94px;background:#20343b}
+.nc-partidos-contenido .nc-partidos-categoria{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;min-width:37px;padding:8px 5px;border-radius:9px;font-weight:800;font-size:12px;opacity:1}
+.nc-partidos-equipos{min-width:0;flex:1;display:flex;flex-direction:column;gap:5px}
+.nc-partidos-contenido .nc-partidos-equipo{display:flex;align-items:center;gap:7px;margin:0;min-width:0;line-height:1.3}
+.nc-partidos-escudo,.nc-partidos-escudo-vacio{width:25px;height:25px;object-fit:contain;flex:none;display:inline-flex;align-items:center;justify-content:center;font-size:17px}
+@media(max-width:650px){.nc-partidos-contenido{gap:6px}.nc-partidos-escudo,.nc-partidos-escudo-vacio{width:21px;height:21px}}
 .nc-partidos-scroll{overflow-x:auto}.nc-partidos-matriz{display:grid;grid-template-columns:85px repeat(var(--canchas),minmax(155px,1fr));min-width:max-content;gap:5px}.nc-partidos-celda{padding:10px;border-radius:7px;background:rgba(110,140,160,.12);font-size:12px}.nc-partidos-cab{font-weight:700;text-align:center;background:rgba(90,140,160,.25)}.nc-partidos-hora{font-weight:700;text-align:center}.nc-partidos-equipo{font-weight:600;margin:5px 0}.nc-partidos-categoria{opacity:.75;font-size:11px}.nc-partidos-vacio{opacity:.45;text-align:center}
 @media(max-width:650px){.nc-partidos-panel{padding:12px}.nc-partidos-matriz{grid-template-columns:65px repeat(var(--canchas),minmax(145px,1fr))}.nc-partidos-celda{padding:8px}}
 </style>
@@ -2614,7 +2620,9 @@ function ncVistaJornadasFixture(){
  const hora=p=>String(p.hora||p.horario||'').slice(0,5);
  const cancha=p=>Number(String(p.cancha||'').match(/\d+/)?.[0]||0);
  const horarios=[...new Set(partidos.map(hora).filter(Boolean))].sort();
- const celda=p=>p?`<div class="nc-partidos-celda"><div class="nc-partidos-categoria">${esc(String(p.categoria||''))}</div><div class="nc-partidos-equipo">${esc(String(p.equipoA||p.local||p.equipo1||'Equipo A'))}</div><div class="nc-partidos-equipo">${esc(String(p.equipoB||p.visitante||p.equipo2||'Equipo B'))}</div></div>`:'<div class="nc-partidos-celda nc-partidos-vacio">—</div>';
+ const nombreNormal=n=>String(n||'').trim().toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ');
+ const iconoEquipo=n=>{const t=teams.find(t=>nombreNormal(t.nombre||t.equipo)===nombreNormal(n));return t?.escudo?`<img class="nc-partidos-escudo" src="${esc(t.escudo)}" alt="" loading="lazy">`:'<span class="nc-partidos-escudo-vacio" aria-hidden="true">🛡️</span>'};
+ const celda=p=>{if(!p)return '<div class="nc-partidos-celda nc-partidos-vacio">—</div>';const a=String(p.equipoA||p.local||p.equipo1||'Equipo A'),b=String(p.equipoB||p.visitante||p.equipo2||'Equipo B');return `<div class="nc-partidos-celda nc-partidos-contenido"><span class="nc-partidos-categoria" style="background:${fxColorCategoria(p.categoria)};color:#111">${esc(String(p.categoria||''))}</span><div class="nc-partidos-equipos"><div class="nc-partidos-equipo">${iconoEquipo(a)}<span>${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span>${esc(b)}</span></div></div></div>`};
  const matriz=horarios.length?`<div class="nc-partidos-scroll"><div class="nc-partidos-matriz" style="--canchas:${cantidad}"><div class="nc-partidos-celda nc-partidos-cab">Horario</div>${Array.from({length:cantidad},(_,i)=>`<div class="nc-partidos-celda nc-partidos-cab">Cancha ${i+1}</div>`).join('')}${horarios.map(h=>`<div class="nc-partidos-celda nc-partidos-hora">${esc(h)}</div>${Array.from({length:cantidad},(_,i)=>celda(partidos.find(p=>hora(p)===h&&cancha(p)===i+1))).join('')}`).join('')}</div></div>`:'<p class="muted">No hay partidos cargados para esta jornada.</p>';
  return `<section class="nc-partidos-panel"><div class="nc-partidos-bar"><h3>Partidos por jornada y cancha</h3><div class="nc-partidos-dias">${dias.map((d,i)=>`<button type="button" class="nc-partidos-dia ${d===ncDiaFixtureSeleccionado?'activo':''}" data-nc-dia-fixture="${esc(d)}">Jornada ${i+1} · ${esc(d.split('-').reverse().join('/'))}</button>`).join('')}</div></div>${matriz}</section>`;
 }
