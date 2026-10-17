@@ -2679,7 +2679,7 @@ function ncVistaJornadasFixture(){
   const par=valor=>Array.isArray(valor)&&valor.length===2&&valor.every(v=>String(v??'').trim()!==''&&Number.isFinite(Number(v)))?valor.map(v=>String(v).trim()).join('-'):null;
   const s1=par(resultado.set1),s2=par(resultado.set2),tb=par(resultado.tiebreak);
   if(!s1||!s2)return null;
-  return [s1,s2,...(tb?[tb]:[])].join(' / ');
+return [s1,s2,...(tb?[tb]:[])].join(' · ');
 
  };
  const celda=p=>{if(!p)return '<div class="nc-partidos-celda nc-partidos-vacio">—</div>';
