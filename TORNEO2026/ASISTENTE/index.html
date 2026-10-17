@@ -1151,6 +1151,17 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
 <style id="nc-inscripciones-estilos">
 .nc-inscripcion{display:grid;gap:15px}.nc-inscripcion-encabezado{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.nc-inscripcion-encabezado strong{font-size:17px}.nc-inscripcion-encabezado p{margin:7px 0 0}.nc-inscripcion-badge{font-size:12px;font-weight:750;border-radius:999px;padding:7px 13px;white-space:nowrap}.nc-inscripcion-badge.abierta{color:#075842;background:#e0f7e9}.nc-inscripcion-badge.cerrada{color:#74411a;background:#fff0d9}.nc-inscripcion-opciones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:480px}.nc-inscripcion-opcion{cursor:pointer;border:1px solid #cbd5d1;border-radius:11px;background:transparent;color:inherit;padding:13px 18px;font-weight:700;text-align:center}.nc-inscripcion-opcion.seleccionada{border:2px solid #00a357;background:rgba(0,163,87,.10)}.nc-inscripcion-opcion:focus-visible{outline:3px solid #1399af;outline-offset:2px}.nc-inscripcion-nota{margin:0;line-height:1.5}@media(max-width:540px){.nc-inscripcion-encabezado{flex-direction:column}.nc-inscripcion-opciones{width:100%}}
 </style>
+<style id="fx3-jornadas-columnas-ordenadas">
+/* Etiquetas al lado de cada campo, con ancho suficiente en PC. */
+.fx3{max-width:100%;min-width:0}
+.fx3 .fx3-dia .fx3-campos{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.12fr) minmax(0,1.45fr);gap:14px;align-items:center}
+.fx3 .fx3-dia .fx3-campos label.field{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:10px;min-width:0;white-space:nowrap;line-height:1.35;font-size:13px}
+.fx3 .fx3-dia .fx3-campos label.field input{display:block;flex:1 1 110px;width:auto;max-width:100%;min-width:100px;box-sizing:border-box;margin:0}
+/* Tablet: un campo por fila para conservar etiquetas junto a controles. */
+@media(max-width:1150px){.fx3 .fx3-dia .fx3-campos{grid-template-columns:minmax(0,1fr);gap:12px}.fx3 .fx3-dia .fx3-campos label.field input{flex:0 1 260px}}
+/* Celular: también etiqueta a la izquierda, sin desbordes. */
+@media(max-width:650px){.fx3 .fx3-dia{padding:14px}.fx3 .fx3-dia .fx3-campos label.field{font-size:12px;gap:8px}.fx3 .fx3-dia .fx3-campos label.field input{flex:1 1 100px;min-width:0}}
+</style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
