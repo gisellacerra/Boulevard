@@ -308,12 +308,12 @@ body[data-nc-theme="light"] .equipo-edit-modal input[type="file"]::file-selector
 
 /* Tarjetas de partidos: franja lateral en vez de insignia de categoría */
 .nc-partidos-contenido.nc-partidos-con-franja{position:relative;overflow:hidden;padding-left:25px!important;gap:0;background:#222a2d}
-.nc-partidos-contenido.nc-partidos-con-franja::before{content:"";position:absolute;left:0;top:0;bottom:0;width:11px;background:var(--nc-franja);border-radius:7px 0 0 7px}
+.nc-partidos-contenido.nc-partidos-con-franja::before{content:"";position:absolute;left:0;top:0;bottom:0;width:16px;background:var(--nc-franja);border-radius:7px 0 0 7px}
 .nc-partidos-con-franja .nc-partidos-equipos{min-width:0;width:100%}
 .nc-partidos-referencias{display:flex;flex-wrap:wrap;gap:9px 18px;margin:13px 0 14px;align-items:center;justify-content: flex-end}
 .nc-partidos-referencia{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:#e9f0f3;white-space:nowrap;letter-spacing: 0.5px}
 .nc-partidos-referencia i{display:inline-block;width:12px;height:12px;flex:none}
-@media(max-width:650px){.nc-partidos-contenido.nc-partidos-con-franja{padding-left:22px!important}.nc-partidos-contenido.nc-partidos-con-franja::before{width:8px}.nc-partidos-referencias{gap:8px 12px}}
+@media(max-width:650px){.nc-partidos-contenido.nc-partidos-con-franja{padding-left:22px!important}.nc-partidos-contenido.nc-partidos-con-franja::before{width:12px}.nc-partidos-referencias{gap:8px 12px}}
 </style><style>
 /* Ajustes exclusivos de notificaciones registradas */
 .notice { padding: 18px 20px 20px; }
@@ -435,7 +435,7 @@ button.primary,.primary{background:#18864f!important;color:#fff!important;border
 /* Contenido de la portada: misma grilla, fondo claro y tipografía legible. */
 .nc-dashboard,.nc-stats,.nc-columns,.nc-quick-grid{background:transparent!important}
 .nc-feed-item{color:#263142!important}
- .nc-partidos-click{cursor:pointer;transition:filter .15s,box-shadow .15s} .nc-partidos-click:hover{filter:brightness(1.13);box-shadow:inset 0 0 0 2px #9cf32c} .nc-partidos-click:focus-visible{outline:3px solid #9cf32c;outline-offset:-3px}
+ .nc-partidos-click{cursor:pointer;transition:filter .15s,box-shadow .15s} .nc-partidos-click:hover{filter:brightness(1.13);box-shadow:inset 0 0 0 1px #9cf32c} .nc-partidos-click:focus-visible{outline:3px solid #9cf32c;outline-offset:-3px}
 </style>
 <style id="nc-referencia-fidelidad-2026">
 /* Referencia aprobada: superficies blancas, fondo #f2f2f2, verde oscuro. */
@@ -1199,8 +1199,15 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
 .nc-partidos-filtro i{width:10px;height:10px;display:inline-block;border-radius:2px}
 .nc-partidos-filtro.activo{background:#bbf04a;color:#1c282b;border-color:#bbf04a;font-weight:700}
 .nc-partidos-filtro:focus-visible{outline:2px solid #bbf04a;outline-offset:2px}
-@media(max-width:900px){.nc-partidos-matriz{grid-template-columns:minmax(47px,58px) repeat(var(--canchas),minmax(0,1fr))!important;gap:3px}.nc-partidos-matriz>.nc-partidos-celda{padding:7px 4px}.nc-partidos-matriz .nc-partidos-contenido.nc-partidos-con-franja{padding-left:15px!important}.nc-partidos-matriz .nc-partidos-con-franja::before{width:6px}.nc-partidos-matriz .nc-partidos-equipo{font-size:10px;gap:3px}.nc-partidos-matriz .nc-partidos-escudo,.nc-partidos-matriz .nc-partidos-escudo-vacio{width:17px;height:17px}}
+@media(max-width:900px){.nc-partidos-matriz{grid-template-columns:minmax(47px,58px) repeat(var(--canchas),minmax(0,1fr))!important;gap:3px}.nc-partidos-matriz>.nc-partidos-celda{padding:7px 4px}.nc-partidos-matriz .nc-partidos-contenido.nc-partidos-con-franja{padding-left:15px!important}.nc-partidos-matriz .nc-partidos-con-franja::before{width:9px}.nc-partidos-matriz .nc-partidos-equipo{font-size:10px;gap:3px}.nc-partidos-matriz .nc-partidos-escudo,.nc-partidos-matriz .nc-partidos-escudo-vacio{width:17px;height:17px}}
 @media(max-width:550px){.nc-partidos-matriz .nc-partidos-equipo{flex-direction:column;align-items:flex-start}.nc-partidos-matriz .nc-partidos-contenido{min-height:105px}.nc-partidos-cab{font-size:10px}.nc-partidos-hora{font-size:11px}}
+</style>
+<style id="nc-ajustes-referencias-filete">
+/* Únicamente referencias de categoría en Partidos por jornada y cancha. */
+.nc-partidos-filtro[style*="--nc-color-categoria"]{background:var(--nc-color-categoria)!important;color:#111!important;border-color:var(--nc-color-categoria)!important;font-weight:700}
+.nc-partidos-filtro[style*="--nc-color-categoria"].activo{box-shadow:inset 0 0 0 1px #111}
+/* Rollover de tarjetas: filete fino, sin alterar clic ni selección. */
+.nc-partidos-click:hover{box-shadow:inset 0 0 0 1px #9cf32c}
 </style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
@@ -2657,7 +2664,7 @@ function ncVistaJornadasFixture(){
  const celda=p=>{if(!p)return '<div class="nc-partidos-celda nc-partidos-vacio">—</div>';const a=String(p.equipoA||p.local||p.equipo1||'Equipo A'),b=String(p.equipoB||p.visitante||p.equipo2||'Equipo B');return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" role="button" tabindex="0" title="Cargar o corregir resultado" data-nc-resultado="${esc(encodeURIComponent(JSON.stringify({fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}"><div class="nc-partidos-equipos"><div class="nc-partidos-equipo">${iconoEquipo(a)}<span>${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span>${esc(b)}</span></div></div></div>`};
  const matriz=horarios.length?`<div class="nc-partidos-scroll"><div class="nc-partidos-matriz" style="--canchas:${cantidad}"><div class="nc-partidos-celda nc-partidos-cab">Horario</div>${Array.from({length:cantidad},(_,i)=>`<div class="nc-partidos-celda nc-partidos-cab">Cancha ${i+1}</div>`).join('')}${horarios.map(h=>`<div class="nc-partidos-celda nc-partidos-hora">${esc(h)}</div>${Array.from({length:cantidad},(_,i)=>celda(partidosVisibles.find(p=>hora(p)===h&&cancha(p)===i+1))).join('')}`).join('')}</div></div>`:'<p class="muted">No hay partidos cargados para esta jornada.</p>';
  return `<section class="nc-partidos-panel"><div class="nc-partidos-bar"><h3>Partidos por jornada y cancha</h3><div class="nc-partidos-dias">${dias.map((d,i)=>`<button type="button" class="nc-partidos-dia ${d===ncDiaFixtureSeleccionado?'activo':''}" data-nc-dia-fixture="${esc(d)}">Jornada ${i+1} · ${esc(d.split('-').reverse().join('/'))}</button>`).join('')}</div></div>
-  <div class="nc-partidos-filtros" aria-label="Filtrar partidos por categoría"><span class="nc-partidos-filtros-label">Mostrar horarios:</span><button type="button" class="nc-partidos-filtro ${ncCategoriaFixtureSeleccionada==='todas'?'activo':''}" data-nc-categoria-fixture="todas" aria-pressed="${ncCategoriaFixtureSeleccionada==='todas'}">Todas</button>${categoriasDia.map(cat=>`<button type="button" class="nc-partidos-filtro ${ncCategoriaFixtureSeleccionada===cat?'activo':''}" data-nc-categoria-fixture="${esc(cat)}" aria-pressed="${ncCategoriaFixtureSeleccionada===cat}"><i style="background:${fxColorCategoria(cat)}" aria-hidden="true"></i>+${esc(cat.replace(/^\+/,''))}</button>`).join('')}</div>${matriz}</section>`;
+  <div class="nc-partidos-filtros" aria-label="Filtrar partidos por categoría"><span class="nc-partidos-filtros-label">Mostrar horarios:</span><button type="button" class="nc-partidos-filtro ${ncCategoriaFixtureSeleccionada==='todas'?'activo':''}" data-nc-categoria-fixture="todas" aria-pressed="${ncCategoriaFixtureSeleccionada==='todas'}">Todas</button>${categoriasDia.map(cat=>`<button type="button" class="nc-partidos-filtro ${ncCategoriaFixtureSeleccionada===cat?'activo':''}" data-nc-categoria-fixture="${esc(cat)}" aria-pressed="${ncCategoriaFixtureSeleccionada===cat}" style="--nc-color-categoria:${fxColorCategoria(cat)}">+${esc(cat.replace(/^\+/,''))}</button>`).join('')}</div>${matriz}</section>`;
 }
 function ncAbrirResultadoDesdeFixture(b){
  let info;try{info=JSON.parse(decodeURIComponent(b.dataset.ncResultado))}catch(e){return}
