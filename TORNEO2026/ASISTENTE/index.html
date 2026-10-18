@@ -305,6 +305,16 @@ body[data-nc-theme="light"] .equipo-edit-modal input[type="file"]::file-selector
 .equipo-edit-modal .as-modal-actions{flex-shrink:0;margin:0!important;padding:15px 26px;border-top:1px solid #e3e8e7;background:#fff;display:flex;justify-content:flex-end;gap:12px}
 .equipo-edit-modal .as-modal-actions button{min-height:43px}
 @media(max-width:650px){.equipo-edit-overlay{padding:8px}.equipo-edit-modal{max-height:calc(100dvh - 16px);border-radius:12px}.equipo-edit-header{padding:15px 17px}.equipo-edit-fields{grid-template-columns:minmax(0,1fr);padding:17px;gap:14px;scrollbar-gutter:auto}.equipo-edit-fields .field{grid-column:1/-1}.equipo-edit-modal .as-modal-actions{padding:12px 17px}.equipo-edit-modal .as-modal-actions button{flex:1;min-width:0}}
+
+/* Tarjetas de partidos: franja lateral en vez de insignia de categoría */
+.nc-partidos-contenido.nc-partidos-con-franja{position:relative;overflow:hidden;padding-left:25px!important;gap:0;background:#222a2d}
+.nc-partidos-contenido.nc-partidos-con-franja::before{content:"";position:absolute;left:0;top:0;bottom:0;width:16px;background:var(--nc-franja);border-radius:7px 0 0 7px}
+.nc-partidos-con-franja .nc-partidos-equipos{min-width:0;width:100%}
+.nc-partidos-referencias{display:flex;flex-wrap:wrap;gap:9px 18px;margin:13px 0 14px;align-items:center;justify-content: flex-end}
+.nc-partidos-referencia{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:#e9f0f3;white-space:nowrap;letter-spacing: 0.5px}
+.nc-partidos-referencia i{display:inline-block;width:12px;height:12px;flex:none}
+@media(max-width:650px){.nc-partidos-contenido.nc-partidos-con-franja{padding-left:22px!important}.nc-partidos-contenido.nc-partidos-con-franja::before{width:12px}.nc-partidos-referencias{gap:8px 12px}}
+.nc-partidos-matriz .nc-partidos-nombre.nc-partidos-ganador{color:#ffe500!important;font-weight:700}
 </style><style>
 /* Ajustes exclusivos de notificaciones registradas */
 .notice { padding: 18px 20px 20px; }
@@ -426,6 +436,7 @@ button.primary,.primary{background:#18864f!important;color:#fff!important;border
 /* Contenido de la portada: misma grilla, fondo claro y tipografía legible. */
 .nc-dashboard,.nc-stats,.nc-columns,.nc-quick-grid{background:transparent!important}
 .nc-feed-item{color:#263142!important}
+ .nc-partidos-click{cursor:pointer;transition:filter .15s,box-shadow .15s} .nc-partidos-click:hover{filter:brightness(1.13);box-shadow:inset 0 0 0 1px #9cf32c} .nc-partidos-click:focus-visible{outline:3px solid #9cf32c;outline-offset:-3px}
 </style>
 <style id="nc-referencia-fidelidad-2026">
 /* Referencia aprobada: superficies blancas, fondo #f2f2f2, verde oscuro. */
@@ -976,7 +987,7 @@ body .equipo-edit-overlay .equipo-edit-modal .as-modal-actions .secondary{backgr
 .as-modal-actions{justify-content:flex-end!important}
 </style><style id="r12-boceto-fiel-20261016">
 #r12ModalDialog.nc-result-editor{width:min(100%,680px)!important;max-height:94vh;overflow-y:auto;border-radius:14px;background:#fff!important;color:#152024!important;box-shadow:0 20px 70px #0005;font-family:Arial,sans-serif;color-scheme:light}
-#r12ModalDialog .r12-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;background:#a3ef32!important;padding:22px 24px 18px;color:#142024!important}
+#r12ModalDialog .r12-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;background:#cecece!important;padding:22px 24px 18px;color:#142024!important}
 #r12ModalDialog .r12-modal-head h2{margin:0 0 7px;font-size:24px;line-height:1.2;font-weight:700;color:#142024!important}
 #r12ModalDialog .r12-modal-head p{margin:0;font-size:17px;color:#142024!important}
 #r12ModalDialog .r12-close{background:#fff!important;color:#334047!important;border:1px solid #e3e9e9!important;border-radius:8px;width:34px;height:34px;min-width:34px;padding:0;font-size:20px;line-height:1}
@@ -1161,6 +1172,128 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
 @media(max-width:1150px){.fx3 .fx3-dia .fx3-campos{grid-template-columns:minmax(0,1fr);gap:12px}.fx3 .fx3-dia .fx3-campos label.field input{flex:0 1 260px}}
 /* Celular: también etiqueta a la izquierda, sin desbordes. */
 @media(max-width:650px){.fx3 .fx3-dia{padding:14px}.fx3 .fx3-dia .fx3-campos label.field{font-size:12px;gap:8px}.fx3 .fx3-dia .fx3-campos label.field input{flex:1 1 100px;min-width:0}}
+</style>
+<style id="nc-vista-fixture-solo-modulo">
+.nc-partidos-panel{margin-bottom:20px;padding:18px;border:1px solid var(--line,#354955);border-radius:14px;background:#191c1d}
+.nc-partidos-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}.nc-partidos-bar h3{margin:0}.nc-partidos-dias{display:flex;gap:7px;flex-wrap:wrap}.nc-partidos-dia{padding:8px 12px;border:1px solid #637985;border-radius:8px;background:transparent;color:inherit;cursor:pointer}.nc-partidos-dia.activo{background:#bbf04a;color:#252c2b}
+.nc-partidos-contenido{display:flex;align-items:center;gap:11px;min-height:94px;background:#20343b}
+.nc-partidos-contenido .nc-partidos-categoria{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;min-width:37px;padding:8px 5px;border-radius:9px;font-weight:800;font-size:12px;opacity:1}
+.nc-partidos-equipos{min-width:0;flex:1;display:flex;flex-direction:column;gap:5px}
+.nc-partidos-contenido .nc-partidos-equipo{display:flex;align-items:center;gap:7px;margin:0;min-width:0;line-height:1.3;letter-spacing: 0.5px}
+.nc-partidos-escudo,.nc-partidos-escudo-vacio{width:25px;height:25px;object-fit:contain;flex:none;display:inline-flex;align-items:center;justify-content:center;font-size:17px}
+@media(max-width:650px){.nc-partidos-contenido{gap:6px}.nc-partidos-escudo,.nc-partidos-escudo-vacio{width:21px;height:21px}}
+.nc-partidos-scroll{overflow-x:auto}.nc-partidos-matriz{display:grid;grid-template-columns:85px repeat(var(--canchas),minmax(155px,1fr));min-width:max-content;gap:5px}.nc-partidos-celda{padding:10px;border-radius:7px;background:rgba(110,140,160,.12);font-size:12px}.nc-partidos-cab{font-weight:700;text-align:center;background:rgba(90,140,160,.25)}.nc-partidos-hora{font-weight:700;text-align:center;align-content: center}.nc-partidos-equipo{margin:5px 0}.nc-partidos-categoria{opacity:.75;font-size:11px}.nc-partidos-vacio{opacity:.45;text-align:center}
+@media(max-width:650px){.nc-partidos-panel{padding:12px}.nc-partidos-matriz{grid-template-columns:65px repeat(var(--canchas),minmax(145px,1fr))}.nc-partidos-celda{padding:8px}}
+
+/* Grilla adaptable sin desplazamiento horizontal */
+.nc-partidos-panel{min-width:0;max-width:100%;overflow:hidden}
+.nc-partidos-scroll{width:100%;max-width:100%;overflow-x:hidden!important;overflow-y:visible}
+.nc-partidos-matriz{width:100%;min-width:0!important;grid-template-columns:minmax(58px,76px) repeat(var(--canchas),minmax(0,1fr))!important;gap:5px}
+.nc-partidos-matriz>.nc-partidos-celda{min-width:0;padding:9px 7px}
+.nc-partidos-matriz .nc-partidos-contenido.nc-partidos-con-franja{padding-left:22px!important;min-width:0}
+.nc-partidos-matriz .nc-partidos-equipo{min-width:0;gap:5px;letter-spacing:0;font-size:clamp(10px,.85vw,13px)}
+.nc-partidos-matriz .nc-partidos-equipo span:last-child{min-width:0;overflow-wrap:anywhere;word-break:normal;line-height:1.25}
+.nc-partidos-matriz .nc-partidos-escudo,.nc-partidos-matriz .nc-partidos-escudo-vacio{width:clamp(17px,1.65vw,25px);height:clamp(17px,1.65vw,25px)}
+.nc-partidos-filtros{display:flex;align-items:center;justify-content:start;gap:7px;flex-wrap:wrap;margin:10px 0 14px}
+.nc-partidos-filtros-label{font-size:12px;opacity:.85;margin-right:3px}
+.nc-partidos-filtro{display:inline-flex;align-items:center;gap:7px;border:1px solid #637985;border-radius:7px;padding:7px 11px;background:transparent;color:inherit;font-size:12px;cursor:pointer}
+.nc-partidos-filtro i{width:10px;height:10px;display:inline-block;border-radius:2px}
+.nc-partidos-filtro.activo{color:#f3f6f7;border-color:rgb(179 179 179);font-weight:700}
+.nc-partidos-filtro:focus-visible{outline:2px solid #bbf04a;outline-offset:2px}
+@media(max-width:900px){.nc-partidos-matriz{grid-template-columns:minmax(47px,58px) repeat(var(--canchas),minmax(0,1fr))!important;gap:3px}.nc-partidos-matriz>.nc-partidos-celda{padding:7px 4px}.nc-partidos-matriz .nc-partidos-contenido.nc-partidos-con-franja{padding-left:15px!important}.nc-partidos-matriz .nc-partidos-con-franja::before{width:9px}.nc-partidos-matriz .nc-partidos-equipo{font-size:10px;gap:3px}.nc-partidos-matriz .nc-partidos-escudo,.nc-partidos-matriz .nc-partidos-escudo-vacio{width:17px;height:17px}}
+@media(max-width:550px){.nc-partidos-matriz .nc-partidos-equipo{flex-direction:column;align-items:flex-start}.nc-partidos-matriz .nc-partidos-contenido{min-height:105px}.nc-partidos-cab{font-size:10px}.nc-partidos-hora{font-size:11px}}
+
+/* Marcador compacto: sets ganados por equipo, visible solo con resultado guardado. */
+.nc-partidos-matriz .nc-partidos-equipo .nc-partidos-nombre{flex:1;min-width:0;overflow-wrap:anywhere}
+.nc-partidos-matriz .nc-partidos-puntos{font-size:11px;color:#f5d85b;text-align:center;letter-spacing:1.15px;white-space:nowrap;margin-top:3px;padding-top:10px;border-top:1px solid rgba(255,255,255,.16)}
+@media(max-width:550px){.nc-partidos-matriz .nc-partidos-puntos{font-size:10px;letter-spacing:0}}
+</style>
+<style id="nc-ajustes-referencias-filete">
+/* Únicamente referencias de categoría en Partidos por jornada y cancha. */
+.nc-partidos-filtro[style*="--nc-color-categoria"]{background:var(--nc-color-categoria)!important;color:#111!important;border-color:var(--nc-color-categoria)!important;font-weight:700}
+.nc-partidos-filtro[style*="--nc-color-categoria"].activo{box-shadow:inset 0 0 0 1px #111}
+/* Rollover de tarjetas: filete fino, sin alterar clic ni selección. */
+.nc-partidos-click:hover{box-shadow:inset 0 0 0 1px #9cf32c}
+</style>
+
+<style id="nc-resultados-redisenio-20261018">
+/* Nuevo diseño compartido: carga y corrección. Solo presentación; se conservan IDs y lógica. */
+#r12ModalDialog.nc-result-editor{width:min(1080px,100%)!important;border-radius:20px!important;max-height:94dvh!important}
+#r12ModalDialog .r12-modal-head{position:relative;display:block;background:#fff!important;padding:28px 32px 12px!important}
+#r12ModalDialog .r12-modal-head h2{font-size:29px!important;letter-spacing:-.5px;margin:0 0 2px!important}
+#r12ModalDialog .r12-modal-head .r12-category{font-size:19px!important;font-weight:600;margin:0 0 20px!important}
+#r12ModalDialog .r12-head-content{padding-right:45px}
+#r12ModalDialog .r12-versus{display:grid;grid-template-columns:minmax(0,1fr) 45px minmax(0,1fr);gap:14px;align-items:center;padding:14px 0 5px;border-top:1px solid #edf0f0}
+#r12ModalDialog .r12-versus strong{font-size:20px;overflow-wrap:anywhere}
+#r12ModalDialog .r12-versus strong:last-child{text-align:right}
+#r12ModalDialog .r12-versus span{font-weight:800;color:#78848c;text-align:center}
+#r12ModalDialog .r12-close{position:absolute;right:27px;top:26px;width:40px;height:40px;border-radius:50%!important;background:#f1f4f6!important;font-size:23px}
+#r12ModalDialog .r12-modal-body{padding:12px 32px 30px!important}
+#r12ModalDialog .r12-info{padding:15px 18px!important;font-size:14px!important}
+#r12ModalDialog .r12-sets{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px!important;margin:17px 0!important}
+#r12ModalDialog .r12-set{display:flex!important;flex-direction:column;border-radius:13px!important}
+#r12ModalDialog .r12-set-name{min-height:49px;padding:12px!important;font-size:17px!important}
+#r12ModalDialog .r12-set-fields{padding:15px 13px!important;gap:13px!important;flex:1}
+#r12ModalDialog .r12-set-fields label{gap:8px!important;font-size:15px!important}
+#r12ModalDialog .r12-set-fields input{width:82px!important;min-width:65px!important;max-width:82px!important;font-size:16px!important;padding:10px 8px!important;text-align:center}
+#r12ModalDialog .r12-reason{font-size:15px!important;font-weight:700;margin:18px 0!important}
+#r12ModalDialog .r12-reason textarea{font-weight:400;min-height:80px;font-size:14px!important;padding:13px!important;border-radius:9px!important}
+#r12ModalDialog .r12-validation{padding:13px 17px!important}
+#r12ModalDialog .r12-buttons{margin-top:20px!important}
+#r12ModalDialog .r12-buttons button{font-size:15px!important;padding:13px 20px!important}
+#r12ModalDialog .r12-buttons .primary:disabled{opacity:.55!important}
+@media(max-width:760px){
+ #r12ModalDialog .r12-sets{grid-template-columns:1fr!important;gap:10px!important}
+ #r12ModalDialog .r12-set{display:grid!important;grid-template-columns:95px minmax(0,1fr)!important}
+ #r12ModalDialog .r12-set-name{min-height:100%;font-size:15px!important}
+ #r12ModalDialog .r12-set-fields{padding:9px 12px!important;gap:7px!important}
+ #r12ModalDialog .r12-modal-head{padding:22px 20px 10px!important}
+ #r12ModalDialog .r12-modal-body{padding:12px 20px 23px!important}
+ #r12ModalDialog .r12-close{right:17px;top:18px}
+ #r12ModalDialog .r12-modal-head h2{font-size:23px!important}
+ #r12ModalDialog .r12-versus strong{font-size:16px}
+}
+@media(max-width:420px){
+ #r12ModalDialog .r12-modal-head{padding:17px 14px 8px!important}
+ #r12ModalDialog .r12-modal-body{padding:10px 13px 18px!important}
+ #r12ModalDialog .r12-set{grid-template-columns:76px minmax(0,1fr)!important}
+ #r12ModalDialog .r12-set-fields input{width:73px!important;min-width:60px!important}
+ #r12ModalDialog .r12-versus{gap:6px;grid-template-columns:minmax(0,1fr) 30px minmax(0,1fr)}
+ #r12ModalDialog .r12-buttons button{font-size:13px!important;padding:12px!important}
+}
+</style>
+
+<style id="r12-ajuste-escudos-compacto">
+#r12ModalDialog.nc-result-editor{width:min(820px,calc(100vw - 28px))!important;max-width:820px!important;border-radius:18px!important}
+#r12ModalDialog .r12-modal-head{padding:23px 26px 8px!important}
+#r12ModalDialog .r12-modal-head h2{font-size:26px!important}
+#r12ModalDialog .r12-modal-head .r12-category{font-size:17px!important;margin-bottom:12px!important}
+#r12ModalDialog .r12-modal-body{padding:10px 26px 24px!important}
+#r12ModalDialog .r12-versus{border-top:0!important;grid-template-columns:minmax(0,1fr) 32px minmax(0,1fr)!important;gap:8px!important;padding:6px 0 8px!important}
+#r12ModalDialog .r12-versus strong{font-size:18px!important}
+#r12ModalDialog .r12-versus-team{display:flex;align-items:center;gap:10px;min-width:0}
+#r12ModalDialog .r12-versus-away{justify-content:flex-end;text-align:right}
+#r12ModalDialog .r12-team-shield{width:34px;height:38px;object-fit:contain;flex-shrink:0}
+#r12ModalDialog .r12-team-shield-empty{width:34px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-size:25px}
+#r12ModalDialog .r12-team-label{display:flex;align-items:center;gap:7px;min-width:0;overflow-wrap:anywhere}
+#r12ModalDialog .r12-team-label .r12-team-shield{width:24px;height:27px}
+#r12ModalDialog .r12-team-label .r12-team-shield-empty{width:24px;font-size:18px}
+#r12ModalDialog .r12-sets{gap:10px!important;margin:13px 0!important}
+#r12ModalDialog .r12-set-fields{padding:12px 10px!important;gap:10px!important}
+#r12ModalDialog .r12-set-fields label{font-size:14px!important;gap:5px!important}
+#r12ModalDialog .r12-set-fields input{width:67px!important;min-width:58px!important;max-width:67px!important;padding:8px 4px!important}
+#r12ModalDialog .r12-set-name{min-height:43px!important;padding:9px!important}
+#r12ModalDialog .r12-close{display:flex!important;align-items:center;justify-content:center;right:22px!important;top:21px!important;width:38px!important;height:38px!important;border-radius:50%!important;color:#101820!important;background:#f1f4f7!important;padding:0!important}
+#r12ModalDialog .r12-close svg{display:block;flex:none}
+@media(max-width:760px){#r12ModalDialog .r12-sets{grid-template-columns:1fr!important}#r12ModalDialog .r12-set-fields{padding:10px!important}#r12ModalDialog .r12-modal-head{padding:20px 18px 8px!important}#r12ModalDialog .r12-modal-body{padding:10px 18px 22px!important}#r12ModalDialog .r12-versus strong{font-size:15px!important}#r12ModalDialog .r12-team-shield{width:27px;height:30px}#r12ModalDialog .r12-close{right:15px!important;top:16px!important}}
+@media(max-width:420px){#r12ModalDialog .r12-versus-team{gap:5px}#r12ModalDialog .r12-team-label .r12-team-shield{width:21px;height:24px}#r12ModalDialog .r12-set-fields label{font-size:13px!important}}
+</style>
+<style>
+.nc-reprog-fields[hidden],.nc-reprog-retraso[hidden],.nc-reprog-conflictos[hidden]{display:none!important}.nc-reprog-modos{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}.nc-reprog-modos button{border:1px solid #c9d2db;background:#f5f7fa;color:#17487f;border-radius:8px;padding:9px 11px;cursor:pointer}.nc-reprog-modos button.activo{background:#17487f;color:white}.nc-reprog-retraso{background:#f1f5f8;border-radius:9px;padding:14px;margin:12px 0}.nc-reprog-retraso label{display:block;font-weight:700}.nc-reprog-retraso input{display:block;width:110px;margin-top:6px;padding:8px;border:1px solid #aab5c0;border-radius:6px}.nc-reprog-retraso p,.nc-reprog-resumen{font-size:13px}.nc-reprog-resumen{font-weight:700}
+</style>
+<style id="nc-ux-fixture-25">
+.nc-ux-config{margin-bottom:20px}.nc-ux-config-detalle{overflow:hidden;background:rgba(120,145,150,.06)}
+.nc-ux-config-cabecera{display:flex;align-items:center;gap:14px;cursor:pointer;list-style:none;margin-bottom:15px}.nc-ux-config-cabecera::-webkit-details-marker{display:none}.nc-ux-config-cabecera:focus-visible{outline:3px solid #00a357;outline-offset:-3px}.nc-ux-config-numero{display:inline-grid;place-items:center;flex:none;width:36px;height:36px;border-radius:50%;background:#a3ef32;color:#191d1f;font-weight:700}.nc-ux-config-textos{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}.nc-ux-config-textos strong{font-size:20px}.nc-ux-config-textos small{font-size:13px;line-height:1.45;opacity:.8}.nc-ux-config-estado{font-size:12px;font-weight:500;padding:7px 10px;border:1px solid currentColor;border-radius:12px;white-space:nowrap}.nc-ux-config-estado:after{content:' ▾'}.nc-ux-config-detalle[open] .nc-ux-config-estado:after{content:' ▴'}.nc-ux-config-contenido{padding:0 16px 16px}.nc-ux-partidos-encabezado{display:flex;align-items:flex-start;gap:14px;margin:12px 0 23px}.nc-ux-partidos-encabezado h2{margin:0 0 5px;font-size:20px}.nc-ux-partidos-encabezado p{margin:0;font-size:13px;opacity:.8;line-height:1.5}@media(max-width:650px){.nc-ux-config-cabecera{padding:14px 12px;gap:10px;flex-wrap:wrap}.nc-ux-config-estado{margin-left:46px}.nc-ux-config-textos strong{font-size:15px}.nc-ux-config-contenido{padding:0 8px 10px}}
 </style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
@@ -1524,7 +1657,7 @@ function confirmarGuardarFixture(){
   mostrarDialogoZonas({titulo:'Confirmar fixture definitivo',detalle:fixture.length+' partidos · '+settings.edicion+' '+settings.anio,advertencia:(existe?'Ya existe un fixture confirmado. Se reemplazará el fixture anterior. ':'Se guardará el fixture por primera vez. ')+'No se publican partidos en la aplicación de jugadores.'}).then(ok=>{
    if(!ok){if(boton)boton.disabled=false;return}
    const payload={anio:settings.anio,edicion:settings.edicion,canchas:settings.canchas,duracion:settings.duracion,intervalo:settings.intervalo,fechas:programaFechas(),horarios:ventanasTorneo(),partidos:fixture.map(p=>({...p})),huella:snapshot.huella,huellaZonas:fixtureZonasHuella,reemplazar:existe};
-   google.script.run.withSuccessHandler(r=>{if(boton)boton.disabled=false;mostrarDialogoZonas({titulo:'Fixture guardado',detalle:r.guardados+' partidos confirmados',advertencia:'Cambios guardados correctamente.',soloAceptar:true});}).withFailureHandler(e=>{if(boton)boton.disabled=false;mostrarDialogoZonas({titulo:'No se guardó el fixture',detalle:'Revisá los datos',advertencia:String(e.message||e),soloAceptar:true})}).adminFixture11Guardar(payload);
+   google.script.run.withSuccessHandler(r=>{if(boton)boton.disabled=false;google.script.run.withSuccessHandler(actualizado=>{fixtureSnapshot=actualizado;fx3Paso=2;render();const configuracion=document.querySelector('.nc-ux-config-detalle');if(configuracion)configuracion.open=false;document.querySelector('.nc-ux-partidos')?.scrollIntoView({behavior:'smooth',block:'start'});mostrarDialogoZonas({titulo:'Fixture guardado',detalle:r.guardados+' partidos confirmados',advertencia:'La grilla muestra la programación confirmada.',soloAceptar:true});}).withFailureHandler(e=>{mostrarDialogoZonas({titulo:'Fixture guardado',detalle:r.guardados+' partidos confirmados',advertencia:'Se guardó, pero no se pudo actualizar la grilla: '+String(e.message||e),soloAceptar:true});}).adminFixture11Snapshot();}).withFailureHandler(e=>{if(boton)boton.disabled=false;mostrarDialogoZonas({titulo:'No se guardó el fixture',detalle:'Revisá los datos',advertencia:String(e.message||e),soloAceptar:true})}).adminFixture11Guardar(payload);
   });
  }).withFailureHandler(e=>{if(boton)boton.disabled=false;mostrarDialogoZonas({titulo:'No se pudo comprobar el fixture',detalle:'Error de consulta',advertencia:String(e.message||e),soloAceptar:true})}).adminFixture11Snapshot();
 }
@@ -1571,7 +1704,7 @@ function fxEtiquetaCategoria(categoria){
 function renderFixtureEtapa10(){const f=programaFechas();const confirmadas=zonasConfirmadasFixture();const errores=fixture.length?validarFixtureEtapa10():[];
  const dias=['Viernes','Sábado','Domingo'];
  const fechaCampos=dias.map((dia,i)=>`<label class="field">${dia} · ${ventanasTorneo()[i].join(' a ')}<input type="date" id="et10date${i}" value="${esc(f[i]||'')}"></label>`).join('');
- const info=`<p class="muted">Los partidos se generan exclusivamente a partir de las zonas confirmadas. Primero se asignan automáticamente los horarios y las canchas; después podés corregirlos. Esta etapa NO publica partidos.</p>${fxRenderModos()}<div class="form fechas-torneo-grid">${fechaCampos}</div><p class="status"><span id="fxZonasConfirmadas">${confirmadas.length}</span> zonas confirmadas consultadas · ${settings.canchas} canchas · ${Number(settings.duracion)+Number(settings.intervalo)} minutos por turno</p><div class="toolbar"><button class="secondary" id="et10Refresh">Actualizar zonas confirmadas</button><button class="primary" id="et10Generate">Generar y distribuir partidos</button><button class="secondary" id="et10Otra" ${fixture.length?'':'disabled'}>Generar otra propuesta</button><button class="secondary" id="et11Refresh">Consultar fixture guardado</button><button class="primary" id="et11Save" ${fixture.length&&!errores.length?'':'disabled'}>Confirmar y guardar fixture</button><button class="secondary" id="et10CSV" ${fixture.length?'':'disabled'}>Descargar fixture borrador</button></div><div role="alert" class="fx-important-alert"><strong>Importante:</strong> Primero seleccioná <strong>Actualizar zonas confirmadas</strong> y después <strong>Generar y distribuir partidos</strong> para asignar los horarios y las canchas con los datos más recientes.</div>${fxResumenPropuesta?`<div class="fx-propuesta">${esc(fxResumenPropuesta)}</div>`:''}<div class="notice fx-fixture-notice">${fixture.length?fixture.length+' partidos en borrador. '+(errores.length?errores.length+' observaciones por revisar.':'Sin conflictos de superposición detectados.'):'Todavía no hay partidos generados.'}</div>`;
+ const info=`<p class="muted">Los partidos se generan exclusivamente a partir de las zonas confirmadas. Primero se asignan automáticamente los horarios y las canchas; después podés corregirlos. Esta etapa NO publica partidos.</p>${fxRenderModos()}<div class="form fechas-torneo-grid">${fechaCampos}</div><p class="status"><span id="fxZonasConfirmadas">${confirmadas.length}</span> zonas confirmadas consultadas · ${settings.canchas} canchas · ${Number(settings.duracion)+Number(settings.intervalo)} minutos por turno</p><div class="toolbar"><button class="secondary" id="et10Refresh">Actualizar zonas confirmadas</button><button class="primary" id="et10Generate">Generar y distribuir partidos</button><button class="secondary" id="et10Otra" ${fixture.length?'':'disabled'}>Generar otra propuesta</button><button class="secondary" id="et10Limpiar" ${fixture.length?'':'disabled'}>Limpiar fixture borrador</button><button class="secondary" id="et11Refresh">Consultar fixture guardado</button><button class="primary" id="et11Save" ${fixture.length&&!errores.length?'':'disabled'}>Confirmar y guardar fixture</button><button class="secondary" id="et10CSV" ${fixture.length?'':'disabled'}>Descargar fixture borrador</button></div><div role="alert" class="fx-important-alert"><strong>Importante:</strong> Primero seleccioná <strong>Actualizar zonas confirmadas</strong> y después <strong>Generar y distribuir partidos</strong> para asignar los horarios y las canchas con los datos más recientes.</div>${fxResumenPropuesta?`<div class="fx-propuesta">${esc(fxResumenPropuesta)}</div>`:''}<div class="notice fx-fixture-notice">${fixture.length?fixture.length+' partidos en borrador. '+(errores.length?errores.length+' observaciones por revisar.':'Sin conflictos de superposición detectados.'):'Todavía no hay partidos generados.'}</div>`;
    const filtroCat=fxCategoriaSeleccionada,filtroDia=fxDiaSeleccionado;
   const selector=`<div class="fx-filtros"><label><select aria-label="Categoría" id="fxFiltroCat" style="background:${filtroCat==='todas'?'#fff':fxFondoCategoria(filtroCat)};color:#111"><option value="todas" ${filtroCat==='todas'?'selected':''}>Todas las categorías</option>${[...new Set([...catList,...fixture.map(p=>fxCategoriaNormalizada(p.categoria)).filter(c=>c!=='todas')])].map(c=>`<option value="${c}" ${filtroCat===c?'selected':''}>${c}</option>`).join('')}</select></label><label><select aria-label="Día" id="fxFiltroDia"><option value="todos" ${filtroDia==='todos'?'selected':''}>Todas las jornadas</option>${f.map((fecha,i)=>`<option value="${esc(fecha)}" ${filtroDia===fecha?'selected':''}>${dias[i]} ${esc(fecha)}</option>`).join('')}</select></label></div>`;
   const fechaBonita=fecha=>{try{return new Date(fecha+'T12:00:00').toLocaleDateString('es-AR',{day:'numeric',month:'long',year:'numeric'})}catch(e){return fecha}};
@@ -1587,7 +1720,7 @@ function renderFixtureEtapa10(){const f=programaFechas();const confirmadas=zonas
 const alertas=errores.length?`<div class="notice"><strong>Revisar antes de publicar</strong><ul>${errores.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'<p class="status">'+(fixture.length?'No se detectaron conflictos de superposición.':'El control se activará al generar partidos.')+'</p>';
  return panel('Programación automática y edición manual',info)+panel('Partidos y horarios',tabla)+panel('Validación de la programación',alertas);
 }
-function activarFixtureEtapa10(){const sr=$('#et11Refresh');if(sr)sr.onclick=consultarFixtureConfirmado;const sb=$('#et11Save');if(sb)sb.onclick=confirmarGuardarFixture;const r=$('#et10Refresh');if(r)r.onclick=consultarZonas;const g=$('#et10Generate');if(g)g.onclick=generarFixtureAutomatico;const otra=$('#et10Otra');if(otra)otra.onclick=generarFixtureAutomatico;document.querySelectorAll('[name=fxModo]').forEach(el=>el.onchange=()=>{fxModoDistribucion=el.value;fxResumenPropuesta='';render()});document.querySelectorAll('[data-fx-reserva]').forEach(el=>el.onchange=()=>{const comp=el.dataset.fxReserva;const lista=new Set(fxReservas[comp]||[]);if(el.checked)lista.add(el.value);else lista.delete(el.value);fxReservas[comp]=[...lista].sort((a,b)=>Number(a)-Number(b));});const c=$('#et10CSV');if(c)c.onclick=downloadFixtureCSV;document.querySelectorAll('[data-fi]').forEach(el=>el.onchange=()=>{fixture[Number(el.dataset.fi)][el.dataset.key]=el.value;saveDraft();render()});const fc=$('#fxFiltroCat');if(fc)fc.onchange=()=>{fxCategoriaSeleccionada=fc.value;render()};const fd=$('#fxFiltroDia');if(fd)fd.onchange=()=>{fxDiaSeleccionado=fd.value;render()};document.querySelectorAll('[data-fx-publicar]').forEach(b=>b.onclick=()=>{const day=b.dataset.fxPublicar;const target=$('#fxPublicacion');if(!target)return;target.innerHTML='<div class="panel"><h2>Revisión previa de publicación · '+esc(day)+'</h2><div id="dayPreview"></div></div>';const old=document.getElementById('dayToPublish');if(old)old.value=day;else{const input=document.createElement('input');input.type='hidden';input.id='dayToPublish';input.value=day;target.prepend(input)}exportDayPreview();target.scrollIntoView({behavior:'smooth',block:'start'});});}
+function activarFixtureEtapa10(){const sr=$('#et11Refresh');if(sr)sr.onclick=consultarFixtureConfirmado;const sb=$('#et11Save');if(sb)sb.onclick=confirmarGuardarFixture;const r=$('#et10Refresh');if(r)r.onclick=consultarZonas;const g=$('#et10Generate');if(g)g.onclick=generarFixtureAutomatico;const otra=$('#et10Otra');if(otra)otra.onclick=generarFixtureAutomatico;const limpiar=$('#et10Limpiar');if(limpiar)limpiar.onclick=async()=>{if(!fixture.length)return;const ok=await dialogoEquipo('Limpiar fixture borrador','Se eliminarán solamente los partidos del borrador guardado en este navegador. Se conservarán los equipos, las zonas y la configuración. No se modificará Google Sheets ni el fixture confirmado. ¿Continuar?',true);if(!ok)return;fixture=[];fxResumenPropuesta='';saveDraft();render();};document.querySelectorAll('[name=fxModo]').forEach(el=>el.onchange=()=>{fxModoDistribucion=el.value;fxResumenPropuesta='';render()});document.querySelectorAll('[data-fx-reserva]').forEach(el=>el.onchange=()=>{const comp=el.dataset.fxReserva;const lista=new Set(fxReservas[comp]||[]);if(el.checked)lista.add(el.value);else lista.delete(el.value);fxReservas[comp]=[...lista].sort((a,b)=>Number(a)-Number(b));});const c=$('#et10CSV');if(c)c.onclick=downloadFixtureCSV;document.querySelectorAll('[data-fi]').forEach(el=>el.onchange=()=>{fixture[Number(el.dataset.fi)][el.dataset.key]=el.value;saveDraft();render()});const fc=$('#fxFiltroCat');if(fc)fc.onchange=()=>{fxCategoriaSeleccionada=fc.value;render()};const fd=$('#fxFiltroDia');if(fd)fd.onchange=()=>{fxDiaSeleccionado=fd.value;render()};document.querySelectorAll('[data-fx-publicar]').forEach(b=>b.onclick=()=>{const day=b.dataset.fxPublicar;const target=$('#fxPublicacion');if(!target)return;target.innerHTML='<div class="panel"><h2>Revisión previa de publicación · '+esc(day)+'</h2><div id="dayPreview"></div></div>';const old=document.getElementById('dayToPublish');if(old)old.value=day;else{const input=document.createElement('input');input.type='hidden';input.id='dayToPublish';input.value=day;target.prepend(input)}exportDayPreview();target.scrollIntoView({behavior:'smooth',block:'start'});});}
 function roundRobin(names){let a=[...names];if(a.length%2)a.push(null);const rounds=[];for(let r=0;r<a.length-1;r++){const matches=[];for(let i=0;i<a.length/2;i++){if(a[i]&&a[a.length-1-i])matches.push([a[i],a[a.length-1-i]])}rounds.push(matches);a=[a[0],a[a.length-1],...a.slice(1,-1)]}return rounds}async function generateFixture(){const all=[];for(const cat of catList){for(const z of zones[cat]||[]){roundRobin(z.equipos).forEach((round,r)=>round.forEach(([local,visitante])=>all.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),categoria:cat,zona:z.nombre,ronda:r+1,local,visitante,fecha:'',hora:'',cancha:''})))}}if(!all.length){avisoIntegrado('Primero sorteá las zonas.');return}if(fixture.length&&!await dialogoEquipo('Confirmación','¿Reemplazar el fixture borrador existente?',true))return;fixture=all;saveDraft();render()}async function importTournamentJSON(raw){let data;try{data=JSON.parse(raw)}catch(e){avisoIntegrado('El archivo no contiene JSON válido.');return}if(!data||!Array.isArray(data.equipos)){avisoIntegrado('Se necesita una respuesta con la propiedad equipos (lista).');return}const incoming=data.equipos.filter(x=>x&&x.equipo&&x.categoria).map(x=>({nombre:String(x.equipo).trim(),categoria:String(x.categoria).trim().startsWith('+')?String(x.categoria).trim():'+'+String(x.categoria).trim(),localidad:String(x.ciudad||''),dt:'',telefono:'',hombres:0,mujeres:0}));if(!incoming.length){avisoIntegrado('No hay equipos válidos para importar.');return}if(!await dialogoEquipo('Confirmación','Se importarán '+incoming.length+' equipos a este navegador. Se reemplazarán los equipos del borrador y se limpiarán sus zonas y fixture. La tabla no se modificará. ¿Continuar?',true))return;teams=incoming;zones={};fixture=[];if(data.config&&typeof data.config==='object'){const c=data.config;const year=Number(c.anio||c.anio_torneo||c.ano);if(year>=2020&&year<=2100)settings.anio=year;}saveDraft();render();avisoIntegrado('Importados '+incoming.length+' equipos. Los campos de DT y jugadores quedan pendientes de completar.')}function importJSONFile(input){const f=input.files&&input.files[0];if(!f)return;f.text().then(importTournamentJSON).catch(()=>avisoIntegrado('No se pudo leer el archivo.'));input.value=''}async function importJSONURL(){const el=document.getElementById('sourceURL');const url=el?.value.trim()||'';if(!/^https:\/\//i.test(url)){avisoIntegrado('Ingresá una dirección HTTPS válida.');return}try{const response=await fetch(url,{redirect:'follow'});if(!response.ok)throw new Error('HTTP '+response.status);await importTournamentJSON(await response.text())}catch(e){avisoIntegrado('No fue posible leer la URL desde este navegador (puede deberse a restricciones CORS del servicio). Alternativa: guardá el JSON en un archivo y usá Importar archivo. '+e.message)}}
 
 
@@ -2360,7 +2493,7 @@ function resultados12Leer(){
  if(!window.google?.script?.run){mostrarDialogoZonas({titulo:'Sin conexión',detalle:'Abrí el Asistente privado',advertencia:'Los resultados no están disponibles en este momento.',soloAceptar:true});return}
  if(resultados12Cargando)return;
  resultados12Cargando=true;const estado=$('#r12Estado');if(estado)estado.textContent='Actualizando partidos y resultados...';
- google.script.run.withSuccessHandler(d=>{resultados12Cargando=false;resultados12Datos=d;if(active==='resultados'||active==='posiciones'||active==='resumen')render()}).withFailureHandler(e=>{resultados12Cargando=false;const msg=String(e.message||e);const st=$('#r12Estado');if(st)st.textContent='Error: '+msg;mostrarDialogoZonas({titulo:'No se pudieron consultar los resultados',detalle:'No se modificó ningún dato',advertencia:msg,soloAceptar:true})}).adminResultados12Consultar();
+ google.script.run.withSuccessHandler(d=>{resultados12Cargando=false;resultados12Datos=d;ncResultadosPrecarga=d;ncResultadosPrecargaHora=Date.now();if(active==='resultados'||active==='posiciones'||active==='resumen'||active==='fixture')render()}).withFailureHandler(e=>{resultados12Cargando=false;const msg=String(e.message||e);const st=$('#r12Estado');if(st)st.textContent='Error: '+msg;mostrarDialogoZonas({titulo:'No se pudieron consultar los resultados',detalle:'No se modificó ningún dato',advertencia:msg,soloAceptar:true})}).adminResultados12Consultar();
 }
 function resultados12Marcador(a,b,tie=false){
  if(a===''||b==='')return {estado:'incompleto'};
@@ -2437,6 +2570,7 @@ function diagnostico28Render(){
  const detalle=d?`<p class="muted">Última revisión: ${esc(d.fecha||'')} · Solo lectura</p><div class="tablewrap"><table><thead><tr><th>Hoja</th><th>Estado</th><th>Registros</th></tr></thead><tbody>${Object.entries(hojas).map(([nombre,h])=>`<tr><td>${esc(nombre)}</td><td>${esc(h.existe?(h.faltantes?.length?'Columnas faltantes':'Disponible'):'No existe')}</td><td>${esc(String(h.filas??0))}</td></tr>`).join('')}</tbody></table></div>${d.problemas?.length?`<ul>${d.problemas.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`:'<p>No se detectaron problemas en las verificaciones disponibles.</p>'}`:'<p class="muted">Todavía no se ejecutó el diagnóstico.</p>';
  return panel('Diagnóstico de integridad',`<p class="muted" style="font-size:12px;line-height:1.55;margin:0 0 12px">Esta herramienta comprueba la coherencia de la información del torneo. Revisa los partidos programados, los resultados registrados y los antecedentes de auditoría para identificar posibles inconsistencias, datos incompletos, duplicaciones o diferencias entre registros. Permite detectar situaciones que requieren revisión antes de continuar con la organización del torneo. Es una herramienta de consulta: no modifica, elimina ni corrige automáticamente ningún dato.</p><div class="toolbar"><button class="secondary" id="diagnostico28Actualizar" ${diagnostico28Cargando?'disabled':''}>${diagnostico28Cargando?'Revisando…':'Ejecutar diagnóstico'}</button><span class="status">${esc(estado)}</span></div>${detalle}`);
 }
+function nombreNormal(n){return String(n||'').trim().toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ')}
 function resultados12Render(){
  const partidos=resultados12Partidos();const seleccion=partidos.find(p=>resultados12Clave(p)===resultados12Seleccion)||null;
  const filtrados=partidos.filter(p=>resultados12Filtro==='todas'||'+'+String(p.categoria).replace(/^\+/,'')===resultados12Filtro);
@@ -2446,16 +2580,17 @@ function resultados12Render(){
  if(seleccion){
   const r=resultados12Existente(seleccion);
   const v=(key,i)=>esc(r?.[key]?.[i]??'');
-  const set=(nombre,id,a)=>`<section class="r12-set"><div class="r12-set-name ${nombre==='Set 1'?'r12-set-one':nombre==='Set 2'?'r12-set-two':'r12-set-tb'}">${nombre}</div><div class="r12-set-fields"><label><span>${esc(seleccion.local)}</span><input type="number" min="0" max="${nombre==='Tie Break'?12:17}" id="r12${id}l" value="${v(a,0)}" placeholder="Puntos" style="background:#f3f6f7!important;background-color:#f3f6f7!important;color:#17202b!important;-webkit-text-fill-color:#17202b!important;color-scheme:light!important"></label><label><span>${esc(seleccion.visitante)}</span><input type="number" min="0" max="${nombre==='Tie Break'?12:17}" id="r12${id}v" value="${v(a,1)}" placeholder="Puntos" style="background:#f3f6f7!important;background-color:#f3f6f7!important;color:#17202b!important;-webkit-text-fill-color:#17202b!important;color-scheme:light!important"></label></div></section>`;
+  const nombreNormal=n=>String(n||'').trim().toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ');
+  const escudoResultado=n=>{const t=teams.find(t=>nombreNormal(t.nombre||t.equipo)===nombreNormal(n)&&String(t.categoria||'').replace(/^\+/,'')===String(seleccion.categoria||'').replace(/^\+/,''))||teams.find(t=>nombreNormal(t.nombre||t.equipo)===nombreNormal(n));return t?.escudo?`<img class="r12-team-shield" src="${esc(t.escudo)}" alt="">`:'<span class="r12-team-shield-empty" aria-hidden="true">🛡️</span>'};
+  const set=(nombre,id,a)=>`<section class="r12-set"><div class="r12-set-name ${nombre==='Set 1'?'r12-set-one':nombre==='Set 2'?'r12-set-two':'r12-set-tb'}">${nombre}</div><div class="r12-set-fields"><label><span class="r12-team-label">${escudoResultado(seleccion.local)}${esc(seleccion.local)}</span><input type="number" min="0" max="${nombre==='Tie Break'?12:17}" id="r12${id}l" value="${v(a,0)}" placeholder="Puntos" style="background:#f3f6f7!important;background-color:#f3f6f7!important;color:#17202b!important;-webkit-text-fill-color:#17202b!important;color-scheme:light!important"></label><label><span class="r12-team-label">${escudoResultado(seleccion.visitante)}${esc(seleccion.visitante)}</span><input type="number" min="0" max="${nombre==='Tie Break'?12:17}" id="r12${id}v" value="${v(a,1)}" placeholder="Puntos" style="background:#f3f6f7!important;background-color:#f3f6f7!important;color:#17202b!important;-webkit-text-fill-color:#17202b!important;color-scheme:light!important"></label></div></section>`;
   const infoIcon='<span class="r12-info-icon" aria-hidden="true">!</span>';
   const warnIcon='<span class="r12-warn-icon" aria-hidden="true">!</span>';
   editor=`<div id="r12ModalOverlay" class="as-modal-overlay" role="presentation" style="padding:12px;z-index:100001"><div id="r12ModalDialog" class="nc-result-editor" role="dialog" aria-modal="true" aria-label="${r?'Corregir':'Cargar'} resultado">
-    <div class="r12-modal-head"><div><h2>${r?'Corregir':'Cargar'} resultado · +${esc(String(seleccion.categoria).replace(/^\+/,''))} · ${esc(seleccion.genero||'Mixto')}</h2><p>${esc(seleccion.local)} vs ${esc(seleccion.visitante)}</p></div><button type="button" id="r12Cerrar" class="r12-close" aria-label="Cerrar">×</button></div>
+    <div class="r12-modal-head"><div class="r12-head-content"><h2>${r?'Corregir':'Cargar'} resultado</h2><p class="r12-category">+${esc(String(seleccion.categoria).replace(/^\+/,''))} · ${esc(seleccion.genero||'Mixto')}</p><div class="r12-versus"><strong class="r12-versus-team">${escudoResultado(seleccion.local)}${esc(seleccion.local)}</strong><span>VS</span><strong class="r12-versus-team r12-versus-away">${esc(seleccion.visitante)}${escudoResultado(seleccion.visitante)}</strong></div></div><button type="button" id="r12Cerrar" class="r12-close" aria-label="Cerrar"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" fill="none" stroke="currentColor" stroke-width="3.8" stroke-linecap="round"/></svg></button></div>
     <div class="r12-modal-body"><div class="r12-info">${infoIcon}<span>Los dos primeros sets son a 15 (máximo 17); el Tie Break es a 10 (máximo 12). En el último punto del límite se permite diferencia de uno.</span></div>
     <div class="r12-sets">${set('Set 1','s1','set1')}${set('Set 2','s2','set2')}${set('Tie Break','tb','tiebreak')}</div>
     ${r?'<label class="r12-reason">Motivo de la corrección *<textarea id="r12Motivo" maxlength="500" rows="2" placeholder="Explicá por qué se modifica el resultado"></textarea></label>':''}
     <div class="r12-validation">${infoIcon}<span id="r12Validacion" class="status" aria-live="polite">Completá los dos sets regulares con marcadores válidos.</span></div>
-    <div class="r12-warning">${warnIcon}<span>Los resultados se guardan al confirmar.<br>No se publican automáticamente en la aplicación pública.</span></div>
     <div class="r12-buttons"><button type="button" class="secondary" id="r12Cancelar">Cancelar</button><button type="button" class="primary" id="r12Guardar" disabled>${r?'Confirmar corrección':'Confirmar y guardar resultado'}</button></div>
     </div></div></div>`;
  }
@@ -2508,8 +2643,14 @@ async function resultados12Guardar(){
    error(new Error('El partido o su resultado original cambió desde que abriste el editor. Actualizá y revisá antes de corregir.'),true);return;
   }
   google.script.run.withSuccessHandler(async r=>{
-   terminar();resultados12Seleccion='';resultados12Leer();
+   terminar();
+   // El guardado ya fue confirmado por el servidor. Mostrar la confirmación sin esperar una nueva lectura.
    await mostrarDialogoZonas({titulo:anterior?'Resultado corregido':'Resultado guardado',detalle:r.ganador+' · '+r.sets+' sets',advertencia:anterior?'Corrección registrada en HISTORIAL.':'Resultado confirmado correctamente.',soloAceptar:true});
+   // Al aceptar, cerrar también el editor de resultados, incluso si fue abierto desde la grilla.
+   resultados12Seleccion='';
+   document.querySelector('#r12ModalOverlay')?.remove();
+   ncResultadosPrecarga=null;ncResultadosPrecargaHora=0;
+   resultados12Leer();
   }).withFailureHandler(e=>error(e,/cambiaron|cambi[oó]|actualiz|cruces/i.test(String(e?.message||e)))).adminResultados12Guardar({partido,resultado:v.resultado,huella:fresco.huella,huellaFixture:fresco.huellaFixture,reemplazar:!!anterior,motivo});
  }).withFailureHandler(e=>error(e)).adminResultados12Consultar();
 }
@@ -2591,7 +2732,276 @@ try{ncJuegoItems=JSON.parse(localStorage.getItem(NC_JUEGO_KEY)||'[]');if(!Array.
 function ncJuegoGuardar(){try{localStorage.setItem(NC_JUEGO_KEY,JSON.stringify(ncJuegoItems));return true}catch(e){alert('No se pudo guardar la foto en este navegador. Para la publicación real habrá que conectar Drive y Apps Script.');return false}}
 function ncJuegoVista(){return `<div class="nc-juego"><section class="nc-box"><div class="nc-box-head"><h2>Nueva fotografía</h2><span class="nc-juego-tag">Una imagen por publicación</span></div><p class="nc-juego-intro">Seleccioná una foto horizontal. El asistente la ajustará a un máximo de 960 píxeles de ancho y la convertirá a WebP antes de guardarla.</p><form id="nc-juego-form"><label class="nc-juego-upload"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span>Seleccionar fotografía</span><small>JPG, PNG o WebP · Apaisada</small><input id="nc-juego-archivo" type="file" accept="image/jpeg,image/png,image/webp" required></label><div id="nc-juego-previa" class="nc-juego-previa" hidden></div><label class="field">Título de la fotografía<input id="nc-juego-titulo" type="text" maxlength="110" placeholder="Ej.: Partido de la categoría +60" required></label><div class="nc-juego-actions"><button class="primary" type="submit" id="nc-juego-publicar">Guardar fotografía</button><span id="nc-juego-estado" class="status"></span></div></form><p class="nc-juego-aviso">Vista de prueba: las fotografías se guardan únicamente en este navegador. La publicación automática en la app pública se habilitará al conectar Google Drive y Apps Script.</p></section><section class="nc-box"><div class="nc-box-head"><h2>Fotografías cargadas</h2><span class="nc-juego-tag">${ncJuegoItems.length} fotografías</span></div>${ncJuegoItems.length?`<div class="nc-juego-list">${ncJuegoItems.map((it,i)=>`<div class="nc-juego-row"><img src="${it.imagen}" alt=""><div><div>${esc(it.titulo)}</div><small>${esc(it.fecha)}</small></div><button type="button" class="secondary" data-nc-juego-edit="${i}">Editar</button><button type="button" class="secondary" data-nc-juego-delete="${i}">Eliminar</button></div>`).join('')}</div>`:'<div class="nc-empty">Todavía no se cargaron fotografías.</div>'}</section></div>`}
 function ncJuegoEnlazar(){const file=document.getElementById('nc-juego-archivo'),prev=document.getElementById('nc-juego-previa'),form=document.getElementById('nc-juego-form'),status=document.getElementById('nc-juego-estado');let preparado=null;file?.addEventListener('change',async()=>{preparado=null;prev.hidden=true;const f=file.files?.[0];if(!f)return;status.textContent='Preparando fotografía…';try{const bitmap=await createImageBitmap(f);if(bitmap.width<=bitmap.height){bitmap.close();file.value='';status.textContent='Seleccioná una fotografía apaisada (más ancha que alta).';return}const w=Math.min(bitmap.width,960),h=Math.max(1,Math.round(bitmap.height*w/bitmap.width));const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(bitmap,0,0,w,h);bitmap.close();preparado=c.toDataURL('image/webp',.78);prev.innerHTML='<img alt="Vista previa" src="'+preparado+'"><small>'+w+' × '+h+' px · '+Math.round(preparado.length*.75/1024)+' KB aproximadamente</small>';prev.hidden=false;status.textContent='Fotografía lista.'}catch(e){status.textContent='No se pudo procesar la imagen.'}});form?.addEventListener('submit',e=>{e.preventDefault();const titulo=document.getElementById('nc-juego-titulo').value.trim();if(!preparado||!titulo){status.textContent='Seleccioná una foto horizontal y escribí un título.';return}ncJuegoItems.unshift({titulo,imagen:preparado,fecha:new Date().toLocaleString('es-AR')});if(ncJuegoGuardar())render();else ncJuegoItems.shift()});document.querySelectorAll('[data-nc-juego-delete]').forEach(b=>b.addEventListener('click',()=>{if(confirm('¿Eliminar esta fotografía?')){ncJuegoItems.splice(Number(b.dataset.ncJuegoDelete),1);ncJuegoGuardar();render()}}));document.querySelectorAll('[data-nc-juego-edit]').forEach(b=>b.addEventListener('click',()=>{const i=Number(b.dataset.ncJuegoEdit);const t=prompt('Título de la fotografía:',ncJuegoItems[i].titulo);if(t?.trim()){ncJuegoItems[i].titulo=t.trim().slice(0,110);ncJuegoGuardar();render()}}))}
-function consultarNotificaciones(){if(!window.google?.script?.run)return;google.script.run.withSuccessHandler(rows=>{notices=rows;saveDraft();if(active==='avisos')render()}).withFailureHandler(err=>dialogoEquipo('Error de notificaciones',String(err.message||err))).adminListarNotificaciones()}function navigate(id){if(id==='ayuda'){window.open(AYUDA_PDF_RUTA,'_blank','noopener,noreferrer');return;}active=id;render();if(id==='avisos')consultarNotificaciones();if(id==='arbitros')arbLeer();if(id==='equipos')leerEquiposPrivados();if(id==='zonas'){leerEquiposPrivados();consultarZonas()}else if(id==='fixture')consultarZonas();if(id==='resultados'||id==='posiciones'||id==='cruces')resultados12Leer();if(id==='registro')historial26Leer();if(id==='cruces'){cruces15Leer();cruces16Leer()}if(id==='resumen')resultados12Leer();if(id==='inicio')ncDashboardLeerFixture()};const menu38Abiertos={};function render(){document.querySelectorAll('#nav details.menu38-acordeon').forEach(d=>{menu38Abiertos[d.dataset.grupo]=d.open});document.querySelectorAll('.year').forEach(x=>x.textContent=settings.anio);const menuGrupos=[['', ['inicio']],['Organización del torneo',['equipos','zonas','fixture','resultados','posiciones','cruces','arbitros']],['Servicios y comunicación',['avisos','en_juego','bufet','alojamiento']],['Información del torneo',['resumen','registro','diagnostico']],['Configuración',['config','ayuda']]];$('#nav').innerHTML=menuGrupos.map(([titulo,ids])=>(titulo?`<details class="menu38-acordeon" data-grupo="${titulo}" ${Object.prototype.hasOwnProperty.call(menu38Abiertos,titulo)?(menu38Abiertos[titulo]?'open':''):(ids.includes(active)?'open':'')}><summary class="menu38-grupo">${titulo}</summary><div class="menu38-items">`:'<div class="menu38-inicio">')+ids.map(id=>{const m=modules.find(x=>x[0]===id);if(!m)return '';const [key,icon,nombre]=m;return `<button class="${key===active?'active':''}" data-go="${key}">${icon.startsWith('<svg')?icon:`<span class="nav-icon-glyph" aria-hidden="true">${icon}</span>`} ${nombre}</button>`}).join('')+'</div>'+(titulo?'</details>':'')).join('');$('#heading').textContent=active==='inicio'?[settings.edicion,settings.nombre,settings.anio].filter(Boolean).join(' '):modules.find(m=>m[0]===active)[2];$('#tournamentTitle').innerHTML='<span class="torneo-edicion">'+esc(settings.edicion||'')+'</span> <span class="torneo-nombre">'+esc([settings.nombre,settings.anio].filter(Boolean).join(' '))+'</span>';const view=$('#view');if(active==='inicio'){
+function consultarNotificaciones(){if(!window.google?.script?.run)return;google.script.run.withSuccessHandler(rows=>{notices=rows;saveDraft();if(active==='avisos')render()}).withFailureHandler(err=>dialogoEquipo('Error de notificaciones',String(err.message||err))).adminListarNotificaciones()}function navigate(id){if(id==='ayuda'){window.open(AYUDA_PDF_RUTA,'_blank','noopener,noreferrer');return;}active=id;render();if(id==='avisos')consultarNotificaciones();if(id==='arbitros')arbLeer();if(id==='equipos')leerEquiposPrivados();if(id==='zonas'){leerEquiposPrivados();consultarZonas()}else if(id==='fixture')consultarZonas();if(id==='resultados'||id==='posiciones'||id==='cruces')resultados12Leer();if(id==='registro')historial26Leer();if(id==='cruces'){cruces15Leer();cruces16Leer()}if(id==='resumen')resultados12Leer();if(id==='inicio')ncDashboardLeerFixture()};const menu38Abiertos={};
+/* Vista de jornadas: únicamente dentro de Fixture y canchas.
+   El acceso "Partidos hoy" del inicio ya navega a ese módulo. */
+let ncDiaFixtureSeleccionado='';
+let ncCategoriaFixtureSeleccionada='todas';
+function ncVistaJornadasFixture(){
+ const filas=Array.isArray(fixtureSnapshot?.filas)?fixtureSnapshot.filas:[];
+ const filasTorneo=filas.filter(p=>String(p.anio||settings.anio)===String(settings.anio)&&String(p.edicion||settings.edicion)===String(settings.edicion));
+ const datos=filasTorneo.length?filasTorneo:(Array.isArray(fixture)?fixture:[]);
+ const fechaNormal=p=>{const v=String(p.fecha||p.dia||'');if(/^\d{4}-\d{2}-\d{2}/.test(v))return v.slice(0,10);const m=v.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:''};
+ const dias=[...new Set([...(Array.isArray(settings.fechasEtapa10)?settings.fechasEtapa10:[]),...datos.map(fechaNormal)].filter(Boolean))].sort();
+ if(!dias.length)return '<section class="nc-partidos-panel"><h3>Partidos del día</h3><p class="muted">Todavía no hay jornadas programadas. Configurá las fechas y generá el fixture para ver los partidos.</p></section>';
+ if(!dias.includes(ncDiaFixtureSeleccionado))ncDiaFixtureSeleccionado=dias[0];
+ const partidos=datos.filter(p=>fechaNormal(p)===ncDiaFixtureSeleccionado);
+ const cantidad=Math.max(1,Math.min(12,Number(settings.canchas)||4));
+ const hora=p=>{const raw=String(p.hora||p.horario||'').trim();const m=/^(\d{1,2}):(\d{2})/.exec(raw);return m?m[1].padStart(2,'0')+':'+m[2]:raw.slice(0,5)};
+ const cancha=p=>Number(String(p.cancha||'').match(/\d+/)?.[0]||0);
+ const categoriasDia=[...new Set(partidos.map(p=>String(p.categoria||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
+ if(ncCategoriaFixtureSeleccionada!=='todas'&&!categoriasDia.includes(ncCategoriaFixtureSeleccionada))ncCategoriaFixtureSeleccionada='todas';
+ const partidosVisibles=ncCategoriaFixtureSeleccionada==='todas'?partidos:partidos.filter(p=>String(p.categoria||'').trim()===ncCategoriaFixtureSeleccionada);
+ const duracionBloque=Math.max(1,Number(settings.duracion||50)+Number(settings.intervalo||10));
+ const posJornada=programaFechas().indexOf(ncDiaFixtureSeleccionado);
+ const ventana=ventanasTorneo()[posJornada];
+ const minutosGrilla=v=>{const m=/^(\d{1,2}):(\d{2})/.exec(String(v||''));return m?Number(m[1])*60+Number(m[2]):NaN};
+ const hhGrilla=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+ const inicioGrilla=Array.isArray(ventana)?minutosGrilla(ventana[0]):NaN;
+ const finGrilla=Array.isArray(ventana)?minutosGrilla(ventana[1]):NaN;
+ const horariosProgramados=partidos.map(hora).filter(Boolean);
+ const franjas=[];
+ if(Number.isFinite(inicioGrilla)&&Number.isFinite(finGrilla)&&finGrilla>inicioGrilla){
+  for(let m=inicioGrilla;m+duracionBloque<=finGrilla&&franjas.length<250;m+=duracionBloque)franjas.push(hhGrilla(m));
+ }
+ const horarios=[...new Set([...franjas,...horariosProgramados.map(h=>{const m=/^(\d{1,2}):(\d{2})/.exec(h);return m?m[1].padStart(2,'0')+':'+m[2]:h})])].sort((a,b)=>minutosGrilla(a)-minutosGrilla(b));
+ const nombreNormal=n=>String(n||'').trim().toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ');
+ const iconoEquipo=n=>{const t=teams.find(t=>nombreNormal(t.nombre||t.equipo)===nombreNormal(n));return t?.escudo?`<img class="nc-partidos-escudo" src="${esc(t.escudo)}" alt="" loading="lazy">`:'<span class="nc-partidos-escudo-vacio" aria-hidden="true">🛡️</span>'};
+ const marcadorFixture=p=>{
+  const norm=x=>String(x||'').trim().toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ');
+  const cat=x=>norm(x).replace(/^\+/,'').replace(/^categoria\s*\+?/,'');
+  const a=String(p.equipoA||p.local||p.equipo1||''),b=String(p.equipoB||p.visitante||p.equipo2||'');
+  const confirmados=resultados12Partidos().filter(q=>cat(q.categoria)===cat(p.categoria)&&norm(q.local)===norm(a)&&norm(q.visitante)===norm(b));
+  const coinciden=confirmados.filter(q=>fechaNormal(q)===fechaNormal(p));
+  const exactos=coinciden.filter(q=>String(q.hora||'').slice(0,5)===hora(p));
+  const partido=exactos.length===1?exactos[0]:coinciden.length===1?coinciden[0]:confirmados.length===1?confirmados[0]:null;
+  const resultado=partido?resultados12Existente(partido):null;
+  if(!resultado)return null;
+  const par=valor=>Array.isArray(valor)&&valor.length===2&&valor.every(v=>String(v??'').trim()!==''&&Number.isFinite(Number(v)))?valor.map(v=>String(v).trim()).join('-'):null;
+  const s1=par(resultado.set1),s2=par(resultado.set2),tb=par(resultado.tiebreak);
+  if(!s1||!s2)return null;
+return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ganador||'')};
+
+ };
+ const celda=p=>{if(!p)return '<div class="nc-partidos-celda nc-partidos-vacio nc-partidos-destino" title="Soltá aquí un partido pendiente">＋</div>';
+  const a=String(p.equipoA||p.local||p.equipo1||'Equipo A'),b=String(p.equipoB||p.visitante||p.equipo2||'Equipo B');
+  const datosMarcador=marcadorFixture(p);
+  const puntos=datosMarcador?.puntos||'';
+  const ganador=nombreNormal(datosMarcador?.ganador||'');
+  const ganaA=!!ganador&&ganador===nombreNormal(a);
+  const ganaB=!!ganador&&ganador===nombreNormal(b);
+  const reloj=!datosMarcador?`<button type="button" class="nc-partidos-reloj" title="Modificar horario o cancha" aria-label="Modificar horario o cancha" data-nc-reprogramar="${esc(encodeURIComponent(JSON.stringify({fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||''),local:a,visitante:b})))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button>`:'';
+  const marcador=puntos?`<div class="nc-partidos-puntos" aria-label="Puntos por set: ${esc(puntos)}">${esc(puntos)}</div>`:'';
+  return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" ${!datosMarcador?'draggable="true" data-nc-arrastrable="1"':''} role="button" tabindex="0" title="Cargar o corregir resultado" data-nc-resultado="${esc(encodeURIComponent(JSON.stringify({fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}"><div class="nc-partidos-equipos"><div class="nc-partidos-equipo">${iconoEquipo(a)}<span class="nc-partidos-nombre ${ganaA?'nc-partidos-ganador':''}">${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span class="nc-partidos-nombre ${ganaB?'nc-partidos-ganador':''}">${esc(b)}</span></div>${marcador}</div>${reloj}</div>`;
+
+ };
+ const matriz=horarios.length?`<div class="nc-partidos-scroll"><div class="nc-partidos-matriz" style="--canchas:${cantidad}"><div class="nc-partidos-celda nc-partidos-cab">Horario</div>${Array.from({length:cantidad},(_,i)=>`<div class="nc-partidos-celda nc-partidos-cab">Cancha ${i+1}</div>`).join('')}${horarios.map(h=>`<div class="nc-partidos-celda nc-partidos-hora">${esc(h)}</div>${Array.from({length:cantidad},(_,i)=>`<div class="nc-partidos-slot" data-nc-slot-fecha="${esc(ncDiaFixtureSeleccionado)}" data-nc-slot-hora="${esc(h)}" data-nc-slot-cancha="${i+1}">${celda(partidos.find(p=>hora(p)===h&&cancha(p)===i+1))}</div>`).join('')}`).join('')}</div></div>`:'<p class="muted">No hay partidos cargados para esta jornada.</p>';
+ return `<section class="nc-partidos-panel"><div class="nc-partidos-bar"><h3>Partidos del día</h3><div class="nc-partidos-bar-controles"><div class="nc-partidos-dias">${dias.map((d,i)=>`<button type="button" class="nc-partidos-dia ${d===ncDiaFixtureSeleccionado?'activo':''}" data-nc-dia-fixture="${esc(d)}">Jornada ${i+1} · ${esc(d.split('-').reverse().join('/'))}</button>`).join('')}</div><button type="button" class="nc-grilla-expandir" data-nc-grilla-expandir aria-label="Ampliar grilla a pantalla completa" title="Pantalla completa" aria-pressed="${document.body.classList.contains('nc-grilla-ampliada')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5"/></svg><span class="nc-grilla-expandir-texto">${document.body.classList.contains('nc-grilla-ampliada')?'Cerrar':'Ampliar'}</span></button></div></div>
+  <div class="nc-partidos-filtros" aria-label="Filtrar partidos por categoría"><span class="nc-partidos-filtros-label">Mostrar horarios:</span><button type="button" class="nc-partidos-filtro ${ncCategoriaFixtureSeleccionada==='todas'?'activo':''}" data-nc-categoria-fixture="todas" aria-pressed="${ncCategoriaFixtureSeleccionada==='todas'}">Todas</button>${categoriasDia.map(cat=>`<button type="button" class="nc-partidos-filtro ${ncCategoriaFixtureSeleccionada===cat?'activo':''}" data-nc-categoria-fixture="${esc(cat)}" aria-pressed="${ncCategoriaFixtureSeleccionada===cat}" style="--nc-color-categoria:${fxColorCategoria(cat)}">+${esc(cat.replace(/^\+/,''))}</button>`).join('')}</div>${matriz}</section>`;
+}
+// Precarga compartida: evita una consulta nueva en cada clic de la grilla.
+let ncResultadosPrecarga=null,ncResultadosPrecargaHora=0,ncResultadosPrecargaPromesa=null;
+function ncResultadosConsultarRapido(){
+ const ahora=Date.now();
+ if(ncResultadosPrecarga&&ahora-ncResultadosPrecargaHora<20000)return Promise.resolve(ncResultadosPrecarga);
+ if(ncResultadosPrecargaPromesa)return ncResultadosPrecargaPromesa;
+ if(!window.google?.script?.run)return Promise.reject(new Error('Abrí el Asistente desde su enlace privado para consultar los resultados.'));
+ ncResultadosPrecargaPromesa=new Promise((resolve,reject)=>google.script.run.withSuccessHandler(d=>{
+  if(!d||!Array.isArray(d.partidos)){reject(new Error('No se recibió la lista de partidos desde Resultados.'));return;}
+  ncResultadosPrecarga=d;ncResultadosPrecargaHora=Date.now();resultados12Datos=d;if(active==='fixture')render();resolve(d);
+ }).withFailureHandler(reject).adminResultados12Consultar()).finally(()=>{ncResultadosPrecargaPromesa=null});
+ return ncResultadosPrecargaPromesa;
+}
+async function ncAbrirResultadoDesdeFixture(b){
+ let info;try{info=JSON.parse(decodeURIComponent(b.dataset.ncResultado))}catch(e){return}
+ if(b.dataset.ncAbriendo==='1')return;
+ b.dataset.ncAbriendo='1';
+ const norm=x=>String(x||'').trim().toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ');
+ const cat=x=>norm(x).replace(/^\+/,'').replace(/^categoria\s*\+?/,'').replace(/^\+/,'');
+ const fecha=x=>{const t=String(x||'').trim();if(/^\d{4}-\d{2}-\d{2}/.test(t))return t.slice(0,10);const m=t.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:t};
+ try{
+  // Consultar datos actuales: la grilla puede abrirse antes de visitar la pantalla Resultados.
+  if(!window.google?.script?.run)throw new Error('Abrí el Asistente desde su enlace privado para consultar los resultados.');
+  const datos=await ncResultadosConsultarRapido();
+  if(!datos||!Array.isArray(datos.partidos))throw new Error('No se recibió la lista de partidos desde Resultados.');
+  resultados12Datos=datos;
+  const todos=resultados12Partidos();
+  const mismos=todos.filter(p=>cat(p.categoria)===cat(info.categoria)&&norm(p.local)===norm(info.local)&&norm(p.visitante)===norm(info.visitante));
+  const porFecha=mismos.filter(p=>fecha(p.fecha)===fecha(info.fecha));
+  const porHora=porFecha.filter(p=>String(p.hora||'').slice(0,5)===String(info.hora||'').slice(0,5));
+  // No seleccionar al azar cuando existen varios partidos entre los mismos equipos.
+  const partido=porHora.length===1?porHora[0]:porFecha.length===1?porFecha[0]:mismos.length===1?mismos[0]:null;
+  if(!partido){
+   const sinConfirmar=(datos.partidos||[]).some(p=>cat(p.categoria)===cat(info.categoria)&&norm(p.local)===norm(info.local)&&norm(p.visitante)===norm(info.visitante));
+   mostrarDialogoZonas({titulo:'Resultado no disponible',detalle:info.local+' vs '+info.visitante,advertencia:sinConfirmar?'El partido figura en el sistema, pero aún no está confirmado para cargar resultados.':'El partido de la grilla no coincide con un encuentro confirmado en Resultados. Revisá los nombres de equipos y la categoría.',soloAceptar:true});
+   return;
+  }
+ resultados12Seleccion=resultados12Clave(partido);
+ const tmp=document.createElement('div');tmp.innerHTML=resultados12Render();const modal=tmp.querySelector('#r12ModalOverlay');
+ if(!modal)return;
+ document.querySelector('#r12ModalOverlay')?.remove();document.body.appendChild(modal);
+ const cerrar=()=>{resultados12Seleccion='';modal.remove()};
+ modal.querySelector('#r12Cancelar')?.addEventListener('click',cerrar);
+ modal.querySelector('#r12Cerrar')?.addEventListener('click',cerrar);
+ modal.addEventListener('click',e=>{if(e.target===modal)cerrar()});
+ modal.querySelector('#r12Motivo')?.addEventListener('input',resultados12ActualizarVista);
+ ['r12s1l','r12s1v','r12s2l','r12s2v','r12tbl','r12tbv'].forEach(id=>modal.querySelector('#'+id)?.addEventListener('input',resultados12ActualizarVista));
+ resultados12ActualizarVista();modal.querySelector('#r12Guardar')?.addEventListener('click',resultados12Guardar);
+
+ }catch(e){mostrarDialogoZonas({titulo:'No se pudieron consultar los resultados',detalle:info.local+' vs '+info.visitante,advertencia:String(e?.message||e),soloAceptar:true})}
+ finally{delete b.dataset.ncAbriendo}
+}
+async function ncReprogramarIndividual(b,destinoInicial){
+ let info;try{info=JSON.parse(decodeURIComponent(b.dataset.ncReprogramar))}catch(e){return}
+ if(!window.google?.script?.run){avisoIntegrado('Esta modificación requiere abrir el asistente desde Apps Script.');return}
+ const leer=()=>new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).adminFixture11Snapshot());
+ let snap;try{snap=await leer()}catch(e){avisoIntegrado('No se pudo consultar el fixture confirmado: '+String(e.message||e));return}
+ const filas=(snap.filas||[]).filter(p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion));
+ const normFecha=v=>{const s=String(v||'').trim();const m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(s);return m?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):s.slice(0,10)};
+ const norm=v=>String(v||'').trim().toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+ const horaNormal=v=>{const m=String(v||'').trim().match(/^(\d{1,2}):(\d{2})/);return m?m[1].padStart(2,'0')+':'+m[2]:String(v||'').trim()};
+ const match=p=>norm(p.categoria)===norm(info.categoria)&&norm(p.local||p.equipoA)===norm(info.local)&&norm(p.visitante||p.equipoB)===norm(info.visitante)&&normFecha(p.fecha)===normFecha(info.fecha)&&horaNormal(p.hora||p.horario)===horaNormal(info.hora)&&Number(String(p.cancha||'').match(/\d+/)?.[0]||0)===Number(info.cancha);
+ const indices=filas.map((p,i)=>match(p)?i:-1).filter(i=>i>=0);
+ if(indices.length!==1){avisoIntegrado('No se identificó un único partido confirmado. Actualizá el fixture antes de reprogramar.');return}
+ const idx=indices[0],partido=filas[idx];
+ info.fecha=normFecha(info.fecha);
+ if(partido.resultado||partido.estado==='FINALIZADO'||partido.protegido||partido.bloqueado){avisoIntegrado('Este partido está finalizado o protegido y no se puede reprogramar.');return}
+ const overlay=document.createElement('div');overlay.className='nc-reprog-overlay';
+ overlay.innerHTML=`<form class="nc-reprog-modal"><button type="button" class="nc-reprog-x" aria-label="Cerrar">×</button><h3>Modificar programación</h3><p><strong>${esc(info.local)} vs ${esc(info.visitante)}</strong></p><p class="nc-reprog-actual">Actual: ${esc(info.fecha)} · ${esc(info.hora)} · Cancha ${esc(info.cancha)}</p><div class="nc-reprog-modos"><button type="button" data-nc-modo="individual" class="activo">Mover este partido</button><button type="button" data-nc-modo="cadena">Aplicar retraso a los siguientes partidos</button></div><div class="nc-reprog-retraso" hidden><label>Minutos de retraso <input type="number" name="retraso" min="1" max="180" step="1" value="15"></label><p>Se desplazarán los partidos pendientes de esta cancha, desde el encuentro seleccionado hasta el final de la jornada. Los resultados no se modificarán.</p><div class="nc-reprog-resumen"></div></div><div class="nc-reprog-fields"><label>Fecha<input name="fecha" type="date" required value="${esc(info.fecha)}"></label><label>Horario<input name="hora" type="time" required value="${esc(info.hora)}"></label><label>Cancha<select name="cancha">${Array.from({length:Number(settings.canchas)||4},(_,i)=>`<option value="${i+1}" ${i+1===Number(info.cancha)?'selected':''}>Cancha ${i+1}</option>`).join('')}</select></label></div><div class="nc-reprog-conflictos" hidden></div><p class="nc-reprog-error" role="alert"></p><div class="nc-reprog-actions"><button type="button" class="nc-reprog-cancel">Cancelar</button><button type="submit" class="nc-reprog-save">Confirmar cambio</button></div></form>`;
+ document.body.appendChild(overlay);
+ const form=overlay.querySelector('form'),error=form.querySelector('.nc-reprog-error'),panel=form.querySelector('.nc-reprog-conflictos'),guardar=form.querySelector('.nc-reprog-save');
+ if(destinoInicial){form.elements.fecha.value=destinoInicial.fecha;form.elements.hora.value=destinoInicial.hora;form.elements.cancha.value=destinoInicial.cancha;}
+ const modos=form.querySelector('.nc-reprog-modos'), retrasoPanel=form.querySelector('.nc-reprog-retraso'),campos=form.querySelector('.nc-reprog-fields'),resumen=form.querySelector('.nc-reprog-resumen');
+ let modo='individual';
+ const ventana=()=>{const pos=programaFechas().indexOf(info.fecha),v=ventanasTorneo()[pos];return Array.isArray(v)?v:null};
+ const calcularCadena=()=>{
+  const delta=Number(form.elements.retraso.value);
+  if(!Number.isInteger(delta)||delta<1||delta>180)return {error:'Ingresá un retraso entre 1 y 180 minutos.'};
+  const origen=mins(info.hora),afectados=filas.map((q,i)=>({q,i})).filter(({q})=>normFecha(q.fecha)===info.fecha&&Number(q.cancha)===Number(info.cancha)&&mins(q.hora)>=origen).sort((a,b)=>mins(a.q.hora)-mins(b.q.hora));
+  if(!afectados.some(x=>x.i===idx))return {error:'No se encontró el partido de inicio.'};
+  if(afectados.some(x=>esFijo(x.q)))return {error:'Hay partidos finalizados o protegidos en la secuencia. No se aplicó ningún cambio.'};
+  const cambios=afectados.map(({q,i})=>({indice:i,fecha:info.fecha,hora:hh(mins(q.hora)+delta),cancha:Number(q.cancha)}));
+  if(cambios.some(c=>mins(c.hora)>=1440))return {error:'El retraso excede el final del día.'};
+  const v=ventana();if(!v)return {error:'No se encontró la ventana horaria de la jornada.'};
+  if(cambios.some(c=>mins(c.hora)+dur>mins(v[1])))return {error:'El retraso excede el horario de cierre de la jornada.'};
+  const nuevos=filas.map((q,i)=>{const c=cambios.find(c=>c.indice===i);return c?{...q,fecha:c.fecha,hora:c.hora,cancha:c.cancha}:q});
+  for(let i=0;i<nuevos.length;i++)for(let j=i+1;j<nuevos.length;j++)if((cambios.some(c=>c.indice===i)||cambios.some(c=>c.indice===j))&&conflicto(nuevos[i],nuevos[j]))return {error:'El retraso generaría una superposición entre '+titulo(nuevos[i])+' y '+titulo(nuevos[j])+'.'};
+  return {cambios,nuevos};
+ };
+ function actualizarModo(){
+  const cadena=modo==='cadena';retrasoPanel.hidden=!cadena;campos.hidden=cadena;panel.hidden=cadena;
+  modos.querySelectorAll('button').forEach(b=>b.classList.toggle('activo',b.dataset.ncModo===modo));
+  guardar.textContent=cadena?'Confirmar retraso':'Confirmar cambio';error.textContent='';
+  if(cadena){const c=calcularCadena();resumen.textContent=c.error||`${c.cambios.length} partido(s) se desplazarán ${form.elements.retraso.value} minutos.`;guardar.disabled=!!c.error;}
+  else mostrarConflictos();
+ }
+ modos.querySelectorAll('button').forEach(b=>b.onclick=()=>{modo=b.dataset.ncModo;actualizarModo()});
+ form.elements.retraso.addEventListener('input',()=>{if(modo==='cadena')actualizarModo()});
+ const cerrar=()=>overlay.remove();form.querySelector('.nc-reprog-x').onclick=cerrar;form.querySelector('.nc-reprog-cancel').onclick=cerrar;
+ overlay.addEventListener('click',e=>{if(e.target===overlay)cerrar()});
+ const mins=h=>{const m=/^(\d{1,2}):(\d{2})/.exec(String(h||''));return m?Number(m[1])*60+Number(m[2]):NaN};
+ const hh=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+ const dur=Math.max(1,Number(settings.duracion||50)+Number(settings.intervalo||10));
+ const equipos=p=>[norm(p.local||p.equipoA),norm(p.visitante||p.equipoB)].filter(Boolean);
+ const esFijo=p=>!!(p.resultado||p.estado==='FINALIZADO'||p.protegido||p.bloqueado||p.marcador);
+ const asignacion=p=>({fecha:normFecha(p.fecha),hora:String(p.hora||'').slice(0,5),cancha:String(p.cancha||'')});
+ const conflicto=(p,q)=>{const x=asignacion(p),y=asignacion(q);if(!x.fecha||!y.fecha||x.fecha!==y.fecha||!Number.isFinite(mins(x.hora))||!Number.isFinite(mins(y.hora))||Math.abs(mins(x.hora)-mins(y.hora))>=dur)return false;return Number(x.cancha)===Number(y.cancha)||equipos(p).some(t=>equipos(q).includes(t))};
+ const titulo=p=>esc((p.local||p.equipoA||'?')+' vs '+(p.visitante||p.equipoB||'?'));
+ const propuesta=()=>({...partido,fecha:form.elements.fecha.value,hora:form.elements.hora.value,cancha:String(form.elements.cancha.value)});
+ const choques=(p,lista=filas)=>lista.map((q,i)=>i!==idx&&conflicto(p,q)?{p:q,i}:null).filter(Boolean);
+ let intercambio=null;
+ function mostrarConflictos(){intercambio=null;const p=propuesta(),c=choques(p);error.textContent='';panel.hidden=!c.length;guardar.disabled=!!c.length;
+ if(!c.length){panel.innerHTML='';return}
+ panel.innerHTML=`<strong>⚠ Se detectó una superposición</strong><p>El horario elegido entra en conflicto con:</p><ul>${c.map(x=>`<li>${titulo(x.p)} · ${esc(x.p.fecha)} · ${esc(x.p.hora)} · Cancha ${esc(x.p.cancha)}</li>`).join('')}</ul><p><strong>¿Cómo querés resolverlo?</strong></p><div class="nc-reprog-opciones"><button type="button" data-solucion="intercambiar">⇄ Intercambiar horarios</button><button type="button" data-solucion="buscar">◷ Buscar próximo horario libre</button><button type="button" data-solucion="manual">▦ Elegir manualmente</button></div><p class="nc-reprog-ayuda"></p>`;
+ const ayuda=panel.querySelector('.nc-reprog-ayuda');
+ panel.querySelector('[data-solucion="intercambiar"]').onclick=()=>{
+  if(c.length!==1){ayuda.textContent='El intercambio requiere un único partido en conflicto. Probá buscar otro horario.';return}
+  const otro=c[0];if(esFijo(otro.p)){ayuda.textContent='El partido que ocupa el horario está finalizado o protegido; no se puede mover.';return}
+  const original=asignacion(partido),movido={...otro.p,...original};
+  const nuevas=filas.map((q,i)=>i===idx?p:i===otro.i?movido:q);
+  const conflictosNuevos=nuevas.some((q,i)=>i!==idx&&i!==otro.i&&(conflicto(p,q)||conflicto(movido,q)))||conflicto(p,movido);
+  if(conflictosNuevos){ayuda.textContent='El intercambio produciría otra superposición. Elegí otra alternativa.';return}
+  intercambio={indice:otro.i,partido:movido};guardar.disabled=false;
+  ayuda.textContent='Intercambio posible: '+(otro.p.local||otro.p.equipoA)+' vs '+(otro.p.visitante||otro.p.equipoB)+' pasará a '+original.fecha+' · '+original.hora+' · Cancha '+original.cancha+'. Confirmá para guardar ambos cambios.';
+ };
+ panel.querySelector('[data-solucion="buscar"]').onclick=()=>{
+  const fechas=[...new Set([p.fecha,...programaFechas(),...filas.map(q=>normFecha(q.fecha))].filter(Boolean))].sort().filter(f=>f>=p.fecha);
+  const ventanas=ventanasTorneo();let hallado=null;
+  for(const fecha of fechas){const pos=programaFechas().indexOf(fecha),ventana=pos>=0?ventanas[pos]:null;
+   const inicio=Array.isArray(ventana)?mins(ventana[0]):ventana&&typeof ventana==='object'?mins(ventana.inicio||ventana.desde||ventana.start):NaN;
+   const fin=Array.isArray(ventana)?mins(ventana[1]):ventana&&typeof ventana==='object'?mins(ventana.fin||ventana.hasta||ventana.end):NaN;
+   const desde=Math.max(fecha===p.fecha?mins(p.hora)+1:0,Number.isFinite(inicio)?inicio:0);
+   const hasta=Number.isFinite(fin)?fin-dur:23*60+59-dur;
+   for(let m=Math.ceil(desde/dur)*dur;m<=hasta&&!hallado;m+=dur){for(let cancha=1;cancha<=Math.max(1,Number(settings.canchas)||4);cancha++){
+    const candidato={...p,fecha,hora:hh(m),cancha:String(cancha)};
+    if(!choques(candidato).length){hallado=candidato;break}
+   }}if(hallado)break;
+  }
+  if(!hallado){ayuda.textContent='No encontré un espacio libre posterior dentro de las jornadas disponibles. Elegí fecha, hora o cancha manualmente.';return}
+  form.elements.fecha.value=hallado.fecha;form.elements.hora.value=hallado.hora;form.elements.cancha.value=hallado.cancha;mostrarConflictos();
+ };
+ panel.querySelector('[data-solucion="manual"]').onclick=()=>{ayuda.textContent='Modificá fecha, hora o cancha en los campos superiores. El sistema volverá a verificar las superposiciones.';form.elements.hora.focus()};
+ }
+ ['fecha','hora','cancha'].forEach(n=>form.elements[n].addEventListener('change',mostrarConflictos));
+ if(destinoInicial)mostrarConflictos();
+ form.onsubmit=async e=>{e.preventDefault();
+ if(modo==='cadena'){
+  const plan=calcularCadena();if(plan.error){error.textContent=plan.error;return}
+  const ok=await mostrarDialogoZonas({titulo:'Confirmar retraso en cadena',detalle:`${plan.cambios.length} partidos · Cancha ${info.cancha} · ${info.fecha}`,advertencia:`Se retrasarán ${form.elements.retraso.value} minutos todos los partidos pendientes de esta cancha desde las ${info.hora}. No se modificarán resultados.`});if(!ok)return;
+  guardar.disabled=true;
+  try{
+   const actual=await leer();if(actual.huella!==snap.huella)throw Error('El fixture cambió. Volvé a abrir el reloj.');
+   const cambiosPuntuales=plan.cambios.map(c=>({...c,indice:snap.filas.indexOf(filas[c.indice])}));
+   await new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).adminFixture11Reprogramar({anio:settings.anio,edicion:settings.edicion,canchas:settings.canchas,duracion:settings.duracion,intervalo:settings.intervalo,fechas:programaFechas(),horarios:ventanasTorneo(),cambios:cambiosPuntuales,huella:actual.huella}));
+   fixtureSnapshot=await leer();fixture=plan.nuevos.map(q=>({...q}));saveDraft();cerrar();render();
+   mostrarDialogoZonas({titulo:'Retraso aplicado',detalle:`Se actualizaron ${plan.cambios.length} partidos.`,advertencia:'Los resultados existentes no se modificaron.',soloAceptar:true});
+  }catch(ex){error.textContent='No se guardó el retraso: '+String(ex.message||ex)}finally{guardar.disabled=false}
+  return;
+ }
+ const p=propuesta();error.textContent='';if(!p.fecha||!p.hora){error.textContent='Completá fecha y horario.';return}
+ const c=choques(p);if(c.length&&!intercambio){mostrarConflictos();return}
+ if(intercambio){const otro=filas[intercambio.indice];if(esFijo(otro)){error.textContent='No se puede mover un partido finalizado o protegido.';return}}
+ const cambios=filas.map((q,i)=>i===idx?p:intercambio&&i===intercambio.indice?intercambio.partido:q);
+ if(cambios.some((q,i)=>i!==idx&&(conflicto(p,q)))||(intercambio&&cambios.some((q,i)=>i!==idx&&i!==intercambio.indice&&conflicto(intercambio.partido,q)))){mostrarConflictos();error.textContent='Se detectó una nueva superposición. Revisá la propuesta.';return}
+ const detalle=intercambio?'Se intercambiarán los horarios de DOS partidos.':'Solo se modificará este partido.';
+ const ok=await mostrarDialogoZonas({titulo:intercambio?'Confirmar intercambio de horarios':'Confirmar reprogramación',detalle:info.local+' vs '+info.visitante,advertencia:detalle+' Nuevo horario: '+p.fecha+' · '+p.hora+' · Cancha '+p.cancha+'. No se modificarán resultados.'});if(!ok)return;
+ guardar.disabled=true;
+ try{const actual=await leer();if(actual.huella!==snap.huella)throw Error('El fixture cambió mientras editabas. Volvé a abrir el reloj.');
+ const cambiosPuntuales=[{indice:snap.filas.indexOf(partido),fecha:p.fecha,hora:p.hora,cancha:p.cancha}];
+ if(intercambio)cambiosPuntuales.push({indice:snap.filas.indexOf(filas[intercambio.indice]),fecha:intercambio.partido.fecha,hora:intercambio.partido.hora,cancha:intercambio.partido.cancha});
+ const payload={anio:settings.anio,edicion:settings.edicion,canchas:settings.canchas,duracion:settings.duracion,intervalo:settings.intervalo,fechas:programaFechas(),horarios:ventanasTorneo(),cambios:cambiosPuntuales,huella:actual.huella};
+ await new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).adminFixture11Reprogramar(payload));
+ fixtureSnapshot=await leer();fixture=cambios.map(q=>({...q}));saveDraft();cerrar();render();mostrarDialogoZonas({titulo:'Programación actualizada',detalle:info.local+' vs '+info.visitante,advertencia:intercambio?'Se guardó el intercambio de ambos partidos.':'Se guardó el nuevo horario.',soloAceptar:true});
+ }catch(ex){error.textContent='No se guardó el cambio: '+String(ex.message||ex)}finally{guardar.disabled=false}
+ };
+}
+let ncArrastreOrigen=null;
+function ncEnlazarArrastreFixture(){
+ const panel=document.querySelector('.nc-partidos-panel');if(!panel)return;
+ panel.querySelectorAll('[data-nc-arrastrable]').forEach(celda=>{
+  celda.addEventListener('dragstart',e=>{
+   const reloj=celda.querySelector('[data-nc-reprogramar]');if(!reloj){e.preventDefault();return}
+   ncArrastreOrigen=reloj.dataset.ncReprogramar;
+   e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',ncArrastreOrigen);
+   celda.classList.add('nc-partidos-arrastrando');panel.classList.add('nc-partidos-modo-arrastre');
+  });
+  celda.addEventListener('dragend',()=>{ncArrastreOrigen=null;panel.classList.remove('nc-partidos-modo-arrastre');panel.querySelectorAll('.nc-partidos-slot').forEach(x=>x.classList.remove('nc-partidos-sobre'))});
+ });
+ panel.querySelectorAll('.nc-partidos-slot').forEach(slot=>{
+  if(!slot.querySelector('.nc-partidos-vacio'))return;
+  slot.addEventListener('dragover',e=>{if(!ncArrastreOrigen)return;e.preventDefault();e.dataTransfer.dropEffect='move';slot.classList.add('nc-partidos-sobre')});
+  slot.addEventListener('dragleave',()=>slot.classList.remove('nc-partidos-sobre'));
+  slot.addEventListener('drop',e=>{
+   e.preventDefault();slot.classList.remove('nc-partidos-sobre');panel.classList.remove('nc-partidos-modo-arrastre');
+   const origen=ncArrastreOrigen||e.dataTransfer.getData('text/plain');ncArrastreOrigen=null;if(!origen)return;
+   const fecha=slot.dataset.ncSlotFecha,hora=slot.dataset.ncSlotHora,cancha=slot.dataset.ncSlotCancha;
+   const reloj=document.createElement('button');reloj.dataset.ncReprogramar=origen;
+   ncReprogramarIndividual(reloj,{fecha,hora,cancha});
+  });
+ });
+}
+function ncEnlazarJornadasFixture(){ncEnlazarArrastreFixture();document.querySelectorAll('[data-nc-reprogramar]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();ncReprogramarIndividual(b)}));const ampliar=document.querySelector('[data-nc-grilla-expandir]');if(ampliar)ampliar.addEventListener('click',()=>{document.body.classList.toggle('nc-grilla-ampliada');render()});if(document.querySelector('[data-nc-resultado]')&&window.google?.script?.run)ncResultadosConsultarRapido().catch(()=>{});document.querySelectorAll('[data-nc-resultado]').forEach(b=>{b.addEventListener('click',()=>ncAbrirResultadoDesdeFixture(b));b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();ncAbrirResultadoDesdeFixture(b)}})});document.querySelectorAll('[data-nc-dia-fixture]').forEach(b=>b.addEventListener('click',()=>{ncDiaFixtureSeleccionado=b.dataset.ncDiaFixture;render()}));document.querySelectorAll('[data-nc-categoria-fixture]').forEach(b=>b.addEventListener('click',()=>{ncCategoriaFixtureSeleccionada=b.dataset.ncCategoriaFixture;render()}))}
+function render(){if(active!=='fixture')document.body.classList.remove('nc-grilla-ampliada');document.querySelectorAll('#nav details.menu38-acordeon').forEach(d=>{menu38Abiertos[d.dataset.grupo]=d.open});document.querySelectorAll('.year').forEach(x=>x.textContent=settings.anio);const menuGrupos=[['', ['inicio']],['Organización del torneo',['equipos','zonas','fixture','resultados','posiciones','cruces','arbitros']],['Servicios y comunicación',['avisos','en_juego','bufet','alojamiento']],['Información del torneo',['resumen','registro','diagnostico']],['Configuración',['config','ayuda']]];$('#nav').innerHTML=menuGrupos.map(([titulo,ids])=>(titulo?`<details class="menu38-acordeon" data-grupo="${titulo}" ${Object.prototype.hasOwnProperty.call(menu38Abiertos,titulo)?(menu38Abiertos[titulo]?'open':''):(ids.includes(active)?'open':'')}><summary class="menu38-grupo">${titulo}</summary><div class="menu38-items">`:'<div class="menu38-inicio">')+ids.map(id=>{const m=modules.find(x=>x[0]===id);if(!m)return '';const [key,icon,nombre]=m;return `<button class="${key===active?'active':''}" data-go="${key}">${icon.startsWith('<svg')?icon:`<span class="nav-icon-glyph" aria-hidden="true">${icon}</span>`} ${nombre}</button>`}).join('')+'</div>'+(titulo?'</details>':'')).join('');$('#heading').textContent=active==='inicio'?[settings.edicion,settings.nombre,settings.anio].filter(Boolean).join(' '):modules.find(m=>m[0]===active)[2];$('#tournamentTitle').innerHTML='<span class="torneo-edicion">'+esc(settings.edicion||'')+'</span> <span class="torneo-nombre">'+esc([settings.nombre,settings.anio].filter(Boolean).join(' '))+'</span>';const view=$('#view');if(active==='inicio'){
 const ico=(name)=>({teams:'<circle cx="9" cy="8" r="3"/><circle cx="18" cy="9" r="2.5"/><path d="M2 20v-2a7 7 0 0 1 14 0v2M16 15a5 5 0 0 1 6 5"/>',ball:'<circle cx="12" cy="12" r="9"/><path d="M5 6c7 1 11 6 11 14M11 3c0 6 5 9 10 9M4 15c6-3 12-2 16 3"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="1"/><path d="M7 2v6M17 2v6M3 11h18M8 15h3M14 15h3"/>',court:'<rect x="2" y="4" width="20" height="16"/><path d="M12 4v16M2 12h6M16 12h6"/><circle cx="12" cy="12" r="2"/>',trophy:'<path d="M7 3h10v8a5 5 0 0 1-10 0V3ZM7 5H3v3a4 4 0 0 0 4 4M17 5h4v3a4 4 0 0 1-4 4M12 16v5M7 21h10"/>',file:'<path d="M6 2h9l5 5v15H6zM15 2v5h5M9 12h8M9 16h8"/>',megaphone:'<path d="M3 10h5l12-6v16L8 14H3zM7 14l2 6"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 3"/>'})[name]||'';
 const svg=(name)=>`<svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round">${ico(name)}</svg>`;
 const stat=(id,icon,value,label)=>`<button type="button" class="nc-stat" data-go="${id}">${svg(icon)}<div class="nc-stat-inline"><span class="nc-stat-value">${value}</span><span class="nc-stat-label">${label}</span></div><span class="nc-stat-chevron">›</span></button>`;
@@ -2646,7 +3056,7 @@ else if(active==='zonas'){
  document.querySelectorAll('[data-confirm-zones]').forEach(b=>b.onclick=()=>confirmarZonas(b.dataset.confirmZones));
  activarTableroManual();const refresh=$('#refreshZonas');if(refresh)refresh.onclick=consultarZonas;
 }
-else if(active==='fixture'){view.innerHTML=renderFixtureEtapa10();activarFixtureEtapa10();}
+else if(active==='fixture'){const hayFixture=fixture.length>0;view.innerHTML=`<section class="nc-ux-config"><details class="nc-ux-config-detalle" ${hayFixture?'':'open'}><summary class="nc-ux-config-cabecera"><span class="nc-ux-config-numero">1</span><span class="nc-ux-config-textos"><strong>Configuración inicial de jornadas y canchas</strong><small>${hayFixture?'Ya hay una propuesta de fixture. Abrí esta sección solamente si necesitás revisar la configuración inicial.':'Empezá aquí: definí fechas, horarios y canchas antes de generar el fixture.'}</small></span><span class="nc-ux-config-estado">${hayFixture?'Ver configuración':'Primer paso'}</span></summary><div class="nc-ux-config-contenido">${renderFixtureEtapa10()}</div></details></section><section class="nc-ux-partidos"><div class="nc-ux-partidos-encabezado"><span class="nc-ux-config-numero">2</span><div><h2>Fixture y programación de partidos</h2><p>${hayFixture?'Para modificar un encuentro pendiente, usá el reloj de su tarjeta. No necesitás regenerar el fixture.':'Cuando prepares y confirmes la programación, los partidos aparecerán en esta grilla.'}</p></div></div>${ncVistaJornadasFixture()}</section>`;activarFixtureEtapa10();ncEnlazarJornadasFixture();} 
  else if(active==='resumen'){
  const partidos=resultados12Partidos();const jugados=partidos.filter(p=>!!resultados12Existente(p)).length;
  const competencias=new Set(teams.map(t=>claveCompetencia(t.categoria,t.genero)));
@@ -2708,15 +3118,15 @@ function fx3Inicializar(){if(fx3Dias)return;const f=programaFechas(),v=ventanasT
 function fx3Leer(){if(!fx3Dias)return;fx3Dias.forEach((d,i)=>{for(const [k,suf] of [['fecha','fecha'],['inicio','inicio'],['fin','fin']]){const el=document.getElementById('fx3-'+i+'-'+suf);if(el)d[k]=el.value}});const f=document.getElementById('fx3-corte-fecha'),h=document.getElementById('fx3-corte-hora'),c=document.getElementById('fx3-conservar');if(f)fx3CorteFecha=f.value;if(h)fx3CorteHora=h.value;if(c)fx3Conservar=c.checked;}
 function fx3ValidarDias(){fx3Leer();if(fx3Dias.some(d=>!d.fecha||!d.inicio||!d.fin||minutosHora(d.fin)<=minutosHora(d.inicio))){avisoIntegrado('Completá las fechas y horarios de inicio y finalización.');return false}const a=fx3Dias.map(d=>Date.parse(d.fecha+'T12:00:00'));if(a.some(x=>!Number.isFinite(x))||a[1]-a[0]!==86400000||a[2]-a[1]!==86400000){avisoIntegrado('Las tres jornadas deben ser fechas consecutivas.');return false}if(fx3Dias.some((d,i)=>new Date(d.fecha+'T12:00:00').getDay()!==[5,6,0][i])){avisoIntegrado('Las jornadas deben corresponder a viernes, sábado y domingo.');return false}return true}
 function fx3GuardarDias(){settings.fechasEtapa10=fx3Dias.map(d=>d.fecha);settings.horarios=fx3Dias.map(d=>[d.inicio,d.fin]);saveDraft()}
-function fx3Mover(delta){if(delta>0&&fx3Paso===0){if(!fx3ValidarDias())return;fx3GuardarDias()}fx3Paso=Math.max(0,Math.min(2,fx3Paso+delta));render()}
+function fx3Mover(delta){if(delta>0&&fx3Paso===0){if(!fx3ValidarDias())return;fx3GuardarDias()}fx3Paso=Math.max(0,Math.min(2,fx3Paso+delta));render();const detalle=document.querySelector('.nc-ux-config-detalle');if(detalle)detalle.open=true;}
 function fx3Turno(){return Number(settings.duracion)+Number(settings.intervalo)}
 function fx3Slots(){const turno=fx3Turno(),n=Number(settings.canchas),out=[];fx3Dias.forEach((d,i)=>{for(let m=minutosHora(d.inicio);m+turno<=minutosHora(d.fin);m+=turno)for(let c=1;c<=n;c++)out.push({fecha:d.fecha,hora:horaMinutos(m),cancha:String(c),inicio:i*1440+m})});return out}
 function fx3Clave(p){return [p.categoria,p.genero,p.zona,p.ronda,p.local,p.visitante].join('|')}
 function fx3Proponer(partidos,fijos=[],corte=""){const slots=fx3Slots().filter(s=>!corte||(s.fecha+"T"+s.hora)>=corte),turno=fx3Turno(),n=Number(settings.canchas),ocupados=new Set(fijos.map(p=>p.fecha+'|'+p.hora+'|'+p.cancha)),inicio=new Map();const comp=(p)=>fxComp(p);const posicion=(p)=>fx3Dias.findIndex(d=>d.fecha===p.fecha)*1440+minutosHora(p.hora);for(const p of fijos){const t=posicion(p);if(t<0)continue;for(const nombre of [p.local,p.visitante]){const key=comp(p)+'|'+nombre;if(!inicio.has(key))inicio.set(key,[]);inicio.get(key).push(t)}}const pendientes=partidos.map(p=>({...p})),asignados=[];for(const slot of slots){if(ocupados.has(slot.fecha+'|'+slot.hora+'|'+slot.cancha))continue;let candidato=-1,mejor=Infinity;for(let i=0;i<pendientes.length;i++){const p=pendientes[i],clave=comp(p);if([p.local,p.visitante].some(nombre=>(inicio.get(clave+'|'+nombre)||[]).some(t=>Math.abs(slot.inicio-t)<2*turno)))continue;const puntaje=(Number(p.ronda)||1)*100+(i%19);if(puntaje<mejor){mejor=puntaje;candidato=i}}if(candidato<0)continue;const p=pendientes.splice(candidato,1)[0];asignados.push({...p,fecha:slot.fecha,hora:slot.hora,cancha:slot.cancha});for(const nombre of [p.local,p.visitante]){const key=comp(p)+'|'+nombre;if(!inicio.has(key))inicio.set(key,[]);inicio.get(key).push(slot.inicio)}}return [...fijos,...asignados,...pendientes.map(p=>({...p,fecha:'',hora:'',cancha:''}))]}
 async function fx3Preparar(reprogramacion=false){if(!fx3ValidarDias())return;fx3GuardarDias();fxModoDistribucion='inteligente';if(!Number.isInteger(Number(settings.canchas))||Number(settings.canchas)<1||!Number.isFinite(fx3Turno())||fx3Turno()<=0){avisoIntegrado('Revisá canchas, duración e intervalo en Configuración.');return}if(!reprogramacion){if(!zonasRemotas){avisoIntegrado('Primero deben estar disponibles las zonas confirmadas desde Apps Script.');consultarZonas();return}let partidos;try{partidos=partidosConfirmadosFixture()}catch(e){avisoIntegrado(e.message);return}if(!partidos.length){avisoIntegrado('No hay partidos provenientes de zonas confirmadas.');return}const prev=fixture.slice();const fijados=prev.filter(p=>p.resultado||p.estado==='FINALIZADO'||p.protegido||p.bloqueado);if(fijados.length){avisoIntegrado('Hay partidos con resultados o protegidos. Para conservarlos, utilizá «Reorganizar partidos pendientes».');return}fixture=fx3Proponer(partidos);fixtureZonasHuella=zonasRemotas.huella;fx3EsReprogramacion=false;}else{fx3Leer();if(!fx3CorteFecha||!fx3CorteHora){avisoIntegrado('Indicá fecha y hora desde las que reorganizar.');return}if(!fixture.length){avisoIntegrado('Primero generá una propuesta de fixture.');return}const corte=fx3CorteFecha+'T'+fx3CorteHora;const fijos=[],pendientes=[];for(const p of fixture){const protegido=p.resultado||p.estado==='FINALIZADO'||p.protegido||p.bloqueado;const anterior=p.fecha&&p.hora&&(p.fecha+'T'+p.hora)<corte;if(protegido||(fx3Conservar&&anterior))fijos.push(p);else pendientes.push(p)}const nuevos=fx3Proponer(pendientes,fijos,corte);const fuera=nuevos.filter(p=>!fijos.includes(p)&&p.fecha&&p.hora&&(p.fecha+'T'+p.hora)<corte);if(fuera.length){avisoIntegrado('No se puede reprogramar: algunos partidos quedarían antes de la fecha y hora indicadas.');return}fixture=nuevos;fx3EsReprogramacion=true;}fx3UltimaPropuesta=true;saveDraft();render();const faltan=fixture.filter(p=>!p.fecha).length;if(faltan)avisoIntegrado('Quedaron '+faltan+' partidos sin horario. No confirmes hasta resolver la capacidad disponible.');}
 function fx3Tabla(){const canchas=Math.max(1,Number(settings.canchas)||1),dias=fx3Dias.map(d=>d.fecha);return dias.map((dia,idx)=>{const partidos=fixture.filter(p=>p.fecha===dia).sort((a,b)=>a.hora.localeCompare(b.hora)||Number(a.cancha)-Number(b.cancha));const horas=[...new Set(partidos.map(p=>p.hora))].sort();return `<h3>Jornada ${idx+1} · ${esc(dia)} · ${esc(fx3Dias[idx].inicio)} a ${esc(fx3Dias[idx].fin)}</h3><div class="fx3-tabla"><table><thead><tr><th>Horario</th>${Array.from({length:canchas},(_,i)=>`<th>Cancha ${i+1}</th>`).join('')}</tr></thead><tbody>${horas.map(h=>`<tr><td><strong>${esc(h)}</strong></td>${Array.from({length:canchas},(_,i)=>{const p=partidos.find(p=>p.hora===h&&Number(p.cancha)===i+1);return `<td>${p?`${fxEtiquetaCategoria(p.categoria)} ${esc(p.local)} vs ${esc(p.visitante)}`:'—'}</td>`}).join('')}</tr>`).join('')||`<tr><td colspan="${canchas+1}">Sin partidos programados</td></tr>`}</tbody></table></div>`}).join('')}
-renderFixtureEtapa10=function(){fx3Inicializar();const tit=['Fechas y horarios','Datos del torneo','Vista previa'];const base=`<div class="fx3"><div class="fx3-steps">${tit.map((t,i)=>`<div class="fx3-step ${i===fx3Paso?'actual':i<fx3Paso?'hecho':''}">${i+1}. ${t}</div>`).join('')}</div>`;let html='';if(fx3Paso===0)html=`<h2>1. ¿Cuándo se juega?</h2><p class="muted">Indicá las fechas y los horarios de las tres jornadas. No se programarán partidos fuera de estos límites.</p>${fx3Dias.map((d,i)=>`<div class="fx3-dia"><strong>▦ Jornada ${i+1}</strong><div class="fx3-campos"><label class="field">Fecha<input id="fx3-${i}-fecha" type="date" value="${esc(d.fecha)}"></label><label class="field">Hora de inicio<input id="fx3-${i}-inicio" type="time" value="${esc(d.inicio)}"></label><label class="field">Hora de finalización<input id="fx3-${i}-fin" type="time" value="${esc(d.fin)}"></label></div></div>`).join('')}<div class="fx3-aviso">La duración y el intervalo se toman de <strong>Configuración del torneo</strong>; no hace falta volver a ingresarlos.</div>`;if(fx3Paso===1)html=`<h2>2. Estos son los datos de tu torneo</h2><p class="muted">Se toman automáticamente de la configuración y de los equipos inscriptos.</p><div class="fx3-resumen"><div class="fx3-dato"><small>Equipos inscriptos</small><strong>${teams.length} equipos</strong></div><div class="fx3-dato"><small>Canchas habilitadas</small><strong>${esc(settings.canchas)} canchas</strong></div><div class="fx3-dato"><small>Duración de los sets / juego</small><strong>${esc(settings.duracion)} minutos</strong></div><div class="fx3-dato"><small>Intervalo configurado</small><strong>${esc(settings.intervalo)} minutos</strong></div></div><div class="fx3-aviso">Se evitarán partidos consecutivos del mismo equipo, canchas simultáneas y asignaciones exclusivas por categoría.</div><button class="secondary" type="button" id="fx3-actualizar-zonas">Actualizar zonas confirmadas desde Apps Script</button><p class="muted">${zonasRemotas?'Zonas confirmadas consultadas: '+zonasConfirmadasFixture().length:'Aún no se han consultado las zonas confirmadas.'}</p>`;if(fx3Paso===2){const faltantes=fixture.filter(p=>!p.fecha||!p.hora||!p.cancha).length;const errores=fixture.length?validarFixtureEtapa10():[];html=`<h2>3. Revisá la propuesta de fixture</h2><p class="muted">Prepará la distribución real y revisala antes de confirmar.</p><div class="fx3-resumen"><div class="fx3-dato"><small>Equipos</small><strong>${teams.length}</strong></div><div class="fx3-dato"><small>Canchas</small><strong>${esc(settings.canchas)}</strong></div><div class="fx3-dato"><small>Jornadas</small><strong>3</strong></div><div class="fx3-dato"><small>Reglas de juego</small><strong>${esc(settings.duracion)} + ${esc(settings.intervalo)} min</strong></div></div><button class="primary" type="button" id="fx3-generar">${fixture.length?'Preparar nueva propuesta':'Preparar propuesta de fixture'}</button>${fixture.length?`<p class="muted">${fixture.length-faltantes} de ${fixture.length} partidos con horario · ${faltantes} pendientes.</p>${fx3Tabla()}${errores.length?`<div class="fx3-aviso"><strong>${errores.length} observaciones por resolver</strong><ul>${errores.slice(0,12).map(e=>`<li>${esc(e)}</li>`).join('')}</ul></div>`:'<div class="fx3-aviso">Sin conflictos detectados por el validador del asistente.</div>'}<button class="primary" id="et11Save" type="button" ${faltantes||errores.length?'disabled':''}>Confirmar y guardar en Apps Script</button>`:''}<div class="fx3-reprogramar"><h3>¿Hubo retrasos por tie-break?</h3><p class="muted">Reorganizá los partidos pendientes desde una fecha y hora, manteniendo los encuentros ya jugados o protegidos.</p><button class="secondary" type="button" id="fx3-toggle">${fx3Reprogramar?'Ocultar opciones':'Reorganizar partidos pendientes'} →</button>${fx3Reprogramar?`<div class="fx3-campos" style="margin-top:15px"><label class="field">Reprogramar desde la fecha<input id="fx3-corte-fecha" type="date" value="${esc(fx3CorteFecha||fx3Dias[1].fecha)}"></label><label class="field">A partir de la hora<input id="fx3-corte-hora" type="time" value="${esc(fx3CorteHora||fx3Dias[1].inicio)}"></label></div><label style="display:block;margin:14px 0"><input id="fx3-conservar" type="checkbox" ${fx3Conservar?'checked':''}> Conservar la programación anterior a ese momento</label><button class="primary" type="button" id="fx3-reprogramar">Preparar nueva propuesta →</button>`:''}</div>`}return panel('Administración de partidos y canchas',base+html+`<div class="fx3-acciones"><button class="secondary" id="fx3-anterior" type="button" ${fx3Paso===0?'disabled':''}>← Anterior</button>${fx3Paso<2?'<button class="primary" id="fx3-continuar" type="button">Continuar →</button>':''}</div></div>`)};
-activarFixtureEtapa10=function(){document.getElementById('fx3-anterior')?.addEventListener('click',()=>fx3Mover(-1));document.getElementById('fx3-continuar')?.addEventListener('click',()=>fx3Mover(1));document.getElementById('fx3-actualizar-zonas')?.addEventListener('click',consultarZonas);document.getElementById('fx3-generar')?.addEventListener('click',()=>fx3Preparar(false));document.getElementById('fx3-toggle')?.addEventListener('click',()=>{fx3Leer();fx3Reprogramar=!fx3Reprogramar;render()});document.getElementById('fx3-reprogramar')?.addEventListener('click',()=>fx3Preparar(true));document.getElementById('et11Save')?.addEventListener('click',confirmarGuardarFixture)};
+renderFixtureEtapa10=function(){fx3Inicializar();const tit=['Fechas y horarios','Datos del torneo','Vista previa'];const base=`<div class="fx3"><div class="fx3-steps">${tit.map((t,i)=>`<div class="fx3-step ${i===fx3Paso?'actual':i<fx3Paso?'hecho':''}">${i+1}. ${t}</div>`).join('')}</div>`;let html='';if(fx3Paso===0)html=`<h2>1. ¿Cuándo se juega?</h2><p class="muted">Indicá las fechas y los horarios de las tres jornadas. No se programarán partidos fuera de estos límites.</p>${fx3Dias.map((d,i)=>`<div class="fx3-dia"><strong>▦ Jornada ${i+1}</strong><div class="fx3-campos"><label class="field">Fecha<input id="fx3-${i}-fecha" type="date" value="${esc(d.fecha)}"></label><label class="field">Hora de inicio<input id="fx3-${i}-inicio" type="time" value="${esc(d.inicio)}"></label><label class="field">Hora de finalización<input id="fx3-${i}-fin" type="time" value="${esc(d.fin)}"></label></div></div>`).join('')}<div class="fx3-aviso">La duración y el intervalo se toman de <strong>Configuración del torneo</strong>; no hace falta volver a ingresarlos.</div>`;if(fx3Paso===1)html=`<h2>2. Estos son los datos de tu torneo</h2><p class="muted">Se toman automáticamente de la configuración y de los equipos inscriptos.</p><div class="fx3-resumen"><div class="fx3-dato"><small>Equipos inscriptos</small><strong>${teams.length} equipos</strong></div><div class="fx3-dato"><small>Canchas habilitadas</small><strong>${esc(settings.canchas)} canchas</strong></div><div class="fx3-dato"><small>Duración de los sets / juego</small><strong>${esc(settings.duracion)} minutos</strong></div><div class="fx3-dato"><small>Intervalo configurado</small><strong>${esc(settings.intervalo)} minutos</strong></div></div><div class="fx3-aviso">Se evitarán partidos consecutivos del mismo equipo, canchas simultáneas y asignaciones exclusivas por categoría.</div><button class="secondary" type="button" id="fx3-actualizar-zonas">Actualizar zonas confirmadas desde Apps Script</button><p class="muted">${zonasRemotas?'Zonas confirmadas consultadas: '+zonasConfirmadasFixture().length:'Aún no se han consultado las zonas confirmadas.'}</p>`;if(fx3Paso===2){const faltantes=fixture.filter(p=>!p.fecha||!p.hora||!p.cancha).length;const errores=fixture.length?validarFixtureEtapa10():[];html=`<h2>3. Revisá la propuesta de fixture</h2><p class="muted">Esta sección se utiliza para generar el calendario inicial. Durante el torneo, modificá los partidos pendientes directamente desde la grilla.</p><div class="fx3-resumen"><div class="fx3-dato"><small>Equipos</small><strong>${teams.length}</strong></div><div class="fx3-dato"><small>Canchas</small><strong>${esc(settings.canchas)}</strong></div><div class="fx3-dato"><small>Jornadas</small><strong>3</strong></div><div class="fx3-dato"><small>Reglas de juego</small><strong>${esc(settings.duracion)} + ${esc(settings.intervalo)} min</strong></div></div><button class="primary" type="button" id="fx3-generar">${fixture.length?'Volver a preparar propuesta inicial':'Preparar propuesta de fixture'}</button>${fixture.length?`<p class="muted">${fixture.length-faltantes} de ${fixture.length} partidos con horario · ${faltantes} pendientes.</p>${fx3Tabla()}${errores.length?`<div class="fx3-aviso"><strong>${errores.length} observaciones por resolver</strong><ul>${errores.slice(0,12).map(e=>`<li>${esc(e)}</li>`).join('')}</ul></div>`:'<div class="fx3-aviso">Sin conflictos detectados por el validador del asistente.</div>'}<button class="primary" id="et11Save" type="button" ${faltantes||errores.length?'disabled':''}>Confirmar y guardar en Apps Script</button>`:''}<div class="fx3-aviso" style="margin-top:18px"><strong>¿Necesitás modificar un partido durante el torneo?</strong><p style="margin:8px 0 0">Hacelo desde el reloj blanco de cada encuentro pendiente en la grilla del fixture. Podés cambiar fecha, hora o cancha, buscar un horario disponible o intercambiar dos partidos, sin regenerar el calendario ni modificar resultados.</p></div></div>`}return panel('Administración de partidos y canchas',base+html+`<div class="fx3-acciones"><button class="secondary" id="fx3-anterior" type="button" ${fx3Paso===0?'disabled':''}>← Anterior</button>${fx3Paso<2?'<button class="primary" id="fx3-continuar" type="button">Continuar →</button>':''}</div></div>`)};
+activarFixtureEtapa10=function(){document.getElementById('fx3-anterior')?.addEventListener('click',()=>fx3Mover(-1));document.getElementById('fx3-continuar')?.addEventListener('click',()=>fx3Mover(1));document.getElementById('fx3-actualizar-zonas')?.addEventListener('click',consultarZonas);document.getElementById('fx3-generar')?.addEventListener('click',()=>fx3Preparar(false));document.getElementById('et11Save')?.addEventListener('click',confirmarGuardarFixture)};
 
 </script>
 <script>
@@ -2810,7 +3220,29 @@ body[data-nc-theme="dark"] .nc-fullscreen-button:hover{filter:brightness(1.2)}
   document.addEventListener('fullscreenchange',sync);
   sync();
 })();
-</script></body></html>
+</script><style id="nc-grilla-pantalla-completa">
+.nc-partidos-bar-controles{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;min-width:0}
+.nc-grilla-expandir{display:inline-flex;align-items:center;gap:7px;justify-content:center;flex:none;min-height:36px;padding:7px 11px;border:1px solid #637985;border-radius:8px;background:#191c1d;color:#fff;cursor:pointer;font:inherit;font-size:12px;font-weight:700}
+.nc-grilla-expandir:hover{background:#3c555b}.nc-grilla-expandir svg{width:18px;height:18px}
+body.nc-grilla-ampliada{overflow:hidden!important}
+body.nc-grilla-ampliada .nc-partidos-panel{position:fixed!important;inset:0!important;z-index:99990!important;width:100vw!important;max-width:none!important;height:100dvh!important;margin:0!important;border:0!important;border-radius:0!important;padding:20px 24px!important;overflow:auto!important;overscroll-behavior:contain;background:#191c1d!important;display:flex;flex-direction:column}
+body.nc-grilla-ampliada .nc-partidos-scroll{flex:1;min-height:0;overflow:auto!important;max-width:none!important}
+body.nc-grilla-ampliada .nc-partidos-matriz{min-height:100%;grid-auto-rows:minmax(72px,auto)}
+body.nc-grilla-ampliada .nc-partidos-bar{flex:none}
+body.nc-grilla-ampliada .nc-partidos-filtros{flex:none}
+body.nc-grilla-ampliada .nc-grilla-expandir{background:#bbf04a;color:#202a26;border-color:#bbf04a}
+@media(max-width:700px){body.nc-grilla-ampliada .nc-partidos-panel{padding:12px!important}body.nc-grilla-ampliada .nc-partidos-scroll{overflow:auto!important}body.nc-grilla-ampliada .nc-partidos-matriz{min-width:650px!important;width:100%!important;grid-template-columns:65px repeat(var(--canchas),minmax(140px,1fr))!important}.nc-grilla-expandir-texto{display:none}}
+.nc-partidos-contenido{position:relative}.nc-partidos-reloj{position:absolute;top:5px;right:5px;width:23px;height:23px;display:grid;place-items:center;background:transparent;border:0;color:#fff;cursor:pointer;z-index:2;padding:2px}.nc-partidos-reloj svg{width:18px;height:18px}.nc-partidos-reloj:hover{color:#bbf04a}.nc-reprog-overlay{position:fixed;inset:0;background:#000a;z-index:100001;display:flex;align-items:center;justify-content:center;padding:16px}.nc-reprog-modal{position:relative;background:#fff;color:#222;border-radius:14px;width:min(540px,100%);padding:26px;box-shadow:0 18px 60px #0006}.nc-reprog-modal h3{margin:0 0 14px}.nc-reprog-x{position:absolute;right:14px;top:10px;font-size:29px;border:0;background:none;cursor:pointer}.nc-reprog-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:20px 0}.nc-reprog-fields label{font-size:13px;font-weight:700}.nc-reprog-fields input,.nc-reprog-fields select{width:100%;padding:9px;border:1px solid #aaa;border-radius:7px;margin-top:6px}.nc-reprog-actions{display:flex;justify-content:flex-end;gap:10px}.nc-reprog-actions button{border:0;border-radius:8px;padding:11px 14px;cursor:pointer}.nc-reprog-save{background:#17487f;color:#fff}.nc-reprog-error{color:#a22020;font-size:13px}.nc-reprog-actual{font-size:13px;color:#64717b}.nc-reprog-conflictos{background:#fff8e8;border:1px solid #e8c66c;border-radius:10px;padding:14px;margin:10px 0}.nc-reprog-conflictos ul{padding-left:22px;font-size:13px}.nc-reprog-opciones{display:grid;gap:7px}.nc-reprog-opciones button{padding:10px;text-align:left;border:1px solid #ccd5de;border-radius:7px;background:white;cursor:pointer;color:#17487f}.nc-reprog-opciones button:hover{background:#eef4fa}.nc-reprog-ayuda{font-size:13px;color:#344d60}.nc-reprog-modal{max-height:94vh;overflow-y:auto}.nc-reprog-save:disabled{opacity:.45;cursor:not-allowed}@media(max-width:540px){.nc-reprog-fields{grid-template-columns:1fr}}
+</style><style id="nc-arrastre-fixture23">
+.nc-partidos-slot{min-width:0;min-height:68px;display:flex;flex-direction:column}
+.nc-partidos-slot>.nc-partidos-celda{flex:1}
+.nc-partidos-contenido[draggable="true"]{cursor:grab}
+.nc-partidos-contenido.nc-partidos-arrastrando{opacity:.35}
+.nc-partidos-modo-arrastre .nc-partidos-slot:has(.nc-partidos-vacio){outline:2px dashed #00a357;outline-offset:-3px;background:rgba(0,163,87,.1)}
+.nc-partidos-slot.nc-partidos-sobre{outline:3px solid #00a357!important;outline-offset:-3px;background:rgba(0,163,87,.25)!important}
+.nc-partidos-destino{color:#4b8b68;font-size:20px}
+</style><script id="nc-grilla-pantalla-completa-script">document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.body.classList.contains('nc-grilla-ampliada')){document.body.classList.remove('nc-grilla-ampliada');if(typeof render==='function')render()}});</script>
+</body></html>
 
 
 
