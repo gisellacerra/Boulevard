@@ -2853,6 +2853,7 @@ async function ncAbrirResultadoDesdeFixture(b){
 }
 async function ncReprogramarIndividual(b,destinoInicial){
  let info;try{info=JSON.parse(decodeURIComponent(b.dataset.ncReprogramar))}catch(e){return}
+ {
  // Vista de simulación local: no utiliza Apps Script ni guarda modificaciones.
  const mins=h=>{const m=/^(\d{1,2}):(\d{2})/.exec(String(h||''));return m?+m[1]*60 + +m[2]:NaN};
  const fechaP=p=>{const v=String(p.fecha||'');const m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(v);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:v.slice(0,10)};
@@ -2868,6 +2869,7 @@ async function ncReprogramarIndividual(b,destinoInicial){
  resumen.innerHTML=`<p>${candidatos.length} partidos afectados en esta cancha</p><div style="max-height:320px;overflow:auto"><table style="width:100%;text-align:left"><thead><tr><th>Partido</th><th>Actual</th><th>Simulado</th></tr></thead><tbody>${candidatos.map(p=>`<tr><td>${esc(String(p.equipoA||p.local||'')+' vs '+String(p.equipoB||p.visitante||''))}</td><td>${esc(horaP(p))}</td><td><strong>${format(mins(horaP(p))+delta)}</strong></td></tr>`).join('')}</tbody></table></div>`;
  };input.addEventListener('input',pintar);pintar();
  const cerrar=()=>overlay.remove();overlay.querySelector('.nc-reprog-x').onclick=cerrar;overlay.querySelector('.nc-reprog-cancel').onclick=cerrar;overlay.addEventListener('click',e=>{if(e.target===overlay)cerrar()});return;
+ }
  if(!window.google?.script?.run){avisoIntegrado('Esta modificación requiere abrir el asistente desde Apps Script.');return}
  const leer=()=>new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).adminFixture11Snapshot());
  let snap;try{snap=await leer()}catch(e){avisoIntegrado('No se pudo consultar el fixture confirmado: '+String(e.message||e));return}
@@ -2879,32 +2881,6 @@ async function ncReprogramarIndividual(b,destinoInicial){
  if(indices.length!==1){avisoIntegrado('No se identificó un único partido confirmado. Actualizá el fixture antes de reprogramar.');return}
  const idx=indices[0],partido=filas[idx];
  info.fecha=normFecha(info.fecha);
- if(partido.resultado||partido.estado==='FINALIZADO'||partido.protegido||partido.bloqueado||partido.marcador){
-  // Simulación de solo lectura: no llama a funciones de guardado ni modifica fixture.
-  const origen=String(info.hora||'').slice(0,5);
-  const minutos=h=>{const m=/^(\\d{1,2}):(\\d{2})/.exec(String(h||''));return m?Number(m[1])*60+Number(m[2]):NaN};
-  const hora=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
-  const afectados=filas.filter(q=>normFecha(q.fecha)===info.fecha&&Number(q.cancha)===Number(info.cancha)&&minutos(q.hora)>=minutos(origen)).sort((a,b)=>minutos(a.hora)-minutos(b.hora));
-  const overlay=document.createElement('div');overlay.className='nc-reprog-overlay';
-  overlay.innerHTML=`<div class="nc-reprog-modal" role="dialog" aria-modal="true" aria-label="Simular retraso"><button type="button" class="nc-reprog-x" aria-label="Cerrar">×</button><h3>Simular retraso de horarios</h3><p><strong>${esc(info.local)} vs ${esc(info.visitante)}</strong></p><p class="nc-reprog-actual">Cancha ${esc(info.cancha)} · ${esc(info.fecha)} · desde las ${esc(origen)}</p><p>Esta es una simulación: <strong>no se guardará ningún cambio</strong> ni se modificarán los resultados.</p><div class="nc-reprog-retraso"><label>Minutos de retraso <input type="number" min="1" max="180" step="1" value="15" class="nc-sim-minutos"></label></div><div class="nc-reprog-resumen" aria-live="polite"></div><div class="nc-reprog-actions"><button type="button" class="nc-reprog-cancel">Cerrar simulación</button></div></div>`;
-  document.body.appendChild(overlay);
-  const resumen=overlay.querySelector('.nc-reprog-resumen'),input=overlay.querySelector('.nc-sim-minutos');
-  const pintar=()=>{
-   const delta=Number(input.value);
-   if(!Number.isInteger(delta)||delta<1||delta>180){resumen.textContent='Ingresá un retraso entre 1 y 180 minutos.';return}
-   const excede=afectados.some(q=>minutos(q.hora)+delta>=1440);
-   resumen.innerHTML=`<p><strong>${afectados.length} partido(s) · ${delta} minutos de retraso</strong></p>`+
-    (excede?'<p>Atención: algún horario supera la medianoche.</p>':'')+
-    '<div style="max-height:320px;overflow:auto"><table style="width:100%;border-collapse:collapse"><thead><tr><th style="text-align:left">Partido</th><th>Actual</th><th>Simulado</th></tr></thead><tbody>'+
-    afectados.map(q=>`<tr><td style="padding:7px 4px">${esc((q.local||q.equipoA||'?')+' vs '+(q.visitante||q.equipoB||'?'))}</td><td style="text-align:center">${esc(String(q.hora||'').slice(0,5))}</td><td style="text-align:center"><strong>${esc(hora(minutos(q.hora)+delta))}</strong></td></tr>`).join('')+'</tbody></table></div>';
-  };
-  input.addEventListener('input',pintar);pintar();
-  const cerrar=()=>overlay.remove();
-  overlay.querySelector('.nc-reprog-x').onclick=cerrar;
-  overlay.querySelector('.nc-reprog-cancel').onclick=cerrar;
-  overlay.addEventListener('click',e=>{if(e.target===overlay)cerrar()});
-  return;
- }
  const overlay=document.createElement('div');overlay.className='nc-reprog-overlay';
  overlay.innerHTML=`<form class="nc-reprog-modal"><button type="button" class="nc-reprog-x" aria-label="Cerrar">×</button><h3>Modificar programación</h3><p><strong>${esc(info.local)} vs ${esc(info.visitante)}</strong></p><p class="nc-reprog-actual">Actual: ${esc(info.fecha)} · ${esc(info.hora)} · Cancha ${esc(info.cancha)}</p><div class="nc-reprog-modos"><button type="button" data-nc-modo="individual" class="activo">Mover este partido</button><button type="button" data-nc-modo="cadena">Aplicar retraso a los siguientes partidos</button></div><div class="nc-reprog-retraso" hidden><label>Minutos de retraso <input type="number" name="retraso" min="1" max="180" step="1" value="15"></label><p>Se desplazarán los partidos pendientes de esta cancha, desde el encuentro seleccionado hasta el final de la jornada. Los resultados no se modificarán.</p><div class="nc-reprog-resumen"></div></div><div class="nc-reprog-fields"><label>Fecha<input name="fecha" type="date" required value="${esc(info.fecha)}"></label><label>Horario<input name="hora" type="time" required value="${esc(info.hora)}"></label><label>Cancha<select name="cancha">${Array.from({length:Number(settings.canchas)||4},(_,i)=>`<option value="${i+1}" ${i+1===Number(info.cancha)?'selected':''}>Cancha ${i+1}</option>`).join('')}</select></label></div><div class="nc-reprog-conflictos" hidden></div><p class="nc-reprog-error" role="alert"></p><div class="nc-reprog-actions"><button type="button" class="nc-reprog-cancel">Cancelar</button><button type="submit" class="nc-reprog-save">Confirmar cambio</button></div></form>`;
  document.body.appendChild(overlay);
