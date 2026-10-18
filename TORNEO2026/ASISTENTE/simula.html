@@ -2790,7 +2790,7 @@ return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ga
   const ganador=nombreNormal(datosMarcador?.ganador||'');
   const ganaA=!!ganador&&ganador===nombreNormal(a);
   const ganaB=!!ganador&&ganador===nombreNormal(b);
-  const reloj=!datosMarcador?`<button type="button" class="nc-partidos-reloj" title="Modificar horario o cancha" aria-label="Modificar horario o cancha" data-nc-reprogramar="${esc(encodeURIComponent(JSON.stringify({fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||''),local:a,visitante:b})))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button>`:'';
+  const reloj=`<button type="button" class="nc-partidos-reloj" title="Modificar horario o cancha" aria-label="Modificar horario o cancha" data-nc-reprogramar="${esc(encodeURIComponent(JSON.stringify({fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||''),local:a,visitante:b})))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button>`;
   const marcador=puntos?`<div class="nc-partidos-puntos" aria-label="Puntos por set: ${esc(puntos)}">${esc(puntos)}</div>`:'';
   return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" ${!datosMarcador?'draggable="true" data-nc-arrastrable="1"':''} role="button" tabindex="0" title="Cargar o corregir resultado" data-nc-resultado="${esc(encodeURIComponent(JSON.stringify({fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}"><div class="nc-partidos-equipos"><div class="nc-partidos-equipo">${iconoEquipo(a)}<span class="nc-partidos-nombre ${ganaA?'nc-partidos-ganador':''}">${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span class="nc-partidos-nombre ${ganaB?'nc-partidos-ganador':''}">${esc(b)}</span></div>${marcador}</div>${reloj}</div>`;
 
@@ -2853,6 +2853,21 @@ async function ncAbrirResultadoDesdeFixture(b){
 }
 async function ncReprogramarIndividual(b,destinoInicial){
  let info;try{info=JSON.parse(decodeURIComponent(b.dataset.ncReprogramar))}catch(e){return}
+ // Vista de simulación local: no utiliza Apps Script ni guarda modificaciones.
+ const mins=h=>{const m=/^(\d{1,2}):(\d{2})/.exec(String(h||''));return m?+m[1]*60 + +m[2]:NaN};
+ const fechaP=p=>{const v=String(p.fecha||'');const m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(v);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:v.slice(0,10)};
+ const horaP=p=>String(p.hora||p.horario||'').slice(0,5);
+ const canchaP=p=>String(p.cancha||'').replace(/[^0-9]/g,'');
+ const candidatos=fixture.filter(p=>fechaP(p)===fechaP(info)&&canchaP(p)===canchaP(info)&&mins(horaP(p))>=mins(info.hora)).sort((a,b)=>mins(horaP(a))-mins(horaP(b)));
+ const overlay=document.createElement('div');overlay.className='nc-reprog-overlay';
+ overlay.innerHTML=`<div class="nc-reprog-modal" role="dialog" aria-modal="true" aria-label="Simular retraso"><button type="button" class="nc-reprog-x" aria-label="Cerrar">×</button><h3>Simular retraso de horarios</h3><p><strong>${esc(info.local)} vs ${esc(info.visitante)}</strong></p><p class="nc-reprog-actual">${esc(info.fecha)} · ${esc(info.hora)} · Cancha ${esc(info.cancha)}</p><p><strong>Solo simulación.</strong> No se guardan horarios ni se modifican resultados.</p><div class="nc-reprog-retraso"><label>Minutos de retraso <input class="nc-sim-minutos" type="number" min="1" max="180" value="15"></label></div><div class="nc-reprog-resumen" aria-live="polite"></div><div class="nc-reprog-actions"><button type="button" class="nc-reprog-cancel">Cerrar simulación</button></div></div>`;
+ document.body.appendChild(overlay);
+ const input=overlay.querySelector('input'),resumen=overlay.querySelector('.nc-reprog-resumen');
+ const pintar=()=>{const delta=Number(input.value);if(!Number.isInteger(delta)||delta<1||delta>180){resumen.textContent='Ingresá entre 1 y 180 minutos.';return}
+ const format=m=>String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+ resumen.innerHTML=`<p>${candidatos.length} partidos afectados en esta cancha</p><div style="max-height:320px;overflow:auto"><table style="width:100%;text-align:left"><thead><tr><th>Partido</th><th>Actual</th><th>Simulado</th></tr></thead><tbody>${candidatos.map(p=>`<tr><td>${esc(String(p.equipoA||p.local||'')+' vs '+String(p.equipoB||p.visitante||''))}</td><td>${esc(horaP(p))}</td><td><strong>${format(mins(horaP(p))+delta)}</strong></td></tr>`).join('')}</tbody></table></div>`;
+ };input.addEventListener('input',pintar);pintar();
+ const cerrar=()=>overlay.remove();overlay.querySelector('.nc-reprog-x').onclick=cerrar;overlay.querySelector('.nc-reprog-cancel').onclick=cerrar;overlay.addEventListener('click',e=>{if(e.target===overlay)cerrar()});return;
  if(!window.google?.script?.run){avisoIntegrado('Esta modificación requiere abrir el asistente desde Apps Script.');return}
  const leer=()=>new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).adminFixture11Snapshot());
  let snap;try{snap=await leer()}catch(e){avisoIntegrado('No se pudo consultar el fixture confirmado: '+String(e.message||e));return}
