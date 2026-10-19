@@ -2405,12 +2405,14 @@ function posiciones13Activar(){const b=$('#p13Actualizar');if(b)b.onclick=result
    for(const g of d.grupos){
     bloque+=`<div class="nc-cruce-zona"><span class="nc-cruce-zona-nombre">Zona ${esc(g.zona)}</span><ol class="nc-cruce-equipos">${g.ranking.map(e=>`<li>${esc(e.nombre)}</li>`).join('')}</ol></div>`;
    }
-   const {semis,aviso}=etapa14Semis(d);
+   const oficial=cruces15SemisServidor(d);
+   const semis=oficial.semis;
+   const aviso=!d.completo?'Hay partidos clasificatorios pendientes.':!cruces15VistaServidor?'Validando clasificación con la tabla de respaldo...':!oficial.vista?'Sin clasificación oficial para esta categoría.':!oficial.vista.habilitado?(oficial.vista.motivo||'Clasificación no habilitada.') :semis.length!==2?'Semifinales no disponibles.':'';
    if(!aviso){
     bloque+=`<div class="nc-cruce-semifinales">${semis.map((a,i)=>`<div class="nc-cruce-partido"><strong>Semifinal ${i+1}</strong><span>${esc(a[0])}</span><small>vs.</small><span>${esc(a[1])}</span></div>`).join('')}</div>
     <div class="nc-cruce-definiciones"><div><strong>Final · Oro y Plata</strong><span>Ganadores de semifinales</span></div><div><strong>Tercer puesto · Bronce</strong><span>Perdedores de semifinales</span></div></div>`;
    }
-   bloque+=`</div><div class="nc-cruce-pie">${reloj}<strong>${d.completo?(aviso?esc(aviso):'Clasificación completa'):'Faltan '+pendientes+' partidos'}</strong></div></article>`;
+   bloque+=`</div><div class="nc-cruce-pie">${reloj}<strong>${d.completo?(aviso?esc(aviso):'Clasificación validada'):'Faltan '+pendientes+' partidos'}</strong></div></article>`;
    return bloque;
   }).join('');
   return `<section class="nc-cruces-contenedor"><header class="nc-cruces-cabecera"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="#9bff3d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V12h4v9M10 21V4h4v17M15 21v-8h4v8"/></svg><h2>Cruces</h2></header><div class="nc-cruces-grid">${tarjetas}</div></section>`;
