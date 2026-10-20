@@ -1355,6 +1355,13 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
  .app > aside nav,.app > aside #nav,.app > aside .menu38-acordeon,.app > aside .menu38-items{max-height:none!important;overflow:visible!important;}
 }
 </style>
+<style id="nc-menu-scrollbar-oculta">
+/* Mantener el desplazamiento del menú lateral sin mostrar la barra. */
+@media (min-width:761px){
+  .app > aside{scrollbar-width:none!important;-ms-overflow-style:none!important;}
+  .app > aside::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;}
+}
+</style>
 <style id="nc-avisos-contraste-final">
 /* La tarjeta hereda estilos oscuros de .notice: forzar contraste en todos los descendientes. */
 #view .nc-notice-card{background:#23292b !important;;border:1px solid #657d5d!important;color:#f4f8f4!important}
