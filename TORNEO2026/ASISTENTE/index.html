@@ -3110,25 +3110,21 @@ const ico=(name)=>({teams:'<circle cx="9" cy="8" r="3"/><circle cx="18" cy="9" r
 const svg=(name)=>`<svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round">${ico(name)}</svg>`;
 const stat=(id,icon,value,label)=>`<button type="button" class="nc-stat" data-go="${id}">${svg(icon)}<div class="nc-stat-inline"><span class="nc-stat-value">${value}</span><span class="nc-stat-label">${label}</span></div><span class="nc-stat-chevron">›</span></button>`;
 const quick=(id,icon,label)=>`<button type="button" class="nc-quick" data-go="${id}">${svg(icon)}${label}<span>›</span></button>`;
+// Inicio comparte exactamente la fuente de datos utilizada por «Fixture y programación».
 let ps=[];try{
- const esTorneo=p=>String(p.anio||settings.anio)===String(settings.anio)&&String(p.edicion||settings.edicion)===String(settings.edicion);
- const confirmados=Array.isArray(fixtureSnapshot?.filas)?fixtureSnapshot.filas.filter(esTorneo):[];
- const locales=Array.isArray(fixture)?fixture.filter(esTorneo):[];
- const resultados=typeof resultados12Partidos==='function'?resultados12Partidos():[];
- // La vista de Fixture usa los partidos locales cuando el snapshot remoto está incompleto.
- // Inicio debe respetar también las jornadas que existen en el fixture visible.
- const fechaClave=p=>String(p.fecha||p.dia||p.fechaPartido||'').trim().slice(0,10);
- const diasRemotos=new Set(confirmados.map(fechaClave).filter(Boolean));
- const diasLocales=new Set(locales.map(fechaClave).filter(Boolean));
- ps=[...confirmados];
- for(const p of locales){if(!diasRemotos.has(fechaClave(p)))ps.push(p);}
- for(const p of resultados){if(!diasRemotos.has(fechaClave(p))&&!diasLocales.has(fechaClave(p)))ps.push(p);}
-}catch(e){console.warn('No se pudieron reunir las jornadas de Inicio:',e)}
-if(!Array.isArray(ps))ps=[];
+ const filas=Array.isArray(fixtureSnapshot?.filas)?fixtureSnapshot.filas:[];
+ const filasTorneo=filas.filter(p=>String(p.anio||settings.anio)===String(settings.anio)&&String(p.edicion||settings.edicion)===String(settings.edicion));
+ const base=filasTorneo.length?filasTorneo:(Array.isArray(fixture)?fixture:[]);
+ const decisivos=(cruces15Datos?.filas||[]).filter(p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion)&&String(p.estado)==='CONFIRMADO'&&['SEMIFINAL','FINAL','TERCER_PUESTO'].includes(String(p.instancia))).map(p=>({...p,categoria:'+'+String(p.categoria).replace(/^\+/,''),_cruce:true}));
+ ps=[...base,...decisivos];
+}catch(e){console.warn('No se pudieron reunir los partidos de Inicio:',e)}
 const categorias=[...new Set(teams.map(t=>t.categoria).filter(Boolean))];
 const ahoraDashboard=new Date();const hoyLocal=[ahoraDashboard.getFullYear(),String(ahoraDashboard.getMonth()+1).padStart(2,'0'),String(ahoraDashboard.getDate()).padStart(2,'0')].join('-');
 const fechaDePartido=(p)=>{const raw=String(p.fecha||p.dia||p.fechaPartido||'');if(/^\d{4}-\d{2}-\d{2}/.test(raw))return raw.slice(0,10);const m=raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:null};
-const diasProgramados=[...new Set(ps.map(fechaDePartido).filter(Boolean))].sort();const selectedDay=window.ncSelectedDay||(diasProgramados.includes(hoyLocal)?hoyLocal:(diasProgramados.find(d=>d>hoyLocal)||diasProgramados[diasProgramados.length-1]||hoyLocal));const partidosHoy=ps.filter(p=>fechaDePartido(p)===selectedDay).sort((a,b)=>String(a.hora||'').localeCompare(String(b.hora||''))).slice(0,6);
+const diasProgramados=[...new Set([...(Array.isArray(settings.fechasEtapa10)?settings.fechasEtapa10:[]),...ps.map(fechaDePartido)].filter(Boolean))].sort();
+const selectedDay=(window.ncSelectedDay&&diasProgramados.includes(window.ncSelectedDay))?window.ncSelectedDay:(diasProgramados.includes(hoyLocal)?hoyLocal:(diasProgramados.find(d=>d>hoyLocal)||diasProgramados[0]||hoyLocal));
+window.ncSelectedDay=selectedDay;
+const partidosHoy=ps.filter(p=>fechaDePartido(p)===selectedDay).sort((a,b)=>String(a.hora||'').localeCompare(String(b.hora||''))).slice(0,6);
 const diaFecha=new Date(selectedDay+'T12:00:00');const fechaVisible=diaFecha.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 const dayBar=`<div class="nc-daybar"><button type="button" data-nc-day="-1" aria-label="Día anterior"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><div class="nc-daybar-center"><strong>${fechaVisible}</strong><small>Jornada seleccionada · usá las flechas para cambiar de fecha</small></div><button type="button" data-nc-day="1" aria-label="Día siguiente"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button></div>`;
 const matchRows=partidosHoy.map((p,i)=>`<tr><td>${esc(String(p.hora||p.horario||'—'))}</td><td><span class="nc-cat" style="background:${fxColorCategoria(p.categoria)};color:#000!important">${esc(String(p.categoria||'—'))}</span></td><td>${esc(String(p.cancha||'—'))}</td><td>${esc(String(p.equipoA||p.local||p.equipo1||'—'))}</td><td>${esc(String(p.equipoB||p.visitante||p.equipo2||'—'))}</td></tr>`).join('');
@@ -3140,7 +3136,7 @@ view.innerHTML=`<div class="nc-dashboard">${dayBar}
 <div class="nc-quick-grid">${quick('resultados','calendar','Cargar resultado')}${quick('fixture','file','Generar fixture')}${quick('equipos','teams','Administrar equipos')}${quick('avisos','megaphone','Publicar aviso')}</div>
 <div class="nc-columns"><section class="nc-box"><div class="nc-box-head"><h2>Avisos recientes</h2><button class="nc-link" data-go="avisos">Ver todos ›</button></div>${noticeRows||'<div class="nc-empty">Todavía no hay avisos publicados.</div>'}</section><section class="nc-box"><div class="nc-box-head"><h2>Próximos encuentros</h2><button class="nc-link" data-go="fixture">Ver todos ›</button></div>${ps.slice(6,10).map(p=>`<div class="nc-feed-item">${svg('calendar')}<div>${esc(String(p.equipoA||p.local||'Equipo A'))} — ${esc(String(p.equipoB||p.visitante||'Equipo B'))}<small>${esc(String(p.hora||p.horario||'Horario por confirmar'))} · Cancha ${esc(String(p.cancha||'—'))}</small></div></div>`).join('')||'<div class="nc-empty">Los próximos encuentros aparecerán cuando esté disponible el fixture.</div>'}</section></div>
 </div>`;
-document.querySelectorAll('[data-nc-day]').forEach(b=>b.addEventListener('click',()=>{const d=new Date(selectedDay+'T12:00:00');d.setDate(d.getDate()+Number(b.dataset.ncDay));window.ncSelectedDay=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');render();}));
+document.querySelectorAll('[data-nc-day]').forEach(b=>b.addEventListener('click',()=>{const i=diasProgramados.indexOf(selectedDay);const siguiente=i+Number(b.dataset.ncDay);if(diasProgramados.length&&siguiente>=0&&siguiente<diasProgramados.length){window.ncSelectedDay=diasProgramados[siguiente]}else if(!diasProgramados.length){const d=new Date(selectedDay+'T12:00:00');d.setDate(d.getDate()+Number(b.dataset.ncDay));window.ncSelectedDay=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}render();}));
 const tituloTorneo=document.getElementById('nc-torneo-titulo');if(tituloTorneo){const nombre=String(settings.nombre||'Torneo Nacional de Newcom').trim();const edicion=String(settings.edicion||'').trim();const nombreLimpio=nombre.replace(/(\d+)\s*[°ºª]{2,}/g,'$1°').replace(/\s{2,}/g,' ');const edicionLimpia=edicion.replace(/[°ºª]+/g,'').trim();const numeroEdicion=/^[IVXLCDM]+$/i.test(edicionLimpia)?({'VI':'6','V':'5','VII':'7','VIII':'8','IX':'9','X':'10'}[edicionLimpia.toUpperCase()]||edicionLimpia):edicionLimpia;const prefijo=/^(?:\d+\s*[°ºª]|[IVXLCDM]+\b)/i.test(nombreLimpio)?'':(numeroEdicion?numeroEdicion+'° ':'');tituloTorneo.textContent=(prefijo+nombreLimpio).replace(/(\d+)\s*[°ºª]{2,}/g,'$1°');}const season=document.getElementById('nc-season');if(season)season.textContent='▣  Temporada '+String(settings.anio||new Date().getFullYear());
 }
 
