@@ -25,7 +25,7 @@ header.top>button:first-child{grid-column:1!important;order:0!important;margin:0
 header.top>.tournament-brand{grid-column:2!important;order:0!important;min-width:0!important;display:flex!important;align-items:center!important;justify-content:center!important}
 header.top .tournament-logo{display:block!important;width:100%!important;max-width:260px!important;max-height:94px!important;height:auto!important;object-fit:contain!important;object-position:center center!important;margin:auto!important}
 header.top>.notification-bell:last-child{grid-column:3!important;order:0!important;display:flex!important;position:relative!important;justify-self:center!important;margin:0!important;padding:6px!important}
-header.top .nc-unread-count{position:absolute;top:-3px;right:-5px;min-width:19px;height:19px;padding:0 4px;display:none;align-items:center;justify-content:center;background:#e02e3d;color:white;border-radius:12px;border:2px solid white;font-size:10px;font-weight:800;line-height:1}
+header.top .nc-unread-count{position:absolute;top:-3px;right:-5px;min-width:19px;height:19px;padding:0 4px;display:none;align-items:center;justify-content:center;background:#e02e3d;color:white;border-radius:12px;border:0;font-size:10px;font-weight:800;line-height:1}
 header.top .nc-unread-count.visible{display:flex}
 #view>.home-photo:first-child{margin-top:0!important;padding-top:0!important}
 #view>.home-photo:first-child .carousel-photo{margin-top:0!important}
@@ -47,7 +47,7 @@ header.top>.notification-bell:last-child{transform:translateX(-9px)!important}
 
 <style id="nc-menu-legibilidad-ajustes">
 /* Contador sin aro blanco */
-header.top .nc-unread-count{border:0!important;box-shadow:none!important;outline:0!important}
+header.top .nc-unread-count{border:0!important;box-shadow:none!important;outline:0!important;background-clip:padding-box!important}
 /* Barra inferior más alta, con iconos y rótulos más legibles */
 .bottom{background:#18864f!important;min-height:83px!important;padding-bottom:env(safe-area-inset-bottom,0px)!important}
 .bottom nav{min-height:83px!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;align-items:stretch!important}
