@@ -357,6 +357,14 @@ body[data-nc-theme="light"] .equipo-edit-modal input[type="file"]::file-selector
 .nc-pos-zona .nc-pos-tabla th:nth-child(3),.nc-pos-zona .nc-pos-tabla td:nth-child(3){width:62px;text-align:center;}
 .nc-pos-zona .nc-pos-tabla th:nth-child(4),.nc-pos-zona .nc-pos-tabla td:nth-child(4){width:68px;text-align:center;}
 @media(max-width:500px){.nc-pos-zona .nc-pos-tabla th:nth-child(1),.nc-pos-zona .nc-pos-tabla td:nth-child(1){width:48px}.nc-pos-zona .nc-pos-tabla th:nth-child(3),.nc-pos-zona .nc-pos-tabla td:nth-child(3){width:44px}.nc-pos-zona .nc-pos-tabla th:nth-child(4),.nc-pos-zona .nc-pos-tabla td:nth-child(4){width:52px}}
+
+/* Tabla completa de posiciones en Inicio: columnas uniformes en todas las zonas */
+.nc-pos-zona .tablewrap{overflow-x:auto}
+.nc-pos-zona .nc-pos-tabla{table-layout:fixed;width:100%;min-width:920px}
+.nc-pos-zona .nc-pos-tabla th,.nc-pos-zona .nc-pos-tabla td{width:6.7%;text-align:center;white-space:nowrap}
+.nc-pos-zona .nc-pos-tabla th:nth-child(1),.nc-pos-zona .nc-pos-tabla td:nth-child(1){width:8%;text-align:left}
+.nc-pos-zona .nc-pos-tabla th:nth-child(2),.nc-pos-zona .nc-pos-tabla td:nth-child(2){width:27%;text-align:left}
+.nc-pos-zona .nc-pos-tabla th:nth-child(11),.nc-pos-zona .nc-pos-tabla td:nth-child(11){width:11%;text-align:center}
 </style><style>
 /* Ajustes exclusivos de notificaciones registradas */
 .notice { padding: 18px 20px 20px; }
@@ -3213,7 +3221,7 @@ const ncPosicionesInicio=()=>{
    else{v.PG++;l.PP++;v.PTS+=3;l.PTS+=sl===1?2:1;}
   }
   const filas=[...equipos.values()].sort((a,b)=>b.PTS-a.PTS||b.PG-a.PG||((b.SF-b.SC)-(a.SF-a.SC))||((b.PF-b.PC)-(a.PF-a.PC))||a.nombre.localeCompare(b.nombre,'es'));
-  return `<div class="nc-pos-zona"><div class="nc-pos-zona-titulo">Zona ${esc(zona||'general')} <small>${jugados} de ${partidos.length} partidos con resultado</small></div><div class="tablewrap"><table class="nc-compact nc-pos-tabla"><thead><tr><th>POS.</th><th>EQUIPO</th><th>PJ</th><th>PTS</th></tr></thead><tbody>${filas.map((e,i)=>`<tr><td>${i+1}</td><td>${esc(e.nombre)}</td><td>${e.PJ}</td><td><strong>${e.PTS}</strong></td></tr>`).join('')}</tbody></table></div></div>`;
+  return `<div class="nc-pos-zona"><div class="nc-pos-zona-titulo">Zona ${esc(zona||'general')} <small>${jugados} de ${partidos.length} partidos con resultado</small></div><div class="tablewrap"><table class="nc-compact nc-pos-tabla"><thead><tr><th>Pos.</th><th>Equipo</th><th>PJ</th><th>PG</th><th>PP</th><th>SF</th><th>SC</th><th>Dif.</th><th>PF</th><th>PC</th><th>Puntos</th></tr></thead><tbody>${filas.map((e,i)=>`<tr><td>${i+1}</td><td><strong>${esc(e.nombre)}</strong></td><td>${e.PJ}</td><td>${e.PG}</td><td>${e.PP}</td><td>${e.SF}</td><td>${e.SC}</td><td>${e.SF-e.SC}</td><td>${e.PF}</td><td>${e.PC}</td><td><strong>${e.PTS}</strong></td></tr>`).join('')}</tbody></table></div></div>`;
  }).join('');
 };
 const resultadosHTML=terminados.slice(0,5).map(p=>{const r=resultadoRegistrado(p);const local=String(p.equipoA||p.local||p.equipo1||'—'),visitante=String(p.equipoB||p.visitante||p.equipo2||'—');const ganador=String(r?.ganador||'').trim();const setsA=Array.isArray(r?.set1)&&Array.isArray(r?.set2)?[r.set1,r.set2,r.tiebreak].filter(x=>Array.isArray(x)&&x.length===2).reduce((n,x)=>n+(Number(x[0])>Number(x[1])?1:0),0):null;const setsB=Array.isArray(r?.set1)&&Array.isArray(r?.set2)?[r.set1,r.set2,r.tiebreak].filter(x=>Array.isArray(x)&&x.length===2).reduce((n,x)=>n+(Number(x[1])>Number(x[0])?1:0),0):null;const marcador=setsA!==null?`${setsA} - ${setsB}`:'';const resalta=n=>ganador&&ganador.toLocaleLowerCase()===n.toLocaleLowerCase()?`<strong style="color:#f8db4c">${esc(n)}</strong>`:esc(n);return `<div class="nc-feed-item">${svg('trophy')}<div>${resalta(local)} <span style="opacity:.8">${esc(marcador||'—')}</span> ${resalta(visitante)}<small>${esc(String(p.categoria||'—'))}</small></div></div>`}).join('');
