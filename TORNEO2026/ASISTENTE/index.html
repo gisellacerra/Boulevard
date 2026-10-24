@@ -3110,7 +3110,20 @@ const ico=(name)=>({teams:'<circle cx="9" cy="8" r="3"/><circle cx="18" cy="9" r
 const svg=(name)=>`<svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round">${ico(name)}</svg>`;
 const stat=(id,icon,value,label)=>`<button type="button" class="nc-stat" data-go="${id}">${svg(icon)}<div class="nc-stat-inline"><span class="nc-stat-value">${value}</span><span class="nc-stat-label">${label}</span></div><span class="nc-stat-chevron">›</span></button>`;
 const quick=(id,icon,label)=>`<button type="button" class="nc-quick" data-go="${id}">${svg(icon)}${label}<span>›</span></button>`;
-let ps=[];try{ps=Array.isArray(fixtureSnapshot?.filas)?fixtureSnapshot.filas.filter(p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion)):[];if(!ps.length&&typeof resultados12Partidos==='function')ps=resultados12Partidos();}catch(e){}
+let ps=[];try{
+ const esTorneo=p=>String(p.anio||settings.anio)===String(settings.anio)&&String(p.edicion||settings.edicion)===String(settings.edicion);
+ const confirmados=Array.isArray(fixtureSnapshot?.filas)?fixtureSnapshot.filas.filter(esTorneo):[];
+ const locales=Array.isArray(fixture)?fixture.filter(esTorneo):[];
+ const resultados=typeof resultados12Partidos==='function'?resultados12Partidos():[];
+ // La vista de Fixture usa los partidos locales cuando el snapshot remoto está incompleto.
+ // Inicio debe respetar también las jornadas que existen en el fixture visible.
+ const fechaClave=p=>String(p.fecha||p.dia||p.fechaPartido||'').trim().slice(0,10);
+ const diasRemotos=new Set(confirmados.map(fechaClave).filter(Boolean));
+ const diasLocales=new Set(locales.map(fechaClave).filter(Boolean));
+ ps=[...confirmados];
+ for(const p of locales){if(!diasRemotos.has(fechaClave(p)))ps.push(p);}
+ for(const p of resultados){if(!diasRemotos.has(fechaClave(p))&&!diasLocales.has(fechaClave(p)))ps.push(p);}
+}catch(e){console.warn('No se pudieron reunir las jornadas de Inicio:',e)}
 if(!Array.isArray(ps))ps=[];
 const categorias=[...new Set(teams.map(t=>t.categoria).filter(Boolean))];
 const ahoraDashboard=new Date();const hoyLocal=[ahoraDashboard.getFullYear(),String(ahoraDashboard.getMonth()+1).padStart(2,'0'),String(ahoraDashboard.getDate()).padStart(2,'0')].join('-');
