@@ -199,7 +199,7 @@ ncCarouselPaint=function(){
 };
 setInterval(()=>{const track=document.getElementById('photo-track'),photos=galleryImages();if(!track||photos.length<2||document.hidden||photoBusy||document.getElementById('photo-upload')?.open||photoHover||Date.now()<photoPauseUntil||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;track.scrollTo({left:(photoIndex+1)*track.clientWidth,behavior:'smooth'});},7000);
 
-const galleryGeneric=generic;generic=function(){if(page==='galeria')return `<div class="photo-bar"><button class="link" onclick="go('inicio')">‹ Inicio</button><button class="upload-photo" onclick="openPhotoUpload()">Subí tu foto</button></div><div class="photo-grid photo-full">${galleryImages().map(p=>`<figure><img loading="lazy" src="${safe(p.url)}" alt="Foto compartida del torneo"></figure>`).join('')||'<p class="empty">Todavía no hay fotos compartidas.</p>'}</div>`;return galleryGeneric();};
+const galleryGeneric=generic;generic=function(){if(page==='galeria')return `<div class="photo-bar"><button class="link" onclick="go('inicio')">‹ Inicio</button><button class="upload-photo" onclick="openPhotoUpload()">Subí tu foto</button></div><div class="photo-grid photo-full">${galleryImages().map((p,i)=>`<figure><img loading="lazy" src="${safe(p.url)}" alt="Foto compartida del torneo" role="button" tabindex="0" onclick="ncAbrirFoto(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ncAbrirFoto(${i})}"></figure>`).join('')||'<p class="empty">Todavía no hay fotos compartidas.</p>'}</div>`;return galleryGeneric();};
 ncFotosCargar=function(){if(!PHOTO_ENDPOINT){photoLoadState='unavailable';ncFotosPintar();return;}const cb='ncPhotos_'+Date.now()+Math.floor(Math.random()*1000),tag=document.createElement('script');let timer;const clean=()=>{clearTimeout(timer);tag.remove();delete window[cb];};const fail=()=>{clean();photoLoadState='unavailable';ncFotosPintar();};window[cb]=d=>{clean();if(d?.ok&&Array.isArray(d.fotos)){ncFotosPublicas=d.fotos;photoLoadState='ready';}else photoLoadState='unavailable';ncFotosPintar();};tag.onerror=fail;timer=setTimeout(fail,15000);tag.src=PHOTO_ENDPOINT+'?api=fotos&callback='+cb;document.head.appendChild(tag);};
 document.getElementById('photo-upload-form').addEventListener('submit',sendPhoto);
 document.getElementById('photo-file').addEventListener('change',async function(){photoInputFile=null;photoPayload=null;photoStatus('');const preview=document.getElementById('photo-preview');preview.replaceChildren();const f=this.files[0];if(!f)return;if(f.size>3*1024*1024){photoStatus('La foto supera los 3 MB. Elegí una más liviana.');this.value='';return;}if(!/^image\/(jpeg|png|webp)$/i.test(f.type)){photoStatus('Elegí una foto JPG, PNG o WebP.');this.value='';return;}const url=URL.createObjectURL(f),img=new Image();img.alt='Vista previa de tu foto';img.onload=img.onerror=()=>URL.revokeObjectURL(url);img.src=url;preview.append(img);});
@@ -209,4 +209,25 @@ render();
 const ncRenderWithDataStatus=render;
 render=function(){ncRenderWithDataStatus();if(ncDataPhase==='error'){const box=document.createElement('div');box.className='data-status';box.setAttribute('role','status');box.innerHTML=`<span>${safe(ncDataMessage)}</span><button class="link" onclick="ncDatosCargar()">Reintentar</button>`;document.getElementById('view').prepend(box);}};
 ncFotosCargar();ncDatosCargar();
-</script></body></html>
+</script>
+<style>
+.photo-full figure img{cursor:zoom-in}
+.nc-lightbox{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.96);display:flex;align-items:center;justify-content:center;padding:56px 0 30px;box-sizing:border-box}
+.nc-lightbox img{display:block;width:100%;height:auto;max-height:calc(100dvh - 100px);object-fit:contain}
+.nc-lightbox-close{position:absolute;right:14px;top:max(12px,env(safe-area-inset-top));width:44px;height:44px;border:0;border-radius:50%;background:#303536;color:#fff;font-size:28px;line-height:1;cursor:pointer;z-index:2}
+.nc-lightbox-close:focus-visible{outline:3px solid #c8fa42}
+</style>
+<script>
+function ncAbrirFoto(i){
+ const p=galleryImages()[i];if(!p)return;
+ ncCerrarFoto();
+ const overlay=document.createElement('div');overlay.className='nc-lightbox';overlay.id='nc-lightbox';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Fotografía ampliada');
+ const img=document.createElement('img');img.src=p.url;img.alt=p.titulo||'Fotografía del torneo';
+ const close=document.createElement('button');close.className='nc-lightbox-close';close.type='button';close.setAttribute('aria-label','Cerrar fotografía');close.textContent='×';close.onclick=ncCerrarFoto;
+ overlay.onclick=e=>{if(e.target===overlay)ncCerrarFoto()};overlay.append(img,close);document.body.append(overlay);
+ document.body.dataset.ncPhotoOpen='1';document.body.style.overflow='hidden';close.focus();
+}
+function ncCerrarFoto(){const modal=document.getElementById('nc-lightbox');if(!modal)return;modal.remove();document.body.style.overflow='';delete document.body.dataset.ncPhotoOpen;}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')ncCerrarFoto()});
+</script>
+</body></html>
