@@ -286,20 +286,29 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')ncCerrarFoto()});
 
 <script id="nc-category-palette-script">
 (function(){
-const palette={'+40':'#d64da7','+50':'#48c438','+60':'#348bef','+68':'#ff6555','+70':'#e5f13c','+75':'#f7a139'};
-function applyPalette(){
-const view=document.getElementById('view');
-if(!view)return;
-view.querySelectorAll('.chip,.tabs button').forEach(el=>{
-const value=(el.textContent||'').trim();
-if(!palette[value])return;
-el.style.setProperty('--nc-category-color',palette[value]);
-el.classList.add(el.matches('.tabs button')&&el.classList.contains('active')?'nc-cat-selected':'nc-cat-color');
-});
-}
-const observer=new MutationObserver(applyPalette);
-function start(){const v=document.getElementById('view');if(v){observer.observe(v,{childList:true,subtree:true});applyPalette()}}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+  const palette={'+40':'#d64da7','+50':'#48c438','+60':'#348bef','+68':'#ff6555','+70':'#e5f13c','+75':'#f7a139'};
+  const exact=/^\+(40|50|60|68|70|75)$/;
+  let scheduled=false;
+  function update(){
+    scheduled=false;
+    document.querySelectorAll('#view span,#view button,#view div,#view strong,#view small,#view label').forEach(el=>{
+      if(el.children.length || !exact.test((el.textContent||'').trim())) return;
+      const key=el.textContent.trim(),color=palette[key];
+      const cs=getComputedStyle(el);
+      const badge=el.matches('.chip,.badge,[class*="cat"],[class*="pill"],[class*="tag"]') ||
+        (cs.borderRadius!=='0px' && cs.backgroundColor!=='rgba(0, 0, 0, 0)' && cs.backgroundColor!=='transparent');
+      if(badge){
+        if(el.style.getPropertyValue('background-color')!==color)el.style.setProperty('background-color',color,'important');
+        if(el.style.getPropertyValue('color')!=='#101410')el.style.setProperty('color','#101410','important');
+      } else if(el.matches('.strip button') && el.classList.contains('active')){
+        if(el.style.getPropertyValue('border-color')!==color)el.style.setProperty('border-color',color,'important');
+        if(el.style.getPropertyValue('color')!==color)el.style.setProperty('color',color,'important');
+      }
+    });
+  }
+  function schedule(){if(!scheduled){scheduled=true;requestAnimationFrame(update)}}
+  function start(){const view=document.getElementById('view');if(!view)return;new MutationObserver(schedule).observe(view,{childList:true,subtree:true,characterData:true});schedule()}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
 </script>
 </body></html>
