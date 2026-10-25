@@ -3378,7 +3378,7 @@ function ncNormalizarConfiguracion(r){
  if(!r||typeof r!=='object')return {};
  const norm=k=>String(k).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/gi,'').toLowerCase();
  const src={};Object.entries(r).forEach(([k,v])=>{src[norm(k)]=v});
- const aliases={nombre:['nombre','nombretorneo'],edicion:['edicion'],anio:['anio','ano'],canchas:['canchas'],duracion:['duracion'],intervalo:['intervalo'],direccionEvento:['direccionEvento','direccion_evento','direccionsede','direccionSedeDeportiva'],nombreSedeDeportiva:['nombreSedeDeportiva','nombre_sede_deportiva','nombresede'],inscripcionesAbiertas:['inscripcionesAbiertas']};
+ const aliases={nombre:['nombre','nombretorneo'],edicion:['edicion'],anio:['anio','ano'],canchas:['canchas'],duracion:['duracion'],intervalo:['intervalo'],direccionEvento:['direccionEvento','direccion_evento','direccionsede','direccionSedeDeportiva'],nombreSedeDeportiva:['nombreSedeDeportiva','nombre_sede_deportiva','nombre_sede','nombresede'],inscripcionesAbiertas:['inscripcionesAbiertas']};
  const datos={};Object.entries(aliases).forEach(([k,keys])=>{for(const alias of keys){const v=src[norm(alias)];if(v!==undefined&&v!==null&&String(v).trim()!==''){datos[k]=v;break}}});
  return datos;
 }
