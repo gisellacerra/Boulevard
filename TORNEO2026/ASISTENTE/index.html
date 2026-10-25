@@ -3387,8 +3387,21 @@ function ncConsultarConfiguracion(){
  google.script.run.withSuccessHandler(r=>{
   const datos=ncNormalizarConfiguracion(r);
   if(Object.keys(datos).length){settings={...settings,...datos};saveDraft();if(active==='config'||active==='alojamiento')render()}
-  if(!datos.direccionEvento)console.warn('La consulta de configuración no devolvió direccionEvento. Revisar adminConsultarConfiguracionTorneo en Apps Script.',r);
- }).withFailureHandler(err=>console.warn('No se pudo consultar configuración:',err)).adminConsultarConfiguracionTorneo();
+  // La dirección se consulta por separado porque la configuración general puede omitirla.
+  ncConsultarDireccionEvento();
+ }).withFailureHandler(err=>{console.warn('No se pudo consultar configuración:',err);ncConsultarDireccionEvento()}).adminConsultarConfiguracionTorneo();
+}
+function ncConsultarDireccionEvento(){
+ if(!window.google?.script?.run)return;
+ google.script.run.withSuccessHandler(r=>{
+  const direccion=typeof r==='string'?r:String(r?.direccionEvento??r?.direccion_evento??'').trim();
+  if(!direccion)return;
+  if(settings.direccionEvento!==direccion){
+   settings.direccionEvento=direccion;
+   saveDraft();
+   if(active==='config'||active==='alojamiento')render();
+  }
+ }).withFailureHandler(err=>console.warn('No se pudo recuperar la dirección de la sede:',err)).adminConsultarDireccionEvento();
 }
 try{render()}catch(error){console.error('Error al iniciar el administrador:',error);window.dispatchEvent(new ErrorEvent('error',{error: error,message:String(error)}))}if(window.google?.script?.run){ncConsultarConfiguracion();google.script.run.withSuccessHandler(rows=>{services=[...services.filter(s=>s.tipo!=='alojamiento'),...rows];saveDraft();if(active==='alojamiento')render()}).withFailureHandler(err=>console.warn('No se pudieron leer alojamientos:',err)).adminListarAlojamientos();google.script.run.withSuccessHandler(rows=>{services=[...services.filter(s=>s.tipo!=='bufet'),...rows.map(r=>({...r,tipo:'bufet'}))];saveDraft();if(active==='bufet')render()}).withFailureHandler(err=>console.warn('No se pudo leer bufet:',err)).adminListarBufet();consultarNotificaciones();if(!teams.length)navigate('equipos')}
 
