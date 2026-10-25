@@ -439,7 +439,7 @@ body[data-nc-theme="light"] .primary {background:#18864f!important;border-color:
 </style>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="conexion-api.js?v=20261025-1"></script>
+<script src="conexion-api.js?v=20261025-3"></script>
 <style id="newcom-encabezados-unificados">
 /* Encabezado coherente en todos los paneles: icono SVG local, visible y sin dependencias. */
 #view .panel.newcom-panel{padding-top:0;overflow:hidden}
@@ -3403,6 +3403,7 @@ function ncConsultarDireccionEvento(){
   }
  }).withFailureHandler(err=>console.warn('No se pudo recuperar la dirección de la sede:',err)).adminConsultarDireccionEvento();
 }
+document.addEventListener('newcom-autorizado',()=>{ncConsultarConfiguracion();},{once:true});
 try{render()}catch(error){console.error('Error al iniciar el administrador:',error);window.dispatchEvent(new ErrorEvent('error',{error: error,message:String(error)}))}if(window.google?.script?.run){ncConsultarConfiguracion();google.script.run.withSuccessHandler(rows=>{services=[...services.filter(s=>s.tipo!=='alojamiento'),...rows];saveDraft();if(active==='alojamiento')render()}).withFailureHandler(err=>console.warn('No se pudieron leer alojamientos:',err)).adminListarAlojamientos();google.script.run.withSuccessHandler(rows=>{services=[...services.filter(s=>s.tipo!=='bufet'),...rows.map(r=>({...r,tipo:'bufet'}))];saveDraft();if(active==='bufet')render()}).withFailureHandler(err=>console.warn('No se pudo leer bufet:',err)).adminListarBufet();consultarNotificaciones();if(!teams.length)navigate('equipos')}
 
 
