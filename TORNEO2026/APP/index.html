@@ -489,7 +489,7 @@ async function ncActualizarKmPublicos(){
  if(!origen){els.forEach(el=>el.textContent='Distancia no disponible: falta la dirección de la sede.');return;}
  for(const el of els){if(version!==ncAlojVersion||page!=='alojamiento')return;
    const a=ncAlojamientosPublicos[Number(el.dataset.alojIndex)];
-   try{const km=await ncDistanciaVialPublica(origen,a.direccion);if(version!==ncAlojVersion)return;if(el.isConnected)el.textContent='Distancia a la sede por calles: '+km;}
+   try{const km=await ncDistanciaVialPublica(origen,a.direccion);if(version!==ncAlojVersion)return;if(el.isConnected)el.textContent='Distancia al Polideportivo: '+km;}
    catch(e){if(el.isConnected)el.textContent='Distancia no disponible · Revisá la dirección o la conexión.';}
  }
 }
