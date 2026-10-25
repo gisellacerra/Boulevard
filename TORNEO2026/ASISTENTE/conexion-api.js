@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   const CLIENT_ID='158432822961-m49sji0hneqt4u6rkobbngt08c8c2mhn.apps.googleusercontent.com';
-  const SCRIPT_ID='AKfycbxEo9D7klkUJ7ZiSrRCB3ljr0VHNOdpG6Q7DpZ2FCEGhaqRRYpQTMrjLslR3PiWPWxZow';
+  const SCRIPT_ID='16wIlEc2ZRx67KmItEddvmkm9iCHo5QP1AE5X6rY-kz7Gz3H3K_LhAJaU';
   const SCOPES='https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email';
   let token='', client, tokenExpiresAt=0, renewal=null, authorized=false, verifying=false;
   const pending=[];
