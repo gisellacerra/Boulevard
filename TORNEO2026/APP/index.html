@@ -283,7 +283,7 @@ function ncAvisoId(n){const raw=[n.titulo||'',n.mensaje||'',n.fecha||'',n.enlace
 function ncAvisosLeidos(){try{return JSON.parse(localStorage.getItem(NC_AVISOS_LEIDOS_KEY)||'{}')||{}}catch(e){return {}}}
 function ncAvisoLeido(id){return !!ncAvisosLeidos()[id]}
 function ncActualizarCampana(){const el=document.getElementById('nc-unread-count');if(!el)return;const leidos=ncAvisosLeidos();const total=ncNotificaciones.filter(n=>!leidos[ncAvisoId(n)]).length;el.textContent=total>99?'99+':String(total);el.classList.toggle('visible',total>0);el.setAttribute('aria-label',total+' notificaciones sin leer')}
-function ncAbrirNotificaciones(){go('avisos');try{const leidos=ncAvisosLeidos();ncNotificaciones.forEach(n=>{leidos[ncAvisoId(n)]=true});localStorage.setItem(NC_AVISOS_LEIDOS_KEY,JSON.stringify(leidos))}catch(e){}ncActualizarCampana()}
+function ncAbrirNotificaciones(){go('avisos');ncActualizarCampana()}
 function ncMarcarAviso(id){try{const leidos=ncAvisosLeidos();leidos[id]=true;localStorage.setItem(NC_AVISOS_LEIDOS_KEY,JSON.stringify(leidos))}catch(e){}render();ncActualizarCampana()}
 
 let ncDataPhase='loading',ncDataMessage='';
