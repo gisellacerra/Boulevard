@@ -287,7 +287,7 @@ function ncDatosCargar(){
  window[cb]=d=>{clean();if(!d||!d.ok){ncEstado('No se pudieron cargar los datos del torneo.');return;}
  teams=(d.equipos||[]).map(t=>({name:t.nombre,cat:ncNormalCat(t.categoria),city:t.ciudad||t.provincia||''}));
  matches=(d.partidos||[]).map(p=>({a:p.local,b:p.visitante,cat:ncNormalCat(p.categoria),court:p.cancha||'—',time:p.hora||'—',fecha:p.fecha||'',status:p.resultado?'Finalizado':'Programado',score:p.resultado?`${p.resultado.setsLocal} – ${p.resultado.setsVisitante}`:'–',zona:p.zona||'',genero:p.genero||'',resultado:p.resultado||null}));
- ncCruces=d.cruces||[];ncNotificaciones=Array.isArray(d.notificaciones)?d.notificaciones:[];const catsReal=[...new Set([...teams.map(x=>x.cat),...matches.map(x=>x.cat)].filter(Boolean))].sort((a,b)=>Number(a.slice(1))-Number(b.slice(1)));
+ ncCruces=d.cruces||[];ncNotificaciones=Array.isArray(d.notificaciones)?[...d.notificaciones].reverse():[];const catsReal=[...new Set([...teams.map(x=>x.cat),...matches.map(x=>x.cat)].filter(Boolean))].sort((a,b)=>Number(a.slice(1))-Number(b.slice(1)));
  cats.splice(0,cats.length,'Todas',...catsReal);if(!cats.includes(category))category='Todas';ncDataPhase='ready';ncDataMessage='';render();};
  tag.onerror=()=>{clean();ncEstado('No se pudo conectar con la planilla.');};
  tag.src=NC_DATOS_API+(NC_DATOS_API.includes('?')?'&':'?')+'api=datos&callback='+cb;document.head.appendChild(tag);
