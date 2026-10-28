@@ -375,12 +375,12 @@ function ncDatosCargar(silencioso=false){
 function ncEstado(msg){ncDataPhase='error';ncDataMessage=msg;render();}
 const ncRenderAnterior=render;render=function(){ncRenderAnterior();ncFotosPintar();};
 // Diseño público Somos Newcom. Solo lectura de los datos de la organización.
-let photoIndex=0,selectedDate='',photoLoadState='loading';
+let photoIndex=0,selectedDate='',photoLoadState='loading';let ncDiaCalendario='',ncFechaElegidaManualmente=false;
 const safe=ncFotosEsc;
 function normalizedDate(v){const s=String(v||'').trim();if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);const m=s.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:'';}
 function tournamentDates(){return [...new Set(matches.map(m=>normalizedDate(m.fecha)).filter(Boolean))].sort();}
-function daySelector(){const dates=tournamentDates();if(!dates.length)return `<div class="notice">${ncEmptyData('Las fechas aparecerán cuando se publique el fixture.')}</div>`;if(!dates.includes(selectedDate)){const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/Argentina/Buenos_Aires'});selectedDate=dates.includes(today)?today:dates.find(d=>d>=today)||dates[dates.length-1];}return `<div class="days" aria-label="Jornada">${dates.map(d=>{const label=new Date(d+'T12:00:00').toLocaleDateString('es-AR',{weekday:'short',day:'numeric'}).replace('.','');return `<button class="${d===selectedDate?'active':''}" aria-pressed="${d===selectedDate}" onclick="chooseDate('${d}')">${safe(label)}</button>`}).join('')}</div>`;}
-function chooseDate(d){selectedDate=d;render();}
+function daySelector(){const dates=tournamentDates();if(!dates.length)return `<div class="notice">${ncEmptyData('Las fechas aparecerán cuando se publique el fixture.')}</div>`;const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/Argentina/Buenos_Aires'});if(ncDiaCalendario!==today){ncDiaCalendario=today;ncFechaElegidaManualmente=false;}if(!ncFechaElegidaManualmente||!dates.includes(selectedDate)){selectedDate=dates.includes(today)?today:dates.find(d=>d>=today)||dates[dates.length-1];}return `<div class="days" aria-label="Jornada">${dates.map(d=>{const label=new Date(d+'T12:00:00').toLocaleDateString('es-AR',{weekday:'short',day:'numeric'}).replace('.','');return `<button class="${d===selectedDate?'active':''}" aria-pressed="${d===selectedDate}" onclick="chooseDate('${d}')">${safe(label)}</button>`}).join('')}</div>`;}
+function chooseDate(d){selectedDate=d;ncFechaElegidaManualmente=true;render();}
 filterMatches=function(){return matches.filter(m=>(category==='Todas'||m.cat===category)&&(!selectedDate||normalizedDate(m.fecha)===selectedDate));};
 function completed(m){return m.status==='Finalizado'&&m.resultado!=null;}
 function courtLabel(v){return /^cancha\b/i.test(String(v))?String(v):'Cancha '+v;}
