@@ -279,18 +279,18 @@ function ncMarcarAviso(id){try{const leidos=ncAvisosLeidos();leidos[id]=true;loc
 
 let ncDataPhase='loading',ncDataMessage='';
 function ncEmptyData(fallback){return ncDataPhase==='loading'?'Cargando datos del torneo…':ncDataPhase==='error'?'La información no se pudo cargar todavía.':fallback;}
-function ncDatosCargar(){
- ncDataPhase='loading';ncDataMessage='';render();
+function ncDatosCargar(silencioso=false){
+ if(!silencioso){ncDataPhase='loading';ncDataMessage='';render();}
  if(!NC_DATOS_API){ncEstado('Para mostrar datos reales, configurá la URL de la API pública.');return;}
  const cb='ncDatosCallback_'+Date.now(),tag=document.createElement('script');
- const timeout=setTimeout(()=>{clean();ncEstado('No se pudo conectar con la planilla.');},45000);
+ const timeout=setTimeout(()=>{clean();if(!silencioso)ncEstado('No se pudo conectar con la planilla.');},45000);
  function clean(){clearTimeout(timeout);delete window[cb];tag.remove();}
- window[cb]=d=>{clean();if(!d||!d.ok){ncEstado('No se pudieron cargar los datos del torneo.');return;}
+ window[cb]=d=>{clean();if(!d||!d.ok){if(!silencioso)ncEstado('No se pudieron cargar los datos del torneo.');return;}
  teams=(d.equipos||[]).map(t=>({name:t.nombre,cat:ncNormalCat(t.categoria),city:t.ciudad||t.provincia||''}));
- matches=(d.partidos||[]).map(p=>({a:p.local,b:p.visitante,cat:ncNormalCat(p.categoria),court:p.cancha||'—',time:p.hora||'—',fecha:p.fecha||'',status:p.resultado?'Finalizado':'Programado',score:p.resultado?`${p.resultado.setsLocal} – ${p.resultado.setsVisitante}`:'–',zona:p.zona||'',genero:p.genero||'',resultado:p.resultado||null}));
+ matches=(d.partidos||[]).map(p=>({a:p.local,b:p.visitante,cat:ncNormalCat(p.categoria),court:p.cancha||'—',time:p.hora||'—',fecha:p.fecha||'',status:p.resultado?'Finalizado':'Programado',score:p.resultado?`${p.resultado.setsLocal} – ${p.resultado.setsVisitante}`:'–',zona:p.zona||'',genero:p.genero||'',resultado:p.resultado||null,escudoLocal:p.escudoLocal||p.logoLocal||'',escudoVisitante:p.escudoVisitante||p.logoVisitante||''}));
  ncCruces=d.cruces||[];ncNotificaciones=Array.isArray(d.notificaciones)?[...d.notificaciones].reverse():[];const catsReal=[...new Set([...teams.map(x=>x.cat),...matches.map(x=>x.cat)].filter(Boolean))].sort((a,b)=>Number(a.slice(1))-Number(b.slice(1)));
  cats.splice(0,cats.length,'Todas',...catsReal);if(!cats.includes(category))category='Todas';ncDataPhase='ready';ncDataMessage='';render();};
- tag.onerror=()=>{clean();ncEstado('No se pudo conectar con la planilla.');};
+ tag.onerror=()=>{clean();if(!silencioso)ncEstado('No se pudo conectar con la planilla.');};
  tag.src=NC_DATOS_API+(NC_DATOS_API.includes('?')?'&':'?')+'api=datos&callback='+cb;document.head.appendChild(tag);
 }
 function ncEstado(msg){ncDataPhase='error';ncDataMessage=msg;render();}
@@ -450,6 +450,35 @@ function paint(){scheduled=false;
 function queue(){if(!scheduled){scheduled=true;requestAnimationFrame(paint)}}
 function start(){const root=document.getElementById('view');if(!root)return;new MutationObserver(queue).observe(root,{childList:true,subtree:true,characterData:true});queue()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+</script>
+<style id="nc-resultados-modal-estilos">
+.sports-card.nc-finished{cursor:pointer;transition:border-color .2s ease,background .2s ease}.sports-card.nc-finished:hover{border-color:#a5eb37;background:#292e2b}.sports-card.nc-finished:focus-visible{outline:2px solid #a5eb37;outline-offset:2px}.nc-winner{color:#ffe500!important;font-weight:700}.nc-result-modal{position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.76);display:flex;align-items:center;justify-content:center;padding:16px}.nc-result-dialog{width:min(440px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:#242829;color:#f0f4f0;border:1px solid #425044;border-radius:18px;padding:22px;box-shadow:0 20px 70px #0009}.nc-result-top{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#a5eb37;font-weight:700;font-size:12px;text-transform:uppercase}.nc-result-close{border:0;background:#3a4140;color:#fff;width:34px;height:34px;border-radius:50%;font-size:23px;line-height:1}.nc-result-teams{display:grid;grid-template-columns:1fr 40px 1fr;align-items:start;text-align:center;gap:6px;margin:25px 0 14px}.nc-result-team{min-width:0;overflow-wrap:anywhere}.nc-result-team strong{display:block;font-size:15px;line-height:1.25;min-height:38px}.nc-result-team b{display:block;font-size:36px;margin-top:6px}.nc-result-team img{height:55px;width:55px;object-fit:contain;margin-bottom:10px}.nc-result-vs{padding-top:48px;color:#91a093;font-weight:700}.nc-result-set{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:center;text-align:center;padding:10px 0;border-top:1px solid #39443d}.nc-result-set span{color:#aeb9af;font-size:12px}.nc-result-foot{text-align:center;color:#aeb9af;font-size:12px;margin-top:15px}.nc-result-winner-tag{font-size:10px;color:#ffe500;font-weight:700}
+</style>
+<script id="nc-resultados-modal-script">
+(function(){
+ const oldMatchRows=matchRows;
+ function resultSets(r){if(!r)return [];
+   const collections=[r.sets,r.detalleSets,r.parciales,r.puntosPorSet,r.resultadosSets];
+   let raw=collections.find(Array.isArray);
+   if(!raw){raw=[];for(let i=1;i<=3;i++){
+     const obj=r['set'+i]||r['set_'+i]||r['set'+i+'Puntos'];
+     const l=obj&&typeof obj==='object'?(obj.local??obj.puntosLocal??obj.a??obj.equipoLocal):r['set'+i+'Local']??r['puntosLocal'+i];
+     const v=obj&&typeof obj==='object'?(obj.visitante??obj.puntosVisitante??obj.b??obj.equipoVisitante):r['set'+i+'Visitante']??r['puntosVisitante'+i];
+     if(l!=null&&v!=null)raw.push({local:l,visitante:v});
+   }}
+   return raw.map((v,i)=>{if(Array.isArray(v))return {label:'Set '+(i+1),a:v[0],b:v[1]};if(typeof v==='string'){const m=v.match(/(\d+)\s*[-–:]\s*(\d+)/);return m?{label:'Set '+(i+1),a:m[1],b:m[2]}:null;}return {label:'Set '+(i+1),a:v.local??v.puntosLocal??v.a??v.equipoLocal,b:v.visitante??v.puntosVisitante??v.b??v.equipoVisitante};}).filter(x=>x&&x.a!=null&&x.b!=null);
+ }
+ function winner(m){if(!completed(m))return 0;const a=Number(m.resultado.setsLocal),b=Number(m.resultado.setsVisitante);return Number.isFinite(a)&&Number.isFinite(b)?Math.sign(a-b):0;}
+ matchRows=function(arr){return arr.length?arr.map(m=>{const done=completed(m),win=winner(m),idx=matches.indexOf(m);return `<article class="sports-card ${done?'nc-finished':''}" ${done?`role="button" tabindex="0" aria-label="Ver resultado de ${safe(m.a)} y ${safe(m.b)}" onclick="ncAbrirResultado(${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ncAbrirResultado(${idx})}"`:''}><div class="when ${done?'final':''}">${done?'Final':safe(m.time)}</div><div><div class="versus"><span class="${win>0?'nc-winner':''}">${safe(m.a)}</span><span class="${done?'final-score':'vs'}">${done?safe(m.score):'vs'}</span><span class="${win<0?'nc-winner':''}">${safe(m.b)}</span></div><div class="meta">${safe(courtLabel(m.court))} · ${safe(m.genero||'')} ${safe(m.cat)}${m.zona?' · Zona '+safe(m.zona):''}${done?' · Ver resultado':''}</div></div></article>`;}).join(''):`<div class="empty">${ncEmptyData('No hay partidos en esta selección.')}</div>`;};
+ window.ncAbrirResultado=function(idx){const m=matches[idx];if(!m||!completed(m))return;ncCerrarResultado();const win=winner(m),sets=resultSets(m.resultado),safeUrl=u=>/^https:\/\//i.test(String(u||''))?safe(u):'';
+ const logoA=safeUrl(m.escudoLocal),logoB=safeUrl(m.escudoVisitante);
+ const el=document.createElement('div');el.className='nc-result-modal';el.id='nc-result-modal';el.setAttribute('role','presentation');el.innerHTML=`<section class="nc-result-dialog" role="dialog" aria-modal="true" aria-label="Resultado del partido"><div class="nc-result-top"><span>${safe(m.genero||'')} ${safe(m.cat)} ${m.zona?'· Zona '+safe(m.zona):''}</span><button class="nc-result-close" aria-label="Cerrar resultado" onclick="ncCerrarResultado()">×</button></div><div class="nc-result-teams"><div class="nc-result-team ${win>0?'nc-winner':''}">${logoA?`<img src="${logoA}" alt="">`:''}<strong>${safe(m.a)}</strong><b>${safe(m.resultado.setsLocal)}</b>${win>0?'<div class="nc-result-winner-tag">GANADOR</div>':''}</div><div class="nc-result-vs">–</div><div class="nc-result-team ${win<0?'nc-winner':''}">${logoB?`<img src="${logoB}" alt="">`:''}<strong>${safe(m.b)}</strong><b>${safe(m.resultado.setsVisitante)}</b>${win<0?'<div class="nc-result-winner-tag">GANADOR</div>':''}</div></div>${sets.length?sets.map(x=>`<div class="nc-result-set"><strong>${safe(x.a)}</strong><span>${safe(x.label)}</span><strong>${safe(x.b)}</strong></div>`).join(''):''}<div class="nc-result-foot">${safe(courtLabel(m.court))} · Resultado confirmado</div></section>`;
+ el.addEventListener('click',e=>{if(e.target===el)ncCerrarResultado()});document.body.appendChild(el);document.body.style.overflow='hidden';el.querySelector('button').focus();};
+ window.ncCerrarResultado=function(){document.getElementById('nc-result-modal')?.remove();document.body.style.overflow='';};
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('nc-result-modal'))ncCerrarResultado()});
+ // Reconsulta la API pública para reflejar los resultados confirmados por la organización.
+ setInterval(()=>{if(!document.hidden&&typeof ncDatosCargar==='function')ncDatosCargar(true);},60000);
 })();
 </script>
 </body></html>
