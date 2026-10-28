@@ -311,7 +311,7 @@ function ncCarouselPaint(){const target=document.getElementById('somos-carousel'
 function photoGo(i){photoIndex=i;ncCarouselPaint();}function photoMove(step){photoGo(photoIndex+step);}
 const oldPhotoPaint=ncFotosPintar;ncFotosPintar=function(){oldPhotoPaint();ncCarouselPaint();};
 ncFotosCargar=function(){if(!NC_FOTOS_API){photoLoadState='unavailable';ncFotosPintar();return;}const cb='ncPhotos_'+Date.now(),tag=document.createElement('script');let timer;const clean=()=>{clearTimeout(timer);tag.remove();delete window[cb];};const fail=()=>{clean();photoLoadState='unavailable';ncFotosPintar();};window[cb]=d=>{clean();if(Array.isArray(d?.fotos))ncFotosPublicas=d.fotos;photoLoadState=ncFotosPublicas.length?'ready':'empty';ncFotosPintar();};tag.onerror=fail;timer=setTimeout(fail,15000);tag.src=NC_FOTOS_API+'?api=fotos&callback='+cb;document.head.appendChild(tag);};
-home=function(){const selector=daySelector(),filtered=filterMatches(),upcoming=filtered.filter(m=>!completed(m)).sort((a,b)=>a.time.localeCompare(b.time)),finished=filtered.filter(completed).sort((a,b)=>b.time.localeCompare(a.time));return `<section class="carousel home-photo" id="somos-carousel" aria-label="Fotos compartidas del torneo"></section>${selector}${catTabs()}<div class="section-title"><h2>Próximos partidos</h2><button class="link" onclick="go('partidos')">Ver todos ›</button></div>${upcoming.length?matchRows(upcoming.slice(0,3)):`<div class="empty">${ncEmptyData('No hay próximos partidos publicados para esta jornada.')}</div>`}<div class="section-title"><h2>Últimos resultados</h2><button class="link" onclick="go('resultados')">Ver todos ›</button></div>${finished.length?matchRows(finished.slice(0,3)):`<div class="empty">${ncEmptyData('Los resultados se publicarán al finalizar los partidos.')}</div>`}`;};
+home=function(){const selector=daySelector(),filtered=filterMatches(),upcoming=filtered.filter(m=>!completed(m)).sort((a,b)=>a.time.localeCompare(b.time)),finished=filtered.filter(completed).sort((a,b)=>b.time.localeCompare(a.time));return `<section class="carousel home-photo" id="somos-carousel" aria-label="Fotos compartidas del torneo"></section>${selector}${catTabs()}<div class="section-title"><h2>Últimos resultados</h2><button class="link" onclick="go('resultados')">Ver todos ›</button></div>${finished.length?matchRows(finished.slice(0,3)):`<div class="empty">${ncEmptyData('Los resultados se publicarán al finalizar los partidos.')}</div>`}<div class="section-title"><h2>Próximos partidos</h2><button class="link" onclick="go('partidos')">Ver todos ›</button></div>${upcoming.length?matchRows(upcoming.slice(0,3)):`<div class="empty">${ncEmptyData('No hay próximos partidos publicados para esta jornada.')}</div>`}`;};
 partidos=function(){return `${head('Partidos','PROGRAMACIÓN')}${daySelector()}${catTabs()}${matchRows(filterMatches().sort((a,b)=>a.time.localeCompare(b.time)))}`;};
 const originalGeneric=generic;generic=function(){if(page==='mas')return `${head('Más','TORNEO')}<div class="more-menu">${simpleRows([['Equipos','Participantes del torneo','equipos'],['Fotos','Compartidas por participantes','galeria'],['Torneo','Zonas y cruces','torneo'],...others.map(([id,name])=>[name,'',id])])}</div>`;if(page==='resultados')return `${head('Resultados','PARTIDOS FINALIZADOS')}${daySelector()}${catTabs()}${matchRows(filterMatches().filter(completed))}`;if(page==='fixture')return partidos();return originalGeneric();};
 // No se publican posiciones simuladas: se calculan únicamente desde resultados confirmados.
@@ -413,6 +413,7 @@ ncFotosCargar();ncDatosCargar();
 .nc-lightbox img{display:block;width:100%;height:auto;max-height:calc(100dvh - 100px);object-fit:contain}
 .nc-lightbox-close{position:absolute;right:14px;top:max(12px,env(safe-area-inset-top));width:44px;height:44px;border:0;border-radius:50%;background:#303536;color:#fff;font-size:28px;line-height:1;cursor:pointer;z-index:2}
 .nc-lightbox-close:focus-visible{outline:3px solid #c8fa42}
+.nc-result-detail-title{text-align:center;font-weight:700;font-size:13px;margin:12px 0 4px}.nc-result-no-points{text-align:center;font-size:12px;color:#aeb9af;padding:12px 0}.nc-result-divider{border-top:1px solid #465048;margin-top:18px}
 </style>
 <script>
 function ncAbrirFoto(i){
@@ -465,20 +466,38 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .sports-card.nc-category-card .nc-team-crest{width:29px;height:29px;flex:0 0 29px;object-fit:contain}
 .sports-card.nc-category-card .versus{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}
 @media(max-width:420px){.sports-card.nc-category-card{padding-left:15px!important;padding-right:9px}.sports-card.nc-category-card .versus{gap:5px;font-size:12px}.sports-card.nc-category-card .nc-team-crest{width:24px;height:24px;flex-basis:24px}.sports-card.nc-category-card .nc-team-label{gap:4px}}
+.nc-result-detail-title{text-align:center;font-weight:700;font-size:13px;margin:12px 0 4px}.nc-result-no-points{text-align:center;font-size:12px;color:#aeb9af;padding:12px 0}.nc-result-divider{border-top:1px solid #465048;margin-top:18px}
 </style>
 <script id="nc-resultados-modal-script">
 (function(){
  const oldMatchRows=matchRows;
- function resultSets(r){if(!r)return [];
-   const collections=[r.sets,r.detalleSets,r.parciales,r.puntosPorSet,r.resultadosSets];
-   let raw=collections.find(Array.isArray);
-   if(!raw){raw=[];for(let i=1;i<=3;i++){
-     const obj=r['set'+i]||r['set_'+i]||r['set'+i+'Puntos'];
-     const l=obj&&typeof obj==='object'?(obj.local??obj.puntosLocal??obj.a??obj.equipoLocal):r['set'+i+'Local']??r['puntosLocal'+i];
-     const v=obj&&typeof obj==='object'?(obj.visitante??obj.puntosVisitante??obj.b??obj.equipoVisitante):r['set'+i+'Visitante']??r['puntosVisitante'+i];
-     if(l!=null&&v!=null)raw.push({local:l,visitante:v});
-   }}
-   return raw.map((v,i)=>{if(Array.isArray(v))return {label:'Set '+(i+1),a:v[0],b:v[1]};if(typeof v==='string'){const m=v.match(/(\d+)\s*[-–:]\s*(\d+)/);return m?{label:'Set '+(i+1),a:m[1],b:m[2]}:null;}return {label:'Set '+(i+1),a:v.local??v.puntosLocal??v.a??v.equipoLocal,b:v.visitante??v.puntosVisitante??v.b??v.equipoVisitante};}).filter(x=>x&&x.a!=null&&x.b!=null);
+ function resultSets(r){
+   if(!r)return [];
+   const keys=['puntosPorSet','detalleSets','parciales','resultadosSets','sets','detalle','puntos','marcadores'];
+   const parsePair=(v,i)=>{
+     if(Array.isArray(v))return {label:'Set '+(i+1),a:v[0],b:v[1]};
+     if(typeof v==='string'){const m=v.match(/(\d+)\s*[-–:]\s*(\d+)/);return m?{label:'Set '+(i+1),a:m[1],b:m[2]}:null;}
+     if(v&&typeof v==='object')return {label:'Set '+(i+1),a:v.local??v.puntosLocal??v.puntosA??v.a??v.equipoLocal??v.localPuntos??v.p1,b:v.visitante??v.puntosVisitante??v.puntosB??v.b??v.equipoVisitante??v.visitantePuntos??v.p2};
+     return null;
+   };
+   for(const key of keys){let raw=r[key];
+     if(typeof raw==='string'){
+       try{raw=JSON.parse(raw)}catch(e){raw=(raw.match(/\d+\s*[-–:]\s*\d+/g)||[])}
+     }
+     if(raw&&typeof raw==='object'&&!Array.isArray(raw))raw=Object.values(raw);
+     if(Array.isArray(raw)){
+       const parsed=raw.map(parsePair).filter(x=>x&&x.a!=null&&x.b!=null&&Number.isFinite(Number(x.a))&&Number.isFinite(Number(x.b)));
+       if(parsed.length)return parsed;
+     }
+   }
+   const parsed=[];
+   for(let i=1;i<=3;i++){
+     const obj=r['set'+i]??r['set_'+i]??r['set'+i+'Puntos']??r['parcial'+i];
+     let item=parsePair(obj,i-1);
+     if(!item||item.a==null||item.b==null)item={label:'Set '+i,a:r['set'+i+'Local']??r['puntosLocal'+i]??r['set'+i+'A']??r['localSet'+i],b:r['set'+i+'Visitante']??r['puntosVisitante'+i]??r['set'+i+'B']??r['visitanteSet'+i]};
+     if(item.a!=null&&item.b!=null)parsed.push(item);
+   }
+   return parsed;
  }
  function winner(m){if(!completed(m))return 0;const a=Number(m.resultado.setsLocal),b=Number(m.resultado.setsVisitante);return Number.isFinite(a)&&Number.isFinite(b)?Math.sign(a-b):0;}
  function ncCategoryColor(cat){const c=String(cat||'').match(/\+?(40|50|60|68|70|75)/);return c?({40:'#d64da7',50:'#48c438',60:'#348bef',68:'#ff6555',70:'#e5f13c',75:'#f7a139'}[c[1]]):'#a5eb37';}
@@ -486,7 +505,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  matchRows=function(arr){return arr.length?arr.map(m=>{const done=completed(m),win=winner(m),idx=matches.indexOf(m);return `<article class="sports-card nc-category-card ${done?'nc-finished':''}" style="--nc-category-color:${ncCategoryColor(m.cat)}" ${done?`role="button" tabindex="0" aria-label="Ver resultado de ${safe(m.a)} y ${safe(m.b)}" onclick="ncAbrirResultado(${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ncAbrirResultado(${idx})}"`:''}><div class="when ${done?'final':''}">${safe(m.time)}</div><div><div class="versus"><span class="nc-team-label ${win>0?'nc-winner':''}">${ncLogo(m.escudoLocal)}<span>${safe(m.a)}</span></span><span class="${done?'final-score':'vs'}">${done?safe(m.score):'vs'}</span><span class="nc-team-label nc-team-away ${win<0?'nc-winner':''}">${ncLogo(m.escudoVisitante)}<span>${safe(m.b)}</span></span></div><div class="meta">${safe(courtLabel(m.court))} · ${safe(m.genero||'')} ${safe(m.cat)}${m.zona?' · Zona '+safe(m.zona):''}${done?' · Ver resultado':''}</div></div></article>`;}).join(''):`<div class="empty">${ncEmptyData('No hay partidos en esta selección.')}</div>`;};
  window.ncAbrirResultado=function(idx){const m=matches[idx];if(!m||!completed(m))return;ncCerrarResultado();const win=winner(m),sets=resultSets(m.resultado),safeUrl=u=>/^(https?:\/\/|data:image\/(?:png|jpeg|jpg|webp|gif);base64,)/i.test(String(u||''))?safe(u):'';
  const logoA=safeUrl(m.escudoLocal),logoB=safeUrl(m.escudoVisitante);
- const el=document.createElement('div');el.className='nc-result-modal';el.id='nc-result-modal';el.setAttribute('role','presentation');el.innerHTML=`<section class="nc-result-dialog" role="dialog" aria-modal="true" aria-label="Resultado del partido"><div class="nc-result-top"><span>${safe(m.genero||'')} ${safe(m.cat)} ${m.zona?'· Zona '+safe(m.zona):''}</span><button class="nc-result-close" aria-label="Cerrar resultado" onclick="ncCerrarResultado()">×</button></div><div class="nc-result-teams"><div class="nc-result-team ${win>0?'nc-winner':''}">${logoA?`<img src="${logoA}" alt="">`:''}<strong>${safe(m.a)}</strong><b>${safe(m.resultado.setsLocal)}</b>${win>0?'<div class="nc-result-winner-tag">GANADOR</div>':''}</div><div class="nc-result-vs">–</div><div class="nc-result-team ${win<0?'nc-winner':''}">${logoB?`<img src="${logoB}" alt="">`:''}<strong>${safe(m.b)}</strong><b>${safe(m.resultado.setsVisitante)}</b>${win<0?'<div class="nc-result-winner-tag">GANADOR</div>':''}</div></div>${sets.length?'<div class="nc-result-divider" aria-hidden="true"></div>':''}${sets.length?sets.map(x=>`<div class="nc-result-set"><strong>${safe(x.a)}</strong><span>${safe(x.label)}</span><strong>${safe(x.b)}</strong></div>`).join(''):''}<div class="nc-result-foot">${safe(courtLabel(m.court))} · Resultado confirmado</div></section>`;
+ const el=document.createElement('div');el.className='nc-result-modal';el.id='nc-result-modal';el.setAttribute('role','presentation');el.innerHTML=`<section class="nc-result-dialog" role="dialog" aria-modal="true" aria-label="Resultado del partido"><div class="nc-result-top"><span>${safe(m.genero||'')} ${safe(m.cat)} ${m.zona?'· Zona '+safe(m.zona):''}</span><button class="nc-result-close" aria-label="Cerrar resultado" onclick="ncCerrarResultado()">×</button></div><div class="nc-result-teams"><div class="nc-result-team ${win>0?'nc-winner':''}">${logoA?`<img src="${logoA}" alt="">`:''}<strong>${safe(m.a)}</strong><b>${safe(m.resultado.setsLocal)}</b>${win>0?'<div class="nc-result-winner-tag">GANADOR</div>':''}</div><div class="nc-result-vs">–</div><div class="nc-result-team ${win<0?'nc-winner':''}">${logoB?`<img src="${logoB}" alt="">`:''}<strong>${safe(m.b)}</strong><b>${safe(m.resultado.setsVisitante)}</b>${win<0?'<div class="nc-result-winner-tag">GANADOR</div>':''}</div></div><div class="nc-result-divider" aria-hidden="true"></div><div class="nc-result-detail-title">Puntos por set</div>${sets.length?sets.map(x=>`<div class="nc-result-set"><strong>${safe(x.a)}</strong><span>${safe(x.label)}</span><strong>${safe(x.b)}</strong></div>`).join(''):'<div class="nc-result-no-points">El detalle de puntos no está disponible en los datos publicados.</div>'}<div class="nc-result-foot">${safe(courtLabel(m.court))} · Resultado confirmado</div></section>`;
  el.addEventListener('click',e=>{if(e.target===el)ncCerrarResultado()});document.body.appendChild(el);document.body.style.overflow='hidden';el.querySelector('button').focus();};
  window.ncCerrarResultado=function(){document.getElementById('nc-result-modal')?.remove();document.body.style.overflow='';};
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('nc-result-modal'))ncCerrarResultado()});
