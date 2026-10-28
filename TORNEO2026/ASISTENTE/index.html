@@ -2968,9 +2968,11 @@ async function ncReprogramarIndividual(b,destinoInicial){
  const filas=(snap.filas||[]).filter(p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion));
  const normFecha=v=>{const s=String(v||'').trim();const m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(s);return m?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):s.slice(0,10)};
  const norm=v=>String(v||'').trim().toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
- const match=p=>norm(p.categoria)===norm(info.categoria)&&norm(p.local||p.equipoA)===norm(info.local)&&norm(p.visitante||p.equipoB)===norm(info.visitante)&&normFecha(p.fecha)===normFecha(info.fecha)&&String(p.hora||'').slice(0,5)===info.hora&&Number(p.cancha)===Number(info.cancha);
+ // La grilla prioriza equipoA/equipoB; usar exactamente ese mismo criterio al buscar en el fixture confirmado.
+ const normHora=v=>{const m=/^(\d{1,2}):(\d{1,2})/.exec(String(v||'').trim());return m?m[1].padStart(2,'0')+':'+m[2].padStart(2,'0'):String(v||'').trim()};
+ const match=p=>norm(p.categoria)===norm(info.categoria)&&norm(p.equipoA||p.local||p.equipo1)===norm(info.local)&&norm(p.equipoB||p.visitante||p.equipo2)===norm(info.visitante)&&normFecha(p.fecha)===normFecha(info.fecha)&&normHora(p.hora||p.horario)===normHora(info.hora)&&Number(p.cancha)===Number(info.cancha);
  const indices=filas.map((p,i)=>match(p)?i:-1).filter(i=>i>=0);
- if(indices.length!==1){avisoIntegrado('No se identificó un único partido confirmado. Actualizá el fixture antes de reprogramar.');return}
+ if(indices.length!==1){avisoIntegrado(indices.length?'Hay más de un partido con la misma identificación. No se modificó ningún dato.':'El partido visible no coincide con el registro confirmado. No se modificó ningún dato.');return}
  const idx=indices[0],partido=filas[idx];
  info.fecha=normFecha(info.fecha);
  if(partido.resultado||partido.estado==='FINALIZADO'||partido.protegido||partido.bloqueado){avisoIntegrado('Este partido está finalizado o protegido y no se puede reprogramar.');return}
