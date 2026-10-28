@@ -1355,6 +1355,13 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
  .app > aside nav,.app > aside #nav,.app > aside .menu38-acordeon,.app > aside .menu38-items{max-height:none!important;overflow:visible!important;}
 }
 </style>
+<style id="nc-menu-scrollbar-invisible">
+/* Oculta solo la barra visual del menú; conserva el desplazamiento. */
+@media (min-width:761px){
+  .app > aside {scrollbar-width:none!important;-ms-overflow-style:none!important;}
+  .app > aside::-webkit-scrollbar {display:none!important;width:0!important;height:0!important;}
+}
+</style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
