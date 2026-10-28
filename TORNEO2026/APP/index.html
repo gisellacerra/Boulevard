@@ -1,0 +1,665 @@
+<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#191c1d"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><title>NEWCOM · Torneo</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
+:root{--bg:#191c1d;--surface:#242829;--surface2:#303536;--ink:#f0f4f0;--muted:#9dac9f;--lime:#c4ef68;--line:#34443b;--red:#f38a83}*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--ink);font:400 14px/1.45 Roboto,Arial,sans-serif}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:2px solid var(--lime);outline-offset:2px}.app{max-width:1020px;margin:auto;min-height:100dvh;padding-bottom:75px}.top{height:59px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:0 18px;position:sticky;top:0;background:#191c1df5;z-index:8}.brand{font-size:15px;letter-spacing:.09em;color:var(--lime)}.brand small{display:block;font-size:10px;color:var(--muted);letter-spacing:.12em;text-align:center}.top button,.iconbtn{background:none;border:0;color:var(--ink);padding:9px}.ic{width:20px;height:20px;stroke:#fff;stroke-width:1.65;fill:none;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}.top .ic{width:22px;height:22px}.view{padding:0 18px 24px}.pagehead{display:flex;justify-content:space-between;align-items:end;gap:10px;padding:24px 0 14px;border-bottom:1px solid var(--line)}.eyebrow{font-size:10px;letter-spacing:.14em;color:var(--lime);text-transform:uppercase}.pagehead h1{font-size:25px;line-height:1.1;margin:5px 0 0;font-weight:400}.muted{color:var(--muted)}.tiny{font-size:11px}.hero{position:relative;height:158px;margin:18px 0 0;overflow:hidden;background:#20352e}.hero img{width:100%;height:100%;object-fit:cover;object-position:center 44%;filter:brightness(.7)}.hero .over{position:absolute;bottom:13px;left:15px;text-shadow:0 2px 12px #000}.hero .over span{display:block;color:var(--lime);font-size:10px;letter-spacing:.14em}.hero .over strong{font-size:20px;font-weight:400}.strip{display:flex;gap:0;overflow:auto;border-bottom:1px solid var(--line);scrollbar-width:none}.strip::-webkit-scrollbar{display:none}.strip button{border:0;border-bottom:2px solid transparent;background:none;color:var(--muted);padding:12px 14px;white-space:nowrap;font-size:12px}.strip button:first-child{padding-left:0}.strip button.active{border-bottom-color:var(--lime);color:var(--ink)}.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 0 6px}.section-title h2{font-size:17px;margin:0;font-weight:400}.link{background:none;border:0;color:var(--lime);padding:6px 0;font-size:12px}.match{display:grid;grid-template-columns:72px 1fr auto;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding:14px 0;min-height:69px}.match .when{font-size:11px;color:var(--muted);line-height:1.5}.match .teams{font-size:14px;line-height:1.65}.match .score{font-size:15px;color:var(--lime);text-align:right;white-space:nowrap}.match .score small{display:block;font-size:10px;color:var(--muted)}.status{font-size:10px;color:var(--lime);letter-spacing:.06em}.rowline{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);width:100%;color:var(--ink);background:none;border-top:0;border-left:0;border-right:0;text-align:left}.rowline .number{color:var(--muted);width:22px;font-size:12px}.rowline .grow{flex:1;min-width:0}.rowline .grow small{display:block;color:var(--muted);font-size:11px}.rowline .ic{width:17px;height:17px;color:var(--muted)}.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:17px}.quick button{border:0;border-right:1px solid var(--line);background:none;color:var(--ink);padding:14px 5px;text-align:center;font-size:11px}.quick button:last-child{border-right:0}.quick .ic{display:block;color:var(--lime);margin:0 auto 7px}.search{display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--line);padding:12px 0}.search input{width:100%;background:transparent;border:0;outline:0;color:var(--ink);font-size:14px}.search input::placeholder{color:var(--muted)}.search .ic{color:var(--muted)}.bottom{position:fixed;bottom:0;left:0;right:0;background:#15211ef5;border-top:1px solid var(--line);z-index:10;padding-bottom:env(safe-area-inset-bottom)}.bottom nav{max-width:1020px;margin:auto;display:grid;grid-template-columns:repeat(4,1fr)}.bottom button{border:0;background:none;color:var(--muted);display:flex;align-items:center;flex-direction:column;gap:4px;padding:10px 0 8px;font-size:10px}.bottom button.active{color:var(--lime)}.bottom .ic{width:21px;height:21px}.drawer{position:fixed;inset:0;background:#0009;z-index:20;display:none}.drawer.open{display:block}.drawer aside{width:min(310px,85vw);height:100%;background:var(--bg);border-right:1px solid var(--line);padding:15px 22px;overflow:auto}.drawer .head{display:flex;justify-content:space-between;align-items:center;padding:6px 0 18px;border-bottom:1px solid var(--line)}.drawer h3{font-size:11px;color:var(--lime);letter-spacing:.12em;margin:22px 0 8px}.drawer button.menuitem{width:100%;display:flex;align-items:center;gap:14px;background:none;border:0;color:var(--ink);text-align:left;padding:12px 0;border-bottom:1px solid #27382f}.drawer button.menuitem .ic{color:var(--muted)}.pager{display:flex;justify-content:space-between;align-items:center;margin:16px 0;color:var(--muted);font-size:12px}.pager button{background:none;border:1px solid var(--line);color:var(--ink);padding:8px 13px;border-radius:3px}.pager button:disabled{opacity:.3;cursor:default}.statline{display:grid;grid-template-columns:1fr auto;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.statline small{display:block;color:var(--muted)}.chip{color:var(--lime);font-size:11px;padding: 4px 8px;
+    border-radius: 8px;};.empty{padding:30px 0;color:var(--muted);text-align:center}.footer{color:var(--muted);font-size:11px;text-align:center;margin:24px 0}.back{border:0;background:none;color:var(--lime);padding:16px 0 0;display:flex;align-items:center;gap:6px;font-size:12px}@media(min-width:700px){.view{padding:0 34px 30px}.hero{height:240px}.match{grid-template-columns:100px 1fr auto}.pagehead{padding-top:32px}.bottom nav{max-width:720px}.app{border-left:1px solid #25362e;border-right:1px solid #25362e}}@media(prefers-reduced-motion:no-preference){button{transition:color .15s,background .15s}}
+
+.photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:13px 0}.photo-grid figure{margin:0;position:relative;aspect-ratio:1.2;overflow:hidden;background:var(--surface2)}.photo-grid img{width:100%;height:100%;object-fit:cover}.photo-grid figcaption{position:absolute;inset:auto 0 0;padding:18px 7px 7px;font-size:10px;background:linear-gradient(transparent,#000b)}.photo-cta{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--line);padding:16px;margin:14px 0}.photo-cta p{margin:4px 0 0;color:var(--muted);font-size:12px}.photo-cta button{border:1px solid var(--lime);background:transparent;color:var(--lime);padding:9px 12px;white-space:nowrap}.photo-message{font-size:12px;color:var(--muted);padding:14px 0}.photo-full{grid-template-columns:repeat(2,minmax(0,1fr))}@media(min-width:700px){.photo-full{grid-template-columns:repeat(4,minmax(0,1fr))}}
+:root{--bg:#191c1d;--surface:#202425;--surface2:#292e30;--lime:#c8fa42;--line:#363c3f;--ink:#f5f6f7;--muted:#adb5c1}body{font-size:15px}.top{height:100px;max-width:1020px;margin:auto;background:#191c1df5;padding:16px 22px;position:relative;justify-content:flex-start;gap:14px}.top>button:first-child{order:2;margin-left:auto}.top>button:last-child{display:none}.brand{font-size:36px;letter-spacing:-1.5px;font-weight:800;line-height:1}.brand small{font-size:15px;letter-spacing:0;text-align:left;margin-top:9px;color:var(--muted);font-weight:400}.view{padding:0 18px 26px}.bottom{background:#191c1df5}.bottom button{font-size:12px;padding:13px 0 12px;font-weight:500}.bottom .ic{width:26px;height:26px}.section-title{margin:25px 0 12px}.section-title h2{font-weight:750;font-size:23px;letter-spacing:-.5px}.link{font-size:13px;color:var(--muted)}.pagehead h1{font-weight:750}.strip{gap:8px;border:0;margin:12px 0;overflow:auto}.strip button,.strip button:first-child{padding:10px 18px;border:1px solid var(--line);border-radius:10px;font-weight:600;font-size:14px}.strip button.active{color:var(--lime);border-color:var(--lime);background:#c8fa4209}.days{display:flex;gap:0;border:1px solid var(--line);border-radius:8px;overflow:auto;margin:8px 0 12px}.days button{flex:1;min-width:80px;border:0;background:transparent;color:var(--muted);padding:13px 8px;font-size:16px;font-weight:700;white-space:nowrap}.days button.active{background:var(--lime);color:#151718;border-radius:8px}.somos-title{font-size:30px;font-weight:800;letter-spacing:-1px;margin:24px 0 12px}.somos-title span{color:var(--lime)}.carousel{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}.carousel-photo{position:relative;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:#242a2b}.carousel-photo img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}.carousel-photo>button{position:absolute;top:calc(50% - 21px);width:42px;height:42px;border:0;border-radius:50%;color:white;background:#191c1ddd;display:grid;place-items:center}.carousel-photo>button.prev{left:10px}.carousel-photo>button.next{right:10px}.carousel-caption{text-align:center;padding:10px 14px 15px}.carousel-caption strong{font-size:18px;font-weight:700}.carousel-caption p{margin:3px 0 0;color:var(--muted);font-size:13px}.dots{display:flex;justify-content:center;gap:7px;margin:0 0 9px;flex-wrap:wrap}.dots button{width:8px;height:8px;padding:0;border:0;border-radius:50%;background:#647079}.dots button.active{background:var(--lime)}.gallery-empty{text-align:center;padding:26px;color:var(--muted);max-width:310px;font-size:14px}.gallery-empty .ic{width:38px;height:38px;display:block;margin:0 auto 14px;color:var(--lime)}.sports-card{border:1px solid var(--line);border-radius:8px;padding:14px 12px;margin:8px 0;display:grid;grid-template-columns:58px 1fr;gap:12px;align-items:center;background:var(--surface)}.sports-card .when{font-weight:500;font-size:14px;line-height:1.2;margin-left: 8px;color:var(--ink);border-right:1px solid #586065;padding:9px 10px 9px 0}.sports-card .when.final{font-size:12px;color:var(--muted);font-weight:500}.sports-card .versus{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;font-size:14px;font-weight:650;line-height:1.3;overflow-wrap:anywhere}.sports-card .versus>:last-child{text-align:right}.sports-card .vs{font-size:12px;color:var(--muted);font-weight:400}.sports-card .final-score{color:var(--lime);white-space:nowrap;font-size:13px;font-weight:800}.sports-card .meta{font-size:12px;color:var(--muted);margin-top:7px}.more-menu .rowline{padding:16px 0}.rowline .grow{font-weight:500}.empty{font-size:14px;padding:22px 8px}.drawer .brand{font-size:26px}.footer{font-size:11px;color:#8c969d}.notice{color:var(--muted);font-size:12px;line-height:1.5}.app{border-color:var(--line)}@media(min-width:700px){.top{height:112px;padding:22px 34px}.brand{font-size:44px}.view{padding:0 34px 30px}.somos-title{font-size:38px}.sports-card{padding:17px 20px;grid-template-columns:76px 1fr}.sports-card .versus{font-size:18px}.sports-card .meta{font-size:13px}.section-title h2{font-size:28px}.carousel-photo{max-height:430px}.bottom nav{max-width:1020px}}@media(max-width:360px){.view{padding-left:12px;padding-right:12px}.brand{font-size:31px}.brand small{font-size:13px}.section-title h2{font-size:21px}.sports-card{gap:8px;padding:12px 9px;grid-template-columns:50px 1fr}.sports-card .versus{font-size:12px}.sports-card .final-score{font-size:17px}.strip button,.strip button:first-child{padding:9px 14px}}
+.pagehead > .tiny {
+  display: none !important;
+}
+.photo-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:23px 0 12px}.upload-photo{background:var(--lime);color:#171a1b;border:0;border-radius:9px;padding:12px 17px;font:500 15px Roboto,Arial,sans-serif}.upload-photo:disabled{opacity:.5;cursor:default}.photo-counter{color:var(--muted);text-align:center;padding:8px;font-size:12px}.photo-grid figure{border-radius:10px}.photo-grid figcaption{display:none}#photo-upload{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:25px;width:calc(100% - 30px);max-width:440px;max-height:90dvh;overflow:auto}#photo-upload::backdrop{background:#000b}#photo-upload h2{font-size:25px;margin:0 32px 12px 0;font-weight:750}.photo-close{position:absolute;right:12px;top:10px;background:none;border:0;color:var(--ink);font-size:30px;padding:0 8px}.photo-picker{display:block;border:1px dashed #899d65;border-radius:9px;padding:17px;color:var(--lime)}.photo-picker input{display:block;margin-top:12px;width:100%;font-size:12px;color:var(--muted)}#photo-preview img{display:block;max-width:100%;max-height:220px;margin:15px auto;object-fit:contain;border-radius:8px}.photo-public{font-size:12px;color:var(--muted)}#photo-upload-status{font-size:14px;line-height:1.5;color:var(--lime);min-height:20px;margin-bottom:0}.data-status{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--line);padding:12px;border-radius:9px;color:var(--muted);font-size:13px;margin:12px 0}.home-photo{margin-top:8px}.home-photo + .days{margin-top:16px}
+.top{height:auto;min-height:126px;padding:16px 18px;gap:18px;align-items:center}.top>button:first-child{order:0;margin-left:0;flex:0 0 auto;padding:10px}.top>button:first-child .ic{width:26px;height:26px}.tournament-brand{flex:1;min-width:0;line-height:0}.tournament-logo{display:block;width:240px;max-width:100%;height:auto;max-height:105px;object-fit:contain;object-position:left center}.carousel-photo>.photo-upload-overlay{position:absolute;top:auto;left:auto;bottom:12px;right:12px;width:auto;height:auto;border-radius:9px;padding:10px 14px;display:block;background:rgba(255,255,255,.5);color:#171a1b;font:700 14px Roboto,Arial,sans-serif;border:0;z-index:2}.carousel-photo>.photo-upload-overlay:focus-visible{outline:3px solid var(--lime);outline-offset:3px}.photo-bar:has(>.link:only-child){justify-content:flex-end;margin:8px 0}.gallery-empty{padding-bottom:36px}@media(min-width:700px){.top{min-height:146px;padding:18px 34px;gap:24px}.tournament-logo{width:280px;max-height:118px}}@media(max-width:360px){.top{min-height:110px;padding:12px;gap:10px}.tournament-logo{max-height:88px}.carousel-photo>.photo-upload-overlay{font-size:12px;padding:9px 11px;bottom:9px;right:9px}}
+
+.top .tournament-brand{display:flex;justify-content:flex-end}.top .tournament-logo{object-position:right center}.drawer-brand{display:block;flex:1;min-width:0}.drawer-brand img{display:block;width:205px;max-width:100%;height:auto}.drawer .head{gap:12px;align-items:center}.drawer .head>.iconbtn{flex:0 0 auto}
+
+html,body,.top,.drawer aside{background-color:#191c1d}.top{background:#191c1d;color:#f5f6f7}.top>.notification-bell:last-child{display:flex;align-items:center;justify-content:center;order:2;flex:0 0 auto;padding:10px;color:#f5f6f7;background:transparent;border:0}.top>.notification-bell:last-child .ic{width:27px;height:27px}.top>.notification-bell:hover{color:var(--lime)}.tournament-brand{order:1}@media(max-width:420px){.top{gap:10px}.top .tournament-logo{width:220px}.top>.notification-bell:last-child{padding:7px}}
+
+/* Solo la cabecera exterior cambia a blanco. */
+header.top{background:#191c1d;color:#191c1d}.top>button:first-child,.top>.notification-bell:last-child{color:#191c1d}.top>.notification-bell:hover,.top>button:first-child:hover{color:#008839}.drawer aside,.drawer .head,.app,.view,.bottom{background-color:#191c1d;color:var(--ink)}
+.carousel-photo .photo-track{display:flex;align-items:stretch;width:100%;height:100%;min-width:0;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x pan-y}.photo-track::-webkit-scrollbar{display:none}.photo-track .photo-slide{flex:0 0 100%;width:100%;height:100%;min-width:0;scroll-snap-align:start;scroll-snap-stop:always}.photo-track .photo-slide img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;user-select:none}.carousel-dots{display:flex;justify-content:center;align-items:center;gap:1px;flex-wrap:wrap;padding:7px 10px;background:#191c1d}.carousel-dots button{border:0;background:transparent;padding:6px;width:23px;height:23px;display:grid;place-items:center}.carousel-dots button span{display:block;width:9px;height:9px;border-radius:50%;background:#6e7579}.carousel-dots button.active span{background:var(--lime)}.carousel-dots button:focus-visible{outline:2px solid var(--lime);outline-offset:0;border-radius:50%}.photo-counter{display:none}
+
+.home-photo{border:0;border-radius:0;background:transparent;overflow:hidden}.home-photo .carousel-photo,.home-photo .photo-track,.home-photo .photo-slide,.home-photo img{border:0;border-radius:0}.photo-footer{display:flex;justify-content:flex-end;align-items:center;gap:15px;min-height:39px;padding:4px 0;background:var(--bg)}.photo-footer .photo-counter{display:inline;padding:0;color:var(--muted);font-size:12px}.photo-footer .link{font-size:13px;color:var(--lime);padding:7px 0}.home-photo .photo-upload-overlay,.home-photo .carousel-dots{display:none}
+@media(max-width:699px){.home-photo{width:calc(100% + 36px);margin-left:-18px;margin-right:-18px}.home-photo .carousel-photo{aspect-ratio:auto;height:calc((100vw - 36px)*9/16)}.home-photo .photo-footer{padding-left:18px;padding-right:18px}}
+@media(max-width:360px){.home-photo{width:calc(100% + 24px);margin-left:-12px;margin-right:-12px}.home-photo .carousel-photo{height:calc((100vw - 24px)*9/16)}.home-photo .photo-footer{padding-left:12px;padding-right:12px}}
+
+/* Ajustes de cabecera y continuidad con la galería */
+header.top{display:grid!important;grid-template-columns:42px minmax(0,1fr) 42px!important;align-items:center!important;column-gap:5px!important;justify-content:stretch!important;margin-bottom:0!important;border-bottom:0!important;padding:8px 12px!important;min-height:0!important;height:112px!important}
+header.top>button:first-child{grid-column:1!important;order:0!important;margin:0!important;justify-self:center!important}
+header.top>.tournament-brand{grid-column:2!important;order:0!important;min-width:0!important;display:flex!important;align-items:center!important;justify-content:center!important}
+header.top .tournament-logo{display:block!important;width:70%!important;opacity: 0.5;max-width:260px!important;max-height:94px!important;height:auto!important;object-fit:contain!important;object-position:center center!important;margin:auto!important}
+header.top>.notification-bell:last-child{grid-column:3!important;order:0!important;display:flex!important;position:relative!important;justify-self:center!important;margin:0!important;padding:6px!important}
+header.top .nc-unread-count{position:absolute;top:-3px;right:-5px;min-width:19px;height:19px;padding:0 4px;display:none;align-items:center;justify-content:center;background:#e02e3d;color:white;border-radius:12px;border:0;font-size:10px;font-weight:800;line-height:1}
+header.top .nc-unread-count.visible{display:flex}
+#view>.home-photo:first-child{margin-top:0!important;padding-top:0!important}
+#view>.home-photo:first-child .carousel-photo{margin-top:0!important}
+.nc-notice{cursor:pointer}.nc-notice.nc-unread{border-left:3px solid #a8ec35;padding-left:12px;background:#a8ec350b}.nc-notice .nc-notice-status{display:inline-block;margin-left:8px;font-size:10px;font-weight:700;color:#a8ec35}.nc-notice .nc-notice-date{margin-top:5px}
+@media(max-width:420px){header.top{height:103px!important;padding:5px 8px!important;grid-template-columns:36px minmax(0,1fr) 36px!important}header.top .tournament-logo{max-width:245px!important;max-height:93px!important}}
+
+/* Ocultar marcador en tarjetas conservando exactamente su espacio */
+.sports-card .final-score{visibility:hidden!important;}
+</style>
+<style id="nc-menu-six-custom">
+:root{--lime:#a5eb37!important}
+.bottom{background:#18864f!important;border-top:0!important;color:#fff!important}
+.bottom nav{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+.bottom button{color:#fff!important;min-width:0!important;padding:10px 1px 8px!important;gap:5px!important;font-size:10px!important}
+.bottom button.active{color:#a5eb37!important}
+.bottom .ic{width:23px!important;height:23px!important}
+header.top>.notification-bell:last-child{transform:translateX(-9px)!important}
+.nc-notice.nc-unread{border-left-color:#a5eb37!important;background:#a5eb370b!important}
+.nc-notice .nc-notice-status{color:#a5eb37!important}
+@media(max-width:390px){.bottom button{font-size:9px!important}.bottom .ic{width:21px!important;height:21px!important}}
+</style>
+
+<style id="nc-menu-legibilidad-ajustes">
+/* Contador sin aro blanco */
+header.top .nc-unread-count{border:0!important;box-shadow:none!important;outline:0!important;background-clip:padding-box!important}
+/* Barra inferior más alta, con iconos y rótulos más legibles */
+.bottom{background:#174917!important;min-height:83px!important;padding-bottom:env(safe-area-inset-bottom,0px)!important}
+.bottom nav{min-height:83px!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;align-items:stretch!important}
+.bottom nav button{min-height:78px!important;padding:12px 1px 10px!important;gap:6px!important;font-size:11px!important;line-height:1.15!important;color:#fff!important}
+.bottom nav button .ic{width:27px!important;height:27px!important;color:inherit!important;stroke:currentColor!important}
+.bottom nav button span{font-size:11px!important;font-weight:600!important;color:inherit!important}
+.bottom nav button.active,.bottom nav button.active .ic,.bottom nav button.active span{color:#a5eb37!important;stroke:currentColor!important}
+@media(max-width:390px){.bottom nav button{font-size:10px!important}.bottom nav button span{font-size:10px!important}.bottom nav button .ic{width:25px!important;height:25px!important}}
+</style>
+
+<style id="nc-ux-legibilidad-2026">
+/* Navegación visible y accesible en Notificaciones */
+.nc-notifications-nav{display:grid;grid-template-columns:48px minmax(0,1fr) 48px;align-items:center;gap:8px;margin:12px 0 20px}
+.nc-notifications-nav h1{font-size:clamp(23px,5vw,30px)!important;line-height:1.2!important;margin:0!important;text-align:center;font-weight:800}
+.nc-back-notifications,.nc-close-notifications{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border:1px solid rgba(255,255,255,.18);border-radius:12px;background:rgba(255,255,255,.07);color:inherit;cursor:pointer}
+.nc-close-notifications{font-size:31px;line-height:1}
+.nc-back-notifications:focus-visible,.nc-close-notifications:focus-visible{outline:3px solid #a5eb37;outline-offset:2px}
+/* Legibilidad general: textos de contenido, ayudas, tarjetas y navegación */
+body{font-size:16px!important;line-height:1.5!important}
+.view{font-size:16px!important}
+.view p,.view li,.view label,.view input,.view select,.view button,.view .rowline,.view .statline,.view .empty,.view .chip,.view .strip,.view .card{font-size:15px!important;line-height:1.45!important}
+.view small,.view .muted,.view .tiny,.view .eyebrow,.view .footer,.view .rowline small,.view .statline small{font-size:13px!important;line-height:1.45!important}
+.view h1{font-size:clamp(23px,5vw,30px)!important;line-height:1.2!important}
+.view h2{font-size:21px!important;line-height:1.3!important}
+.view h3{font-size:18px!important;line-height:1.35!important}
+.view .rowline strong,.view .statline strong{font-size:16px!important;line-height:1.4!important}
+.view .nc-notice{padding-top:16px!important;padding-bottom:16px!important;gap:8px}
+.view .nc-notice strong{display:inline;font-size:17px!important}
+.view .nc-notice small{display:block;font-size:15px!important;line-height:1.55!important;margin-top:8px}
+.view .nc-notice .nc-notice-date{font-size:13px!important;opacity:.82}
+.view .nc-notice .nc-notice-status{font-size:12px!important}
+.view .nc-notice a{display:inline-block;margin-top:10px;font-size:15px!important;text-decoration:underline}
+.bottom nav button,.bottom nav button span{font-size:12px!important;line-height:1.2!important}
+.drawer .menuitem,.drawer button{font-size:16px!important}
+@media(max-width:390px){.bottom nav button,.bottom nav button span{font-size:11px!important}}
+</style>
+
+<style id="nc-live-and-categories">
+/* Persistent compact header with an unmistakable live state. */
+header.top{position:sticky!important;top:0!important;z-index:100!important;height:92px!important;min-height:92px!important;background:#fff!important}
+header.top .tournament-brand{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;line-height:1!important;min-width:0!important}
+header.top .tournament-logo{max-width:210px!important;max-height:65px!important;width:auto!important;height:auto!important;object-fit:contain!important}
+.nc-live-status{display:inline-flex;align-items:center;justify-content:center;gap:6px;color:#191c1d;font:700 10px/1 Roboto,Arial,sans-serif;letter-spacing:.1em;white-space:nowrap}
+.nc-live-dot{width:9px;height:9px;border-radius:50%;background:#e12738;box-shadow:0 0 0 0 rgba(225,39,56,.6);animation:ncLivePulse 1.65s ease-out infinite}
+@keyframes ncLivePulse{0%{box-shadow:0 0 0 0 rgba(225,39,56,.55);opacity:1}65%{box-shadow:0 0 0 7px rgba(225,39,56,0);opacity:.85}100%{box-shadow:0 0 0 0 rgba(225,39,56,0);opacity:1}}
+@media(prefers-reduced-motion:reduce){.nc-live-dot{animation:none}}
+@media(max-width:600px){header.top{height:85px!important;min-height:85px!important;padding:5px 8px!important}header.top .tournament-logo{max-width:185px!important;max-height:58px!important}.nc-live-status{font-size:9px}}
+/* Category palette supplied by the tournament organization. */
+:root{--nc-cat-40:#d64da7;--nc-cat-50:#48c438;--nc-cat-60:#348bef;--nc-cat-68:#ff6555;--nc-cat-70:#e5f13c;--nc-cat-75:#f7a139}
+.nc-cat-color{color:var(--nc-category-color)!important}
+.nc-cat-bg{background:var(--nc-category-color)!important;color:#101410!important;border-color:var(--nc-category-color)!important}
+.tabs button.nc-cat-selected,.tabs button.nc-cat-selected.active{background:var(--nc-category-color)!important;border-color:var(--nc-category-color)!important;color:#101410!important}
+.chip.nc-cat-color{color:var(--nc-category-color)!important}
+</style>
+<style id="nc-dark-header-bottom-alignment">
+/* Restore dark header while preserving the sticky compact layout. */
+header.top{background:#191c1d!important;color:#fff!important}
+header.top>button:first-child,header.top>.notification-bell:last-child{color:#fff!important}
+header.top .nc-live-status{color:#fff!important}
+/* Move both the icon and its label down together by 5px. */
+.bottom nav button{padding-top:17px!important;padding-bottom:5px!important}
+</style>
+
+<style id="nc-final-header-category-tabs">
+header.top{position:sticky!important;top:0!important;z-index:100!important;background:#191c1d!important;color:#fff!important;display:grid!important;grid-template-columns:36px 58px minmax(0,1fr) 36px!important;gap:6px!important;align-items:center!important;height:112px!important;min-height:112px!important;padding:8px 12px!important}
+header.top>button:first-child{grid-column:1!important;grid-row:1!important;color:#fff!important}
+header.top>.nc-live-left{grid-column:2!important;transform: translateX(10px);grid-row:1!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:6px!important;color:#fff!important;font:700 10px/1.1 Roboto,Arial,sans-serif;white-space:nowrap;letter-spacing:.02em}
+header.top .nc-live-dot{width:14px!important;height:14px!important;flex:0 0 auto}
+header.top .tournament-brand{grid-column:3!important;grid-row:1!important;display:flex!important;align-items:center!important;justify-content:center!important;min-width:0!important;line-height:0!important}
+header.top .tournament-logo{width:240px!important;max-width:100%!important;max-height:105px!important;height:auto!important;object-fit:contain!important;object-position:center!important}
+header.top>.notification-bell{grid-column:4!important;grid-row:1!important;color:#fff!important;transform:none!important;justify-self:center!important}
+.nc-category-tabs .strip{display:flex!important;gap:8px!important;padding:8px 10px!important;border-bottom:0!important}
+.nc-category-tabs .strip button{border:1px solid #353b3d!important;border-radius:9px!important;background:transparent!important;color:#b9c0c4!important;padding:10px 15px!important;font-weight:700!important;min-height:42px!important;box-shadow:none!important}
+.nc-category-tabs .strip button.active{background:var(--nc-active-category,#252a2c)!important;color:var(--nc-active-ink,#fff)!important;border-color:var(--nc-active-category,#454b4d)!important;box-shadow:none!important}
+.nc-category-tabs .strip button[data-nc-cat="+40"]{--nc-active-category:#d64da7;--nc-active-ink:#111}
+.nc-category-tabs .strip button[data-nc-cat="+50"]{--nc-active-category:#48c438;--nc-active-ink:#111}
+.nc-category-tabs .strip button[data-nc-cat="+60"]{--nc-active-category:#348bef;--nc-active-ink:#111}
+.nc-category-tabs .strip button[data-nc-cat="+68"]{--nc-active-category:#ff6555;--nc-active-ink:#111}
+.nc-category-tabs .strip button[data-nc-cat="+70"]{--nc-active-category:#e5f13c;--nc-active-ink:#111}
+.nc-category-tabs .strip button[data-nc-cat="+75"]{--nc-active-category:#f7a139;--nc-active-ink:#111}
+@media(max-width:420px){header.top{height:106px!important;min-height:106px!important;grid-template-columns:30px 52px minmax(0,1fr) 30px!important;gap:3px!important;padding:6px 8px!important}header.top .tournament-logo{width:240px!important;max-height:95px!important}header.top>.nc-live-left{font-size:9px!important}}
+</style>
+<style id="nc-nav-icons-unified">
+/* Same unboxed navigation treatment as the rest of NEWCOM LIVE. */
+.nc-back-notifications,.nc-close-notifications{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;padding:0!important;color:inherit!important;width:48px!important;height:48px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+.nc-back-notifications svg{width:25px!important;height:25px!important}
+.nc-close-notifications{font-family:Arial,Roboto,sans-serif!important;font-size:38px!important;font-weight:400!important;line-height:1!important}
+.nc-back-notifications:hover,.nc-close-notifications:hover{background:transparent!important}
+</style>
+<style id="nc-final-category-header-fix">
+/* Every category filter retains its assigned color, selected or not. */
+.nc-category-tabs .strip button[data-nc-cat]{background:var(--nc-active-category)!important;color:#101410!important;border:1px solid transparent!important;box-shadow:none!important}
+.nc-category-tabs .strip button[data-nc-cat].active{background:var(--nc-active-category)!important;color:#101410!important;border:1px solid transparent!important}
+/* Give the bell its own column; keep the tournament logo clear of it. */
+header.top{grid-template-columns:38px 57px minmax(0,1fr) 45px!important;column-gap:7px!important}
+header.top .tournament-brand{width:100%!important;overflow:hidden!important}
+header.top .tournament-logo{width:200px!important;max-width:100%!important;max-height:92px!important}
+header.top>.notification-bell{justify-self:end!important;align-self:center!important;z-index:2!important;margin-right:2px!important;transform:none!important}
+/* Punto rojo fijo y aro blanco expansivo. */
+header.top .nc-live-dot{position:relative!important;display:inline-block!important;flex:0 0 14px!important;width:14px!important;height:14px!important;background:#e12738!important;border-radius:50%!important;animation:none!important;box-shadow:none!important;overflow:visible!important}
+header.top .nc-live-dot::after{content:"";position:absolute;inset:-3px;border:1.5px solid #fff;border-radius:50%;background:transparent;box-shadow:none;pointer-events:none;animation:ncWhiteRing 1.45s ease-out infinite}
+@keyframes ncWhiteRing{0%{transform:scale(.8);opacity:1}100%{transform:scale(1.6);opacity:0}}
+@media(max-width:420px){header.top{grid-template-columns:30px 49px minmax(0,1fr) 38px!important;gap:3px!important;padding-left:7px!important;padding-right:7px!important}header.top .tournament-logo{width:185px!important;max-height:90px!important}header.top>.notification-bell{padding:5px!important}}
+@media(prefers-reduced-motion:reduce){header.top .nc-live-dot::after{animation:none!important}}
+</style>
+
+<style id="nc-fix-all-and-header-20261024">
+/* "Todas" is a neutral filter, not a category: restore its outline and legible label. */
+.nc-category-tabs .strip button.nc-all-categories,
+.nc-category-tabs .strip button[data-nc-cat="Todas"]{
+  background:transparent!important;
+  border:1px solid #b8c0c4!important;
+  color:#f1f4f5!important;
+  box-shadow:none!important;
+}
+.nc-category-tabs .strip button.nc-all-categories.active,
+.nc-category-tabs .strip button[data-nc-cat="Todas"].active{
+  background:#303638!important;
+  border:1px solid #f1f4f5!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+/* Reserve independent, non-overlapping columns for logo and bell. */
+header.top{
+  grid-template-columns:34px 52px minmax(0,1fr) 48px!important;
+  column-gap:8px!important;
+  overflow:visible!important;
+}
+header.top .tournament-brand{
+  grid-column:3!important;
+  min-width:0!important;
+  max-width:100%!important;
+  width:100%!important;
+  overflow:hidden!important;
+  justify-content:center!important;
+}
+header.top .tournament-logo{
+  display:block!important;
+  width:auto!important;
+  max-width:100%!important;
+  max-height:90px!important;
+  height:auto!important;
+  object-fit:contain!important;
+}
+header.top>.notification-bell{
+  grid-column:4!important;
+  position:relative!important;
+  width:44px!important;
+  min-width:44px!important;
+  height:44px!important;
+  margin:0!important;
+  padding:7px!important;
+  justify-self:center!important;
+  z-index:5!important;
+  background:#191c1d!important;
+}
+@media(max-width:420px){
+  header.top{
+    grid-template-columns:28px 46px minmax(0,1fr) 42px!important;
+    column-gap:5px!important;
+    padding-left:8px!important;
+    padding-right:8px!important;
+  }
+  header.top .tournament-logo{max-height:65px!important}
+  header.top>.notification-bell{width:40px!important;min-width:40px!important;height:40px!important;padding:6px!important}
+}
+</style>
+
+<style id="nc-mobile-scale-repair">
+/* Prevent oversized inherited text in the home filters. */
+@media(max-width:600px){
+  #view .days{width:100%;max-width:100%;margin:8px 0 12px!important}
+  #view .days button{font-size:14px!important;line-height:1.2!important;padding:12px 5px!important;min-width:0!important;font-weight:700!important}
+  #view .nc-category-tabs .strip{gap:8px!important;padding:8px 10px!important;overflow-x:auto!important;flex-wrap:nowrap!important}
+  #view .nc-category-tabs .strip button{font-size:13px!important;line-height:1.2!important;padding:9px 12px!important;min-height:39px!important;flex:0 0 auto!important;white-space:nowrap!important}
+  #view .home-photo button, #view .home-photo .link{font-size:13px!important;line-height:1.3!important}
+  #view .home-photo .photo-counter{font-size:12px!important}
+}
+</style>
+<style id="nc-todas-filete-igual-dias">
+/* Igualar el filete de Todas al del selector de fechas. */
+#view .nc-category-tabs .strip button.nc-all-categories,
+#view .nc-category-tabs .strip button[data-nc-cat="Todas"],
+#view .nc-category-tabs .strip button.nc-all-categories.active,
+#view .nc-category-tabs .strip button[data-nc-cat="Todas"].active{
+  border:1px solid var(--line)!important;
+  border-radius:11px!important;
+  box-shadow:none!important;
+}
+</style>
+<style id="nc-bell-visibility-repair">
+/* The bell must remain in the fourth grid column, never under the logo. */
+header.top{display:grid!important;grid-template-columns:30px 48px minmax(0,1fr) 42px!important;gap:5px!important;align-items:center!important;overflow:visible!important}
+header.top>button:first-child{grid-column:1!important;grid-row:1!important}
+header.top>.nc-live-left{grid-column:2!important;grid-row:1!important}
+header.top>.tournament-brand{grid-column:3!important;grid-row:1!important;min-width:0!important;max-width:100%!important;overflow:hidden!important}
+header.top>.notification-bell:last-child{grid-column:4!important;grid-row:1!important;display:flex!important;visibility:visible!important;opacity:1!important;position:relative!important;justify-self:center!important;align-self:center!important;flex:0 0 42px!important;width:42px!important;height:44px!important;min-width:42px!important;margin:0!important;padding:8px!important;z-index:15!important;color:#fff!important;background:transparent!important;border:0!important}
+header.top>.notification-bell:last-child .ic{display:block!important;width:27px!important;height:27px!important;stroke:currentColor!important;color:#fff!important}
+@media(max-width:420px){header.top{grid-template-columns:28px 43px minmax(0,1fr) 40px!important;gap:4px!important;padding-left:7px!important;padding-right:7px!important}header.top>.notification-bell:last-child{width:40px!important;min-width:40px!important}}
+</style><style id="nc-notification-close-20px">.nc-close-notifications{font-size:20px!important}</style>
+<style id="nc-aviso-boton-unificado">
+/* Botón de enlace en avisos, con la misma identidad verde lima del sitio. */
+#view .nc-notice a.nc-aviso-boton{display:inline-flex!important;align-items:center;justify-content:center;box-sizing:border-box;min-height:44px;padding:11px 20px!important;margin-top:14px!important;border:0;border-radius:7px;background:#a5eb37!important;color:#191c1d!important;font-family:Roboto,Arial,sans-serif;font-size:14px!important;font-weight:700!important;line-height:1.2!important;text-decoration:none!important;box-shadow:none!important;transition:filter .15s ease}
+#view .nc-notice a.nc-aviso-boton:hover{filter:brightness(.92)}
+#view .nc-notice a.nc-aviso-boton:focus-visible{outline:2px solid #fff;outline-offset:3px}
+</style>
+<style id="nc-photo-chevron-controls">
+/* Controles manuales del carrusel, sin alterar el desplazamiento automático. */
+.home-photo .carousel-photo>.nc-photo-chevron{position:absolute;top:50%;transform:translateY(-50%);z-index:4;display:flex;align-items:center;justify-content:center;width:42px;height:42px;padding:9px;border:0;border-radius:50%;background:rgba(0,0,0,.58);color:#fff;cursor:pointer;touch-action:manipulation}
+.home-photo .carousel-photo>.nc-photo-chevron.prev{left:10px}
+.home-photo .carousel-photo>.nc-photo-chevron.next{right:10px}
+.home-photo .carousel-photo>.nc-photo-chevron .ic{width:24px;height:24px;stroke:currentColor;stroke-width:2.5}
+.home-photo .carousel-photo>.nc-photo-chevron:hover{background:rgba(0,0,0,.82)}
+.home-photo .carousel-photo>.nc-photo-chevron:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+@media(max-width:420px){.home-photo .carousel-photo>.nc-photo-chevron{width:38px;height:38px}.home-photo .carousel-photo>.nc-photo-chevron.prev{left:8px}.home-photo .carousel-photo>.nc-photo-chevron.next{right:8px}}
+</style>
+<style id="nc-cierres-unificados">
+/* Mismo cierre circular del modal de resultados en toda la aplicación. */
+.nc-result-close,.nc-lightbox-close,.nc-close-notifications,.photo-close,.drawer .head>.iconbtn{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:34px!important;height:34px!important;min-width:34px!important;
+  padding:0!important;border:0!important;border-radius:50%!important;
+  background:#3a4140!important;color:#fff!important;
+  font:700 23px/1 Arial,Roboto,sans-serif!important;
+  box-shadow:none!important;cursor:pointer;
+}
+.nc-result-close:hover,.nc-lightbox-close:hover,.nc-close-notifications:hover,.photo-close:hover,.drawer .head>.iconbtn:hover{background:#4b5553!important}
+.drawer .head>.iconbtn .ic{width:16px!important;height:16px!important;stroke:#fff!important;stroke-width:3!important}
+.nc-result-close:focus-visible,.nc-lightbox-close:focus-visible,.nc-close-notifications:focus-visible,.photo-close:focus-visible,.drawer .head>.iconbtn:focus-visible{outline:2px solid var(--lime)!important;outline-offset:3px!important}
+</style>
+<style id="nc-fotos-titulos-20261028">
+#photo-upload .photo-title-label{display:block;margin:15px 0 7px;color:#f0f4f0;font-size:14px;font-weight:600}
+#photo-title{display:block;width:100%;min-height:44px;padding:10px 12px;border:1px solid #66736b;border-radius:8px;background:#191c1d;color:#fff;font:400 14px Roboto,Arial,sans-serif}
+#photo-title::placeholder{color:#aab3ae}
+#photo-upload .photo-title-help{margin:5px 0 12px;color:#adb5c1;font-size:11px}
+.photo-footer{justify-content:flex-end!important;gap:18px!important}
+.photo-footer .photo-current-title{margin-right:auto;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color: var(--muted);font-size:12px;font-weight:500}
+.photo-footer .photo-counter{flex:0 0 auto}
+.photo-footer .link{flex:0 0 auto}
+.nc-lightbox-title{position:absolute;bottom:max(14px,env(safe-area-inset-bottom));left:14px;right:14px;text-align:center;color:#fff;font:600 15px/1.4 Roboto,Arial,sans-serif;overflow-wrap:anywhere}
+</style>
+<style id="nc-escudos-enfrentados">
+/* Escudos hacia el centro: local a la derecha, visitante a la izquierda. */
+.sports-card.nc-category-card .nc-team-label:not(.nc-team-away){justify-content:flex-end;text-align:right}
+.sports-card.nc-category-card .nc-team-away{justify-content:flex-start;text-align:left}
+</style>
+<style id="nc-escudos-columnas-fijas-20261028">
+/* Columnas idénticas para cada partido: nombre | escudo | VS | escudo | nombre. */
+.sports-card.nc-category-card .versus{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 29px 22px 29px minmax(0,1fr)!important;
+  column-gap:5px!important;align-items:center!important;
+}
+.sports-card.nc-category-card .nc-team-label{display:contents!important}
+.sports-card.nc-category-card .nc-team-label>span{min-width:0;overflow-wrap:anywhere;font-size:inherit;line-height:1.3}
+.sports-card.nc-category-card .nc-team-label:not(.nc-team-away)>span{grid-column:1;text-align:right}
+.sports-card.nc-category-card .nc-team-label:not(.nc-team-away)>.nc-team-crest{grid-column:2}
+.sports-card.nc-category-card .versus>.vs,.sports-card.nc-category-card .versus>.final-score{grid-column:3;text-align:center!important;min-width:0}
+.sports-card.nc-category-card .nc-team-away>.nc-team-crest{grid-column:4}
+.sports-card.nc-category-card .nc-team-away>span{grid-column:5;text-align:left}
+.sports-card.nc-category-card .nc-team-crest{display:block;width:29px;height:29px;object-fit:contain;justify-self:center}
+.sports-card.nc-category-card .nc-crest-slot{display:block;width:29px;height:29px}
+@media(max-width:420px){
+.sports-card.nc-category-card .versus{grid-template-columns:minmax(0,1fr) 24px 16px 24px minmax(0,1fr)!important;column-gap:9px!important}
+.sports-card.nc-category-card .nc-team-crest,.sports-card.nc-category-card .nc-crest-slot{width:24px;height:24px}
+}
+</style>
+<style id="nc-color-dias-seleccionados">
+/* Únicamente el fondo del día seleccionado. */
+#view .days button.active{background:#d6d6d6!important;color:#171a1b!important;opacity: 0.6;}
+</style>
+<style id="nc-notificaciones-ajustes-finales">
+.nc-close-notifications{width:50px!important;height:50px!important;border-radius:50%!important;font-size:36px!important;font-weight:700!important;line-height:1!important}
+#view .nc-notice,#view .nc-notice.nc-unread{border-left:0!important;background:transparent!important;padding-left:15px!important;cursor:default!important}
+#view .nc-notice .grow,#view .nc-notice small{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;max-height:none!important;display:block;overflow-wrap:anywhere}
+#view .nc-notice .nc-notice-status{display:inline-block!important;color:#a5eb37!important;margin-left:8px}
+</style>
+</head><body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol><symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11h-6v-7H9v7H3z"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M7 3v4m10-4v4M3 10h18m-13 4h2m4 0h2m-8 4h2"/></symbol><symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 3h10v8a5 5 0 0 1-10 0zM7 5H3v3a4 4 0 0 0 4 4m10-7h4v3a4 4 0 0 1-4 4m-5 4v4m-5 0h10"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6m2 9h2v-2a6 6 0 0 0-4-5.65"/></symbol><symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol><symbol id="i-left" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol><symbol id="i-radio" viewBox="0 0 24 24"><path d="M12 18v4m-4 0h8m-4-9a2 2 0 1 0 0-4 2 2 0 0 0 0 4M6 6a9 9 0 0 0 0 12m12-12a9 9 0 0 1 0 12M9 9a4 4 0 0 0 0 6m6-6a4 4 0 0 1 0 6"/></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="2.5"/></symbol><symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></symbol><symbol id="i-coffee" viewBox="0 0 24 24"><path d="M3 7h14v8a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6zm14 1h3a3 3 0 0 1 0 6h-3M2 22h18"/></symbol><symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 21V7m18 14V7M3 17h18M3 11h18v6M6 11V8h6v3"/></symbol><symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol><symbol id="i-list" viewBox="0 0 24 24"><path d="M9 5h12M9 12h12M9 19h12M3 5h1m-1 7h1m-1 7h1"/></symbol><symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 22V3m0 1c6-3 8 3 15 0v12c-7 3-9-3-15 0"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></symbol><symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></symbol></svg>
+<header class="top"><button aria-label="Abrir menú" onclick="drawer(true)"><svg class="ic"><use href="#i-menu"/></svg></button><div class="nc-live-left"><span class="nc-live-dot"></span><span>EN VIVO</span></div>
+<div class="brand tournament-brand">
+  <a href="/index.html" onclick="event.preventDefault();go('inicio')" aria-label="Ir al inicio">
+    <img class="tournament-logo"
+         src="https://gisellacerra.github.io/Boulevard/TORNEO2026/APP/logo_calado.png"
+         alt="6.º Torneo Nacional de Newcom 2026">
+  </a>
+</div>
+  <button class="notification-bell iconbtn" aria-label="Notificaciones" onclick="go('avisos')"><svg class="ic"><use href="#i-bell"/></svg><span class="nc-unread-count" id="nc-unread-count"></span></button></header>
+<main class="app"><div class="view" id="view"></div></main><div class="bottom"><nav id="nav"></nav></div><div class="drawer" id="drawer" onclick="if(event.target===this)drawer(false)"><aside><div class="head"><span class="drawer-brand"><img src="https://gisellacerra.github.io/Boulevard/TORNEO2026/APP/logo_calado.png" alt="6.º Torneo Nacional de Newcom 2026"></span><button class="iconbtn" aria-label="Cerrar menú" onclick="drawer(false)"><svg class="ic"><use href="#i-close"/></svg></button></div><h3>COMPETENCIA</h3><div id="menuSports"></div><h3>SERVICIOS Y NOVEDADES</h3><div id="menuOther"></div></aside></div>
+<dialog id="photo-upload" aria-labelledby="photo-upload-title"><button type="button" class="photo-close" aria-label="Cerrar" onclick="closePhotoUpload()">×</button><h2 id="photo-upload-title">Subí tu foto</h2><p class="muted">Hasta 3 MB · JPG, PNG o WebP<br>5 fotos por navegador por día.</p><form id="photo-upload-form"><label class="photo-picker">Elegí una foto<input type="file" id="photo-file" accept="image/jpeg,image/png,image/webp" required></label><div id="photo-preview"></div><label class="photo-title-label" for="photo-title">Título de la foto (opcional)</label><input type="text" id="photo-title" name="titulo" maxlength="60" placeholder="Ej.: Nombre de tu equipo" autocomplete="off"><p class="photo-title-help">Máximo 60 caracteres</p><p class="photo-public">Tu foto aparecerá públicamente en la app al publicarla.</p><button type="submit" id="photo-send" class="upload-photo">Publicar foto</button><p id="photo-upload-status" role="status" aria-live="polite"></p></form></dialog><script>
+const $=s=>document.querySelector(s);const icon=n=>`<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;let page='inicio',category='Todas',teamPage=0,search='',day='Hoy',subtab='Posiciones';const cats=['Todas','+50','+60','+68'];let teams=[];let matches=[];let ncCruces=[];const ncFechaHoy=()=>new Date().toLocaleDateString('en-CA');const routes=[['inicio','Inicio','home'],['partidos','Partidos','calendar'],['posiciones','Posiciones','trophy'],['cruces','Cruces','flag'],['bufet','Bufet','coffee'],['alojamiento','Hospedaje','bed']];const sports=[['fixture','Fixture','calendar'],['resultados','Resultados','list'],['zonas','Zonas','grid'],['posiciones','Posiciones','trophy'],['cruces','Cruces y finales','flag']];const others=[['avisos','Avisos','bell'],['streaming','Transmisiones','radio'],['alojamiento','Alojamiento','bed'],['bufet','Bufet','coffee'],['informacion','Información','info']];const title={inicio:'Inicio',partidos:'Partidos',torneo:'Torneo',equipos:'Equipos',...Object.fromEntries([...sports,...others].map(x=>[x[0],x[1]]))};function drawer(open){$('#drawer').classList.toggle('open',open)}let ncPaginaAntesAvisos='inicio';function ncVolverAvisos(){go(ncPaginaAntesAvisos&&ncPaginaAntesAvisos!=='avisos'?ncPaginaAntesAvisos:'inicio')}function go(p){if(p==='avisos'&&page!=='avisos'){ncPaginaAntesAvisos=page;ncRegistrarLecturaAvisos();}page=p;teamPage=0;search='';drawer(false);render();window.scrollTo(0,0)}function navRender(){let active=routes.some(r=>r[0]===page)?page:['fixture','resultados'].includes(page)?'partidos':['equipos'].includes(page)?'equipos':'torneo';$('#nav').innerHTML=routes.map(([p,t,i])=>`<button class="${active===p?'active':''}" onclick="go('${p}')" aria-label="${t}" ${active===p?'aria-current="page"':''}>${icon(i)}<span>${t}</span></button>`).join('');$('#menuSports').innerHTML=sports.map(([p,t,i])=>`<button class="menuitem" onclick="go('${p}')">${icon(i)}${t}</button>`).join('');$('#menuOther').innerHTML=others.map(([p,t,i])=>`<button class="menuitem" onclick="go('${p}')">${icon(i)}${t}</button>`).join('')}
+function head(t,tag='CENTRO DEL TORNEO'){return `<div class="pagehead"><div><h1>${t}</h1></div><span class="tiny muted">${new Date().getFullYear()}</span></div>`}function tabs(arr,active,fn){return `<div class="strip">${arr.map(v=>`<button class="${v===active?'active':''}" onclick="${fn}('${v}')">${v}</button>`).join('')}</div>`}function catTabs(){return `<div class="nc-category-tabs"><div class="strip">${cats.map(v=>`<button data-nc-cat="${v}" class="${v==='Todas'?'nc-all-categories ':''}${v===category?'active':''}" onclick="setCat('${v}')">${v}</button>`).join('')}</div></div>`}function setCat(v){category=v;teamPage=0;render()}function setDay(v){day=v;render()}function setSub(v){subtab=v;render()}function filterMatches(){return matches.filter(m=>category==='Todas'||m.cat===category)}function matchRows(arr){return arr.length?arr.map(m=>`<div class="match"><div class="when">${m.time}<br>Cancha ${m.court}<br><span class="chip">${m.cat}</span></div><div class="teams">${m.a}<br>${m.b}</div><div class="score">${m.score}<small>${m.status}</small></div></div>`).join(''):`<div class="empty">${ncEmptyData('No hay partidos en esta selección.')}</div>`}function simpleRows(items){return items.map(([t,detail,p])=>`<button class="rowline" onclick="go('${p}')"><span class="grow">${t}<small>${detail}</small></span>${icon('chevron')}</button>`).join('')}function home(){return `<div class="hero"><img src="https://images.unsplash.com/photo-1592656094267-764a45160876?auto=format&fit=crop&w=1300&q=80" alt="Cancha de voleibol"><div class="over"><span>COMPETENCIA · NEWCOM</span><strong>Viví el torneo</strong></div></div>${head('Partidos de hoy')}${tabs(['Todas','+50','+60','+68'],category,'setCat')}${matchRows(filterMatches().slice(0,3))}<div style="text-align:right"><button class="link" onclick="go('partidos')">Ver todos los partidos →</button></div><div class="quick"><button onclick="go('fixture')">${icon('calendar')}Fixture</button><button onclick="go('posiciones')">${icon('trophy')}Posiciones</button><button onclick="go('streaming')">${icon('radio')}En vivo</button></div><div class="section-title"><h2>El torneo en imágenes</h2><button class="link" onclick="go('galeria')">Ver galería →</button></div><div id="nc-photo-home" class="photo-grid"></div><div class="photo-cta"><div><strong>¡Compartí tu momento!</strong><p>Muy pronto vas a poder enviar tus fotografías para que la organización las publique.</p></div><button onclick="go('galeria')">Subí tu foto!</button></div><div class="section-title"><h2>Novedades</h2><button class="link" onclick="go('avisos')">Ver avisos →</button></div><div class="rowline"><div class="grow">Información del torneo<small>Comunicados y novedades oficiales</small></div>${icon('chevron')}</div>`}function partidos(){return `${head('Partidos','COMPETENCIA')}${tabs(['Ayer','Hoy','Mañana'],day,'setDay')}${catTabs()}<div class="section-title"><h2>${day==='Hoy'?'Partidos de hoy':'Programación · '+day.toLowerCase()}</h2><span class="tiny muted">${day==='Hoy'?filterMatches().length+' partidos':'Demostración'}</span></div>${day==='Hoy'?matchRows(filterMatches()):`<div class="empty">La programación de ${day.toLowerCase()} se mostrará cuando esté disponible.</div>`}`}function equipos(){let found=teams.filter(t=>(category==='Todas'||t.cat===category)&&(`${t.name} ${t.city}`).toLowerCase().includes(search.toLowerCase()));let count=Math.ceil(found.length/6),shown=found.slice(teamPage*6,(teamPage+1)*6);return `${head('Equipos','PARTICIPANTES')}${catTabs()}<label class="search">${icon('search')}<input id="teamSearch" type="search" placeholder="Buscar equipo o localidad" value="${search.replaceAll('"','&quot;')}" oninput="findTeams(this.value)" autocomplete="off"></label><div class="section-title"><h2>Participantes</h2><span class="tiny muted">${found.length} equipos</span></div><div id="teamList">${teamRows(shown,found.length,count)}</div>`}function teamRows(shown,total,count){return `${shown.map((t,i)=>`<div class="rowline"><span class="number">${String(teamPage*6+i+1).padStart(2,'0')}</span><span class="grow">${t.name}<small>${t.city}</small></span><span class="chip">${t.cat}</span></div>`).join('')||`<div class="empty">${ncEmptyData('No se encontraron equipos.')}</div>`}<div class="pager"><button onclick="changeTeamPage(-1)" ${teamPage===0?'disabled':''}>Anterior</button><span>${total?`Página ${teamPage+1} de ${count}`:'Sin resultados'}</span><button onclick="changeTeamPage(1)" ${teamPage>=count-1?'disabled':''}>Siguiente</button></div>`}function findTeams(v){search=v;teamPage=0;let found=teams.filter(t=>(category==='Todas'||t.cat===category)&&(`${t.name} ${t.city}`).toLowerCase().includes(search.toLowerCase()));$('#teamList').innerHTML=teamRows(found.slice(0,6),found.length,Math.ceil(found.length/6))}function changeTeamPage(d){teamPage+=d;let found=teams.filter(t=>(category==='Todas'||t.cat===category)&&(`${t.name} ${t.city}`).toLowerCase().includes(search.toLowerCase()));$('#teamList').innerHTML=teamRows(found.slice(teamPage*6,(teamPage+1)*6),found.length,Math.ceil(found.length/6))}function torneo(){return `${head('Torneo','COMPETENCIA')}${catTabs()}<div class="section-title"><h2>Competencia</h2></div>${simpleRows([['Zonas','Distribución de equipos por grupo','zonas'],['Posiciones','Tablas y clasificación','posiciones'],['Cruces y finales','Definición del campeonato','cruces'],['Fixture completo','Cronograma por cancha','fixture'],['Resultados','Partidos disputados','resultados'],['Historial','Ediciones anteriores','historial']])}`}function standings(){let arr=teams.filter(t=>category==='Todas'||t.cat===category).slice(0,6);return `<div class="section-title"><h2>Tabla de posiciones</h2><span class="tiny muted">PJ · PTS</span></div>${arr.map((t,i)=>`<div class="statline"><div><span class="muted tiny">${i+1}.</span> &nbsp;${t.name}<small>${t.cat}</small></div><div style="text-align:right">${Math.max(0,5-i)} &nbsp; <span class="chip">${Math.max(0,10-i*2)}</span></div></div>`).join('')}`}function generic(){if(page==='galeria')return `${head('Somos Newcom','FOTOGRAFÍAS')}<p class="muted">Fotografías aprobadas por la organización.</p><div id="nc-photo-all" class="photo-grid photo-full"></div>`;let back=`<button class="back" onclick="go('torneo')">${icon('left')} Volver al torneo</button>`;if(page==='fixture'||page==='resultados')return `${back}${head(title[page],'COMPETENCIA')}${catTabs()}${matchRows(filterMatches().filter(m=>page==='fixture'||m.status!=='Próximo'))}`;if(page==='posiciones')return `${back}${head('Posiciones','COMPETENCIA')}${catTabs()}${standings()}`;if(page==='zonas')return `${back}${head('Zonas','COMPETENCIA')}${catTabs()}${['Zona A','Zona B','Zona C'].map((z,j)=>`<div class="section-title"><h2>${z}</h2></div>${teams.filter(t=>category==='Todas'||t.cat===category).slice(j*4,j*4+4).map((t,i)=>`<div class="rowline"><span class="number">${i+1}</span><span class="grow">${t.name}<small>${t.cat}</small></span></div>`).join('')}`).join('')}`;if(page==='cruces')return `${back}${head('Cruces y finales','COMPETENCIA')}${catTabs()}${ncCruces.length?ncCruces.filter(x=>category==='Todas'||ncNormalCat(x.categoria)===category).map(x=>`<div class="statline"><div>${ncFotosEsc(x.instancia)}<small>${ncFotosEsc(x.local)} vs ${ncFotosEsc(x.visitante)}</small></div><span class="chip">${ncFotosEsc(ncNormalCat(x.categoria))}</span></div>`).join(''):'<div class="empty">Todavía no hay cruces publicados.</div>'}`;if(page==='avisos')return `${`<div class="nc-notifications-nav"><button type="button" class="nc-back-notifications" onclick="ncVolverAvisos()" aria-label="Volver a la pantalla anterior" title="Volver"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><h1>Notificaciones</h1><button type="button" class="nc-close-notifications" onclick="go('inicio')" aria-label="Cerrar notificaciones" title="Cerrar">×</button></div>`}${ncNotificaciones.length?ncNotificaciones.map((n,indice)=>{const id=ncAvisoId(n),destacado=indice===0&&ncNuevoAvisoEnVista===id;return `<div class="rowline nc-notice ${destacado?'nc-unread':''}" onclick="ncMarcarAviso('${id}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ncMarcarAviso('${id}')}" ><span class="grow"><strong>${ncFotosEsc(n.titulo)}</strong>${destacado?'<span class="nc-notice-status">NUEVO</span>':''}<small>${ncFotosEsc(n.mensaje)}</small><small class="nc-notice-date">${ncFotosEsc(n.fecha)}</small>${n.enlace&&/^https?:\/\//i.test(n.enlace)?`<a class="nc-aviso-boton" href="${ncFotosEsc(n.enlace)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();ncMarcarAvisoSinRender('${id}')">Abrir enlace</a>`:''}</span></div>`}).join(''):`<div class="empty">${ncEmptyData('Todavía no hay notificaciones publicadas.')}</div>`}`;if(page==='streaming')return `${head('Transmisiones','EN VIVO')}<div class="empty">Los enlaces a las transmisiones aparecerán aquí cuando sean publicados.</div>`;if(page==='alojamiento')return `${head('Alojamiento','SERVICIOS')}<div class="empty">Opciones y contactos de alojamiento, administrados por la organización.</div>`;if(page==='bufet')return `${head('Bufet','SERVICIOS')}<div class="empty">Menú, precios y horarios disponibles durante el torneo.</div>`;if(page==='sedes')return `${head('Sedes','INFORMACIÓN')}<div class="empty">Direcciones y ubicación de las canchas del torneo.</div>`;if(page==='historial')return `${back}${head('Historial','COMPETENCIA')}<div class="empty">Ediciones anteriores y resultados históricos.</div>`;return `${head('Información general','TORNEO')}<div class="statline"><div>Reglamento<small>Información de competencia</small></div></div><div class="statline"><div>Organización<small>Datos y contactos oficiales</small></div></div>`}function render(){navRender();$('#view').innerHTML=({inicio:home,partidos,equipos,torneo}[page]||generic)();if(typeof ncActualizarCampana==='function')ncActualizarCampana()}
+</script><script>
+/* Galería pública: solo muestra fotografías aprobadas. */
+const NC_FOTOS_API='https://script.google.com/macros/s/AKfycbzFNVAgsFRdyRIL9A1FuNexGoRrzxp3xQZATUO3da1ZE9nl0HFXOr9WdtLOj0O1PmGiVA/exec'; // Pegar aquí la URL /exec del despliegue Apps Script después de actualizar Código.gs.
+let ncFotosPublicas=[];
+function ncFotosEsc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function ncFotosPintar(){for(const id of ['nc-photo-home','nc-photo-all']){const el=document.getElementById(id);if(!el)continue;const fotos=id==='nc-photo-home'?ncFotosPublicas.slice(0,3):ncFotosPublicas;el.innerHTML=fotos.length?fotos.map(p=>`<figure><img loading="lazy" src="${ncFotosEsc(p.url)}" alt="${ncFotosEsc(p.titulo)}"><figcaption>${ncFotosEsc(p.titulo)}</figcaption></figure>`).join(''):'<p class="photo-message">Todavía no hay fotografías publicadas.</p>';}}
+function ncFotosCargar(){ncFotosPintar();if(!NC_FOTOS_API)return;const callback='ncFotosCallback_'+Date.now();const tag=document.createElement('script');const clean=()=>{delete window[callback];tag.remove();};window[callback]=data=>{ncFotosPublicas=Array.isArray(data?.fotos)?data.fotos:[];ncFotosPintar();clean();};tag.onerror=()=>{clean();};tag.src=NC_FOTOS_API+(NC_FOTOS_API.includes('?')?'&':'?')+'api=fotos&callback='+callback;document.head.appendChild(tag);}
+const NC_DATOS_API='https://script.google.com/macros/s/AKfycbzuNp6cYlhi6cAn-dqoxMiArsKU5AbvAQkLes1wRRdI5ieb3YP7qd-jewsVuTU2Wx2VTg/exec'; // Pegá aquí la URL /exec del proyecto NEWCOM_LIVE_API_PUBLICA.gs.
+function ncNormalCat(v){const s=String(v||'').trim();return s?(s.startsWith('+')?s:'+'+s):'';}
+let ncNotificaciones=[];
+const NC_AVISOS_LEIDOS_KEY='newcom_live_avisos_leidos_v1';
+let ncNuevoAvisoEnVista='';
+function ncRegistrarLecturaAvisos(){const leidos=ncAvisosLeidos();ncNuevoAvisoEnVista=ncNotificaciones.length&&!leidos[ncAvisoId(ncNotificaciones[0])]?ncAvisoId(ncNotificaciones[0]):'';for(const n of ncNotificaciones)leidos[ncAvisoId(n)]=true;try{localStorage.setItem(NC_AVISOS_LEIDOS_KEY,JSON.stringify(leidos))}catch(e){}ncActualizarCampana()}
+
+function ncAvisoId(n){const raw=[n.titulo||'',n.mensaje||'',n.fecha||'',n.enlace||''].join('|');let h=2166136261;for(let i=0;i<raw.length;i++){h^=raw.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)}
+function ncAvisosLeidos(){try{return JSON.parse(localStorage.getItem(NC_AVISOS_LEIDOS_KEY)||'{}')||{}}catch(e){return {}}}
+function ncAvisoLeido(id){return !!ncAvisosLeidos()[id]}
+function ncActualizarCampana(){const el=document.getElementById('nc-unread-count');if(!el)return;const leidos=ncAvisosLeidos();const total=ncNotificaciones.filter(n=>!leidos[ncAvisoId(n)]).length;el.textContent=total>99?'99+':String(total);el.classList.toggle('visible',total>0);el.setAttribute('aria-label',total+' notificaciones sin leer')}
+function ncMarcarAvisoSinRender(id){try{const leidos=ncAvisosLeidos();leidos[id]=true;localStorage.setItem(NC_AVISOS_LEIDOS_KEY,JSON.stringify(leidos))}catch(e){}ncActualizarCampana()}
+function ncMarcarAviso(id){try{const leidos=ncAvisosLeidos();leidos[id]=true;localStorage.setItem(NC_AVISOS_LEIDOS_KEY,JSON.stringify(leidos))}catch(e){}render();ncActualizarCampana()}
+
+let ncDataPhase='loading',ncDataMessage='';
+function ncEmptyData(fallback){return ncDataPhase==='loading'?'Cargando datos del torneo…':ncDataPhase==='error'?'La información no se pudo cargar todavía.':fallback;}
+function ncDatosCargar(silencioso=false){
+ if(!silencioso){ncDataPhase='loading';ncDataMessage='';render();}
+ if(!NC_DATOS_API){ncEstado('Para mostrar datos reales, configurá la URL de la API pública.');return;}
+ const cb='ncDatosCallback_'+Date.now(),tag=document.createElement('script');
+ const timeout=setTimeout(()=>{clean();if(!silencioso)ncEstado('No se pudo conectar con la planilla.');},45000);
+ function clean(){clearTimeout(timeout);delete window[cb];tag.remove();}
+ window[cb]=d=>{clean();if(!d||!d.ok){if(!silencioso)ncEstado('No se pudieron cargar los datos del torneo.');return;}
+ teams=(d.equipos||[]).map(t=>({name:t.nombre,cat:ncNormalCat(t.categoria),city:t.ciudad||t.provincia||''}));
+ matches=(d.partidos||[]).map(p=>({a:p.local,b:p.visitante,cat:ncNormalCat(p.categoria),court:p.cancha||'—',time:p.hora||'—',fecha:p.fecha||'',status:p.resultado?'Finalizado':'Programado',score:p.resultado?`${p.resultado.setsLocal} – ${p.resultado.setsVisitante}`:'–',zona:p.zona||'',genero:p.genero||'',resultado:p.resultado||null,escudoLocal:p.escudoLocal||p.logoLocal||'',escudoVisitante:p.escudoVisitante||p.logoVisitante||''}));
+ ncCruces=d.cruces||[];ncNotificaciones=Array.isArray(d.notificaciones)?[...d.notificaciones].reverse():[];if(page==='avisos'){const previo=ncNuevoAvisoEnVista;ncRegistrarLecturaAvisos();if(!ncNuevoAvisoEnVista)ncNuevoAvisoEnVista=previo;}const catsReal=[...new Set([...teams.map(x=>x.cat),...matches.map(x=>x.cat)].filter(Boolean))].sort((a,b)=>Number(a.slice(1))-Number(b.slice(1)));
+ cats.splice(0,cats.length,'Todas',...catsReal);if(!cats.includes(category))category='Todas';ncDataPhase='ready';ncDataMessage='';render();};
+ tag.onerror=()=>{clean();if(!silencioso)ncEstado('No se pudo conectar con la planilla.');};
+ tag.src=NC_DATOS_API+(NC_DATOS_API.includes('?')?'&':'?')+'api=datos&callback='+cb;document.head.appendChild(tag);
+}
+function ncEstado(msg){ncDataPhase='error';ncDataMessage=msg;render();}
+const ncRenderAnterior=render;render=function(){ncRenderAnterior();ncFotosPintar();};
+// Diseño público Somos Newcom. Solo lectura de los datos de la organización.
+let photoIndex=0,selectedDate='',photoLoadState='loading';
+const safe=ncFotosEsc;
+function normalizedDate(v){const s=String(v||'').trim();if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);const m=s.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:'';}
+function tournamentDates(){return [...new Set(matches.map(m=>normalizedDate(m.fecha)).filter(Boolean))].sort();}
+function daySelector(){const dates=tournamentDates();if(!dates.length)return `<div class="notice">${ncEmptyData('Las fechas aparecerán cuando se publique el fixture.')}</div>`;if(!dates.includes(selectedDate)){const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/Argentina/Buenos_Aires'});selectedDate=dates.includes(today)?today:dates.find(d=>d>=today)||dates[dates.length-1];}return `<div class="days" aria-label="Jornada">${dates.map(d=>{const label=new Date(d+'T12:00:00').toLocaleDateString('es-AR',{weekday:'short',day:'numeric'}).replace('.','');return `<button class="${d===selectedDate?'active':''}" aria-pressed="${d===selectedDate}" onclick="chooseDate('${d}')">${safe(label)}</button>`}).join('')}</div>`;}
+function chooseDate(d){selectedDate=d;render();}
+filterMatches=function(){return matches.filter(m=>(category==='Todas'||m.cat===category)&&(!selectedDate||normalizedDate(m.fecha)===selectedDate));};
+function completed(m){return m.status==='Finalizado'&&m.resultado!=null;}
+function courtLabel(v){return /^cancha\b/i.test(String(v))?String(v):'Cancha '+v;}
+matchRows=function(arr){return arr.length?arr.map(m=>{const done=completed(m);return `<article class="sports-card"><div class="when ${done?'final':''}">${safe(m.time)}</div><div><div class="versus"><span>${safe(m.a)}</span><span class="${done?'final-score':'vs'}">${done?safe(m.score):'vs'}</span><span>${safe(m.b)}</span></div><div class="meta">${safe(courtLabel(m.court))} · ${safe(m.genero||'')} ${safe(m.cat)}${m.zona?' · Zona '+safe(m.zona):''}</div></div></article>`;}).join(''):`<div class="empty">${ncEmptyData('No hay partidos en esta selección.')}</div>`;};
+function carouselPhotos(){return ncFotosPublicas.map(p=>({url:p.url||p.imagen||p.foto||'',titulo:p.titulo||p.nombre||'',detalle:p.ciudad||p.localidad||''})).filter(p=>/^(https?:\/\/|data:image\/(jpeg|png|webp);base64,)/i.test(p.url));}
+function ncCarouselPaint(){const target=document.getElementById('somos-carousel');if(!target)return;const photos=carouselPhotos();if(!photos.length){target.innerHTML=`<div class="carousel-photo"><div class="gallery-empty">${icon('users')}<strong>Somos Newcom</strong><p>${photoLoadState==='loading'?'Cargando fotografías…':'Las fotografías aparecerán cuando estén disponibles desde el asistente.'}</p></div></div>`;return;}photoIndex=((photoIndex%photos.length)+photos.length)%photos.length;const p=photos[photoIndex];target.innerHTML=`<div class="carousel-photo" id="carousel-touch"><img src="${safe(p.url)}" alt="${safe(p.titulo||'Fotografía del torneo')}" decoding="async">${photos.length>1?`<button class="prev" aria-label="Fotografía anterior" onclick="photoMove(-1)">${icon('left')}</button><button class="next" aria-label="Fotografía siguiente" onclick="photoMove(1)">${icon('chevron')}</button>`:''}</div><div class="carousel-caption"><div class="dots">${photos.map((_,i)=>`<button class="${i===photoIndex?'active':''}" aria-label="Ver fotografía ${i+1}" aria-pressed="${i===photoIndex}" onclick="photoGo(${i})"></button>`).join('')}</div><strong>${safe(p.titulo)}</strong>${p.detalle?`<p>${safe(p.detalle)}</p>`:''}</div>`;let start;const touch=$('#carousel-touch');touch.addEventListener('touchstart',e=>{start=e.changedTouches[0].clientX},{passive:true});touch.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-start;if(Math.abs(dx)>45)photoMove(dx<0?1:-1)},{passive:true});}
+function photoGo(i){photoIndex=i;ncCarouselPaint();}function photoMove(step){photoGo(photoIndex+step);}
+const oldPhotoPaint=ncFotosPintar;ncFotosPintar=function(){oldPhotoPaint();ncCarouselPaint();};
+ncFotosCargar=function(){if(!NC_FOTOS_API){photoLoadState='unavailable';ncFotosPintar();return;}const cb='ncPhotos_'+Date.now(),tag=document.createElement('script');let timer;const clean=()=>{clearTimeout(timer);tag.remove();delete window[cb];};const fail=()=>{clean();photoLoadState='unavailable';ncFotosPintar();};window[cb]=d=>{clean();if(Array.isArray(d?.fotos))ncFotosPublicas=d.fotos;photoLoadState=ncFotosPublicas.length?'ready':'empty';ncFotosPintar();};tag.onerror=fail;timer=setTimeout(fail,15000);tag.src=NC_FOTOS_API+'?api=fotos&callback='+cb;document.head.appendChild(tag);};
+home=function(){const selector=daySelector(),filtered=filterMatches(),upcoming=filtered.filter(m=>!completed(m)).sort((a,b)=>a.time.localeCompare(b.time)),finished=filtered.filter(completed).sort((a,b)=>b.time.localeCompare(a.time));return `<section class="carousel home-photo" id="somos-carousel" aria-label="Fotos compartidas del torneo"></section>${selector}${catTabs()}<div class="section-title"><h2>Últimos resultados</h2><button class="link" onclick="go('resultados')">Ver todos ›</button></div>${finished.length?matchRows(finished.slice(0,3)):`<div class="empty">${ncEmptyData('Los resultados se publicarán al finalizar los partidos.')}</div>`}<div class="section-title"><h2>Próximos partidos</h2><button class="link" onclick="go('partidos')">Ver todos ›</button></div>${upcoming.length?matchRows(upcoming.slice(0,3)):`<div class="empty">${ncEmptyData('No hay próximos partidos publicados para esta jornada.')}</div>`}`;};
+partidos=function(){return `${head('Partidos','PROGRAMACIÓN')}${daySelector()}${catTabs()}${matchRows(filterMatches().sort((a,b)=>a.time.localeCompare(b.time)))}`;};
+const originalGeneric=generic;generic=function(){if(page==='mas')return `${head('Más','TORNEO')}<div class="more-menu">${simpleRows([['Equipos','Participantes del torneo','equipos'],['Fotos','Compartidas por participantes','galeria'],['Torneo','Zonas y cruces','torneo'],...others.map(([id,name])=>[name,'',id])])}</div>`;if(page==='resultados')return `${head('Resultados','PARTIDOS FINALIZADOS')}${daySelector()}${catTabs()}${matchRows(filterMatches().filter(completed))}`;if(page==='fixture')return partidos();return originalGeneric();};
+// No se publican posiciones simuladas: se calculan únicamente desde resultados confirmados.
+standings=function(){const groups=new Map();for(const m of matches.filter(completed)){if(category!=='Todas'&&m.cat!==category)continue;const key=m.cat+' · '+(m.zona?'Zona '+m.zona:'General');if(!groups.has(key))groups.set(key,new Map());const group=groups.get(key);for(const name of [m.a,m.b])if(!group.has(name))group.set(name,{name,pj:0,pts:0});const a=Number(m.resultado.setsLocal),b=Number(m.resultado.setsVisitante);if(!Number.isFinite(a)||!Number.isFinite(b)||a===b)continue;const local=group.get(m.a),away=group.get(m.b);local.pj++;away.pj++;local.pts+=a>b?(b===0?3:2):(a===0?0:1);away.pts+=b>a?(a===0?3:2):(b===0?0:1);}
+return groups.size?[...groups].map(([label,g])=>`<div class="section-title"><h2>${safe(label)}</h2><span class="tiny muted">PJ · PTS</span></div>${[...g.values()].sort((a,b)=>b.pts-a.pts||a.name.localeCompare(b.name)).map(t=>`<div class="statline"><div>${safe(t.name)}</div><div>${t.pj} &nbsp; <span class="chip">${t.pts}</span></div></div>`).join('')}`).join('')+'<p class="notice">Puntos según resultados publicados (3–2–1–0). Igualdad de puntos: consultar la clasificación oficial.</p>':`<div class="empty">${ncEmptyData('Las posiciones aparecerán cuando se publiquen resultados.')}</div>`;};
+navRender=function(){const active=page==='inicio'?'inicio':['partidos','fixture','resultados'].includes(page)?'partidos':page==='posiciones'?'posiciones':'mas';$('#nav').innerHTML=routes.map(([p,t,i])=>`<button class="${p===active?'active':''}" onclick="go('${p}')" ${p===active?'aria-current="page"':''}>${icon(i)}<span>${t}</span></button>`).join('');$('#menuSports').innerHTML=[['equipos','Equipos','users'],...sports].map(([p,t,i])=>`<button class="menuitem" onclick="go('${p}')">${icon(i)}${t}</button>`).join('');$('#menuOther').innerHTML=others.map(([p,t,i])=>`<button class="menuitem" onclick="go('${p}')">${icon(i)}${t}</button>`).join('');};
+render();
+
+// Carga participativa: sin sesiones, sin título, publicación inmediata.
+const PHOTO_ENDPOINT=NC_FOTOS_API;
+let photoBusy=false,photoRequest='',photoInputFile=null,photoPayload=null;
+const uploadId=()=>crypto.randomUUID?crypto.randomUUID().replaceAll('-',''):Array.from(crypto.getRandomValues(new Uint8Array(20)),v=>v.toString(16).padStart(2,'0')).join('');
+function photoClient(){try{let id=localStorage.getItem('newcom_photo_browser');if(!id){id=uploadId();localStorage.setItem('newcom_photo_browser',id);}return id;}catch(e){throw Error('Habilitá el almacenamiento del navegador para subir fotos.');}}
+function photoDay(){return new Date().toLocaleDateString('en-CA',{timeZone:'America/Argentina/Buenos_Aires'});}
+function photoUsed(){try{const q=JSON.parse(localStorage.getItem('newcom_photo_daily')||'{}');return q.day===photoDay()?Number(q.used)||0:0;}catch(e){return 0;}}
+function photoQuota(left){try{localStorage.setItem('newcom_photo_daily',JSON.stringify({day:photoDay(),used:5-left}));}catch(e){}}
+function photoStatus(text){document.getElementById('photo-upload-status').textContent=text;}
+function openPhotoUpload(){const modal=document.getElementById('photo-upload');modal.showModal();photoStatus(!PHOTO_ENDPOINT?'La carga de fotos todavía no está habilitada.':photoUsed()>=5?'Ya subiste las 5 fotos permitidas por hoy.':'');document.getElementById('photo-send').disabled=!PHOTO_ENDPOINT||photoUsed()>=5||photoBusy;}
+function closePhotoUpload(){document.getElementById('photo-upload').close();}
+async function optimizePhoto(file){
+ if(file.size>3*1024*1024)throw Error('La foto supera los 3 MB. Elegí una más liviana.');
+ if(!file.size||!/^image\/(jpeg|png|webp)$/i.test(file.type))throw Error('Elegí una foto JPG, PNG o WebP.');
+ const bitmap=await createImageBitmap(file,{imageOrientation:'from-image'});
+ try{let scale=Math.min(1,1600/Math.max(bitmap.width,bitmap.height));const canvas=document.createElement('canvas');
+ for(let attempt=0;attempt<5;attempt++){
+  canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));const ctx=canvas.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+  for(const quality of [.84,.72,.60,.48]){const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));if(blob&&blob.size<=300*1024){const image=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob);});return {image,width:canvas.width,height:canvas.height,originalSize:file.size};}}
+  scale*=.75;
+ }
+ throw Error('No se pudo reducir la foto. Probá con otra.');
+ }finally{bitmap.close();}
+}
+// Confirmación por consulta al servidor, independiente de iframes y cookies de terceros.
+function photoServerStatus(payload){return new Promise((resolve,reject)=>{
+ const cb='ncReceipt_'+uploadId(),tag=document.createElement('script');let timer;
+ function cleanup(){clearTimeout(timer);tag.remove();delete window[cb];}
+ window[cb]=data=>{cleanup();resolve(data);};
+ tag.onerror=()=>{cleanup();reject(Error('No se pudo consultar NEWCOM FOTOS. Revisá el acceso público de la implementación.'));};
+ timer=setTimeout(()=>{cleanup();reject(Error('NEWCOM FOTOS no respondió. Revisá la implementación de Apps Script.'));},20000);
+ const params=new URLSearchParams({api:'estado',client:payload.client,request:payload.request,callback:cb,t:String(Date.now())});
+ tag.src=PHOTO_ENDPOINT+(PHOTO_ENDPOINT.includes('?')?'&':'?')+params;document.head.appendChild(tag);
+ });}
+async function submitPhotoForm(payload){
+ const before=await photoServerStatus(payload);
+ if(!before||!before.state)throw Error('Actualizá Fotos.gs y publicá una nueva versión de NEWCOM FOTOS.');
+ if(before.state==='saved')return before;
+ if(!before.ok&&before.state!=='error')return before;
+ photoStatus('Enviando foto…');
+ // La respuesta POST es opaca entre dominios. El éxito se confirma únicamente con el recibo.
+ fetch(PHOTO_ENDPOINT,{method:'POST',mode:'no-cors',credentials:'omit',redirect:'follow',body:new URLSearchParams({payload:JSON.stringify(payload)})}).catch(()=>{});
+ const deadline=Date.now()+90000;
+ while(Date.now()<deadline){
+  await new Promise(resolve=>setTimeout(resolve,2500));
+  try{const result=await photoServerStatus(payload);if(result.state==='saved'||result.state==='error')return result;if(!result.ok)return result;}
+  catch(error){if(Date.now()>=deadline)throw error;}
+  photoStatus('Esperando confirmación de publicación…');
+ }
+ throw Error('No recibimos confirmación. Reintentá con la misma foto seleccionada para evitar duplicados.');
+}
+
+async function sendPhoto(event){event.preventDefault();if(photoBusy)return;const input=document.getElementById('photo-file'),file=input.files[0];if(!file){photoStatus('Elegí una foto.');return;}if(!PHOTO_ENDPOINT){photoStatus('La carga de fotos todavía no está habilitada.');return;}if(photoUsed()>=5){photoStatus('Ya subiste las 5 fotos permitidas por hoy.');return;}photoBusy=true;const button=document.getElementById('photo-send');button.disabled=true;
+ try{photoStatus('Preparando foto…');if(file!==photoInputFile||!photoPayload){photoPayload={...await optimizePhoto(file),client:photoClient(),request:uploadId()};photoInputFile=file;}const payload={...photoPayload,titulo:document.getElementById('photo-title').value.trim(),nonce:uploadId()};photoStatus('Subiendo foto…');const result=await submitPhotoForm(payload);if(!result.ok)throw Error(result.error||'No se pudo publicar la foto.');photoQuota(result.restantes);if(result.foto){ncFotosPublicas=ncFotosPublicas.filter(p=>p.id!==result.foto.id);ncFotosPublicas.unshift(result.foto);}photoIndex=0;photoLoadState='ready';ncFotosPintar();input.value='';document.getElementById('photo-title').value='';photoPayload=null;photoInputFile=null;document.getElementById('photo-preview').replaceChildren();photoStatus('¡Tu foto ya está publicada!');}
+ catch(error){photoStatus(error.message||'No se pudo subir la foto. Intentá nuevamente.');}finally{photoBusy=false;button.disabled=photoUsed()>=5;}
+}
+function galleryImages(){return ncFotosPublicas.filter(p=>typeof p.url==='string'&&/^https:\/\//i.test(p.url));}
+let photoPauseUntil=0,photoHover=false;
+function photoCountUpdate(index){const photos=galleryImages(),count=document.getElementById('photo-count');if(count)count.textContent=(photos.length?index+1:0)+' / '+photos.length;const title=document.getElementById('photo-current-title');if(title)title.textContent=photos[index]?.titulo||'';}
+function photoFooter(count,index){const photos=galleryImages(),p=photos[index];return `<div class="photo-footer"><span class="photo-current-title" id="photo-current-title">${safe(p?.titulo||'')}</span><span class="photo-counter" id="photo-count">${count?index+1:0} / ${count}</span><button class="link" onclick="go('galeria')">Subí tu foto!</button></div>`;}
+photoGo=function(index){const photos=galleryImages(),track=document.getElementById('photo-track');if(!photos.length||!track)return;photoIndex=((index%photos.length)+photos.length)%photos.length;photoPauseUntil=Date.now()+7000;track.scrollTo({left:photoIndex*track.clientWidth,behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});photoCountUpdate(photoIndex);};
+photoMove=function(step){photoGo(photoIndex+step);};
+ncCarouselPaint=function(){
+ const target=document.getElementById('somos-carousel');if(!target)return;
+ const photos=galleryImages();
+ if(!photos.length){target.innerHTML=`<div class="carousel-photo"><div class="gallery-empty">${icon('users')}<p>${PHOTO_ENDPOINT?(photoLoadState==='loading'?'Cargando fotos…':'¡Compartí la primera foto del torneo!'):'Las fotos del torneo aparecerán acá.'}</p></div></div>${photoFooter(0,0)}`;return;}
+ photoIndex=((photoIndex%photos.length)+photos.length)%photos.length;
+ const slides=photos.length>1?[...photos,photos[0]]:photos;
+ target.innerHTML=`<div class="carousel-photo"><div class="photo-track" id="photo-track" aria-label="Fotografías del torneo">${slides.map((p,i)=>`<div class="photo-slide" ${i===photos.length?'aria-hidden="true"':''}><img src="${safe(p.url)}" alt="${i===photos.length?'':safe(p.titulo||'Foto compartida del torneo')}" decoding="async" loading="${i===photoIndex?'eager':'lazy'}" draggable="false"></div>`).join('')}</div>${photos.length>1?`<button type="button" class="nc-photo-chevron prev" aria-label="Fotografía anterior" onclick="photoMove(-1)">${icon('left')}</button><button type="button" class="nc-photo-chevron next" aria-label="Fotografía siguiente" onclick="photoMove(1)">${icon('chevron')}</button>`:''}</div>${photoFooter(photos.length,photoIndex)}`;
+ const track=document.getElementById('photo-track');if(!track)return;track.scrollLeft=photoIndex*track.clientWidth;
+ let settle;track.addEventListener('scroll',()=>{const raw=Math.round(track.scrollLeft/Math.max(1,track.clientWidth));photoIndex=raw%photos.length;photoCountUpdate(photoIndex);clearTimeout(settle);settle=setTimeout(()=>{if(raw===photos.length){track.scrollTo({left:0,behavior:'instant'});photoIndex=0;}},180);},{passive:true});
+ track.addEventListener('touchstart',()=>{photoPauseUntil=Date.now()+10000;},{passive:true});track.addEventListener('pointerdown',()=>{photoPauseUntil=Date.now()+10000;},{passive:true});
+ target.onmouseenter=()=>{photoHover=true;};target.onmouseleave=()=>{photoHover=false;photoPauseUntil=Date.now()+1000;};target.onfocusin=()=>{photoPauseUntil=Date.now()+10000;};
+};
+setInterval(()=>{const track=document.getElementById('photo-track'),photos=galleryImages();if(!track||photos.length<2||document.hidden||photoBusy||document.getElementById('photo-upload')?.open||photoHover||Date.now()<photoPauseUntil||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;track.scrollTo({left:(photoIndex+1)*track.clientWidth,behavior:'smooth'});},7000);
+
+const galleryGeneric=generic;generic=function(){if(page==='galeria')return `<div class="photo-bar"><button class="link" onclick="go('inicio')" aria-label="Volver al inicio" title="Volver al inicio" style="display:inline-flex;align-items:center;justify-content:center;padding:4px 0"> <svg class="ic" style="width:25px;height:25px" aria-hidden="true"><use href="#i-left"/></svg></button><button class="upload-photo" onclick="openPhotoUpload()">Subí tu foto</button></div><div class="photo-grid photo-full">${galleryImages().map((p,i)=>`<figure><img loading="lazy" src="${safe(p.url)}" alt="${safe(p.titulo||'Foto compartida del torneo')}" role="button" tabindex="0" onclick="ncAbrirFoto(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ncAbrirFoto(${i})}"></figure>`).join('')||'<p class="empty">Todavía no hay fotos compartidas.</p>'}</div>`;return galleryGeneric();};
+ncFotosCargar=function(){if(!PHOTO_ENDPOINT){photoLoadState='unavailable';ncFotosPintar();return;}const cb='ncPhotos_'+Date.now()+Math.floor(Math.random()*1000),tag=document.createElement('script');let timer;const clean=()=>{clearTimeout(timer);tag.remove();delete window[cb];};const fail=()=>{clean();photoLoadState='unavailable';ncFotosPintar();};window[cb]=d=>{clean();if(d?.ok&&Array.isArray(d.fotos)){ncFotosPublicas=d.fotos;photoLoadState='ready';}else photoLoadState='unavailable';ncFotosPintar();};tag.onerror=fail;timer=setTimeout(fail,15000);tag.src=PHOTO_ENDPOINT+'?api=fotos&callback='+cb;document.head.appendChild(tag);};
+document.getElementById('photo-upload-form').addEventListener('submit',sendPhoto);
+document.getElementById('photo-file').addEventListener('change',async function(){photoInputFile=null;photoPayload=null;photoStatus('');const preview=document.getElementById('photo-preview');preview.replaceChildren();const f=this.files[0];if(!f)return;if(f.size>3*1024*1024){photoStatus('La foto supera los 3 MB. Elegí una más liviana.');this.value='';return;}if(!/^image\/(jpeg|png|webp)$/i.test(f.type)){photoStatus('Elegí una foto JPG, PNG o WebP.');this.value='';return;}const url=URL.createObjectURL(f),img=new Image();img.alt='Vista previa de tu foto';img.onload=img.onerror=()=>URL.revokeObjectURL(url);img.src=url;preview.append(img);});
+setInterval(()=>{if(!document.hidden&&!photoBusy)ncFotosCargar();},60000);
+render();
+
+const ncRenderWithDataStatus=render;
+render=function(){ncRenderWithDataStatus();if(ncDataPhase==='error'){const box=document.createElement('div');box.className='data-status';box.setAttribute('role','status');box.innerHTML=`<span>${safe(ncDataMessage)}</span><button class="link" onclick="ncDatosCargar()">Reintentar</button>`;document.getElementById('view').prepend(box);}};
+ncFotosCargar();ncDatosCargar();
+</script>
+<style>
+.photo-full figure img{cursor:zoom-in}
+.nc-lightbox{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.96);display:flex;align-items:center;justify-content:center;padding:56px 0 30px;box-sizing:border-box}
+.nc-lightbox img{display:block;width:100%;height:auto;max-height:calc(100dvh - 100px);object-fit:contain}
+.nc-lightbox-close{position:absolute;right:14px;top:max(12px,env(safe-area-inset-top));width:44px;height:44px;border:0;border-radius:50%;background:#303536;color:#fff;font-size:28px;line-height:1;cursor:pointer;z-index:2}
+.nc-lightbox-close:focus-visible{outline:3px solid #c8fa42}
+.nc-result-detail-title{text-align:center;font-weight:700;font-size:13px;margin:12px 0 4px}.nc-result-no-points{text-align:center;font-size:12px;color:#aeb9af;padding:12px 0}.nc-result-divider{border-top:1px solid #465048;margin-top:18px}
+</style>
+<script>
+function ncAbrirFoto(i){
+ const p=galleryImages()[i];if(!p)return;
+ ncCerrarFoto();
+ const overlay=document.createElement('div');overlay.className='nc-lightbox';overlay.id='nc-lightbox';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Fotografía ampliada');
+ const img=document.createElement('img');img.src=p.url;img.alt=p.titulo||'Fotografía del torneo';
+ const close=document.createElement('button');close.className='nc-lightbox-close';close.type='button';close.setAttribute('aria-label','Cerrar fotografía');close.textContent='×';close.onclick=ncCerrarFoto;
+ overlay.onclick=e=>{if(e.target===overlay)ncCerrarFoto()};overlay.append(img,close);if(p.titulo){const caption=document.createElement('div');caption.className='nc-lightbox-title';caption.textContent=p.titulo;overlay.append(caption);}document.body.append(overlay);
+ document.body.dataset.ncPhotoOpen='1';document.body.style.overflow='hidden';close.focus();
+}
+function ncCerrarFoto(){const modal=document.getElementById('nc-lightbox');if(!modal)return;modal.remove();document.body.style.overflow='';delete document.body.dataset.ncPhotoOpen;}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')ncCerrarFoto()});
+</script>
+
+<script id="nc-category-palette-script">
+(function(){
+const palette={'+40':'#d64da7','+50':'#48c438','+60':'#348bef','+68':'#ff6555','+70':'#e5f13c','+75':'#f7a139'};
+let scheduled=false;
+function paint(){scheduled=false;
+  document.querySelectorAll('#view button,#view span,#view strong,#view small,#view label,#view div').forEach(el=>{
+    if(el.children.length)return;
+    const category=(el.getAttribute('data-nc-cat')||el.textContent||'').trim();
+    if(!Object.prototype.hasOwnProperty.call(palette,category))return;
+    const color=palette[category];
+    const cs=getComputedStyle(el);
+    const isFilter=el.tagName==='BUTTON';
+    const isBadge=el.matches('.chip,.badge,[class*="cat"],[class*="pill"],[class*="tag"]') || (cs.borderRadius!=='0px' && cs.backgroundColor!=='rgba(0, 0, 0, 0)' && cs.backgroundColor!=='transparent');
+    if(!isFilter&&!isBadge)return;
+    if(el.style.getPropertyValue('background-color')!==color)el.style.setProperty('background-color',color,'important');
+    if(el.style.getPropertyValue('color')!=='#101410')el.style.setProperty('color','#101410','important');
+    if(isFilter && el.style.getPropertyValue('border-color')!=='transparent')el.style.setProperty('border-color','transparent','important');
+  });
+}
+function queue(){if(!scheduled){scheduled=true;requestAnimationFrame(paint)}}
+function start(){const root=document.getElementById('view');if(!root)return;new MutationObserver(queue).observe(root,{childList:true,subtree:true,characterData:true});queue()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+</script>
+<style id="nc-resultados-modal-estilos">
+.sports-card.nc-finished{cursor:pointer;transition:border-color .2s ease,background .2s ease}.sports-card.nc-finished:hover{border-color:#a5eb37;background:#292e2b}.sports-card.nc-finished:focus-visible{outline:2px solid #a5eb37;outline-offset:2px}.nc-winner{color:#ffe500!important;font-weight:700}.nc-result-modal{position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.76);display:flex;align-items:center;justify-content:center;padding:16px}.nc-result-dialog{width:min(440px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:#242829;color:#f0f4f0;border:1px solid #425044;border-radius:18px;padding:22px;box-shadow:0 20px 70px #0009}.nc-result-top{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#fff;font-weight:500;font-size:16px}.nc-result-close{border:0;background:#3a4140;color:#fff;width:34px;height:34px;border-radius:50%;font-size:23px;line-height:1}.nc-result-teams{display:grid;grid-template-columns:1fr 40px 1fr;align-items:start;text-align:center;gap:6px;margin:25px 0 14px}.nc-result-team{min-width:0;overflow-wrap:anywhere}.nc-result-team strong{display:block;font-size:15px;line-height:1.25;min-height:38px}.nc-result-team b{display:block;font-size:36px;margin-top:6px}.nc-result-team img{height:55px;width:55px;object-fit:contain;margin-bottom:10px}.nc-result-vs{padding-top:48px;color:#91a093;font-weight:700}.nc-result-set{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:center;text-align:center;padding:10px 0;border-top:1px solid #39443d}.nc-result-set span{color:#aeb9af;font-size:12px}.nc-result-foot{text-align:center;color:#aeb9af;font-size:12px;margin-top:15px}.nc-result-winner-tag{font-size:10px;color:#ffe500;font-weight:700}
+
+.nc-result-divider{height:1px;background:#68756b;margin:14px 0 5px}
+/* Identidad de las tarjetas: franja por categoría y escudos de los equipos. */
+.sports-card.nc-category-card{position:relative;overflow:hidden;border-left:0!important;padding-left:19px!important;border-top-left-radius:0!important;border-bottom-left-radius:0!important}
+.sports-card.nc-category-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:12px;background:var(--nc-category-color,#a5eb37);border-radius:0px 0 0 0px}
+.sports-card.nc-category-card .nc-team-label{display:flex;align-items:center;gap:7px;min-width:0;overflow-wrap:anywhere}
+.sports-card.nc-category-card .nc-team-label>span{min-width:0}
+.sports-card.nc-category-card .nc-team-away{justify-content:flex-end;text-align:right}
+.sports-card.nc-category-card .nc-team-crest{width:29px;height:29px;flex:0 0 29px;object-fit:contain}
+.sports-card.nc-category-card .versus{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}
+@media(max-width:420px){.sports-card.nc-category-card{padding-left:15px!important;padding-right:9px}.sports-card.nc-category-card .versus{gap:5px;font-size:12px}.sports-card.nc-category-card .nc-team-crest{width:24px;height:24px;flex-basis:24px}.sports-card.nc-category-card .nc-team-label{gap:8px}}
+.nc-result-detail-title{text-align:center;font-weight:700;font-size:13px;margin:12px 0 4px}.nc-result-no-points{text-align:center;font-size:12px;color:#aeb9af;padding:12px 0}.nc-result-divider{border-top:1px solid #465048;margin-top:18px}
+/* Modal de resultados: banda horizontal por categoría y distribución vertical ampliada. */
+.nc-result-dialog{position:relative;overflow-x:hidden;min-height:0;padding:28px 22px 20px;display:flex;flex-direction:column;justify-content:flex-start}
+.nc-result-dialog::before{content:"";position:absolute;left:0;right:0;top:0;height:12px;background:var(--nc-category-color,#a5eb37)}
+.nc-result-dialog .nc-result-teams{margin-top:18px;margin-bottom:12px}
+.nc-result-dialog .nc-result-divider{margin-top:12px;margin-bottom:8px}
+.nc-result-dialog .nc-result-detail-title{margin-bottom:7px}
+.nc-result-dialog .nc-result-set{padding-top:8px;padding-bottom:8px}
+.nc-result-dialog .nc-result-foot{margin-top:12px;padding-top:0}
+@media(max-height:600px){.nc-result-dialog{min-height:0;padding-top:30px}.nc-result-dialog .nc-result-teams{margin-top:22px}}
+</style>
+<script id="nc-resultados-modal-script">
+(function(){
+ const oldMatchRows=matchRows;
+ function resultSets(r){
+   if(!r)return [];
+   const keys=['puntosPorSet','detalleSets','parciales','resultadosSets','sets','detalle','puntos','marcadores'];
+   const parsePair=(v,i)=>{
+     if(Array.isArray(v))return {label:'Set '+(i+1),a:v[0],b:v[1]};
+     if(typeof v==='string'){const m=v.match(/(\d+)\s*[-–:]\s*(\d+)/);return m?{label:'Set '+(i+1),a:m[1],b:m[2]}:null;}
+     if(v&&typeof v==='object')return {label:'Set '+(i+1),a:v.local??v.puntosLocal??v.puntosA??v.a??v.equipoLocal??v.localPuntos??v.p1,b:v.visitante??v.puntosVisitante??v.puntosB??v.b??v.equipoVisitante??v.visitantePuntos??v.p2};
+     return null;
+   };
+   for(const key of keys){let raw=r[key];
+     if(typeof raw==='string'){
+       try{raw=JSON.parse(raw)}catch(e){raw=(raw.match(/\d+\s*[-–:]\s*\d+/g)||[])}
+     }
+     if(raw&&typeof raw==='object'&&!Array.isArray(raw))raw=Object.values(raw);
+     if(Array.isArray(raw)){
+       const parsed=raw.map(parsePair).filter(x=>x&&x.a!=null&&x.b!=null&&Number.isFinite(Number(x.a))&&Number.isFinite(Number(x.b)));
+       if(parsed.length)return parsed;
+     }
+   }
+   const parsed=[];
+   for(let i=1;i<=3;i++){
+     const obj=r['set'+i]??r['set_'+i]??r['set'+i+'Puntos']??r['parcial'+i];
+     let item=parsePair(obj,i-1);
+     if(!item||item.a==null||item.b==null)item={label:'Set '+i,a:r['set'+i+'Local']??r['puntosLocal'+i]??r['set'+i+'A']??r['localSet'+i],b:r['set'+i+'Visitante']??r['puntosVisitante'+i]??r['set'+i+'B']??r['visitanteSet'+i]};
+     if(item.a!=null&&item.b!=null)parsed.push(item);
+   }
+   // La API publica el tercer set bajo la clave "tiebreak", no "set3".
+   // Mostrarlo únicamente si existe un tercer set jugado.
+   const tb=r.tiebreak??r.tieBreak??r.tie_break??r.desempate;
+   let third=parsePair(tb,2);
+   if((!third||third.a==null||third.b==null)&&r.tiebreak_local!=null&&r.tiebreak_visitante!=null){
+     third={label:'Set 3 · Tie-break',a:r.tiebreak_local,b:r.tiebreak_visitante};
+   }
+   if(third&&third.a!=null&&third.b!=null&&Number.isFinite(Number(third.a))&&Number.isFinite(Number(third.b))&&
+      (Number(third.a)>0||Number(third.b)>0)&&!parsed.some(x=>x.label==='Set 3')){
+     third.label='Set 3 · Tie-break';parsed.push(third);
+   }
+   return parsed;
+ }
+ function winner(m){if(!completed(m))return 0;const a=Number(m.resultado.setsLocal),b=Number(m.resultado.setsVisitante);return Number.isFinite(a)&&Number.isFinite(b)?Math.sign(a-b):0;}
+ function ncCategoryColor(cat){const c=String(cat||'').match(/\+?(40|50|60|68|70|75)/);return c?({40:'#d64da7',50:'#48c438',60:'#348bef',68:'#ff6555',70:'#e5f13c',75:'#f7a139'}[c[1]]):'#a5eb37';}
+ function ncLogo(url){const u=String(url||'');return /^(https?:\/\/|data:image\/(?:png|jpeg|jpg|webp|gif);base64,)/i.test(u)?`<img class="nc-team-crest" src="${safe(u)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">`:'<span class="nc-team-crest nc-crest-slot" aria-hidden="true"></span>';}
+ matchRows=function(arr){return arr.length?arr.map(m=>{const done=completed(m),win=winner(m),idx=matches.indexOf(m);return `<article class="sports-card nc-category-card ${done?'nc-finished':''}" style="--nc-category-color:${ncCategoryColor(m.cat)}" ${done?`role="button" tabindex="0" aria-label="Ver resultado de ${safe(m.a)} y ${safe(m.b)}" onclick="ncAbrirResultado(${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ncAbrirResultado(${idx})}"`:''}><div class="when ${done?'final':''}">${safe(m.time)}</div><div><div class="versus"><span class="nc-team-label ${win>0?'nc-winner':''}"><span>${safe(m.a)}</span>${ncLogo(m.escudoLocal)}</span><span class="${done?'final-score':'vs'}">${done?safe(m.score):'vs'}</span><span class="nc-team-label nc-team-away ${win<0?'nc-winner':''}">${ncLogo(m.escudoVisitante)}<span>${safe(m.b)}</span></span></div><div class="meta">${safe(courtLabel(m.court))} · ${safe(m.genero||'')} ${safe(m.cat)}${m.zona?' · Zona '+safe(m.zona):''}${done?' · Ver resultado':''}</div></div></article>`;}).join(''):`<div class="empty">${ncEmptyData('No hay partidos en esta selección.')}</div>`;};
+ window.ncAbrirResultado=function(idx){const m=matches[idx];if(!m||!completed(m))return;ncCerrarResultado();const win=winner(m),sets=resultSets(m.resultado),safeUrl=u=>/^(https?:\/\/|data:image\/(?:png|jpeg|jpg|webp|gif);base64,)/i.test(String(u||''))?safe(u):'';
+ const logoA=safeUrl(m.escudoLocal),logoB=safeUrl(m.escudoVisitante);
+ const el=document.createElement('div');el.className='nc-result-modal';el.id='nc-result-modal';el.setAttribute('role','presentation');el.innerHTML=`<section class="nc-result-dialog" style="--nc-category-color:${ncCategoryColor(m.cat)}" role="dialog" aria-modal="true" aria-label="Resultado del partido"><div class="nc-result-top"><span>${safe(m.genero||'')} ${safe(m.cat)} ${m.zona?'· Zona '+safe(m.zona):''}</span><button class="nc-result-close" aria-label="Cerrar resultado" onclick="ncCerrarResultado()">×</button></div><div class="nc-result-teams"><div class="nc-result-team ${win>0?'nc-winner':''}">${logoA?`<img src="${logoA}" alt="">`:''}<strong>${safe(m.a)}</strong><b>${safe(m.resultado.setsLocal)}</b>${win>0?'<div class="nc-result-winner-tag">GANADOR</div>':''}</div><div class="nc-result-vs">–</div><div class="nc-result-team ${win<0?'nc-winner':''}">${logoB?`<img src="${logoB}" alt="">`:''}<strong>${safe(m.b)}</strong><b>${safe(m.resultado.setsVisitante)}</b>${win<0?'<div class="nc-result-winner-tag">GANADOR</div>':''}</div></div><div class="nc-result-divider" aria-hidden="true"></div><div class="nc-result-detail-title">Puntos por set</div>${sets.length?sets.map(x=>`<div class="nc-result-set"><strong>${safe(x.a)}</strong><span>${safe(x.label)}</span><strong>${safe(x.b)}</strong></div>`).join(''):'<div class="nc-result-no-points">El detalle de puntos no está disponible en los datos publicados.</div>'}<div class="nc-result-foot">${safe(courtLabel(m.court))} · Resultado confirmado</div></section>`;
+ el.addEventListener('click',e=>{if(e.target===el)ncCerrarResultado()});document.body.appendChild(el);document.body.style.overflow='hidden';el.querySelector('button').focus();};
+ window.ncCerrarResultado=function(){document.getElementById('nc-result-modal')?.remove();document.body.style.overflow='';};
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('nc-result-modal'))ncCerrarResultado()});
+ // Reconsulta la API pública para reflejar los resultados confirmados por la organización.
+ setInterval(()=>{if(!document.hidden&&typeof ncDatosCargar==='function')ncDatosCargar(true);},60000);
+})();
+</script>
+
+<style id="nc-install-pwa-style">
+.nc-install-backdrop{position:fixed;inset:0;z-index:200000;background:rgba(0,0,0,.73);display:flex;align-items:center;justify-content:center;padding:18px}
+.nc-install-box{width:min(390px,100%);background:#242829;color:#f5f6f7;border:1px solid #49534b;border-radius:18px;padding:26px 22px 22px;box-shadow:0 18px 65px #0009;font-family:Roboto,Arial,sans-serif}
+.nc-install-box h2{font-size:23px;line-height:1.2;margin:0 0 10px;font-weight:700}.nc-install-box p{font-size:15px;line-height:1.5;color:#c9d1cc;margin:0 0 20px}
+.nc-install-actions{display:flex;gap:10px}.nc-install-actions button{flex:1;min-height:46px;border-radius:9px;font-weight:700;border:1px solid #66736b;padding:10px}.nc-install-now{background:#a5eb37;color:#191c1d;border-color:#a5eb37!important}.nc-install-later{background:transparent;color:#f5f6f7}
+.nc-install-instructions{margin:0 0 18px!important}.nc-install-box[hidden],.nc-install-backdrop[hidden]{display:none!important}
+</style>
+<div id="nc-install-overlay" class="nc-install-backdrop" hidden>
+ <section class="nc-install-box" role="dialog" aria-modal="true" aria-labelledby="nc-install-title">
+  <h2 id="nc-install-title">Instalá NEWCOM LIVE</h2>
+  <p id="nc-install-message">Accedé a los partidos, resultados y novedades desde la pantalla de inicio de tu celular.</p>
+  <div class="nc-install-actions"><button type="button" class="nc-install-later" id="nc-install-later">Ahora no</button><button type="button" class="nc-install-now" id="nc-install-now">Instalar</button></div>
+ </section>
+</div>
+<script id="nc-install-pwa-script">
+(function(){
+ let deferredPrompt=null;
+ const overlay=document.getElementById('nc-install-overlay');
+ const install=document.getElementById('nc-install-now');
+ const later=document.getElementById('nc-install-later');
+ const message=document.getElementById('nc-install-message');
+ const standalone=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+ const isIOS=()=>/iPad|iPhone|iPod/i.test(navigator.userAgent)||(/Macintosh/i.test(navigator.userAgent)&&navigator.maxTouchPoints>1);
+ const show=()=>{if(standalone()||sessionStorage.getItem('nc_install_later')==='1')return;overlay.hidden=false;};
+ const hide=()=>{overlay.hidden=true;};
+ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;show();});
+ window.addEventListener('appinstalled',()=>{deferredPrompt=null;hide();});
+ later.addEventListener('click',()=>{try{sessionStorage.setItem('nc_install_later','1')}catch(e){}hide();});
+ install.addEventListener('click',async()=>{
+  if(deferredPrompt){const p=deferredPrompt;deferredPrompt=null;hide();try{await p.prompt();await p.userChoice;}catch(e){}return;}
+  if(isIOS()){message.textContent='En Safari, tocá Compartir y elegí «Agregar a pantalla de inicio». Después confirmá «Agregar».';}
+  else{message.textContent='En Chrome, abrí el menú ⋮ y elegí «Instalar aplicación» o «Agregar a pantalla principal». Si no aparece, revisá que el sitio esté publicado por HTTPS.';}
+  install.hidden=true;
+ });
+ if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
+ window.addEventListener('load',()=>{if(!standalone())setTimeout(show,650);},{once:true});
+})();
+</script>
+</body></html>
