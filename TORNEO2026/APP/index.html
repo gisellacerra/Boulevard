@@ -388,7 +388,7 @@ function ncDatosCargar(silencioso=false){
 function ncVistaArbitros(){
  const esc=ncFotosEsc;
  const items=ncArbitros.filter(a=>a&&a.activo!==false&&String(a.estado||'').toLowerCase()!=='inactivo');
- return `${head('Árbitros','ORGANIZACIÓN')}<div class="section-title"><h2>Árbitros del torneo</h2></div>${items.length?items.map(a=>{
+ return `${head('Árbitros','ORGANIZACIÓN')}${items.length?items.map(a=>{
    const nombre=[a.apellido,a.nombre].filter(Boolean).join(', ')||'Árbitro';
    const foto=String(a.foto||'');
    const img=/^(?:data:image\/(?:jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+|https:\/\/[^\s]+)$/i.test(foto)
