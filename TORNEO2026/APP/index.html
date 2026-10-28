@@ -431,7 +431,7 @@ async function sendPhoto(event){event.preventDefault();if(photoBusy)return;const
 function galleryImages(){return ncFotosPublicas.filter(p=>typeof p.url==='string'&&/^https:\/\//i.test(p.url));}
 let photoPauseUntil=0,photoHover=false;
 function photoCountUpdate(index){const photos=galleryImages(),count=document.getElementById('photo-count');if(count)count.textContent=(photos.length?index+1:0)+' / '+photos.length;const title=document.getElementById('photo-current-title');if(title)title.textContent=photos[index]?.titulo||'';}
-function photoFooter(count,index){const photos=galleryImages(),p=photos[index];return `<div class="photo-footer"><span class="photo-current-title" id="photo-current-title">${safe(p?.titulo||'')}</span><span class="photo-counter" id="photo-count">${count?index+1:0} / ${count}</span><button class="link" onclick="go('galeria')">Ver fotos</button></div>`;}
+function photoFooter(count,index){const photos=galleryImages(),p=photos[index];return `<div class="photo-footer"><span class="photo-current-title" id="photo-current-title">${safe(p?.titulo||'')}</span><span class="photo-counter" id="photo-count">${count?index+1:0} / ${count}</span><button class="link" onclick="go('galeria')">Subí tu foto!</button></div>`;}
 photoGo=function(index){const photos=galleryImages(),track=document.getElementById('photo-track');if(!photos.length||!track)return;photoIndex=((index%photos.length)+photos.length)%photos.length;photoPauseUntil=Date.now()+7000;track.scrollTo({left:photoIndex*track.clientWidth,behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});photoCountUpdate(photoIndex);};
 photoMove=function(step){photoGo(photoIndex+step);};
 ncCarouselPaint=function(){
