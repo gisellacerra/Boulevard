@@ -1,6 +1,6 @@
 {
-  "name": "NEWCOM LIVE · Torneo",
-  "short_name": "NEWCOM LIVE",
+  "name": "TORNEO · Boulevard",
+  "short_name": "TORNEO NACIONAL BOULEVARD",
   "description": "Partidos, resultados y novedades del torneo de Newcom",
   "start_url": "./index.html",
   "scope": "./",
