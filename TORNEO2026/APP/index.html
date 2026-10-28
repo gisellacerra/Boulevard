@@ -386,14 +386,16 @@ function ncDatosCargar(silencioso=false){
 
 /* Árbitros: lectura desde la misma API pública que alimenta el torneo. */
 function ncVistaArbitros(){
- const esc=typeof ncFotosEsc==='function'?ncFotosEsc:(v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])));
+ const esc=ncFotosEsc;
  const items=ncArbitros.filter(a=>a&&a.activo!==false&&String(a.estado||'').toLowerCase()!=='inactivo');
  return `${head('Árbitros','ORGANIZACIÓN')}<div class="section-title"><h2>Árbitros del torneo</h2></div>${items.length?items.map(a=>{
- const nombre=a.nombreCompleto||a.nombre_completo||a.nombre||a.apellidoNombre||[a.apellido,a.nombres].filter(Boolean).join(', ')||'Árbitro';
- const dato=a.localidad||a.ciudad||a.provincia||'';
- const foto=a.fotoUrl||a.foto_url||a.fotografia||a.foto||a.imagen||'';
- const img=/^https:\/\//i.test(String(foto))?`<img src="${esc(foto)}" alt="" loading="lazy" style="width:52px;height:52px;object-fit:cover;border-radius:50%;flex:none">`:'';
- return `<div class="rowline" style="gap:12px;align-items:center">${img}<span class="grow"><strong>${esc(nombre)}</strong>${dato?`<small>${esc(dato)}</small>`:''}</span></div>`;
+   const nombre=[a.apellido,a.nombre].filter(Boolean).join(', ')||'Árbitro';
+   const foto=String(a.foto||'');
+   const img=/^(?:data:image\/(?:jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+|https:\/\/[^\s]+)$/i.test(foto)
+     ?`<img src="${esc(foto)}" alt="" loading="lazy" style="width:58px;height:58px;object-fit:cover;border-radius:50%;flex:none">`
+     :`<span aria-hidden="true" style="width:58px;height:58px;border-radius:50%;background:#30383a;display:grid;place-items:center;flex:none;font-size:24px">👤</span>`;
+   const federado=String(a.federado||'No').trim().toLowerCase()==='sí'?'Federado':'No federado';
+   return `<div class="rowline" style="gap:12px;align-items:center">${img}<span class="grow"><strong>${esc(nombre)}</strong><small>${federado}</small></span></div>`;
  }).join(''):`<div class="empty">${ncEmptyData('Todavía no hay árbitros publicados.')}</div>`}`;
 }
 function ncEstado(msg){ncDataPhase='error';ncDataMessage=msg;render();}
