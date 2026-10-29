@@ -2329,6 +2329,14 @@ function posiciones13Render(){
    const r=resultados12Existente(p);
    if(!r||String(r.estado).trim()!=='CONFIRMADO')continue;
    const l=equipos.get(p.local),v=equipos.get(p.visitante);
+   if(resultados12EsWO(r)){
+    const ganador=String(r.ganador||'').trim();
+    if(ganador!==p.local&&ganador!==p.visitante)continue;
+    jugados++;l.PJ++;v.PJ++;
+    if(ganador===p.local){l.PG++;v.PP++;l.PTS+=3;}
+    else{v.PG++;l.PP++;v.PTS+=3;}
+    continue;
+   }
    const sl=Number(r.sets?.[0]),sv=Number(r.sets?.[1]);
    if(!((sl===2&&sv===0)||(sl===2&&sv===1)||(sv===2&&sl===0)||(sv===2&&sl===1)))continue;
    const sets=[r.set1,r.set2,...(sl+sv===3?[r.tiebreak]:[])];
@@ -2345,7 +2353,7 @@ function posiciones13Render(){
   const fondo=fxColorCategoria(g.cat);
   contenido+=`<section class="panel section"><h2 style="background:${fondo};color:#000!important;padding:10px;border-radius:8px">Categoría ${esc(g.cat)} · Zona ${esc(g.zona)}</h2><p class="status">${jugados} de ${g.partidos.length} partidos con resultado · ${completo?'Zona completa':'Clasificación provisoria'}</p>${tabla}${completo?'<p class="status">Resultados completos. Posiciones calculadas; cruces pendientes de confirmación.</p>':'<p class="muted">Faltan resultados: todavía no se confirman clasificados ni cruces.</p>'}</section>`;
  }
- return panel('Posiciones por zona',`<p class="muted">Cálculo automático, sin modificar datos. Orden: puntos, partidos ganados, diferencia de sets, diferencia de tantos y orden alfabético. Victoria: 3 puntos; derrota 1–2: 2; derrota 0–2: 1. No se calculan W.O. automáticamente.</p>${selector}`)+contenido;
+ return panel('Posiciones por zona',`<p class="muted">Cálculo automático, sin modificar datos. Orden: puntos, partidos ganados, diferencia de sets, diferencia de tantos y orden alfabético. Victoria: 3 puntos; derrota 1–2: 2; derrota 0–2: 1. Los W.O. confirmados suman partido jugado y 3 puntos al ganador, sin asignar sets ni tantos.</p>${selector}`)+contenido;
 }
 function posiciones13Activar(){const b=$('#p13Actualizar');if(b)b.onclick=resultados12Leer;const f=$('#p13Filtro');if(f)f.onchange=()=>{posiciones13Filtro=f.value;render()};}
 
@@ -2365,6 +2373,12 @@ function posiciones13Activar(){const b=$('#p13Actualizar');if(b)b.onclick=result
      for(const n of [p.local,p.visitante])if(!equipos.has(n))equipos.set(n,{nombre:n,pts:0,pg:0,sf:0,sc:0,pf:0,pc:0});
      const r=resultados12Existente(p);
      if(!r||String(r.estado).trim()!=='CONFIRMADO')continue;
+     if(resultados12EsWO(r)){
+      const ganador=String(r.ganador||'').trim();
+      if(ganador!==p.local&&ganador!==p.visitante)continue;
+      completados++;const e=equipos.get(ganador);e.pg++;e.pts+=3;
+      continue;
+     }
      const sl=Number(r.sets?.[0]),sv=Number(r.sets?.[1]);
      if(!((sl===2&&[0,1].includes(sv))||(sv===2&&[0,1].includes(sl))))continue;
      const setsValidos=[r.set1,r.set2,...(sl+sv===3?[r.tiebreak]:[])];
@@ -2584,6 +2598,7 @@ function cruces16Activar(){const b=$('#c16Actualizar');if(b)b.onclick=()=>{cruce
 let resultados12Datos=null,resultados12Cargando=false,resultados12Seleccion='',resultados12Filtro='todas';
 const resultados12Clave=p=>[p.anio,p.edicion,String(p.categoria).replace(/^\+/,''),p.genero,p.zona,p.ronda,p.local,p.visitante].map(v=>String(v??'').trim()).join('|');
 function resultados12Partidos(){return (resultados12Datos?.partidos||[]).filter(p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion)&&String(p.estado).trim()==='CONFIRMADO');}
+function resultados12EsWO(r){return r?.wo===true||String(r?.sets?.[0]??'').trim().toUpperCase()==='WO'&&String(r?.sets?.[1]??'').trim().toUpperCase()==='WO';}
 function resultados12Existente(p){return (resultados12Datos?.resultados||[]).find(r=>resultados12Clave(r)===resultados12Clave(p));}
 function resultados12Leer(){
  if(!window.google?.script?.run){mostrarDialogoZonas({titulo:'Sin conexión',detalle:'Abrí el Asistente privado',advertencia:'Los resultados no están disponibles en este momento.',soloAceptar:true});return}
