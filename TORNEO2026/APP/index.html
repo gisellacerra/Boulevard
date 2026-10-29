@@ -362,7 +362,7 @@ header.top>.notification-bell:last-child .ic{display:block!important;width:27px!
 </style>
 <style id="nc-unified-subpage-headers-20261029">
 /* Encabezado compacto y homogéneo para todas las vistas interiores. */
-.pagehead.nc-unified-pagehead{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:30px!important;padding:12px 0 11px!important;min-height:52px!important;margin:0!important}
+.pagehead.nc-unified-pagehead{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important;padding:12px 0 11px!important;min-height:52px!important;margin:0!important}
 .pagehead.nc-unified-pagehead h1{font-size:22px!important;line-height:1.15!important;font-weight:750!important;margin:0!important;min-width:0!important}
 .nc-unified-back{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 30px!important;width:30px!important;height:34px!important;padding:0!important;background:transparent!important;border:0!important;border-radius:0!important;color:#f5f6f7!important;box-shadow:none!important}
 .nc-unified-back svg{display:block;width:24px;height:24px}
@@ -460,7 +460,7 @@ function photoGo(i){photoIndex=i;ncCarouselPaint();}function photoMove(step){pho
 const oldPhotoPaint=ncFotosPintar;ncFotosPintar=function(){oldPhotoPaint();ncCarouselPaint();};
 ncFotosCargar=function(){if(!NC_FOTOS_API){photoLoadState='unavailable';ncFotosPintar();return;}const cb='ncPhotos_'+Date.now(),tag=document.createElement('script');let timer;const clean=()=>{clearTimeout(timer);tag.remove();delete window[cb];};const fail=()=>{clean();photoLoadState='unavailable';ncFotosPintar();};window[cb]=d=>{clean();if(Array.isArray(d?.fotos))ncFotosPublicas=d.fotos;photoLoadState=ncFotosPublicas.length?'ready':'empty';ncFotosPintar();};tag.onerror=fail;timer=setTimeout(fail,15000);tag.src=NC_FOTOS_API+'?api=fotos&callback='+cb;document.head.appendChild(tag);};
 home=function(){const selector=daySelector(),filtered=filterMatches(),upcoming=filtered.filter(m=>!completed(m)).sort((a,b)=>a.time.localeCompare(b.time)),finished=filtered.filter(completed).sort((a,b)=>b.time.localeCompare(a.time));return `<section class="carousel home-photo" id="somos-carousel" aria-label="Fotos compartidas del torneo"></section>${selector}${catTabs()}<div class="section-title"><h2>Últimos resultados</h2><button class="link" onclick="go('resultados')">Ver todos ›</button></div>${finished.length?matchRows(finished.slice(0,3)):`<div class="empty">${ncEmptyData('Los resultados se publicarán al finalizar los partidos.')}</div>`}<div class="section-title"><h2>Próximos partidos</h2><button class="link" onclick="go('partidos')">Ver todos ›</button></div>${upcoming.length?matchRows(upcoming.slice(0,3)):`<div class="empty">${ncEmptyData('No hay próximos partidos publicados para esta jornada.')}</div>`}`;};
-partidos=function(){return `${head('Partidos','PROGRAMACIÓN')}${daySelector()}${catTabs()}${matchRows(filterMatches().sort((a,b)=>a.time.localeCompare(b.time)))}`;};
+partidos=function(){return `${head('Partidos','PROGRAMACIÓN')}${daySelector()}${catTabs()}<p class="nc-positions-help nc-partidos-help">Selecciona el escudo para ampliar más información.</p>${matchRows(filterMatches().sort((a,b)=>a.time.localeCompare(b.time)))}`;};
 const originalGeneric=generic;generic=function(){if(page==='mas')return `${head('Más','TORNEO')}<div class="more-menu">${simpleRows([['Equipos','Participantes del torneo','equipos'],['Fotos','Compartidas por participantes','galeria'],...others.map(([id,name])=>[name,'',id])])}</div>`;if(page==='resultados')return `${head('Resultados','PARTIDOS FINALIZADOS')}${daySelector()}${catTabs()}${matchRows(filterMatches().filter(completed))}`;if(page==='fixture')return partidos();return originalGeneric();};
 // No se publican posiciones simuladas: se calculan únicamente desde resultados confirmados.
 standings=function(){const groups=new Map();for(const m of matches.filter(completed)){if(category!=='Todas'&&m.cat!==category)continue;const key=m.cat+' · '+(m.zona?'Zona '+m.zona:'General');if(!groups.has(key))groups.set(key,new Map());const group=groups.get(key);for(const name of [m.a,m.b])if(!group.has(name))group.set(name,{name,pj:0,pts:0});const a=Number(m.resultado.setsLocal),b=Number(m.resultado.setsVisitante);if(!Number.isFinite(a)||!Number.isFinite(b)||a===b)continue;const local=group.get(m.a),away=group.get(m.b);local.pj++;away.pj++;local.pts+=a>b?(b===0?3:2):(a===0?0:1);away.pts+=b>a?(a===0?3:2):(b===0?0:1);}
@@ -776,5 +776,10 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 <style id="nc-posiciones-ayuda-escudo-css">
 .nc-positions-help{font-size:10px!important;line-height:1.55!important;color:#a5eb37!important;margin:-8px 0 14px!important;padding:0!important;background:none!important;border:0!important}
+</style>
+
+<style id="nc-partidos-epigrafe-css">
+/* Epígrafe de Partidos: misma tipografía y color que Posiciones. */
+#view .nc-partidos-help{margin:3px 0 14px!important}
 </style>
 </body></html>
