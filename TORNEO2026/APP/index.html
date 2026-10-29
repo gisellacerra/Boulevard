@@ -712,7 +712,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 <style id="nc-posiciones-ampliadas-css">
 .nc-positions-legend{font-size:10px!important;line-height:1.55!important;color:#aeb7b8;margin:12px 0 14px;padding:0!important;background:none!important;border:0!important}
-.nc-positions-group{margin:18px 0 28px}.nc-positions-heading{padding:12px 13px;border-radius:11px 11px 0 0;background:var(--pos-cat-color,#48c438);color:#101719;font-size:16px;font-weight:500}
+.nc-positions-group{margin:18px 0 28px}.nc-positions-heading{padding:7px 13px;border-radius:11px 11px 0 0;background:var(--pos-cat-color,#48c438);color:#101719;font-size:16px;font-weight:500}
 .nc-positions-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #30383a;border-top:0;border-radius:0 0 11px 11px}
 .nc-positions-table{border-collapse:collapse;width:100%;min-width:370px;table-layout:fixed;text-align:center;white-space:nowrap;font-size:11px;font-variant-numeric:tabular-nums}
 .nc-positions-table th{background:#252c2e;color:#b9c0c2;padding:11px 1px;font-size:10px;font-weight:700}
@@ -755,12 +755,16 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  if(!groups.size)return `<div class="empty">${ncEmptyData('Las posiciones aparecerán cuando se publiquen resultados.')}</div>`;
  const legend='<p class="nc-positions-legend"><b>PTS:</b> Puntos · <b>PJ:</b> Jugados · <b>PG:</b> Ganados · <b>PP:</b> Perdidos · <b>SF:</b> Sets a favor · <b>SC:</b> Sets en contra · <b>Dif.:</b> Diferencia de sets · <b>PF:</b> Puntos a favor · <b>PC:</b> Puntos en contra</p>';
  window.ncPosRows={};let id=0;
- return legend+[...groups.values()].map(g=>{const rows=[...g.items.values()].sort((a,b)=>b.pts-a.pts||b.pg-a.pg||(b.sf-b.sc)-(a.sf-a.sc)||a.name.localeCompare(b.name));const zona=String(g.zona).toLowerCase().startsWith('zona')?g.zona:'Zona '+g.zona;const title=g.cat+' · '+zona;return `<section class="nc-positions-group" style="--pos-cat-color:${palette[g.cat]||'#a5eb37'}"><div class="nc-positions-heading">${esc(title)}</div><div class="nc-positions-scroll" role="region" aria-label="Tabla de posiciones ${esc(title)}" tabindex="0"><table class="nc-positions-table"><thead><tr>${['#','','PTS','PJ','PG','PP','SF','SC','Dif.','PF','PC'].map(h=>`<th scope="col">${h||'Esc.'}</th>`).join('')}</tr></thead><tbody>${rows.map((t,i)=>{const rowId=++id;window.ncPosRows[rowId]={...t,cat:g.cat,zona,logo:logos.get(g.cat+'|'+t.name)||''};return `<tr class="nc-pos-team" role="button" tabindex="0" aria-label="Ver equipo ${esc(t.name)}" onclick="ncPosAbrir(${rowId})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ncPosAbrir(${rowId})}"><td>${i+1}</td><td>${shield(logos.get(g.cat+'|'+t.name))}</td><td class="nc-pts">${t.pts}</td><td>${t.pj}</td><td>${t.pg}</td><td>${t.pp}</td><td>${t.sf}</td><td>${t.sc}</td><td>${t.sf-t.sc}</td><td>${t.hasPoints?t.pf:'—'}</td><td>${t.hasPoints?t.pc:'—'}</td></tr>`}).join('')}</tbody></table></div></section>`;}).join('');
+ return legend+'<p class="nc-positions-help">Selecciona el escudo para ampliar más información.</p>'+[...groups.values()].map(g=>{const rows=[...g.items.values()].sort((a,b)=>b.pts-a.pts||b.pg-a.pg||(b.sf-b.sc)-(a.sf-a.sc)||a.name.localeCompare(b.name));const zona=String(g.zona).toLowerCase().startsWith('zona')?g.zona:'Zona '+g.zona;const title=g.cat+' · '+zona;return `<section class="nc-positions-group" style="--pos-cat-color:${palette[g.cat]||'#a5eb37'}"><div class="nc-positions-heading">${esc(title)}</div><div class="nc-positions-scroll" role="region" aria-label="Tabla de posiciones ${esc(title)}" tabindex="0"><table class="nc-positions-table"><thead><tr>${['#','','PTS','PJ','PG','PP','SF','SC','Dif.','PF','PC'].map(h=>`<th scope="col">${h||'Esc.'}</th>`).join('')}</tr></thead><tbody>${rows.map((t,i)=>{const rowId=++id;window.ncPosRows[rowId]={...t,cat:g.cat,zona,logo:logos.get(g.cat+'|'+t.name)||''};return `<tr class="nc-pos-team" role="button" tabindex="0" aria-label="Ver equipo ${esc(t.name)}" onclick="ncPosAbrir(${rowId})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ncPosAbrir(${rowId})}"><td>${i+1}</td><td>${shield(logos.get(g.cat+'|'+t.name))}</td><td class="nc-pts">${t.pts}</td><td>${t.pj}</td><td>${t.pg}</td><td>${t.pp}</td><td>${t.sf}</td><td>${t.sc}</td><td>${t.sf-t.sc}</td><td>${t.hasPoints?t.pf:'—'}</td><td>${t.hasPoints?t.pc:'—'}</td></tr>`}).join('')}</tbody></table></div></section>`;}).join('');
  };
 })();
 </script>
 <style id="nc-posiciones-numeros-grises-css">
 /* Solo números grises de la tabla de posiciones; PTS verde sin cambios. */
 .nc-positions-table tbody td:not(.nc-pts):not(:nth-child(2)) { font-size: 14px !important; }
+</style>
+
+<style id="nc-posiciones-ayuda-escudo-css">
+.nc-positions-help{font-size:10px!important;line-height:1.55!important;color:#B9142B!important;margin:-8px 0 14px!important;padding:0!important;background:none!important;border:0!important}
 </style>
 </body></html>
