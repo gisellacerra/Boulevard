@@ -330,6 +330,23 @@ header.top>.notification-bell:last-child .ic{display:block!important;width:27px!
 #view .days button.active{background:#d6d6d6!important;color:#171a1b!important;opacity: 0.6;}
 </style>
 <style id="nc-notificaciones-cruz-25px">#view button.nc-close-notifications{font-size:25px!important}</style>
+<style id="nc-arbitros-diseno-final">
+.nc-arbitros-grid{display:grid;gap:12px;margin:14px 0 24px}
+.nc-arbitro-card{display:flex;align-items:center;gap:15px;min-width:0;min-height:120px;padding:12px;border:1px solid #293637;border-radius:14px;background:#111819;box-sizing:border-box}
+.nc-arbitro-foto{display:block;width:116px;height:108px;flex:0 0 116px;object-fit:cover;object-position:center;border-radius:10px}
+.nc-arbitro-sin-foto{background:#30383a;display:grid;place-items:center;font-size:38px}
+.nc-arbitro-info{flex:1;min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center}
+.nc-arbitro-apellido{font-size:25px;font-weight:800;line-height:1.08;color:#fff;overflow-wrap:anywhere}
+.nc-arbitro-nombre{font-size:19px;font-weight:400;line-height:1.25;color:#e7ebec;margin-top:3px}
+.nc-arbitro-ubicacion{display:flex;align-items:center;gap:6px;margin-top:18px;color:#b3bec0;font-size:13px;line-height:1.3}
+.nc-arbitro-ubicacion svg{color:#9eaaad;flex:none}
+.nc-arbitro-estado{flex:none;align-self:flex-start;margin-top:10px;padding:7px 13px;border-radius:22px;font-size:11px;line-height:1;font-weight:800;white-space:nowrap}
+.nc-arbitro-estado.es-federado{background:#bbf338;color:#111b10}
+.nc-arbitro-estado.no-federado{background:#3c4b50;border:1px solid #58676b;color:#dce3e5}
+.nc-arbitro-check{display:inline-grid;place-items:center;width:16px;height:16px;margin-right:4px;border-radius:50%;background:#101a12;color:#bbf338;font-size:12px}
+@media(max-width:430px){.nc-arbitro-card{gap:12px;padding:10px;min-height:112px}.nc-arbitro-foto{width:95px;height:104px;flex-basis:95px}.nc-arbitro-apellido{font-size:22px}.nc-arbitro-nombre{font-size:17px}.nc-arbitro-ubicacion{font-size:11px;margin-top:13px}.nc-arbitro-estado{font-size:9px;padding:6px 8px;margin-top:7px}}
+@media(max-width:360px){.nc-arbitro-foto{width:76px;flex-basis:76px;height:96px}.nc-arbitro-card{gap:9px}.nc-arbitro-apellido{font-size:19px}.nc-arbitro-estado{font-size:8px;padding:5px 6px}}
+</style>
 </head><body>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none"><symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol><symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11h-6v-7H9v7H3z"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M7 3v4m10-4v4M3 10h18m-13 4h2m4 0h2m-8 4h2"/></symbol><symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 3h10v8a5 5 0 0 1-10 0zM7 5H3v3a4 4 0 0 0 4 4m10-7h4v3a4 4 0 0 1-4 4m-5 4v4m-5 0h10"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6m2 9h2v-2a6 6 0 0 0-4-5.65"/></symbol><symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol><symbol id="i-left" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol><symbol id="i-radio" viewBox="0 0 24 24"><path d="M12 18v4m-4 0h8m-4-9a2 2 0 1 0 0-4 2 2 0 0 0 0 4M6 6a9 9 0 0 0 0 12m12-12a9 9 0 0 1 0 12M9 9a4 4 0 0 0 0 6m6-6a4 4 0 0 1 0 6"/></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="2.5"/></symbol><symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></symbol><symbol id="i-coffee" viewBox="0 0 24 24"><path d="M3 7h14v8a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6zm14 1h3a3 3 0 0 1 0 6h-3M2 22h18"/></symbol><symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 21V7m18 14V7M3 17h18M3 11h18v6M6 11V8h6v3"/></symbol><symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol><symbol id="i-list" viewBox="0 0 24 24"><path d="M9 5h12M9 12h12M9 19h12M3 5h1m-1 7h1m-1 7h1"/></symbol><symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 22V3m0 1c6-3 8 3 15 0v12c-7 3-9-3-15 0"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></symbol><symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></symbol></svg>
 <header class="top"><button aria-label="Abrir menú" onclick="drawer(true)"><svg class="ic"><use href="#i-menu"/></svg></button><div class="nc-live-left"><span class="nc-live-dot"></span><span>EN VIVO</span></div>
@@ -388,16 +405,18 @@ function ncDatosCargar(silencioso=false){
 function ncVistaArbitros(){
  const esc=ncFotosEsc;
  const items=ncArbitros.filter(a=>a&&a.activo!==false&&String(a.estado||'').toLowerCase()!=='inactivo');
- return `${head('Árbitros','ORGANIZACIÓN')}${items.length?items.map(a=>{
-   const nombre=[a.apellido,a.nombre].filter(Boolean).join(', ')||'Árbitro';
+ const gps='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg>';
+ return `${head('Árbitros','ORGANIZACIÓN')}<div class="nc-arbitros-grid">${items.length?items.map(a=>{
+   const apellido=String(a.apellido||'').trim();
+   const nombre=String(a.nombre||'').trim();
    const foto=String(a.foto||'');
    const img=/^(?:data:image\/(?:jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+|https:\/\/[^\s]+)$/i.test(foto)
-     ?`<img src="${esc(foto)}" alt="" loading="lazy" style="width:58px;height:58px;object-fit:cover;border-radius:50%;flex:none">`
-     :`<span aria-hidden="true" style="width:58px;height:58px;border-radius:50%;background:#30383a;display:grid;place-items:center;flex:none;font-size:24px">👤</span>`;
-   const federado=String(a.federado||'No').trim().toLowerCase()==='sí'?'Federado':'No federado';
+     ?`<img class="nc-arbitro-foto" src="${esc(foto)}" alt="Fotografía de ${esc(nombre+' '+apellido)}" loading="lazy">`
+     :`<span class="nc-arbitro-foto nc-arbitro-sin-foto" aria-hidden="true">👤</span>`;
+   const federado=String(a.federado||'No').trim().toLowerCase()==='sí';
    const lugar=[a.ciudad,a.provincia].map(x=>String(x||'').trim()).filter(Boolean).join(', ');
-   return `<div class="rowline" style="gap:12px;align-items:center">${img}<span class="grow"><strong>${esc(nombre)}</strong>${lugar?`<small>📍 ${esc(lugar)}</small>`:''}<small>${federado}</small></span></div>`;
- }).join(''):`<div class="empty">${ncEmptyData('Todavía no hay árbitros publicados.')}</div>`}`;
+   return `<article class="nc-arbitro-card">${img}<div class="nc-arbitro-info"><div class="nc-arbitro-apellido">${esc(apellido||'Árbitro')}</div><div class="nc-arbitro-nombre">${esc(nombre)}</div>${lugar?`<div class="nc-arbitro-ubicacion">${gps}<span>${esc(lugar)}</span></div>`:''}</div><span class="nc-arbitro-estado ${federado?'es-federado':'no-federado'}">${federado?'<span class="nc-arbitro-check">✓</span> FEDERADO':'NO FEDERADO'}</span></article>`;
+ }).join(''):`<div class="empty">${ncEmptyData('Todavía no hay árbitros publicados.')}</div>`}</div>`;
 }
 function ncEstado(msg){ncDataPhase='error';ncDataMessage=msg;render();}
 const ncRenderAnterior=render;render=function(){ncRenderAnterior();ncFotosPintar();};
