@@ -2931,7 +2931,7 @@ return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ga
   const ganador=nombreNormal(datosMarcador?.ganador||'');
   const ganaA=!!ganador&&ganador===nombreNormal(a);
   const ganaB=!!ganador&&ganador===nombreNormal(b);
-  const reloj=!p._cruce&&!datosMarcador?`<button type="button" class="nc-partidos-reloj" title="Modificar horario o cancha" aria-label="Modificar horario o cancha" data-nc-reprogramar="${esc(encodeURIComponent(JSON.stringify({fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||''),local:a,visitante:b})))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button>`:'';
+  const reloj=!datosMarcador?`<button type="button" class="nc-partidos-reloj" title="Modificar horario o cancha" aria-label="Modificar horario o cancha" data-nc-reprogramar="${esc(encodeURIComponent(JSON.stringify({fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||''),local:a,visitante:b,cruce:!!p._cruce,instancia:p.instancia,partido:p.partido,genero:p.genero})))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button>`:'';
   const marcador=puntos?`<div class="nc-partidos-puntos" aria-label="Puntos por set: ${esc(puntos)}">${esc(puntos)}</div>`:'';
   return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" ${!p._cruce&&!datosMarcador?'draggable="true" data-nc-arrastrable="1"':''} role="button" tabindex="0" title="Cargar o corregir resultado" data-nc-resultado="${esc(encodeURIComponent(JSON.stringify({cruce:!!p._cruce,instancia:p.instancia,partido:p.partido,genero:p.genero,fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}"><div class="nc-partidos-equipos">${p._cruce?`<div class="nc-cruce-etiqueta-fixture">${esc(p.instancia==='SEMIFINAL'?'Semifinal '+p.partido:p.instancia==='FINAL'?'Final':'Tercer puesto')}</div>`:''}<div class="nc-partidos-equipo">${iconoEquipo(a)}<span class="nc-partidos-nombre ${ganaA?'nc-partidos-ganador':''}">${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span class="nc-partidos-nombre ${ganaB?'nc-partidos-ganador':''}">${esc(b)}</span></div>${marcador}</div>${reloj}</div>`;
 
@@ -3000,7 +3000,42 @@ async function ncAbrirResultadoDesdeFixture(b){
  }catch(e){mostrarDialogoZonas({titulo:'No se pudieron consultar los resultados',detalle:info.local+' vs '+info.visitante,advertencia:String(e?.message||e),soloAceptar:true})}
  finally{delete b.dataset.ncAbriendo}
 }
+async function ncReprogramarCruce(b){
+ let info;try{info=JSON.parse(decodeURIComponent(b.dataset.ncReprogramar))}catch(e){return}
+ if(!window.google?.script?.run)return;
+ const llamar=(nombre,p)=>new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[nombre](p));
+ let snap;try{snap=await llamar('adminCruces15Consultar')}catch(e){avisoIntegrado(String(e.message||e));return}
+ const normFecha=v=>{const t=String(v||'').trim(),m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(t);return m?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):t.slice(0,10)};
+ const filas=(snap.filas||[]),indices=filas.map((r,i)=>String(r.anio)===String(settings.anio)&&String(r.edicion)===String(settings.edicion)&&String(r.categoria).replace(/^\+/,'')===String(info.categoria).replace(/^\+/,'')&&r.instancia===info.instancia&&String(r.partido)===String(info.partido)&&r.genero===info.genero?i:-1).filter(i=>i>=0);
+ if(indices.length!==1){avisoIntegrado('No se identificó un único cruce confirmado.');return}
+ const idx=indices[0],partido=filas[idx];
+ if((cruces16Datos?.resultados||[]).some(r=>String(r.anio)===String(settings.anio)&&String(r.edicion)===String(settings.edicion)&&String(r.categoria).replace(/^\+/,'')===String(info.categoria).replace(/^\+/,'')&&r.instancia===info.instancia&&String(r.partido)===String(info.partido)&&r.genero===info.genero&&r.estado==='CONFIRMADO')){avisoIntegrado('El partido ya tiene resultado y no puede moverse.');return}
+ const overlay=document.createElement('div');overlay.className='nc-reprog-overlay';
+ overlay.innerHTML=`<form class="nc-reprog-modal"><button type="button" class="nc-reprog-x" aria-label="Cerrar">×</button><h3>Modificar programación</h3><p><strong>${esc(info.local)} vs ${esc(info.visitante)}</strong></p><p class="nc-reprog-actual">${esc(info.instancia.replace('_',' '))} · ${esc(info.fecha)} · ${esc(info.hora)} · Cancha ${esc(info.cancha)}</p><div class="nc-reprog-modos"><button type="button" class="activo" data-modo="individual">Mover este partido</button><button type="button" data-modo="cadena">Aplicar retraso a los siguientes partidos</button></div><div class="nc-reprog-retraso" hidden><label>Minutos de retraso <input name="retraso" type="number" min="1" max="180" value="15"></label><p>Retrasa los cruces pendientes de la misma cancha, desde este partido.</p></div><div class="nc-reprog-fields"><label>Fecha<input type="date" name="fecha" value="${esc(normFecha(info.fecha))}" required></label><label>Horario<input type="time" name="hora" value="${esc(info.hora)}" required></label><label>Cancha<select name="cancha">${Array.from({length:Number(settings.canchas)||4},(_,i)=>`<option value="${i+1}" ${Number(info.cancha)===i+1?'selected':''}>Cancha ${i+1}</option>`).join('')}</select></label></div><p class="nc-reprog-error" role="alert"></p><div class="nc-reprog-actions"><button type="button" class="nc-reprog-cancel">Cancelar</button><button type="submit" class="nc-reprog-save">Confirmar cambio</button></div></form>`;
+ document.body.appendChild(overlay);const form=overlay.querySelector('form'),error=form.querySelector('.nc-reprog-error');let modo='individual';
+ const cerrar=()=>overlay.remove();overlay.querySelector('.nc-reprog-x').onclick=cerrar;overlay.querySelector('.nc-reprog-cancel').onclick=cerrar;overlay.addEventListener('click',e=>{if(e.target===overlay)cerrar()});
+ form.querySelectorAll('[data-modo]').forEach(b=>b.onclick=()=>{modo=b.dataset.modo;form.querySelectorAll('[data-modo]').forEach(x=>x.classList.toggle('activo',x===b));form.querySelector('.nc-reprog-retraso').hidden=modo!=='cadena';form.querySelector('.nc-reprog-fields').hidden=modo==='cadena'});
+ form.onsubmit=async e=>{e.preventDefault();error.textContent='';const cambios=[];
+ if(modo==='individual')cambios.push({indice:idx,fecha:form.elements.fecha.value,hora:form.elements.hora.value,cancha:Number(form.elements.cancha.value)});
+ else{const delta=Number(form.elements.retraso.value);if(!Number.isInteger(delta)||delta<1||delta>180){error.textContent='Indicá entre 1 y 180 minutos.';return}
+ const inicio=Date.parse(normFecha(info.fecha)+'T'+info.hora+':00');
+ for(let i=0;i<filas.length;i++){const r=filas[i];if(String(r.anio)!==String(settings.anio)||String(r.edicion)!==String(settings.edicion)||normFecha(r.fecha)!==normFecha(info.fecha)||Number(r.cancha)!==Number(info.cancha)||Date.parse(normFecha(r.fecha)+'T'+r.hora+':00')<inicio||r.estado!=='CONFIRMADO')continue;
+ const t=Date.parse(normFecha(r.fecha)+'T'+r.hora+':00')+delta*60000,d=new Date(t);if(Number.isNaN(t)){error.textContent='Horario inválido.';return}
+ const local=new Date(t);const fecha=local.getFullYear()+'-'+String(local.getMonth()+1).padStart(2,'0')+'-'+String(local.getDate()).padStart(2,'0'),hora=String(local.getHours()).padStart(2,'0')+':'+String(local.getMinutes()).padStart(2,'0');cambios.push({indice:i,fecha,hora,cancha:Number(r.cancha)});
+ }
+ if(!cambios.length){error.textContent='No hay cruces pendientes para retrasar.';return}
+ }
+ const ok=await mostrarDialogoZonas({titulo:'Confirmar reprogramación',detalle:info.local+' vs '+info.visitante,advertencia:`Se actualizarán ${cambios.length} partido(s). Se comprobarán canchas, equipos, jornadas y resultados.`});if(!ok)return;
+ const btn=form.querySelector('.nc-reprog-save');btn.disabled=true;
+ try{const actual=await llamar('adminCruces15Consultar');if(actual.huella!==snap.huella)throw Error('Los cruces cambiaron. Volvé a abrir el reloj.');
+ await llamar('adminCrucesReprogramar',{anio:settings.anio,edicion:settings.edicion,huella:snap.huella,cambios,duracion:settings.duracion,intervalo:settings.intervalo,canchas:settings.canchas,fechas:programaFechas(),horarios:ventanasTorneo()});cerrar();cruces15Leer();mostrarDialogoZonas({titulo:'Programación actualizada',detalle:`${cambios.length} partido(s) guardados.`,soloAceptar:true});
+ }catch(ex){error.textContent='No se guardó: '+String(ex.message||ex)}finally{btn.disabled=false}
+ };
+}
 async function ncReprogramarIndividual(b,destinoInicial){
+ let datos;try{datos=JSON.parse(decodeURIComponent(b.dataset.ncReprogramar))}catch(e){}
+ if(datos?.cruce)return ncReprogramarCruce(b);
+
  let info;try{info=JSON.parse(decodeURIComponent(b.dataset.ncReprogramar))}catch(e){return}
  if(!window.google?.script?.run){avisoIntegrado('Esta modificación requiere abrir el asistente desde tabla de respaldo.');return}
  const leer=()=>new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).adminFixture11Snapshot());
