@@ -1761,7 +1761,7 @@ function confirmarGuardarFixture(){
   mostrarDialogoZonas({titulo:'Confirmar fixture definitivo',detalle:fixture.length+' partidos · '+settings.edicion+' '+settings.anio,advertencia:(existe?'Ya existe un fixture confirmado. Se reemplazará el fixture anterior. ':'Se guardará el fixture por primera vez. ')+'No se publican partidos en la aplicación de jugadores.'}).then(ok=>{
    if(!ok){if(boton)boton.disabled=false;return}
    const payload={anio:settings.anio,edicion:settings.edicion,canchas:settings.canchas,duracion:settings.duracion,intervalo:settings.intervalo,fechas:programaFechas(),horarios:ventanasTorneo(),partidos:fixture.map(p=>({...p})),huella:snapshot.huella,huellaZonas:fixtureZonasHuella,reemplazar:existe};
-   google.script.run.withSuccessHandler(r=>{if(boton)boton.disabled=false;mostrarDialogoZonas({titulo:'Fixture guardado',detalle:r.guardados+' partidos confirmados',advertencia:'Cambios guardados correctamente.',soloAceptar:true});}).withFailureHandler(e=>{if(boton)boton.disabled=false;mostrarDialogoZonas({titulo:'No se guardó el fixture',detalle:'Revisá los datos',advertencia:String(e.message||e),soloAceptar:true})}).adminFixture11Guardar(payload);
+   google.script.run.withSuccessHandler(r=>{if(boton)boton.disabled=false;ncResultadosPrecarga=null;ncResultadosPrecargaHora=0;resultados12Datos=null;google.script.run.withSuccessHandler(data=>{fixtureSnapshot=data;render()}).withFailureHandler(e=>console.warn('No se pudo actualizar la vista del fixture:',e)).adminFixture11Snapshot();mostrarDialogoZonas({titulo:'Fixture guardado',detalle:r.guardados+' partidos confirmados',advertencia:'Cambios guardados correctamente. Ya podés cargar los resultados.',soloAceptar:true});}).withFailureHandler(e=>{if(boton)boton.disabled=false;mostrarDialogoZonas({titulo:'No se guardó el fixture',detalle:'Revisá los datos',advertencia:String(e.message||e),soloAceptar:true})}).adminFixture11Guardar(payload);
   });
  }).withFailureHandler(e=>{if(boton)boton.disabled=false;mostrarDialogoZonas({titulo:'No se pudo comprobar el fixture',detalle:'Error de consulta',advertencia:String(e.message||e),soloAceptar:true})}).adminFixture11Snapshot();
 }
@@ -3016,8 +3016,15 @@ async function ncAbrirResultadoDesdeFixture(b){
   // No seleccionar al azar cuando existen varios partidos entre los mismos equipos.
   const partido=porHora.length===1?porHora[0]:porFecha.length===1?porFecha[0]:mismos.length===1?mismos[0]:null;
   if(!partido){
-   const sinConfirmar=(datos.partidos||[]).some(p=>cat(p.categoria)===cat(info.categoria)&&norm(p.local)===norm(info.local)&&norm(p.visitante)===norm(info.visitante));
-   mostrarDialogoZonas({titulo:'Resultado no disponible',detalle:info.local+' vs '+info.visitante,advertencia:sinConfirmar?'El partido figura en el sistema, pero aún no está confirmado para cargar resultados.':'El partido de la grilla no coincide con un encuentro confirmado en Resultados. Revisá los nombres de equipos y la categoría.',soloAceptar:true});
+   const coincideEquipos=p=>cat(p.categoria)===cat(info.categoria)&&((norm(p.local)===norm(info.local)&&norm(p.visitante)===norm(info.visitante))||(norm(p.local)===norm(info.visitante)&&norm(p.visitante)===norm(info.local)));
+   const enServidor=(datos.partidos||[]).filter(coincideEquipos);
+   const enBorrador=(fixture||[]).some(coincideEquipos);
+   const aviso=enServidor.length
+    ? 'El partido existe en Google Sheets, pero no está confirmado para cargar resultados o su identificación cambió. Revisá el estado en Fixture y Resultados.'
+    : enBorrador
+     ? 'Este partido está en el fixture borrador, pero no figura entre los partidos confirmados en Google Sheets. Entrá en Fixture y utilizá «Confirmar y guardar fixture» antes de cargar resultados.'
+     : 'Este partido no figura en los resultados confirmados de esta edición. Actualizá el fixture desde Google Sheets y comprobá que corresponda al torneo actual.';
+   mostrarDialogoZonas({titulo:'Partido pendiente de confirmación',detalle:info.local+' vs '+info.visitante,advertencia:aviso,soloAceptar:true});
    return;
   }
  resultados12Seleccion=resultados12Clave(partido);
