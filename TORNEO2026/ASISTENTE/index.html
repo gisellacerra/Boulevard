@@ -1376,6 +1376,18 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
   .app > aside::-webkit-scrollbar {display:none!important;width:0!important;height:0!important;}
 }
 </style>
+<style id="nc-solo-contenedores-zonas">
+/* Solo panel de consulta de zonas: no se altera la tipografía ni otros módulos. */
+#view .nc-zonas-consulta-categoria{background:#191c1d!important;border:1px solid #343b3b!important;color:#fff!important}
+#view .nc-zonas-consulta-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
+#view .nc-zonas-consulta-col{min-width:0;background:#191c1d!important;border:1px solid #3c4443!important;border-radius:10px!important;overflow:hidden}
+#view .nc-zonas-consulta-col h3{background:#191c1d!important;color:#fff!important;border-bottom:1px solid #a9eb48!important;margin:0!important;padding:14px 16px!important}
+#view .nc-zonas-consulta-col h3::after{content:"";display:block;width:32px;height:2px;background:#b5f047;margin-top:9px}
+#view .nc-zonas-consulta-col ul{background:#191c1d!important;list-style:none!important;margin:0!important;padding:10px!important}
+#view .nc-zonas-consulta-col li{background:#282d2e!important;color:#fff!important;border:1px solid #3c4443!important;border-radius:7px!important;padding:11px 12px!important;margin:0 0 8px!important;overflow-wrap:anywhere}
+#view .nc-zonas-consulta-col li:last-child{margin-bottom:0!important}
+@media(max-width:720px){#view .nc-zonas-consulta-grid{grid-template-columns:1fr!important}}
+</style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
