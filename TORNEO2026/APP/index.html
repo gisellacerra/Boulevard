@@ -716,42 +716,21 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </div>
 <script id="nc-install-pwa-script">
 (function(){
-let eventoInstalacion = null;
-const instalarOverlay = document.getElementById('instalarOverlay');
-const instalarApp = document.getElementById('instalarApp');
-const instalarAhoraNo = document.getElementById('instalarAhoraNo');
-
-const estaInstalada = () =>
-  window.matchMedia('(display-mode: standalone)').matches ||
-  window.navigator.standalone === true;
-
-window.addEventListener('beforeinstallprompt', (evento) => {
-  evento.preventDefault();
-  eventoInstalacion = evento;
-  if (!estaInstalada() && !sessionStorage.getItem('vi_torneo_instalacion_oculta')) {
-    instalarOverlay.classList.add('visible');
-  }
-});
-
-instalarAhoraNo.addEventListener('click', () => {
-  instalarOverlay.classList.remove('visible');
-  sessionStorage.setItem('vi_torneo_instalacion_oculta','1');
-});
-
-instalarApp.addEventListener('click', async () => {
-  if (!eventoInstalacion) return;
-  instalarOverlay.classList.remove('visible');
-  eventoInstalacion.prompt();
-  await eventoInstalacion.userChoice;
-  eventoInstalacion = null;
-});
-
-window.addEventListener('appinstalled', () => {
-  instalarOverlay.classList.remove('visible');
-  eventoInstalacion = null;
-});
-
-if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
+ let eventoInstalacion=null;
+ const overlay=document.getElementById('instalarOverlay');
+ const instalar=document.getElementById('instalarApp');
+ const ahoraNo=document.getElementById('instalarAhoraNo');
+ const instalada=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+ const oculta=()=>{try{return sessionStorage.getItem('vi_torneo_instalacion_oculta')==='1';}catch(e){return false;}};
+ const actualizar=()=>{instalar.disabled=!eventoInstalacion;instalar.textContent=eventoInstalacion?'INSTALAR':'PREPARANDO…';instalar.style.opacity=eventoInstalacion?'1':'.6';instalar.style.cursor=eventoInstalacion?'pointer':'wait';};
+ const mostrar=()=>{if(!instalada()&&!oculta()){actualizar();overlay.classList.add('visible');}};
+ actualizar();
+ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();eventoInstalacion=e;actualizar();mostrar();});
+ ahoraNo.addEventListener('click',()=>{overlay.classList.remove('visible');try{sessionStorage.setItem('vi_torneo_instalacion_oculta','1');}catch(e){}});
+ instalar.addEventListener('click',async()=>{if(!eventoInstalacion)return;const e=eventoInstalacion;eventoInstalacion=null;overlay.classList.remove('visible');actualizar();try{await e.prompt();await e.userChoice;}catch(error){console.warn('Instalación no completada:',error);}});
+ window.addEventListener('appinstalled',()=>{eventoInstalacion=null;overlay.classList.remove('visible');actualizar();});
+ setTimeout(mostrar,1000);
+ if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
 })();
 </script>
 <style id="nc-posiciones-ampliadas-css">
