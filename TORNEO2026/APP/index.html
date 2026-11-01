@@ -689,8 +689,43 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
-<script id="nc-pwa-registration">
-if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
+<style id="nc-install-pwa-style">
+.nc-install-backdrop{position:fixed;inset:0;z-index:200000;background:rgba(0,0,0,.73);display:flex;align-items:center;justify-content:center;padding:18px}
+.nc-install-box{width:min(390px,100%);background:#242829;color:#f5f6f7;border:1px solid #49534b;border-radius:18px;padding:26px 22px 22px;box-shadow:0 18px 65px #0009;font-family:Barlow,Arial,sans-serif}
+.nc-install-box h2{font-size:23px;line-height:1.2;margin:0 0 10px;font-weight:700}.nc-install-box p{font-size:15px;line-height:1.5;color:#c9d1cc;margin:0 0 20px}
+.nc-install-actions{display:flex;gap:10px}.nc-install-actions button{flex:1;min-height:46px;border-radius:9px;font-weight:700;border:1px solid #66736b;padding:10px}.nc-install-now{background:#a5eb37;color:#191c1d;border-color:#a5eb37!important}.nc-install-later{background:transparent;color:#f5f6f7}
+.nc-install-instructions{margin:0 0 18px!important}.nc-install-box[hidden],.nc-install-backdrop[hidden]{display:none!important}
+</style>
+<div id="nc-install-overlay" class="nc-install-backdrop" hidden>
+ <section class="nc-install-box" role="dialog" aria-modal="true" aria-labelledby="nc-install-title">
+  <h2 id="nc-install-title">Instalá TORNEO NACIONAL BOULEVARD</h2>
+  <p id="nc-install-message">Accedé a los partidos, resultados y novedades desde la pantalla de inicio de tu celular.</p>
+  <div class="nc-install-actions"><button type="button" class="nc-install-later" id="nc-install-later">Ahora no</button><button type="button" class="nc-install-now" id="nc-install-now">Instalar</button></div>
+ </section>
+</div>
+<script id="nc-install-pwa-script">
+(function(){
+ let deferredPrompt=null;
+ const overlay=document.getElementById('nc-install-overlay');
+ const install=document.getElementById('nc-install-now');
+ const later=document.getElementById('nc-install-later');
+ const standalone=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+ const hide=()=>{overlay.hidden=true;};
+ const show=()=>{
+  if(standalone()||!deferredPrompt)return;
+  try{if(sessionStorage.getItem('nc_install_later')==='1')return;}catch(e){}
+  overlay.hidden=false;
+ };
+ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;show();});
+ window.addEventListener('appinstalled',()=>{deferredPrompt=null;hide();});
+ later.addEventListener('click',()=>{try{sessionStorage.setItem('nc_install_later','1');}catch(e){}hide();});
+ install.addEventListener('click',async()=>{
+  if(!deferredPrompt){hide();return;}
+  const prompt=deferredPrompt;deferredPrompt=null;hide();
+  try{await prompt.prompt();await prompt.userChoice;}catch(e){}
+ });
+ if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
+})();
 </script>
 <style id="nc-posiciones-ampliadas-css">
 .nc-positions-legend{font-size:10px!important;line-height:1.55!important;color:#aeb7b8;margin:12px 0 14px;padding:0!important;background:none!important;border:0!important}
