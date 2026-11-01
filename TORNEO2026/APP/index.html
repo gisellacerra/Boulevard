@@ -721,7 +721,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  const ahoraNo=document.getElementById('instalarAhoraNo');
  const instalada=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
  const oculta=()=>{try{return sessionStorage.getItem('vi_torneo_instalacion_oculta')==='1';}catch(e){return false;}};
- const actualizar=()=>{instalar.disabled=!eventoInstalacion;instalar.textContent=eventoInstalacion?'INSTALAR':'PREPARANDO…';instalar.style.opacity=eventoInstalacion?'1':'.6';instalar.style.cursor=eventoInstalacion?'pointer':'wait';};
+ const actualizar=()=>{instalar.disabled=!eventoInstalacion;instalar.textContent=eventoInstalacion?'INSTALAR':'PROCESANDO…';instalar.style.opacity=eventoInstalacion?'1':'.6';instalar.style.cursor=eventoInstalacion?'pointer':'wait';};
  const mostrar=()=>{if(!instalada()&&!oculta()){actualizar();overlay.classList.add('visible');}};
  actualizar();
  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();eventoInstalacion=e;actualizar();mostrar();});
