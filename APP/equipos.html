@@ -1074,7 +1074,6 @@ const URL_DATOS =
   "https://script.google.com/macros/s/AKfycbwgWvZ-g7Hw1R7204cVDnCqCsN-VaqnJtDxVOueepb-dFMz8gdU3AalvBc0bJZKQOtv/exec";
 
 const listaEquipos = document.getElementById("listaEquipos");
-const tablasPosiciones = document.getElementById("tablasPosiciones");
 
 function escaparHTML(valor=""){
   return String(valor)
@@ -1138,193 +1137,6 @@ function renderizarEquipos(equipos){
   `).join("");
 }
 
-function normalizarTexto(valor){
-  return String(valor || "")
-    .trim()
-    .toLocaleLowerCase("es")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
-
-function categoriaComparable(valor){
-  return normalizarTexto(valor).replace(/[^0-9a-z]/g, "");
-}
-
-function calcularPosiciones(equipos, historial){
-  const categorias = {};
-
-  (equipos || []).forEach(item => {
-    const categoria = String(item.categoria || "").trim();
-    const claveCategoria = categoriaComparable(categoria);
-    const equipo = String(item.equipo || "").trim();
-    if(!equipo) return;
-
-    if(!categorias[claveCategoria]){
-      categorias[claveCategoria] = {
-        nombre:categoria,
-        equipos:new Map()
-      };
-    }
-
-    categorias[claveCategoria].equipos.set(normalizarTexto(equipo), {
-      equipo:equipo,
-      pj:0,
-      pg:0,
-      pp:0,
-      sg:0,
-      sp:0,
-      ds:0,
-      pts:0
-    });
-  });
-
-  (historial || []).forEach(partido => {
-    const categoria = String(partido.categoria || "").trim();
-    const claveCategoria = categoriaComparable(categoria);
-    if(!categorias[claveCategoria]) return;
-
-    const tabla = categorias[claveCategoria].equipos;
-    const nombreLocal = String(partido.equipo_local || "").trim();
-    const nombreVisitante = String(partido.equipo_visitante || "").trim();
-    const claveLocal = normalizarTexto(nombreLocal);
-    const claveVisitante = normalizarTexto(nombreVisitante);
-
-    if(!tabla.has(claveLocal) || !tabla.has(claveVisitante)) return;
-
-    const local = tabla.get(claveLocal);
-    const visitante = tabla.get(claveVisitante);
-    const setsLocal = Number(partido.sets_local || 0);
-    const setsVisitante = Number(partido.sets_visitante || 0);
-    const claveGanador = normalizarTexto(partido.ganador);
-    const esWO = partido.walkover === true ||
-      ["si","sí","true","1"].includes(normalizarTexto(partido.walkover));
-
-    if(setsLocal < 2 && setsVisitante < 2) return;
-
-    const ganador = claveGanador === claveLocal ? local :
-      claveGanador === claveVisitante ? visitante :
-      setsLocal > setsVisitante ? local : visitante;
-    const perdedor = ganador === local ? visitante : local;
-    const setsPerdedor = perdedor === local ? setsLocal : setsVisitante;
-
-    local.sg += setsLocal;
-    local.sp += setsVisitante;
-    local.ds = local.sg - local.sp;
-
-    visitante.sg += setsVisitante;
-    visitante.sp += setsLocal;
-    visitante.ds = visitante.sg - visitante.sp;
-
-    ganador.pj++;
-    ganador.pg++;
-    ganador.pts += 3;
-
-    perdedor.pj++;
-    perdedor.pp++;
-    perdedor.pts += esWO ? 0 : (setsPerdedor === 1 ? 2 : 1);
-  });
-
-  return categorias;
-}
-
-function ganadorEnfrentamientoDirecto(a,b,historial,categoria){
-  const claveA = normalizarTexto(a.equipo);
-  const claveB = normalizarTexto(b.equipo);
-  const claveCategoria = categoriaComparable(categoria);
-
-  const enfrentamientos = (historial || []).filter(partido => {
-    if(categoriaComparable(partido.categoria) !== claveCategoria) return false;
-
-    const local = normalizarTexto(partido.equipo_local);
-    const visitante = normalizarTexto(partido.equipo_visitante);
-
-    return (
-      (local === claveA && visitante === claveB) ||
-      (local === claveB && visitante === claveA)
-    );
-  });
-
-  if(enfrentamientos.length !== 1) return 0;
-
-  const ganador = normalizarTexto(enfrentamientos[0].ganador);
-  if(ganador === claveA) return -1;
-  if(ganador === claveB) return 1;
-  return 0;
-}
-
-
-function renderizarPosiciones(equipos, historial){
-  const categorias = calcularPosiciones(equipos, historial);
-  const claves = Object.keys(categorias).sort((a,b) =>
-    Number(a.replace(/\D/g,"")) - Number(b.replace(/\D/g,""))
-  );
-
-  if(claves.length === 0){
-    tablasPosiciones.innerHTML =
-      '<div class="estado-posiciones">Todavía no hay equipos para mostrar.</div>';
-    return;
-  }
-
-  tablasPosiciones.innerHTML = claves.map(clave => {
-    const grupo = categorias[clave];
-    const filas = [...grupo.equipos.values()].sort((a,b) => {
-      const porPuntos = b.pts - a.pts;
-      if(porPuntos) return porPuntos;
-
-      const porGanados = b.pg - a.pg;
-      if(porGanados) return porGanados;
-
-      const porDiferenciaSets = b.ds - a.ds;
-      if(porDiferenciaSets) return porDiferenciaSets;
-
-      const directo = ganadorEnfrentamientoDirecto(
-        a,
-        b,
-        historial,
-        grupo.nombre
-      );
-      if(directo) return directo;
-
-      return a.equipo.localeCompare(b.equipo, "es");
-    });
-
-    return `
-      <section class="tabla-posiciones-categoria">
-        <h3>${escaparHTML(nombreCategoria(grupo.nombre))}</h3>
-        <table class="tabla-posiciones">
-          <thead>
-            <tr>
-              <th>Pos.</th>
-              <th>Equipo</th>
-              <th>PJ</th>
-              <th>PG</th>
-              <th>PP</th>
-              <th>SG</th>
-              <th>SP</th>
-              <th>DS</th>
-              <th>Pts.</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${filas.map((fila, indice) => `
-              <tr>
-                <td class="posicion-numero">${indice + 1}</td>
-                <td>${escaparHTML(fila.equipo)}</td>
-                <td>${fila.pj}</td>
-                <td>${fila.pg}</td>
-                <td>${fila.pp}</td>
-                <td>${fila.sg}</td>
-                <td>${fila.sp}</td>
-                <td>${fila.ds > 0 ? "+" + fila.ds : fila.ds}</td>
-                <td>${fila.pts}</td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      </section>`;
-  }).join("");
-}
-
 async function cargarEquipos(){
   try{
     const respuesta = await fetch(
@@ -1336,14 +1148,11 @@ async function cargarEquipos(){
 
     const datos = await respuesta.json();
     renderizarEquipos(datos.equipos || []);
-    renderizarPosiciones(datos.equipos || [], datos.historial || []);
 
   }catch(error){
     console.error(error);
     listaEquipos.innerHTML =
       '<div class="estado-equipos">No se pudieron cargar los equipos.</div>';
-    tablasPosiciones.innerHTML =
-      '<div class="estado-posiciones">No se pudieron cargar las posiciones.</div>';
   }
 }
 
@@ -1588,4 +1397,3 @@ setInterval(cargarEquipos,60000);
 </body>
 
 </html>
-
