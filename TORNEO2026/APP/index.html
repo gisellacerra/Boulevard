@@ -436,7 +436,9 @@ function ncVistaAlojamientos(){
  const url=v=>/^https?:\/\/[^\s]+$/i.test(String(v||''))?String(v):'';
  const imagen=v=>/^(?:https?:\/\/[^\s]+|data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+)$/i.test(String(v||''))?String(v):'';
  const items=ncAlojamientos.filter(a=>a&&a.nombre&&a.direccion&&!['BAJA','ELIMINADO','INACTIVO'].includes(String(a.estado||'').trim().toUpperCase())).slice().sort((a,b)=>(Number(a.orden)||1)-(Number(b.orden)||1));
- return head('Hospedaje','SERVICIOS')+(items.length?'<div class="nc-aloj-list">'+items.map(a=>{
+ return head('Hospedaje','SERVICIOS')
++'<p class="muted">Las reservas deben gestionarse directamente con cada establecimiento.</p>'
++(items.length?'<div class="nc-aloj-list">'+items.map(a=>{
   const foto=imagen(a.imagen),tel=String(a.contacto||a.telefono||'').trim();
   const primero=tel.split(/\s*(?:\/|;|\||,|\bo\b)\s*/i)[0].trim();
   const numero=primero.replace(/[\s().-]/g,'');
