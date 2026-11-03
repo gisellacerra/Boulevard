@@ -1584,7 +1584,7 @@ function zonasConfirmadasFixture(){
 function partidosConfirmadosFixture(){
  const grupos=zonasConfirmadasFixture();const lista=[];
  for(const g of grupos){const unicos=[...new Set(g.nombres)];if(unicos.length!==g.nombres.length)throw Error('Hay equipos duplicados en la Zona '+g.zona+' de '+g.cat);roundRobin(unicos).forEach((ronda,i)=>ronda.forEach(([local,visitante])=>lista.push({id:'borrador-'+g.cat+'-'+g.genero+'-'+g.zona+'-'+i+'-'+lista.length,categoria:g.cat,genero:g.genero,zona:g.zona,ronda:i+1,local,visitante,fecha:'',hora:'',cancha:''})));}
- // Fase inicial mixta: completar el mínimo de tres partidos por equipo
+ // Fase inicial mixta: completar el mínimo de cuatro partidos por equipo
  // mediante interzonales de la misma categoría y modalidad. Los cruces de
  // copas se definen posteriormente según resultados; no se inventan ganadores.
  const porComp=new Map();
@@ -1593,16 +1593,16 @@ function partidosConfirmadosFixture(){
   const [cat,genero]=comp.split('|'),nombres=[...zonas.keys()];
   const conteo=new Map(nombres.map(n=>[n,0]));const rivales=new Set();
   for(const p of lista.filter(p=>p.categoria===cat&&p.genero===genero)){conteo.set(p.local,(conteo.get(p.local)||0)+1);conteo.set(p.visitante,(conteo.get(p.visitante)||0)+1);rivales.add([p.local,p.visitante].sort().join('||'))}
-  while(nombres.some(n=>conteo.get(n)<3)){
+  while(nombres.some(n=>conteo.get(n)<4)){
    const opciones=[];
    for(let i=0;i<nombres.length;i++)for(let j=i+1;j<nombres.length;j++){
     const a=nombres[i],b=nombres[j];if(zonas.get(a)===zonas.get(b)||rivales.has([a,b].sort().join('||')))continue;
     if(conteo.get(a)>=6||conteo.get(b)>=6)continue;
-    if(conteo.get(a)>=3&&conteo.get(b)>=3)continue;
-    opciones.push({a,b,puntaje:(conteo.get(a)<3?100:0)+(conteo.get(b)<3?100:0)-(conteo.get(a)+conteo.get(b))*10});
+    if(conteo.get(a)>=4&&conteo.get(b)>=4)continue;
+    opciones.push({a,b,puntaje:(conteo.get(a)<4?100:0)+(conteo.get(b)<4?100:0)-(conteo.get(a)+conteo.get(b))*10});
    }
    opciones.sort((a,b)=>b.puntaje-a.puntaje||a.a.localeCompare(b.a)||a.b.localeCompare(b.b));
-   if(!opciones.length)throw Error('No se pueden garantizar tres partidos sin repetir rivales en '+cat+' '+genero+'. Revisá la distribución de zonas.');
+   if(!opciones.length)throw Error('No se pueden garantizar cuatro partidos sin repetir rivales en '+cat+' '+genero+'. Revisá la distribución de zonas.');
    const {a,b}=opciones[0];conteo.set(a,conteo.get(a)+1);conteo.set(b,conteo.get(b)+1);rivales.add([a,b].sort().join('||'));
    lista.push({id:'borrador-interzonal-'+cat+'-'+genero+'-'+lista.length,categoria:cat,genero,zona:'INTERZONAL '+zonas.get(a)+' × '+zonas.get(b),ronda:1,local:a,visitante:b,fecha:'',hora:'',cancha:''});
   }
@@ -1731,7 +1731,7 @@ function validarFixtureEtapa10(){
  // Garantías del fixture inicial (zona + interzonales).
  const conteos=new Map(),diarios=new Map(),horas=new Map();
  for(const p of fixture){const comp=fxComp(p);for(const nombre of [p.local,p.visitante]){if(!nombre)continue;const key=comp+'|'+nombre;conteos.set(key,(conteos.get(key)||0)+1);if(p.fecha){const dia=key+'|'+p.fecha;diarios.set(dia,(diarios.get(dia)||0)+1);if(diarios.get(dia)>3)errores.push(nombre+': más de 3 partidos el '+p.fecha)}if(p.fecha&&p.hora){if(!horas.has(key))horas.set(key,[]);horas.get(key).push({fecha:p.fecha,hora:p.hora})}}}
- for(const [key,cantidad] of conteos){if(cantidad<3)errores.push(key.split('|').slice(1).join(' · ')+': solo '+cantidad+' partidos (mínimo 3)');if(cantidad>6)errores.push(key.split('|').slice(1).join(' · ')+': '+cantidad+' partidos (máximo 6)')}
+ for(const [key,cantidad] of conteos){if(cantidad<4)errores.push(key.split('|').slice(1).join(' · ')+': solo '+cantidad+' partidos (mínimo 4)');if(cantidad>6)errores.push(key.split('|').slice(1).join(' · ')+': '+cantidad+' partidos (máximo 6)')}
  for(const [key,partidos] of horas){partidos.sort((a,b)=>(a.fecha+'T'+a.hora).localeCompare(b.fecha+'T'+b.hora));for(let i=1;i<partidos.length;i++){const a=partidos[i-1],b=partidos[i];if(a.fecha===b.fecha&&minutosHora(b.hora)-minutosHora(a.hora)<2*turno)errores.push(key.split('|').slice(1).join(' · ')+': falta un bloque libre entre partidos del '+b.fecha)}}
  return [...new Set(errores)];
 }
