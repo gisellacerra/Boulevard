@@ -1736,15 +1736,28 @@ function validarFixtureEtapa10(){
  return [...new Set(errores)];
 }
 let ncDashboardConsultando=false;
+window.addEventListener('focus',()=>{if(active==='inicio'||active==='fixture')ncDashboardLeerFixture()});
 window.addEventListener('load',()=>{if(active==='inicio')ncDashboardLeerFixture()},{once:true});
+function ncAplicarFixtureConsultado(data){
+ if(!data||!Array.isArray(data.filas))throw Error('Respuesta de fixture inválida.');
+ const pertenece=p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion);
+ const habiaConfirmado=Array.isArray(fixtureSnapshot?.filas)&&fixtureSnapshot.filas.some(pertenece);
+ fixtureSnapshot=data;
+ if(!data.filas.some(pertenece)&&(habiaConfirmado||!fx3UltimaPropuesta)){
+  fixture=[];fixtureZonasHuella=null;ncPlanArrastre=null;ncDestellos.clear();fx3UltimaPropuesta=null;
+  if(resultados12Datos&&Array.isArray(resultados12Datos.partidos))resultados12Datos.partidos=resultados12Datos.partidos.filter(p=>!pertenece(p));
+  try{localStorage.removeItem('asistente_fixture_huella_zonas')}catch(e){}
+  saveDraft();
+ }
+}
 function ncDashboardLeerFixture(){
  if(!window.google?.script?.run||ncDashboardConsultando)return;
  ncDashboardConsultando=true;
- google.script.run.withSuccessHandler(data=>{ncDashboardConsultando=false;fixtureSnapshot=data;if(active==='inicio')render()}).withFailureHandler(e=>{ncDashboardConsultando=false;console.warn('No se pudo actualizar el fixture del dashboard:',e)}).adminFixture11Snapshot();
+ google.script.run.withSuccessHandler(data=>{ncDashboardConsultando=false;ncAplicarFixtureConsultado(data);if(active==='inicio'||active==='fixture')render()}).withFailureHandler(e=>{ncDashboardConsultando=false;console.warn('No se pudo actualizar el fixture del dashboard:',e)}).adminFixture11Snapshot();
 }
 function consultarFixtureConfirmado(){
  if(!window.google?.script?.run){mostrarDialogoZonas({titulo:'No se pudo consultar',detalle:'Abrí el Asistente privado',advertencia:'Volvé a intentar desde el panel de administración.',soloAceptar:true});return}
- google.script.run.withSuccessHandler(data=>{fixtureSnapshot=data;render();mostrarDialogoZonas({titulo:'Datos actualizados',detalle:'Fixture confirmado consultado',advertencia:'Podés revisar el borrador antes de guardarlo.',soloAceptar:true})}).withFailureHandler(e=>mostrarDialogoZonas({titulo:'No se pudo consultar',detalle:'Error de lectura',advertencia:String(e.message||e),soloAceptar:true})).adminFixture11Snapshot();
+ google.script.run.withSuccessHandler(data=>{ncAplicarFixtureConsultado(data);render();mostrarDialogoZonas({titulo:'Datos actualizados',detalle:'Fixture confirmado consultado',advertencia:'Podés revisar el borrador antes de guardarlo.',soloAceptar:true})}).withFailureHandler(e=>mostrarDialogoZonas({titulo:'No se pudo consultar',detalle:'Error de lectura',advertencia:String(e.message||e),soloAceptar:true})).adminFixture11Snapshot();
 }
 function confirmarGuardarFixture(){
  if(!fixture.length)return;
@@ -1758,7 +1771,7 @@ function confirmarGuardarFixture(){
   mostrarDialogoZonas({titulo:'Confirmar fixture definitivo',detalle:fixture.length+' partidos · '+settings.edicion+' '+settings.anio,advertencia:(existe?'Ya existe un fixture confirmado. Se reemplazará el fixture anterior. ':'Se guardará el fixture por primera vez. ')+'No se publican partidos en la aplicación de jugadores.'}).then(ok=>{
    if(!ok){if(boton)boton.disabled=false;return}
    const payload={anio:settings.anio,edicion:settings.edicion,canchas:settings.canchas,duracion:settings.duracion,intervalo:settings.intervalo,fechas:programaFechas(),horarios:ventanasTorneo(),partidos:fixture.map(p=>({...p})),huella:snapshot.huella,huellaZonas:fixtureZonasHuella,reemplazar:existe};
-   google.script.run.withSuccessHandler(r=>{if(boton)boton.disabled=false;mostrarDialogoZonas({titulo:'Fixture guardado',detalle:r.guardados+' partidos confirmados',advertencia:'Cambios guardados correctamente.',soloAceptar:true});}).withFailureHandler(e=>{if(boton)boton.disabled=false;mostrarDialogoZonas({titulo:'No se guardó el fixture',detalle:'Revisá los datos',advertencia:String(e.message||e),soloAceptar:true})}).adminFixture11Guardar(payload);
+   google.script.run.withSuccessHandler(r=>{if(boton)boton.disabled=false;fx3UltimaPropuesta=null;ncDashboardLeerFixture();mostrarDialogoZonas({titulo:'Fixture guardado',detalle:r.guardados+' partidos confirmados',advertencia:'Cambios guardados correctamente.',soloAceptar:true});}).withFailureHandler(e=>{if(boton)boton.disabled=false;mostrarDialogoZonas({titulo:'No se guardó el fixture',detalle:'Revisá los datos',advertencia:String(e.message||e),soloAceptar:true})}).adminFixture11Guardar(payload);
   });
  }).withFailureHandler(e=>{if(boton)boton.disabled=false;mostrarDialogoZonas({titulo:'No se pudo comprobar el fixture',detalle:'Error de consulta',advertencia:String(e.message||e),soloAceptar:true})}).adminFixture11Snapshot();
 }
@@ -2895,7 +2908,7 @@ function ayudaContenido(){
   const u=AYUDA_PDF_RUTA+'?v='+Date.now();
   return panel('Manual de Ayuda',`<p><a href="${esc(u)}" target="_blank" rel="noopener noreferrer">Abrir PDF ↗</a></p>`);
 }
-function consultarNotificaciones(){if(!window.google?.script?.run)return;google.script.run.withSuccessHandler(rows=>{notices=rows;saveDraft();if(active==='avisos')render()}).withFailureHandler(err=>dialogoEquipo('Error de notificaciones',String(err.message||err))).adminListarNotificaciones()}function navigate(id){if(!modules.some(m=>m[0]===id))return;if(id==='ayuda'){window.open(AYUDA_PDF_RUTA,'_blank','noopener,noreferrer');return;}active=id;render();if(id==='avisos')consultarNotificaciones();if(id==='arbitros')arbLeer();if(id==='equipos')leerEquiposPrivados();if(id==='zonas'){leerEquiposPrivados();consultarZonas()}else if(id==='fixture'){consultarZonas();cruces15Leer();cruces16Leer();}if(id==='resultados'||id==='posiciones'||id==='cruces')resultados12Leer();if(id==='registro')historial26Leer();if(id==='cruces'){cruces15VistaServidor=null;cruces15LeerClasificados();cruces15Leer();cruces16Leer()}if(id==='resumen')resultados12Leer();if(id==='inicio')ncDashboardLeerFixture()};const menu38Abiertos={};
+function consultarNotificaciones(){if(!window.google?.script?.run)return;google.script.run.withSuccessHandler(rows=>{notices=rows;saveDraft();if(active==='avisos')render()}).withFailureHandler(err=>dialogoEquipo('Error de notificaciones',String(err.message||err))).adminListarNotificaciones()}function navigate(id){if(!modules.some(m=>m[0]===id))return;if(id==='ayuda'){window.open(AYUDA_PDF_RUTA,'_blank','noopener,noreferrer');return;}active=id;render();if(id==='avisos')consultarNotificaciones();if(id==='arbitros')arbLeer();if(id==='equipos')leerEquiposPrivados();if(id==='zonas'){leerEquiposPrivados();consultarZonas()}else if(id==='fixture'){ncDashboardLeerFixture();consultarZonas();cruces15Leer();cruces16Leer();}if(id==='resultados'||id==='posiciones'||id==='cruces')resultados12Leer();if(id==='registro')historial26Leer();if(id==='cruces'){cruces15VistaServidor=null;cruces15LeerClasificados();cruces15Leer();cruces16Leer()}if(id==='resumen')resultados12Leer();if(id==='inicio')ncDashboardLeerFixture()};const menu38Abiertos={};
 /* Vista de jornadas: únicamente dentro de Fixture y canchas.
    El acceso "Partidos hoy" del inicio ya navega a ese módulo. */
 let ncDiaFixtureSeleccionado='';
@@ -2903,7 +2916,7 @@ let ncCategoriaFixtureSeleccionada='todas';
 function ncVistaJornadasFixture(){
  const filas=ncPlanArrastre?ncPlanArrastre.filas:(Array.isArray(fixtureSnapshot?.filas)?fixtureSnapshot.filas:[]);
  const filasTorneo=filas.filter(p=>String(p.anio||settings.anio)===String(settings.anio)&&String(p.edicion||settings.edicion)===String(settings.edicion));
- const base=filasTorneo.length?filasTorneo:(Array.isArray(fixture)?fixture:[]);
+ const base=ncPlanArrastre?filasTorneo:(fx3UltimaPropuesta?(Array.isArray(fixture)?fixture:[]):(fixtureSnapshot?filasTorneo:(Array.isArray(fixture)?fixture:[])));
  const decisivos=(cruces15Datos?.filas||[]).filter(p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion)&&String(p.estado)==='CONFIRMADO'&&['SEMIFINAL','FINAL','TERCER_PUESTO'].includes(String(p.instancia))).map(p=>({...p,categoria:'+'+String(p.categoria).replace(/^\+/,''),_cruce:true}));
  const datos=[...base,...decisivos];
  const fechaNormal=p=>{const v=String(p.fecha||p.dia||'');if(/^\d{4}-\d{2}-\d{2}/.test(v))return v.slice(0,10);const m=v.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:''};
@@ -3340,7 +3353,7 @@ const ico=(name)=>({teams:'<circle cx="9" cy="8" r="3"/><circle cx="18" cy="9" r
 const svg=(name)=>`<svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round">${ico(name)}</svg>`;
 const stat=(id,icon,value,label)=>`<button type="button" class="nc-stat" data-go="${id}">${svg(icon)}<div class="nc-stat-inline"><span class="nc-stat-value">${value}</span><span class="nc-stat-label">${label}</span></div><span class="nc-stat-chevron">›</span></button>`;
 const quick=(id,icon,label)=>`<button type="button" class="nc-quick" data-go="${id}">${svg(icon)}${label}<span>›</span></button>`;
-let ps=[];try{ps=Array.isArray(fixtureSnapshot?.filas)?fixtureSnapshot.filas.filter(p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion)):[];if(!ps.length&&typeof resultados12Partidos==='function')ps=resultados12Partidos();}catch(e){}
+let ps=[];try{ps=Array.isArray(fixtureSnapshot?.filas)?fixtureSnapshot.filas.filter(p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion)):[];if(!fixtureSnapshot&&!ps.length&&typeof resultados12Partidos==='function')ps=resultados12Partidos();}catch(e){}
 if(!Array.isArray(ps))ps=[];
 const categorias=[...new Set(teams.map(t=>t.categoria).filter(Boolean))];
 const ahoraDashboard=new Date();const hoyLocal=[ahoraDashboard.getFullYear(),String(ahoraDashboard.getMonth()+1).padStart(2,'0'),String(ahoraDashboard.getDate()).padStart(2,'0')].join('-');
