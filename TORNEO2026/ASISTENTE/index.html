@@ -3027,7 +3027,7 @@ async function ncAbrirResultadoDesdeFixture(b){
 }
 async function ncReprogramarIndividual(b,destinoInicial){
  let info;try{info=JSON.parse(decodeURIComponent(b.dataset.ncReprogramar))}catch(e){return}
- if(!window.google?.script?.run){avisoIntegrado('Esta modificación requiere abrir el asistente desde tabla de respaldo.');return}
+ if(!window.google?.script?.run){avisoIntegrado('No se pudo conectar. Volvé a ingresar al asistente.');return}
  const leer=()=>new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).adminFixture11Snapshot());
  let snap;try{snap=await leer()}catch(e){avisoIntegrado('No se pudo consultar el fixture confirmado: '+String(e.message||e));return}
  const filas=(snap.filas||[]).filter(p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion));
@@ -3042,7 +3042,7 @@ async function ncReprogramarIndividual(b,destinoInicial){
  info.fecha=normFecha(info.fecha);
  if(partido.resultado||partido.estado==='FINALIZADO'||partido.protegido||partido.bloqueado){avisoIntegrado('Este partido está finalizado o protegido y no se puede reprogramar.');return}
  const overlay=document.createElement('div');overlay.className='nc-reprog-overlay';
- overlay.innerHTML=`<form class="nc-reprog-modal"><button type="button" class="nc-reprog-x" aria-label="Cerrar">×</button><h3>Modificar programación</h3><p><strong>${esc(info.local)} vs ${esc(info.visitante)}</strong></p><p class="nc-reprog-actual">Actual: ${esc(info.fecha)} · ${esc(info.hora)} · Cancha ${esc(info.cancha)}</p><div class="nc-reprog-modos"><button type="button" data-nc-modo="individual" class="activo">Mover este partido</button><button type="button" data-nc-modo="cadena">Retrasar esta cancha</button><button type="button" data-nc-modo="jornada">Retrasar toda la jornada</button></div><div class="nc-reprog-retraso" hidden><label>Minutos de retraso <input type="number" name="retraso" min="1" max="180" step="1" value="15"></label><p>Se desplazarán los partidos pendientes desde el encuentro seleccionado. En «toda la jornada» se desplazan las cuatro canchas a la vez. No se modificarán resultados.</p><div class="nc-reprog-resumen"></div><button type="button" class="nc-reprog-buscar" hidden>Buscar horario compatible</button></div><div class="nc-reprog-fields"><label>Fecha<input name="fecha" type="date" required value="${esc(info.fecha)}"></label><label>Horario<input name="hora" type="time" required value="${esc(info.hora)}"></label><label>Cancha<select name="cancha">${Array.from({length:Number(settings.canchas)||4},(_,i)=>`<option value="${i+1}" ${i+1===Number(info.cancha)?'selected':''}>Cancha ${i+1}</option>`).join('')}</select></label></div><div class="nc-reprog-conflictos" hidden></div><p class="nc-reprog-error" role="alert"></p><div class="nc-reprog-actions"><button type="button" class="nc-reprog-cancel">Cancelar</button><button type="submit" class="nc-reprog-save">Confirmar cambio</button></div></form>`;
+ overlay.innerHTML=`<form class="nc-reprog-modal"><button type="button" class="nc-reprog-x" aria-label="Cerrar">×</button><h3>Modificar programación</h3><p><strong>${esc(info.local)} vs ${esc(info.visitante)}</strong></p><p class="nc-reprog-actual">Actual: ${esc(info.fecha)} · ${esc(info.hora)} · Cancha ${esc(info.cancha)}</p><div class="nc-reprog-modos"><button type="button" data-nc-modo="individual" class="activo">Mover este partido</button><button type="button" data-nc-modo="cadena">Retrasar esta cancha</button><button type="button" data-nc-modo="jornada">Retrasar toda la jornada</button></div><div class="nc-reprog-retraso" hidden><label>Minutos de retraso <input type="number" name="retraso" min="1" max="180" step="1" value="15"></label><p class="nc-reprog-alcance"></p><div class="nc-reprog-resumen"></div><button type="button" class="nc-reprog-buscar" hidden>Buscar horario compatible</button></div><div class="nc-reprog-fields"><label>Fecha<input name="fecha" type="date" required value="${esc(info.fecha)}"></label><label>Horario<input name="hora" type="time" required value="${esc(info.hora)}"></label><label>Cancha<select name="cancha">${Array.from({length:Number(settings.canchas)||4},(_,i)=>`<option value="${i+1}" ${i+1===Number(info.cancha)?'selected':''}>Cancha ${i+1}</option>`).join('')}</select></label></div><div class="nc-reprog-conflictos" hidden></div><p class="nc-reprog-error" role="alert"></p><div class="nc-reprog-actions"><button type="button" class="nc-reprog-cancel">Cancelar</button><button type="submit" class="nc-reprog-save">Confirmar cambio</button></div></form>`;
  document.body.appendChild(overlay);
  const form=overlay.querySelector('form'),error=form.querySelector('.nc-reprog-error'),panel=form.querySelector('.nc-reprog-conflictos'),guardar=form.querySelector('.nc-reprog-save');
  if(destinoInicial){form.elements.fecha.value=destinoInicial.fecha;form.elements.hora.value=destinoInicial.hora;form.elements.cancha.value=destinoInicial.cancha;}
@@ -3052,9 +3052,9 @@ async function ncReprogramarIndividual(b,destinoInicial){
  const calcularCadena=()=>{
   const delta=Number(form.elements.retraso.value);
   if(!Number.isInteger(delta)||delta<1||delta>180)return {error:'Ingresá un retraso entre 1 y 180 minutos.'};
-  const origen=mins(info.hora),afectados=filas.map((q,i)=>({q,i})).filter(({q})=>normFecha(q.fecha)===info.fecha&&(modo==='jornada'||Number(q.cancha)===Number(info.cancha))&&mins(q.hora)>=origen).sort((a,b)=>mins(a.q.hora)-mins(b.q.hora));
+  const origen=mins(info.hora),afectados=filas.map((q,i)=>({q,i})).filter(({q})=>normFecha(q.fecha)===info.fecha&&(modo==='jornada'||Number(q.cancha)===Number(info.cancha))&&mins(q.hora)>=origen&&!esFijo(q)).sort((a,b)=>mins(a.q.hora)-mins(b.q.hora));
   if(!afectados.some(x=>x.i===idx))return {error:'No se encontró el partido de inicio.'};
-  if(afectados.some(x=>esFijo(x.q)))return {error:'Hay partidos finalizados o protegidos en la secuencia. Elegí como inicio un horario posterior a esos encuentros.'};
+  
   const cambios=afectados.map(({q,i})=>({indice:i,fecha:info.fecha,hora:hh(mins(q.hora)+delta),cancha:Number(q.cancha)}));
   if(cambios.some(c=>mins(c.hora)>=1440))return {error:'El retraso excede el final del día.'};
   const v=ventana();if(!v)return {error:'No se encontró la ventana horaria de la jornada.'};
@@ -3067,6 +3067,7 @@ async function ncReprogramarIndividual(b,destinoInicial){
   const cadena=modo==='cadena'||modo==='jornada';retrasoPanel.hidden=!cadena;campos.hidden=cadena;panel.hidden=cadena;
   modos.querySelectorAll('button').forEach(b=>b.classList.toggle('activo',b.dataset.ncModo===modo));
   guardar.textContent=cadena?'Confirmar retraso':'Confirmar cambio';error.textContent='';
+  form.querySelector('.nc-reprog-alcance').textContent=modo==='cadena'?'Se retrasarán los partidos pendientes de la cancha '+info.cancha+' desde las '+info.hora+'.':'Se retrasarán los partidos pendientes de todas las canchas desde las '+info.hora+'.';
   if(cadena){const c=calcularCadena();resumen.textContent=c.error||`${c.cambios.length} partido(s) se desplazarán ${form.elements.retraso.value} minutos.`;guardar.disabled=!!c.error;buscarCadena.hidden=!c.error;}
   else mostrarConflictos();
  }
@@ -3096,6 +3097,24 @@ async function ncReprogramarIndividual(b,destinoInicial){
  const asignacion=p=>({fecha:normFecha(p.fecha),hora:String(p.hora||'').slice(0,5),cancha:String(p.cancha||'')});
  const conflicto=(p,q)=>{const x=asignacion(p),y=asignacion(q);if(!x.fecha||!y.fecha||x.fecha!==y.fecha||!Number.isFinite(mins(x.hora))||!Number.isFinite(mins(y.hora))||Math.abs(mins(x.hora)-mins(y.hora))>=dur)return false;return Number(x.cancha)===Number(y.cancha)||equipos(p).some(t=>equipos(q).includes(t))};
  const titulo=p=>esc((p.local||p.equipoA||'?')+' vs '+(p.visitante||p.equipoB||'?'));
+ const advertenciasProgramacion=lista=>{
+  const porEquipo=new Map(),avisos=[];
+  for(const q of lista)for(const clave of equipos(q)){
+   const k=normFecha(q.fecha)+'|'+clave;
+   if(!porEquipo.has(k))porEquipo.set(k,{nombre:q.local||q.equipoA,horas:[]});
+   porEquipo.get(k).horas.push(mins(q.hora));
+  }
+  let descanso=false,carga=false;
+  for(const {horas} of porEquipo.values()){
+   if(horas.length>3)carga=true;
+   horas.sort((a,b)=>a-b);
+   for(let i=1;i<horas.length;i++)if(horas[i]-horas[i-1]<2*dur)descanso=true;
+  }
+  if(descanso)avisos.push('Hay equipos con menos de un bloque libre de descanso.');
+  if(carga)avisos.push('Hay equipos con más de tres partidos en una jornada.');
+  return avisos.length?' Atención: '+avisos.join(' ')+' Podés confirmar este ajuste administrativo.':'';
+ };
+
  const propuesta=()=>({...partido,fecha:form.elements.fecha.value,hora:form.elements.hora.value,cancha:String(form.elements.cancha.value)});
  const choques=(p,lista=filas)=>lista.map((q,i)=>i!==idx&&conflicto(p,q)?{p:q,i}:null).filter(Boolean);
  let intercambio=null;
@@ -3121,7 +3140,7 @@ async function ncReprogramarIndividual(b,destinoInicial){
    const fin=Array.isArray(ventana)?mins(ventana[1]):ventana&&typeof ventana==='object'?mins(ventana.fin||ventana.hasta||ventana.end):NaN;
    const desde=Math.max(fecha===p.fecha?mins(p.hora)+1:0,Number.isFinite(inicio)?inicio:0);
    const hasta=Number.isFinite(fin)?fin-dur:23*60+59-dur;
-   for(let m=Math.ceil(desde/dur)*dur;m<=hasta&&!hallado;m+=dur){for(let cancha=1;cancha<=Math.max(1,Number(settings.canchas)||4);cancha++){
+   for(let m=Math.ceil(desde);m<=hasta&&!hallado;m++){for(let cancha=1;cancha<=Math.max(1,Number(settings.canchas)||4);cancha++){
     const candidato={...p,fecha,hora:hh(m),cancha:String(cancha)};
     if(!choques(candidato).length){hallado=candidato;break}
    }}if(hallado)break;
@@ -3136,7 +3155,7 @@ async function ncReprogramarIndividual(b,destinoInicial){
  form.onsubmit=async e=>{e.preventDefault();
  if(modo==='cadena'||modo==='jornada'){
   const plan=calcularCadena();if(plan.error){error.textContent=plan.error;return}
-  const ok=await mostrarDialogoZonas({titulo:'Confirmar retraso en cadena',detalle:`${plan.cambios.length} partidos · ${modo==='jornada'?'Todas las canchas':'Cancha '+info.cancha} · ${info.fecha}`,advertencia:`Se retrasarán ${form.elements.retraso.value} minutos todos los partidos pendientes ${modo==='jornada'?'de la jornada':'de esta cancha'} desde las ${info.hora}. No se modificarán resultados.`});if(!ok)return;
+  const ok=await mostrarDialogoZonas({titulo:'Confirmar retraso en cadena',detalle:`${plan.cambios.length} partidos · ${modo==='jornada'?'Todas las canchas':'Cancha '+info.cancha} · ${info.fecha}`,advertencia:`Se retrasarán ${form.elements.retraso.value} minutos todos los partidos pendientes ${modo==='jornada'?'de la jornada':'de esta cancha'} desde las ${info.hora}.`+advertenciasProgramacion(plan.nuevos)});if(!ok)return;
   guardar.disabled=true;
   try{
    const actual=await leer();if(actual.huella!==snap.huella)throw Error('El fixture cambió. Volvé a abrir el reloj.');
@@ -3153,7 +3172,7 @@ async function ncReprogramarIndividual(b,destinoInicial){
  const cambios=filas.map((q,i)=>i===idx?p:intercambio&&i===intercambio.indice?intercambio.partido:q);
  if(cambios.some((q,i)=>i!==idx&&(conflicto(p,q)))||(intercambio&&cambios.some((q,i)=>i!==idx&&i!==intercambio.indice&&conflicto(intercambio.partido,q)))){mostrarConflictos();error.textContent='Se detectó una nueva superposición. Revisá la propuesta.';return}
  const detalle=intercambio?'Se intercambiarán los horarios de DOS partidos.':'Solo se modificará este partido.';
- const ok=await mostrarDialogoZonas({titulo:intercambio?'Confirmar intercambio de horarios':'Confirmar reprogramación',detalle:info.local+' vs '+info.visitante,advertencia:detalle+' Nuevo horario: '+p.fecha+' · '+p.hora+' · Cancha '+p.cancha+'. No se modificarán resultados.'});if(!ok)return;
+ const ok=await mostrarDialogoZonas({titulo:intercambio?'Confirmar intercambio de horarios':'Confirmar reprogramación',detalle:info.local+' vs '+info.visitante,advertencia:detalle+' Nuevo horario: '+p.fecha+' · '+p.hora+' · Cancha '+p.cancha+'.'+advertenciasProgramacion(cambios)});if(!ok)return;
  guardar.disabled=true;
  try{const actual=await leer();if(actual.huella!==snap.huella)throw Error('El fixture cambió mientras editabas. Volvé a abrir el reloj.');
  const cambiosPuntuales=[{indice:snap.filas.indexOf(partido),fecha:p.fecha,hora:p.hora,cancha:p.cancha}];
@@ -3174,10 +3193,10 @@ function ncEnlazarArrastreFixture(){
    e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',ncArrastreOrigen);
    celda.classList.add('nc-partidos-arrastrando');panel.classList.add('nc-partidos-modo-arrastre');
   });
-  celda.addEventListener('dragend',()=>{ncArrastreOrigen=null;panel.classList.remove('nc-partidos-modo-arrastre');panel.querySelectorAll('.nc-partidos-slot').forEach(x=>x.classList.remove('nc-partidos-sobre'))});
+  celda.addEventListener('dragend',()=>{celda.classList.remove('nc-partidos-arrastrando');ncArrastreOrigen=null;panel.classList.remove('nc-partidos-modo-arrastre');panel.querySelectorAll('.nc-partidos-slot').forEach(x=>x.classList.remove('nc-partidos-sobre'))});
  });
  panel.querySelectorAll('.nc-partidos-slot').forEach(slot=>{
-  if(!slot.querySelector('.nc-partidos-vacio'))return;
+  
   slot.addEventListener('dragover',e=>{if(!ncArrastreOrigen)return;e.preventDefault();e.dataTransfer.dropEffect='move';slot.classList.add('nc-partidos-sobre')});
   slot.addEventListener('dragleave',()=>slot.classList.remove('nc-partidos-sobre'));
   slot.addEventListener('drop',e=>{
