@@ -1366,7 +1366,7 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
 </style>
 <style>
 @keyframes ncFxRojo{0%,65%{background:#8f161b}100%{background:rgba(110,140,160,.12)}}
-.nc-fx-destello{animation:ncFxRojo 1s ease-out}.nc-fx-conflicto{background:#8f161b!important;outline:2px solid #ef6666;color:white}.nc-fx-barra{display:flex;align-items:center;gap:12px;padding:12px;margin-bottom:12px;border:1px solid #687777;border-radius:8px}.nc-fx-barra span{margin-right:auto}.nc-fx-conflicto::after{content:'!';position:absolute;right:8px;bottom:6px;font-weight:bold}
+.nc-partidos-celda.nc-fx-destello{background:#8f161b!important;background-color:#8f161b!important;box-shadow:inset 0 0 0 2px #ef6666;color:#fff!important}.nc-fx-conflicto{background:#8f161b!important;outline:2px solid #ef6666;color:white}.nc-fx-detalles{flex-basis:100%;font-size:13px}.nc-fx-detalles summary{cursor:pointer}.nc-fx-detalles p{margin:8px 0}.nc-fx-barra{flex-wrap:wrap;display:flex;align-items:center;gap:12px;padding:12px;margin-bottom:12px;border:1px solid #687777;border-radius:8px}.nc-fx-barra span{margin-right:auto}.nc-fx-conflicto::after{content:'!';position:absolute;right:8px;bottom:6px;font-weight:bold}
 </style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
@@ -2901,7 +2901,7 @@ function consultarNotificaciones(){if(!window.google?.script?.run)return;google.
 let ncDiaFixtureSeleccionado='';
 let ncCategoriaFixtureSeleccionada='todas';
 function ncVistaJornadasFixture(){
- const filas=Array.isArray(fixtureSnapshot?.filas)?fixtureSnapshot.filas:[];
+ const filas=ncPlanArrastre?ncPlanArrastre.filas:(Array.isArray(fixtureSnapshot?.filas)?fixtureSnapshot.filas:[]);
  const filasTorneo=filas.filter(p=>String(p.anio||settings.anio)===String(settings.anio)&&String(p.edicion||settings.edicion)===String(settings.edicion));
  const base=filasTorneo.length?filasTorneo:(Array.isArray(fixture)?fixture:[]);
  const decisivos=(cruces15Datos?.filas||[]).filter(p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion)&&String(p.estado)==='CONFIRMADO'&&['SEMIFINAL','FINAL','TERCER_PUESTO'].includes(String(p.instancia))).map(p=>({...p,categoria:'+'+String(p.categoria).replace(/^\+/,''),_cruce:true}));
@@ -3188,7 +3188,7 @@ async function ncReprogramarIndividual(b,destinoInicial){
  }catch(ex){error.textContent='No se guardó el cambio: '+String(ex.message||ex)}finally{guardar.disabled=false}
  };
 }
-let ncPlanArrastre=null,ncArrastreGuardando=false,ncDestellos=new Set();
+let ncPlanArrastre=null,ncArrastreGuardando=false,ncDestellos=new Map();
 const ncFxFecha=v=>{const t=String(v||'').trim(),m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(t);return m?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):t.slice(0,10)};
 const ncFxMin=v=>{const m=/^(\d{1,2}):(\d{2})/.exec(String(v||''));return m?+m[1]*60+(+m[2]):NaN};
 const ncFxHora=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
@@ -3231,23 +3231,29 @@ async function ncFxArrastrar(origen,destino){
   const indices=plan.filas.map((p,i)=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion)&&String(p.categoria).replace(/^\+/,'')===String(info.categoria).replace(/^\+/,'')&&p.local===info.local&&p.visitante===info.visitante&&ncFxFecha(p.fecha)===info.fecha&&ncFxMin(p.hora)===ncFxMin(info.hora)&&Number(p.cancha)===Number(info.cancha)?i:-1).filter(i=>i>=0);
   if(indices.length!==1)throw Error('Actualizá la grilla: no se pudo identificar el partido.');
   const {nuevos,cambiados}=ncFxDesplazar(plan.filas,indices[0],destino,Number(settings.duracion)+Number(settings.intervalo),ncFxFijo);
-  plan.filas=nuevos;ncDestellos=new Set([...cambiados].map(i=>ncFxClave(nuevos[i])));
+  plan.filas=nuevos;ncDestellos=new Map([...cambiados].map(i=>[ncFxClave(nuevos[i]),Date.now()+1100]));
   fixture=nuevos.filter(p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion)).map(p=>({...p}));render();
  }catch(e){avisoIntegrado(e.message||String(e))}
 }
 function ncFxPintarArrastre(){
  if(!ncPlanArrastre)return;
  const plan=ncPlanArrastre,conflictos=ncFxConflictos(plan.filas),panel=document.querySelector('.nc-partidos-panel');if(!panel)return;
+ const visibles=new Set();
  panel.querySelectorAll('[data-nc-resultado]').forEach(card=>{
   let info;try{info=JSON.parse(decodeURIComponent(card.dataset.ncResultado))}catch(e){return}
   const i=plan.filas.findIndex(p=>String(p.categoria).replace(/^\+/,'')===String(info.categoria).replace(/^\+/,'')&&p.genero===info.genero&&p.local===info.local&&p.visitante===info.visitante&&ncFxFecha(p.fecha)===info.fecha&&ncFxMin(p.hora)===ncFxMin(info.hora)&&Number(p.cancha)===Number(info.cancha));
   if(i<0)return;
-  if(conflictos.has(i)){card.classList.add('nc-fx-conflicto');card.title=[...new Set(conflictos.get(i))].join('. ');card.setAttribute('aria-label',card.title);}
-  else if(ncDestellos.has(ncFxClave(plan.filas[i])))card.classList.add('nc-fx-destello');
+  if(conflictos.has(i)){visibles.add(i);card.classList.add('nc-fx-conflicto');card.title=[...new Set(conflictos.get(i))].join('. ');card.setAttribute('aria-label',card.title);}
+  else {const hasta=ncDestellos.get(ncFxClave(plan.filas[i]))||0;if(hasta>Date.now()){card.classList.add('nc-fx-destello');setTimeout(()=>{if(card.isConnected)card.classList.remove('nc-fx-destello')},hasta-Date.now());}}
  });
- ncDestellos.clear();
+ for(const [clave,hasta] of ncDestellos)if(hasta<=Date.now())ncDestellos.delete(clave);
  const cambios=plan.filas.filter((p,i)=>['fecha','hora','cancha'].some(k=>String(p[k])!==String(plan.snap.filas[i][k]))).length;
- const barra=document.createElement('div');barra.className='nc-fx-barra';barra.innerHTML=`<span role="status">${cambios} partidos modificados${conflictos.size?' · '+conflictos.size+' en rojo: revisá los conflictos':''}</span><button class="secondary" type="button" data-nc-fx-descartar>Descartar</button><button class="primary" type="button" data-nc-fx-guardar ${conflictos.size||!cambios||ncArrastreGuardando?'disabled':''}>Guardar cambios</button>`;panel.prepend(barra);
+ const barra=document.createElement('div');barra.className='nc-fx-barra';barra.innerHTML=`<span role="status">${cambios} ${cambios===1?'partido modificado':'partidos modificados'}${conflictos.size?' · '+visibles.size+' en rojo en esta vista'+(conflictos.size>visibles.size?' · '+(conflictos.size-visibles.size)+' fuera de esta vista':''):''}</span><button class="secondary" type="button" data-nc-fx-descartar>Descartar</button><button class="primary" type="button" data-nc-fx-guardar ${conflictos.size||!cambios||ncArrastreGuardando?'disabled':''}>Guardar cambios</button>`;panel.prepend(barra);
+ if(conflictos.size){
+  const detalle=document.createElement('details');detalle.className='nc-fx-detalles';
+  detalle.innerHTML='<summary>Ver conflictos ('+conflictos.size+')</summary>'+[...conflictos].map(([i,motivos])=>{const p=plan.filas[i];return '<p>'+esc(ncFxFecha(p.fecha))+' · '+esc(p.hora)+' · Cancha '+esc(p.cancha)+' · '+esc(p.local)+' vs '+esc(p.visitante)+': '+esc([...new Set(motivos)].join('. '))+'</p>'}).join('');
+  barra.append(detalle);
+ }
  barra.querySelector('[data-nc-fx-descartar]').onclick=()=>{if(ncArrastreGuardando)return;fixture=plan.previo;ncPlanArrastre=null;render()};
  barra.querySelector('[data-nc-fx-guardar]').onclick=async()=>{
   if(ncArrastreGuardando||ncFxConflictos(plan.filas).size)return;
