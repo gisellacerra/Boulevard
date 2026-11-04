@@ -2367,13 +2367,26 @@ let posiciones13Filtro='todas';
 function posiciones13Render(){
  const partidos=resultados12Partidos();
  const grupos=new Map();
+ function agregarPartido(cat,genero,zona,partido,lados){
+  const clave=JSON.stringify([cat,genero,zona]);
+  if(!grupos.has(clave))grupos.set(clave,{cat,genero,zona,partidos:[],lados:new Map()});
+  const grupo=grupos.get(clave);
+  grupo.partidos.push(partido);
+  grupo.lados.set(partido,lados);
+ }
  for(const p of partidos){
   const cat='+'+String(p.categoria).replace(/^\+/,'');
   if(posiciones13Filtro!=='todas'&&cat!==posiciones13Filtro)continue;
+  const genero=String(p.genero||'Mixto').trim()||'Mixto';
   const zona=String(p.zona||'').trim();
-  const clave=cat+'|'+zona;
-  if(!grupos.has(clave))grupos.set(clave,{cat,zona,partidos:[]});
-  grupos.get(clave).partidos.push(p);
+  // El fixture guarda las zonas en el mismo orden que local y visitante.
+  const interzonal=/^INTERZONAL\s+(.+?)\s*×\s*(.+)$/i.exec(zona);
+  if(interzonal){
+   agregarPartido(cat,genero,interzonal[1].trim(),p,[true,false]);
+   agregarPartido(cat,genero,interzonal[2].trim(),p,[false,true]);
+  }else{
+   agregarPartido(cat,genero,zona,p,[true,true]);
+  }
  }
  const selector=`<div class="toolbar"><button class="secondary" id="p13Actualizar">Actualizar posiciones</button><label class="p13-categoria"><span>Categoría:</span><select id="p13Filtro" style="background:${posiciones13Filtro==='todas'?'#fff':fxFondoCategoria(posiciones13Filtro)};color:#111"><option value="todas" ${posiciones13Filtro==='todas'?'selected':''}>Todas</option>${[...new Set([...catList,...fixture.map(p=>fxCategoriaNormalizada(p.categoria)).filter(c=>c!=='todas')])].map(c=>`<option value="${c}" ${posiciones13Filtro===c?'selected':''}>${c}</option>`).join('')}</select></label><span class="status" id="r12Estado">${resultados12Cargando?'Consultando...':resultados12Datos?'Cálculo a partir de resultados guardados':'Todavía no se consultaron los resultados'}</span></div>`;
  if(!resultados12Datos)return panel('Posiciones por zona',selector+'<div class="empty">Presioná «Actualizar posiciones» para consultar los partidos y resultados guardados.</div>');
@@ -2384,10 +2397,13 @@ function posiciones13Render(){
   const equipos=new Map();let jugados=0;
   const nuevo=nombre=>({nombre,PJ:0,PG:0,PP:0,PF:0,PC:0,SF:0,SC:0,PTS:0});
   for(const p of g.partidos){
-   for(const n of [p.local,p.visitante])if(!equipos.has(n))equipos.set(n,nuevo(n));
+   const [localEnZona,visitanteEnZona]=g.lados.get(p);
+   if(localEnZona&&!equipos.has(p.local))equipos.set(p.local,nuevo(p.local));
+   if(visitanteEnZona&&!equipos.has(p.visitante))equipos.set(p.visitante,nuevo(p.visitante));
    const r=resultados12Existente(p);
    if(!r||String(r.estado).trim()!=='CONFIRMADO')continue;
-   const l=equipos.get(p.local),v=equipos.get(p.visitante);
+   const l=localEnZona?equipos.get(p.local):nuevo(p.local);
+   const v=visitanteEnZona?equipos.get(p.visitante):nuevo(p.visitante);
    // Un W.O. confirmado cuenta como partido jugado y victoria,
    // pero no agrega sets ni tantos ficticios.
    if(r.wo===true){
@@ -2412,7 +2428,7 @@ function posiciones13Render(){
   const filas=[...equipos.values()].sort((a,b)=>b.PTS-a.PTS||b.PG-a.PG||((b.SF-b.SC)-(a.SF-a.SC))||((b.PF-b.PC)-(a.PF-a.PC))||a.nombre.localeCompare(b.nombre,'es'));
   const tabla=`<div class="tablewrap"><table><thead><tr><th>Pos.</th><th>Equipo</th><th>PJ</th><th>PG</th><th>PP</th><th>SF</th><th>SC</th><th>Dif.</th><th>PF</th><th>PC</th><th>Puntos</th></tr></thead><tbody>${filas.map((e,i)=>`<tr><td>${i+1}</td><td><strong>${esc(e.nombre)}</strong></td><td>${e.PJ}</td><td>${e.PG}</td><td>${e.PP}</td><td>${e.SF}</td><td>${e.SC}</td><td>${e.SF-e.SC}</td><td>${e.PF}</td><td>${e.PC}</td><td><strong>${e.PTS}</strong></td></tr>`).join('')}</tbody></table></div>`;
   const fondo=fxColorCategoria(g.cat);
-  contenido+=`<section class="panel section"><h2 style="background:${fondo};color:#000!important;padding:10px;border-radius:8px">Categoría ${esc(g.cat)} · Zona ${esc(g.zona)}</h2><p class="status">${jugados} de ${g.partidos.length} partidos con resultado · ${completo?'Zona completa':'Clasificación provisoria'}</p>${tabla}${posiciones13Diagnostico(g)}${completo?'<p class="status">Resultados completos. Posiciones calculadas; cruces pendientes de confirmación.</p>':'<p class="muted">Faltan resultados: todavía no se confirman clasificados ni cruces.</p>'}</section>`;
+  contenido+=`<section class="panel section"><h2 style="background:${fondo};color:#000!important;padding:10px;border-radius:8px">Categoría ${esc(g.cat)} · ${esc(g.genero)} · Zona ${esc(g.zona)}</h2><p class="status">${jugados} de ${g.partidos.length} partidos con resultado · ${completo?'Zona completa':'Clasificación provisoria'}</p>${tabla}${posiciones13Diagnostico(g)}${completo?'<p class="status">Resultados completos. Posiciones calculadas; cruces pendientes de confirmación.</p>':'<p class="muted">Faltan resultados: todavía no se confirman clasificados ni cruces.</p>'}</section>`;
  }
  return panel('Posiciones por zona',`<p class="muted">Cálculo automático, sin modificar datos. Orden: puntos, partidos ganados, diferencia de sets, diferencia de tantos y orden alfabético. Victoria: 3 puntos; derrota 1–2: 2; derrota 0–2: 1. Los W.O. confirmados cuentan como partidos jugados, sin sumar sets ni tantos.</p>${selector}`)+contenido;
 }
