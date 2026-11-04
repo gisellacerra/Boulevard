@@ -792,14 +792,37 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  window.ncPosAbrir=function(id){const t=window.ncPosRows?.[id];if(!t)return;close();const e=document.createElement('div');e.id='nc-pos-modal';e.className='nc-pos-modal';e.setAttribute('role','presentation');e.innerHTML=`<section class="nc-pos-dialog" role="dialog" aria-modal="true" aria-label="Posiciones de ${esc(t.name)}"><button class="nc-pos-close" onclick="ncPosCerrar()" aria-label="Cerrar">×</button>${shield(t.logo,true)}<h2>${esc(t.name)}</h2><div class="nc-pos-sub">${esc(t.cat)} · ${esc(t.zona)}</div><div class="nc-pos-total">${t.pts}<small>PUNTOS</small></div></section>`;e.addEventListener('click',ev=>{if(ev.target===e)close()});document.body.appendChild(e);document.body.style.overflow='hidden';e.querySelector('button').focus();};
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('nc-pos-modal'))close()});
  standings=function(){const groups=new Map(),logos=new Map();for(const m of matches){if(validLogo(m.escudoLocal))logos.set(m.cat+'|'+m.a,m.escudoLocal);if(validLogo(m.escudoVisitante))logos.set(m.cat+'|'+m.b,m.escudoVisitante);}
- for(const m of matches.filter(completed)){if(category!=='Todas'&&m.cat!==category)continue;const a=Number(m.resultado.setsLocal),b=Number(m.resultado.setsVisitante);if(!Number.isFinite(a)||!Number.isFinite(b)||a===b)continue;const key=m.cat+'|'+(m.zona||'General');if(!groups.has(key))groups.set(key,{cat:m.cat,zona:m.zona||'General',items:new Map()});const g=groups.get(key);for(const name of [m.a,m.b])if(!g.items.has(name))g.items.set(name,{name,pj:0,pg:0,pp:0,sf:0,sc:0,pf:0,pc:0,hasPoints:true,pts:0});const x=g.items.get(m.a),y=g.items.get(m.b);x.pj++;y.pj++;x.pg+=a>b?1:0;y.pg+=b>a?1:0;x.pp+=a<b?1:0;y.pp+=b<a?1:0;x.sf+=a;x.sc+=b;y.sf+=b;y.sc+=a;
- // Reglamento: 3 por ganar, 2 por perder 1-2, 1 por perder 0-2, 0 por W.O.
- x.pts+=a>b?3:(a>0?2:1);y.pts+=b>a?3:(b>0?2:1);
- const ps=pairs(m.resultado);if(ps&&ps.length===a+b){for(const [u,v] of ps){x.pf+=u;x.pc+=v;y.pf+=v;y.pc+=u;}}else{x.hasPoints=false;y.hasPoints=false;}}
+ for(const m of matches.filter(completed)){
+  if(category!=='Todas'&&m.cat!==category)continue;
+  const a=Number(m.resultado.setsLocal),b=Number(m.resultado.setsVisitante);
+  if(!Number.isFinite(a)||!Number.isFinite(b)||a===b)continue;
+  const zona=String(m.zona||'').trim()||'General';
+  const interzonal=/^INTERZONAL\s+(.+?)\s*[×x]\s*(.+)$/i.exec(zona);
+  const zonas=interzonal?interzonal.slice(1).map(z=>z.trim()):[zona,zona];
+  const genero=String(m.genero||'').trim();
+  const ps=pairs(m.resultado);
+  for(const [lado,name] of [m.a,m.b].entries()){
+   const zonaEquipo=zonas[lado];
+   const key=JSON.stringify([m.cat,genero,zonaEquipo]);
+   if(!groups.has(key))groups.set(key,{cat:m.cat,genero,zona:zonaEquipo,items:new Map()});
+   const items=groups.get(key).items;
+   if(!items.has(name))items.set(name,{name,pj:0,pg:0,pp:0,sf:0,sc:0,pf:0,pc:0,hasPoints:true,pts:0});
+   const equipo=items.get(name);
+   const [sf,sc]=lado===0?[a,b]:[b,a];
+   equipo.pj++;
+   equipo.sf+=sf;
+   equipo.sc+=sc;
+   if(sf>sc){equipo.pg++;equipo.pts+=3;}
+   else{equipo.pp++;equipo.pts+=sf>0?2:1;}
+   if(ps&&ps.length===a+b){
+    for(const tantos of ps){equipo.pf+=tantos[lado];equipo.pc+=tantos[1-lado];}
+   }else{equipo.hasPoints=false;}
+  }
+ }
  if(!groups.size)return `<div class="empty">${ncEmptyData('Las posiciones aparecerán cuando se publiquen resultados.')}</div>`;
  const legend='<p class="nc-positions-legend"><b>PTS:</b> Puntos · <b>PJ:</b> Jugados · <b>PG:</b> Ganados · <b>PP:</b> Perdidos · <b>SF:</b> Sets a favor · <b>SC:</b> Sets en contra · <b>Dif.:</b> Diferencia de sets · <b>PF:</b> Puntos a favor · <b>PC:</b> Puntos en contra</p>';
  window.ncPosRows={};let id=0;
- return legend+'<p class="nc-positions-help">Selecciona el escudo para ampliar más información.</p>'+[...groups.values()].map(g=>{const rows=[...g.items.values()].sort((a,b)=>b.pts-a.pts||b.pg-a.pg||(b.sf-b.sc)-(a.sf-a.sc)||a.name.localeCompare(b.name));const zona=String(g.zona).toLowerCase().startsWith('zona')?g.zona:'Zona '+g.zona;const title=g.cat+' · '+zona;return `<section class="nc-positions-group" style="--pos-cat-color:${palette[g.cat]||'#a5eb37'}"><div class="nc-positions-heading">${esc(title)}</div><div class="nc-positions-scroll" role="region" aria-label="Tabla de posiciones ${esc(title)}" tabindex="0"><table class="nc-positions-table"><thead><tr>${['#','','PTS','PJ','PG','PP','SF','SC','Dif.','PF','PC'].map(h=>`<th scope="col">${h||'Esc.'}</th>`).join('')}</tr></thead><tbody>${rows.map((t,i)=>{const rowId=++id;window.ncPosRows[rowId]={...t,cat:g.cat,zona,logo:logos.get(g.cat+'|'+t.name)||''};return `<tr class="nc-pos-team" role="button" tabindex="0" aria-label="Ver equipo ${esc(t.name)}" onclick="ncPosAbrir(${rowId})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ncPosAbrir(${rowId})}"><td>${i+1}</td><td>${shield(logos.get(g.cat+'|'+t.name))}</td><td class="nc-pts">${t.pts}</td><td>${t.pj}</td><td>${t.pg}</td><td>${t.pp}</td><td>${t.sf}</td><td>${t.sc}</td><td>${t.sf-t.sc}</td><td>${t.hasPoints?t.pf:'—'}</td><td>${t.hasPoints?t.pc:'—'}</td></tr>`}).join('')}</tbody></table></div></section>`;}).join('');
+ return legend+'<p class="nc-positions-help">Selecciona el escudo para ampliar más información.</p>'+[...groups.values()].map(g=>{const rows=[...g.items.values()].sort((a,b)=>b.pts-a.pts||b.pg-a.pg||(b.sf-b.sc)-(a.sf-a.sc)||a.name.localeCompare(b.name));const zona=String(g.zona).toLowerCase().startsWith('zona')?g.zona:'Zona '+g.zona;const title=[g.cat,g.genero,zona].filter(Boolean).join(' · ');return `<section class="nc-positions-group" style="--pos-cat-color:${palette[g.cat]||'#a5eb37'}"><div class="nc-positions-heading">${esc(title)}</div><div class="nc-positions-scroll" role="region" aria-label="Tabla de posiciones ${esc(title)}" tabindex="0"><table class="nc-positions-table"><thead><tr>${['#','','PTS','PJ','PG','PP','SF','SC','Dif.','PF','PC'].map(h=>`<th scope="col">${h||'Esc.'}</th>`).join('')}</tr></thead><tbody>${rows.map((t,i)=>{const rowId=++id;window.ncPosRows[rowId]={...t,cat:g.cat,zona,logo:logos.get(g.cat+'|'+t.name)||''};return `<tr class="nc-pos-team" role="button" tabindex="0" aria-label="Ver equipo ${esc(t.name)}" onclick="ncPosAbrir(${rowId})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ncPosAbrir(${rowId})}"><td>${i+1}</td><td>${shield(logos.get(g.cat+'|'+t.name))}</td><td class="nc-pts">${t.pts}</td><td>${t.pj}</td><td>${t.pg}</td><td>${t.pp}</td><td>${t.sf}</td><td>${t.sc}</td><td>${t.sf-t.sc}</td><td>${t.hasPoints?t.pf:'—'}</td><td>${t.hasPoints?t.pc:'—'}</td></tr>`}).join('')}</tbody></table></div></section>`;}).join('');
  };
 })();
 
