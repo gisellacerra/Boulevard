@@ -1336,7 +1336,8 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
 @media(max-width:420px){#r12ModalDialog .r12-versus-team{gap:5px}#r12ModalDialog .r12-team-label .r12-team-shield{width:21px;height:24px}#r12ModalDialog .r12-set-fields label{font-size:13px!important}}
 </style>
 <style>
-.nc-reprog-fields[hidden],.nc-reprog-retraso[hidden],.nc-reprog-conflictos[hidden]{display:none!important}.nc-reprog-modos{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}.nc-reprog-modos button{border:1px solid #c9d2db;background:#f5f7fa;color:#191d1f;border-radius:8px;padding:9px 11px;cursor:pointer}.nc-reprog-modos button.activo{background:#a5eb37;color:#191d1f}.nc-reprog-retraso{background:#f1f5f8;border-radius:9px;padding:14px;margin:12px 0}.nc-reprog-retraso label{display:block;font-weight:700}.nc-reprog-retraso input{display:block;width:110px;margin-top:6px;padding:8px;border:1px solid #aab5c0;border-radius:6px}.nc-reprog-retraso p,.nc-reprog-resumen{font-size:13px}.nc-reprog-resumen{font-weight:700}.nc-reprog-resumen-error{color:#a22020}
+.nc-reprog-fields[hidden],.nc-reprog-retraso[hidden],.nc-reprog-conflictos[hidden]{display:none!important}.nc-reprog-modos{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}.nc-reprog-modos button{border:1px solid #c9d2db;background:#f5f7fa;color:#191d1f;border-radius:8px;padding:9px 11px;cursor:pointer}.nc-reprog-modos button.activo{background:#a5eb37;color:#191d1f}.nc-reprog-retraso{background:#f1f5f8;border-radius:9px;padding:14px;margin:12px 0}.nc-reprog-retraso label{display:block;font-weight:700}.nc-reprog-retraso input{display:block;width:110px;margin-top:6px;padding:8px;border:1px solid #aab5c0;border-radius:6px}.nc-reprog-retraso p,.nc-reprog-resumen{font-size:16px}.nc-reprog-resumen{font-weight:500}.nc-reprog-resumen-error{color:#a22020;margin-top: -25px;
+    line-height: 3}
 </style>
 <style id="nc-reprog-conflicto-bandas">
 .nc-reprog-conflictos .nc-reprog-conflicto-lista{list-style:none;margin:10px 0 16px;padding:0;display:grid;gap:8px}
@@ -1368,7 +1369,20 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
 @keyframes ncFxRojo{0%,65%{background:#8f161b}100%{background:rgba(110,140,160,.12)}}
 .nc-partidos-celda.nc-fx-destello{background:#8f161b!important;background-color:#8f161b!important;box-shadow:inset 0 0 0 2px #ef6666;color:#fff!important}.nc-fx-conflicto{background:#8f161b!important;outline:2px solid #ef6666;color:white}.nc-fx-detalles{flex-basis:100%;font-size:13px}.nc-fx-detalles summary{cursor:pointer}.nc-fx-detalles p{margin:8px 0}.nc-fx-barra{flex-wrap:wrap;display:flex;align-items:center;gap:12px;padding:12px;margin-bottom:12px;border:1px solid #687777;border-radius:8px}.nc-fx-barra span{margin-right:auto}.nc-fx-conflicto::after{content:'!';position:absolute;right:8px;bottom:6px;font-weight:bold}
 </style>
-<style>.nc-fx-confirmacion{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:14px 0;margin-bottom:12px}.nc-fx-confirmacion span{margin-right:auto}.nc-partidos-celda[data-nc-borrador]{cursor:default}</style></head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
+<style>.nc-fx-confirmacion{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:14px 0;margin-bottom:12px}.nc-fx-confirmacion span{margin-right:auto}.nc-partidos-celda[data-nc-borrador]{cursor:default}</style>
+<style>
+.nc-reprog-modal .nc-reprog-buscar{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:12px 20px;margin-top:16px;border:1px solid #8b959e;border-radius:8px;background:#626a70;color:#fff;font-family:inherit;font-size:14px;font-weight:500;line-height:1.35;cursor:pointer;transition:background .15s ease}
+.nc-reprog-modal .nc-reprog-buscar:hover{background:#4d555b}
+.nc-reprog-modal .nc-reprog-buscar:focus-visible{outline:2px solid #a5eb37;outline-offset:3px}
+.nc-reprog-modal .nc-reprog-buscar[hidden]{display:none!important}
+</style>
+
+<style>
+.nc-reprog-modal .nc-reprog-retraso .nc-reprog-alcance{margin:14px 0 10px;line-height:1.4}
+.nc-reprog-modal .nc-reprog-retraso .nc-reprog-resumen{display:block;margin:0;padding:0;line-height:1.4;white-space:normal}
+.nc-reprog-modal .nc-reprog-retraso .nc-reprog-resumen-error{margin:0;line-height:1.4}
+</style>
+</head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
      preserveAspectRatio="xMinYMin meet"
