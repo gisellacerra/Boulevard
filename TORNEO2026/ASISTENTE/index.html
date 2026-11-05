@@ -1651,7 +1651,42 @@ function fxEvaluarReservas(comps,canchas){
  }
  return '';
 }
-function fxCalcularPropuesta(partidos,slots,turno,canchas,semilla){
+// A02: consulta de distancias existentes; nunca modifica la hoja DISTANCIAS.
+function fxLeerDistanciasA02(){
+ return new Promise((resolve,reject)=>{
+  if(!window.google?.script?.run){reject(new Error('No hay conexión con Apps Script para consultar DISTANCIAS.'));return}
+  google.script.run.withSuccessHandler(d=>resolve(Array.isArray(d)?d:[]))
+   .withFailureHandler(e=>reject(new Error(String(e?.message||e))))
+   .adminDistanciasConsultar();
+ });
+}
+function fxClaveLugarA02(localidad,provincia){
+ return [localidad,provincia].map(v=>String(v||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ')).join('|');
+}
+function fxPrioridadViajeA02(distancias){
+ const kmPorLugar=new Map(distancias.filter(d=>d&&Number.isFinite(Number(d.distancia_km))&&d.distancia_km!==''&&d.distancia_km!=null)
+  .map(d=>[fxClaveLugarA02(d.localidad,d.provincia),Number(d.distancia_km)]));
+ const kmPorEquipo=new Map(),faltantes=[];
+ teams.forEach(t=>{
+  const nombre=String(t.nombre||t.equipo||'').trim();if(!nombre)return;
+  const clave=fxClaveLugarA02(t.localidad||t.ciudad,t.provincia);
+  if(kmPorLugar.has(clave))kmPorEquipo.set(nombre,kmPorLugar.get(clave));
+  else faltantes.push(nombre);
+ });
+ return {kmPorEquipo,faltantes};
+}
+function fxPenalizacionViajeA02(p,slot,contexto,turno){
+ if(!contexto||slot.fecha!==contexto.primerDia)return 0;
+ const kms=[contexto.kmPorEquipo.get(p.local),contexto.kmPorEquipo.get(p.visitante)]
+  .filter(v=>Number.isFinite(v));
+ if(!kms.length)return 0;
+ // Preferencia blanda: sin datos de hora de llegada no se prohíbe jugar.
+ // Se penaliza progresivamente el primer y segundo turno del viernes para viajeros.
+ const km=Math.max(...kms),turnosDesdeApertura=Math.max(0,(slot.inicio-contexto.primerInicio)/turno);
+ if(km<=30||turnosDesdeApertura>=2)return 0;
+ return Math.min(1000,km*1.5)*(2-turnosDesdeApertura);
+}
+function fxCalcularPropuesta(partidos,slots,turno,canchas,semilla,contextoViaje){
  const pendientes=partidos.map((p,i)=>({...p,_orden:i}));
  const asignados=[];const ultimaHora=new Map();const ultimaRonda=new Map();const conteo=new Map();
  let descansoMin=Infinity,descansoMax=0;
@@ -1670,7 +1705,7 @@ function fxCalcularPropuesta(partidos,slots,turno,canchas,semilla){
    const descanso=Math.min(ta===undefined?turno*6:slot.inicio-ta,tb===undefined?turno*6:slot.inicio-tb);
    const jugados=(conteo.get(a)||0)+(conteo.get(b)||0);
    const ruido=((i*31+semilla*67+slot.inicio*7+Number(slot.cancha)*13)%101)/101;
-   const score=(p.ronda-r)*1000+jugados*160+Math.min(descanso/turno,12)*(-14)+ruido*95;
+   const score=(p.ronda-r)*1000+jugados*160+Math.min(descanso/turno,12)*(-14)+ruido*95+fxPenalizacionViajeA02(p,slot,contextoViaje,turno);
    posibles.push({i,score});
   }
   if(!posibles.length)continue;
@@ -1707,10 +1742,17 @@ async function generarFixtureAutomatico(){
  }
  if(partidos.length>horarios.length){avisoIntegrado('No alcanza la capacidad: '+partidos.length+' partidos para '+horarios.length+' espacios.');return}
  if(fxModoDistribucion==='reservadas')for(const comp of comps){const cupos=horarios.filter(s=>fxCanchasPermitidas(comp,canchas).includes(s.cancha)).length;const demanda=partidos.filter(p=>fxComp(p)===comp).length;if(demanda>cupos){avisoIntegrado(tituloCompetencia(comp)+': '+demanda+' partidos para '+cupos+' espacios reservados.');return}}
+ // A02: las distancias se leen antes de generar. Si falla la consulta, no se genera
+ // una propuesta que aparentaría haber aplicado la prioridad de viaje.
+ let contextoViaje;
+ try{
+  const distancias=await fxLeerDistanciasA02();
+  contextoViaje={...fxPrioridadViajeA02(distancias),primerDia:fechas[0],primerInicio:minutosHora(ventanasTorneo()[0][0])};
+ }catch(e){avisoIntegrado('No se pudo consultar DISTANCIAS. No se generó ningún fixture: '+e.message);return}
  // Múltiples alternativas: se conserva la que programe más partidos y equilibre descansos.
  let mejor=null;
  for(let intento=0;intento<24;intento++){
-  const propuesta=fxCalcularPropuesta(partidos,horarios,turno,canchas,fxNumeroPropuesta*29+intento+1);
+  const propuesta=fxCalcularPropuesta(partidos,horarios,turno,canchas,fxNumeroPropuesta*29+intento+1,contextoViaje);
   const puntaje=propuesta.faltantes*100000+propuesta.descansoMax-propuesta.descansoMin;
   if(!mejor||puntaje<mejor.puntaje)mejor={...propuesta,puntaje};
   if(propuesta.faltantes===0&&propuesta.descansoMax-propuesta.descansoMin<=turno)break;
@@ -1719,7 +1761,7 @@ async function generarFixtureAutomatico(){
  fixture=mejor.partidos;fixtureZonasHuella=zonasRemotas.huella;
  try{localStorage.setItem('asistente_fixture_huella_zonas',fixtureZonasHuella)}catch(e){}
  settings.fechasEtapa10=fechas;fxNumeroPropuesta++;
- fxResumenPropuesta=(fxModoDistribucion==='inteligente'?'Distribución inteligente':'Canchas reservadas')+' · '+(partidos.length-mejor.faltantes)+' de '+partidos.length+' partidos programados · '+mejor.faltantes+' sin horario.';
+ fxResumenPropuesta=(fxModoDistribucion==='inteligente'?'Distribución inteligente':'Canchas reservadas')+' · '+(partidos.length-mejor.faltantes)+' de '+partidos.length+' partidos programados · '+mejor.faltantes+' sin horario · Prioridad de viaje aplicada'+(contextoViaje.faltantes.length?' · '+contextoViaje.faltantes.length+' equipos sin distancia':'')+'.';
  saveDraft();render();
  if(mejor.faltantes)avisoIntegrado('Se programaron '+(partidos.length-mejor.faltantes)+' partidos; '+mejor.faltantes+' quedaron pendientes. Revisá las reservas o ampliá los horarios. No se puede confirmar hasta completarlos.');
 }
