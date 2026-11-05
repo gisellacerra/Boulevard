@@ -1570,7 +1570,7 @@ function tableroManual(cat){
 function ncZ01Confirmadas(cat){
  const filas=zonasParaCategoria(cat),nombres=[...new Set(filas.map(r=>String(r.zona||'').trim()).filter(Boolean))].sort();
  if(!nombres.length)return '';
- return `<div class="nc-z01-resumen"><span class="nc-z01-confirmado">✓ Zonas confirmadas en Google Sheets</span><span class="nc-z01-borrador">${filas.length} equipos registrados</span></div><div class="nc-z01-grupos">${nombres.map(z=>ncZ01Columna(cat,z,filas.filter(r=>String(r.zona||'').trim()===z).map(r=>String(r.equipo||r.nombre||r.nombreEquipo||'').trim()).filter(Boolean),[],false)).join('')}</div>`;
+ return `<div class="nc-z01-resumen"><span class="nc-z01-confirmado">✓ Zonas confirmadas en la tabla</span><span class="nc-z01-borrador">${filas.length} equipos registrados</span></div><div class="nc-z01-grupos">${nombres.map(z=>ncZ01Columna(cat,z,filas.filter(r=>String(r.zona||'').trim()===z).map(r=>String(r.equipo||r.nombre||r.nombreEquipo||'').trim()).filter(Boolean),[],false)).join('')}</div>`;
 }
 function activarTableroManual(){
  document.querySelectorAll('[data-drag-name]').forEach(el=>el.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',JSON.stringify({cat:el.dataset.dragCat,nombre:el.dataset.dragName}));e.dataTransfer.effectAllowed='move'}));
