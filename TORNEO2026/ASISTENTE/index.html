@@ -1383,7 +1383,43 @@ body .as-modal-overlay .as-modal.nc-baja-modal .as-modal-actions button.primary{
 .nc-reprog-modal .nc-reprog-retraso .nc-reprog-resumen-error{margin:0;line-height:1.4}
 </style>
 <style>body .nc-posiciones-coef .nc-coef,body[data-nc-theme] .nc-posiciones-coef .nc-coef{color:#b3f337!important;-webkit-text-fill-color:#b3f337!important;background:#242b2b!important;font-weight:700!important}</style>
-</head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
+<style id="nc-z01-zonas-redisenio">
+/* Z01: presentación de zonas; no altera persistencia ni reglas del sorteo. */
+#view .nc-z01-resumen{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:12px 0 18px}
+#view .nc-z01-resumen p{margin:0;line-height:1.5}
+#view .nc-z01-grupos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:16px 0}
+#view .nc-z01-grupo{min-width:0;border:1px solid #3b4442;border-radius:12px;overflow:hidden;background:#191d1f}
+#view .nc-z01-grupo-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 16px;background:var(--nc-z01-color,#a8ed43);color:#111}
+#view .nc-z01-grupo-head strong{font-size:16px;font-weight:650}
+#view .nc-z01-grupo-head small{font-size:12px;color:#26302a}
+#view .nc-z01-miembros{padding:8px 12px 12px;min-height:76px}
+#view .nc-z01-miembro{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #394241;min-width:0}
+#view .nc-z01-miembro:last-child{border-bottom:0}
+#view .nc-z01-escudo{width:35px;height:35px;object-fit:contain;flex:none}
+#view .nc-z01-escudo-vacio{width:35px;height:35px;display:grid;place-items:center;flex:none;color:#a8ed43}
+#view .nc-z01-nombre{flex:1;min-width:0;overflow-wrap:anywhere;font-size:13px;color:#f1f5f2}
+#view .nc-z01-grupo[data-drop-zone]{border-style:dashed}
+#view .nc-z01-grupo.drag-over{outline:2px solid #a8ed43;outline-offset:2px}
+#view .nc-z01-miembro[draggable=true]{cursor:grab}
+#view .nc-z01-miembro select{width:92px;max-width:92px;padding:6px 5px;font-size:11px!important;flex:none}
+#view .nc-z01-grip{color:#9ba7a4;font-size:18px;flex:none}
+#view .nc-z01-sin-equipos{font-size:12px;color:#a8b5b0;padding:12px 5px}
+#view .nc-z01-confirmado{display:inline-flex;gap:6px;align-items:center;font-size:12px;color:#6cda9b}
+#view .nc-z01-borrador{font-size:12px;color:#b8c2be}
+#view .nc-z01-controles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+#view .nc-z01-control{border:1px solid #3b4442;border-radius:10px;padding:14px;background:#191d1f}
+#view .nc-z01-control-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+#view .nc-z01-control .field{margin-bottom:10px}
+#view .nc-z01-control .field input{max-width:115px}
+#view .nc-z01-panel-pie{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:15px}
+body[data-nc-theme=light] #view .nc-z01-grupo,body[data-nc-theme=light] #view .nc-z01-control{background:#fff;border-color:#dfe4e7}
+body[data-nc-theme=light] #view .nc-z01-miembro{border-color:#e5e9e7}
+body[data-nc-theme=light] #view .nc-z01-nombre{color:#17202b}
+body[data-nc-theme=light] #view .nc-z01-sin-equipos,body[data-nc-theme=light] #view .nc-z01-borrador{color:#667487}
+body[data-nc-theme=light] #view .nc-z01-confirmado{color:#167849}
+@media(max-width:1150px){#view .nc-z01-grupos{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){#view .nc-z01-grupos{grid-template-columns:minmax(0,1fr)}#view .nc-z01-miembro select{width:90px}}
+</style></head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
      preserveAspectRatio="xMinYMin meet"
@@ -1513,14 +1549,28 @@ async function cambiarZona(cat,nombre,zona){
  if(zona!=='pendientes')grupos.find(z=>z.nombre===zona).equipos.push(nombre);
  fixture=fixture.filter(p=>claveCompetencia(p.categoria,p.genero)!==cat);saveDraft();render();
 }
+function ncZ01Escudo(cat,nombre){
+ const t=teams.find(t=>claveCompetencia(t.categoria,t.genero)===cat&&t.nombre===nombre);
+ return t?.escudo?`<img class="nc-z01-escudo" src="${esc(t.escudo)}" alt="" loading="lazy">`:'<span class="nc-z01-escudo-vacio" aria-hidden="true">🛡️</span>';
+}
+function ncZ01Columna(cat,zona,nombres,grupos,edicion=true){
+ const color=fxColorCategoria(competenciaDeClave(cat).categoria);
+ return `<section class="nc-z01-grupo" style="--nc-z01-color:${color}" ${edicion?`data-drop-cat="${esc(cat)}" data-drop-zone="${esc(zona)}"`:''}>
+ <div class="nc-z01-grupo-head"><strong>${zona==='pendientes'?'Sin asignar':'Zona '+esc(zona)}</strong><small>${nombres.length} ${nombres.length===1?'equipo':'equipos'}</small></div>
+ <div class="nc-z01-miembros">${nombres.map(nombre=>`<div class="nc-z01-miembro" ${edicion?`draggable="true" data-drag-cat="${esc(cat)}" data-drag-name="${esc(nombre)}"`:''}>${edicion?'<span class="nc-z01-grip" aria-hidden="true">⠿</span>':''}${ncZ01Escudo(cat,nombre)}<span class="nc-z01-nombre">${esc(nombre)}</span>${edicion?`<select aria-label="Asignar zona a ${esc(nombre)}" data-zone-cat="${esc(cat)}" data-zone-team="${esc(nombre)}"><option value="pendientes" ${zona==='pendientes'?'selected':''}>Pendiente</option>${grupos.map(z=>`<option value="${esc(z.nombre)}" ${zona===z.nombre?'selected':''}>Zona ${esc(z.nombre)}</option>`).join('')}</select>`:''}</div>`).join('')||`<div class="nc-z01-sin-equipos">${edicion?'Arrastrá equipos aquí':'No hay equipos registrados'}</div>`}</div></section>`;
+}
 function tableroManual(cat){
  const grupos=zones[cat]||[],pendientes=equiposPendientes(cat);
  const counts=grupos.map(z=>z.equipos.length);
  const equilibrado=counts.length>0&&counts.every(n=>n>0)&&Math.max(...counts)-Math.min(...counts)<=1;
  const total=teams.filter(t=>claveCompetencia(t.categoria,t.genero)===cat).length;
  const completo=!pendientes.length&&equilibrado&&counts.reduce((a,b)=>a+b,0)===total;
- const columna=(zona,titulo,nombres)=>`<div class="zone-column" data-drop-cat="${esc(cat)}" data-drop-zone="${esc(zona)}"><h3>${titulo} · ${nombres.length}</h3>${nombres.map(nombre=>`<div class="zone-entry" draggable="true" data-drag-cat="${esc(cat)}" data-drag-name="${esc(nombre)}"><span class="grip">⠿</span><span>${esc(nombre)}</span><select aria-label="Zona de ${esc(nombre)}" data-zone-cat="${esc(cat)}" data-zone-team="${esc(nombre)}"><option value="pendientes" ${zona==='pendientes'?'selected':''}>Pendiente</option>${grupos.map(z=>`<option value="${esc(z.nombre)}" ${zona===z.nombre?'selected':''}>Zona ${esc(z.nombre)}</option>`).join('')}</select></div>`).join('')||'<p class="muted">Arrastrá aquí los equipos</p>'}</div>`;
- return `<p class="status">${pendientes.length?pendientes.length+' equipos pendientes':equilibrado?'Distribución completa y equilibrada':'Revisá la distribución de equipos'}</p><div class="zone-board">${columna('pendientes','Pendientes',pendientes.map(t=>t.nombre))}${grupos.map(z=>columna(z.nombre,'Zona '+esc(z.nombre),z.equipos)).join('')}</div><button class="primary" data-confirm-zones="${esc(cat)}" ${completo?'':'disabled'}>Confirmar y guardar ${esc(tituloCompetencia(cat))}</button>`;
+ return `<div class="nc-z01-resumen"><p class="nc-z01-borrador">${pendientes.length?pendientes.length+' equipos sin asignar':equilibrado?'Todos los equipos asignados · distribución equilibrada':'Revisá la distribución de equipos'}</p><span class="nc-z01-borrador">Borrador · sin guardar en la tabla</span></div><div class="nc-z01-grupos">${grupos.map(z=>ncZ01Columna(cat,z.nombre,z.equipos,grupos)).join('')}${pendientes.length?ncZ01Columna(cat,'pendientes',pendientes.map(t=>t.nombre),grupos):''}</div><div class="nc-z01-panel-pie"><span class="nc-z01-borrador">Podés arrastrar equipos o cambiar su zona con el selector.</span><button class="primary" data-confirm-zones="${esc(cat)}" ${completo?'':'disabled'}>Confirmar y guardar ${esc(tituloCompetencia(cat))}</button></div>`;
+}
+function ncZ01Confirmadas(cat){
+ const filas=zonasParaCategoria(cat),nombres=[...new Set(filas.map(r=>String(r.zona||'').trim()).filter(Boolean))].sort();
+ if(!nombres.length)return '';
+ return `<div class="nc-z01-resumen"><span class="nc-z01-confirmado">✓ Zonas confirmadas en Google Sheets</span><span class="nc-z01-borrador">${filas.length} equipos registrados</span></div><div class="nc-z01-grupos">${nombres.map(z=>ncZ01Columna(cat,z,filas.filter(r=>String(r.zona||'').trim()===z).map(r=>String(r.equipo||r.nombre||r.nombreEquipo||'').trim()).filter(Boolean),[],false)).join('')}</div>`;
 }
 function activarTableroManual(){
  document.querySelectorAll('[data-drag-name]').forEach(el=>el.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',JSON.stringify({cat:el.dataset.dragCat,nombre:el.dataset.dragName}));e.dataTransfer.effectAllowed='move'}));
@@ -3469,16 +3519,16 @@ else if(active==='equipos'){view.innerHTML=(settings.inscripcionesAbiertas!==fal
 
 
 else if(active==='zonas'){
- const informacion=`<p class="muted">El sorteo se realiza presencialmente por la Comisión mediante "papelitos" y/o bolillero. Registrá el resultado arrastrando cada equipo a su zona o usando el selector. La tabla solo se actualiza al confirmar.</p><div class="toolbar"><button class="secondary" id="refreshZonas">Actualizar zonas guardadas</button><span class="status" id="estadoZonas">${zonasRemotas?'Datos actualizados':'Pendiente de actualización'}</span></div>`;
+ const informacion=`<p class="muted">El sorteo se realiza presencialmente. Distribuí los equipos arrastrándolos o usando el selector. Los cambios solo se guardan al confirmar.</p><div class="toolbar"><button class="secondary" id="refreshZonas">Actualizar zonas guardadas</button><span class="status" id="estadoZonas">${zonasRemotas?'Datos actualizados':'Pendiente de actualización'}</span></div>`;
  const categoriasConEquipos=competenciasActivas();
- const controles=categoriasConEquipos.map(cat=>{const n=teams.filter(t=>claveCompetencia(t.categoria,t.genero)===cat).length,guardados=zonasParaCategoria(cat);
-  return `<div class="panel"><b class="cat-distintivo" style="background:${fxColorCategoria(cat)};color:#111">${esc(tituloCompetencia(cat))}</b><p class="muted">${n} equipos inscritos · definí manualmente la cantidad de zonas</p><label class="field">Cantidad de zonas<input type="number" id="count${esc(cat)}" min="0" max="${Math.max(1,Math.min(26,n))}" value="${zones[cat]?.length||0}"></label><p><button class="secondary" data-prepare="${cat}" ${n?'':'disabled'}>Preparar zonas</button></p><p class="status">${guardados.length?'● '+guardados.length+' equipos confirmados ':'Sin zonas confirmadas '}</p></div>`;
+ const controles=categoriasConEquipos.map(cat=>{const n=teams.filter(t=>claveCompetencia(t.categoria,t.genero)===cat).length;
+ return `<div class="nc-z01-control"><div class="nc-z01-control-top"><b class="cat-distintivo" style="background:${fxColorCategoria(competenciaDeClave(cat).categoria)};color:#111">${esc(tituloCompetencia(cat))}</b><span class="muted">${n} equipos</span></div><label class="field">Cantidad de zonas<input type="number" id="count${esc(cat)}" min="1" max="${Math.max(1,Math.min(26,n))}" value="${zones[cat]?.length||[...new Set(zonasParaCategoria(cat).map(r=>r.zona))].filter(Boolean).length||1}"></label><button class="secondary" data-prepare="${esc(cat)}">Preparar zonas</button></div>`;
  }).join('');
- const grupos=categoriasConEquipos.map(cat=>{const guardados=zonasParaCategoria(cat),actuales=zones[cat]||[];
-  const remotos=guardados.length?`<p class="status"><strong>Confirmado:</strong> ${[...new Set(guardados.map(r=>r.zona))].map(z=>`Zona ${esc(z)} (${guardados.filter(r=>r.zona===z).length})`).join(' · ')}</p>`:'';
-  return panel(tituloCompetencia(cat),remotos+(actuales.length?tableroManual(cat):'<div class="empty">Elegí la cantidad y pulsá Preparar zonas.</div>'));
+ const grupos=categoriasConEquipos.map(cat=>{
+ const confirmadas=ncZ01Confirmadas(cat),actuales=zones[cat]||[];
+ return panel(tituloCompetencia(cat),confirmadas+(actuales.length?`<div class="nc-z01-resumen"><strong>Borrador en edición</strong></div>`+tableroManual(cat):confirmadas?'':'<div class="empty">Elegí la cantidad de zonas y pulsá Preparar zonas.</div>'));
  }).join('');
- view.innerHTML=panel('Asignación manual de zonas · Sorteo presencial',informacion+(categoriasConEquipos.length?`<div class="form nc-zonas-tres-columnas">${controles}</div>`:'<p class="muted">Todavía no hay equipos inscriptos. Las categorías aparecerán al registrar equipos.</p>'))+grupos;
+ view.innerHTML=panel('Asignación manual de zonas · Sorteo presencial',informacion+(categoriasConEquipos.length?`<div class="nc-z01-controles">${controles}</div>`:'<p class="muted">Todavía no hay equipos inscriptos.</p>'))+grupos;
  document.querySelectorAll('[data-prepare]').forEach(b=>b.onclick=()=>createZones(b.dataset.prepare,Number(document.getElementById('count'+b.dataset.prepare).value)));
  document.querySelectorAll('[data-confirm-zones]').forEach(b=>b.onclick=()=>confirmarZonas(b.dataset.confirmZones));
  activarTableroManual();const refresh=$('#refreshZonas');if(refresh)refresh.onclick=consultarZonas;
