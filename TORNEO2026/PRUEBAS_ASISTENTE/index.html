@@ -3648,7 +3648,15 @@ function fx3Slots(){
   for(let c=1;c<=n;c++){
    const v=fx3Disponibilidad[i+1]?.[c];
    if(!v)throw Error('Falta horario de Jornada '+(i+1)+', Cancha '+c);
-   for(let m=Number(v.start);m+turno<=Number(v.end);m+=turno)
+   // Intersección obligatoria: jornada general y disponibilidad particular de la cancha.
+   const inicioJornada=minutosHora(d.inicio),finJornada=minutosHora(d.fin);
+   if(!Number.isFinite(inicioJornada)||!Number.isFinite(finJornada)||finJornada<=inicioJornada)
+    throw Error('Horario inválido de Jornada '+(i+1));
+   const desde=Math.max(inicioJornada,Number(v.start));
+   const hasta=Math.min(finJornada,Number(v.end));
+   if(!Number.isFinite(desde)||!Number.isFinite(hasta))
+    throw Error('Horario inválido de Cancha '+c+' en Jornada '+(i+1));
+   for(let m=desde;m+turno<=hasta;m+=turno)
     out.push({fecha:d.fecha,hora:horaMinutos(m),cancha:String(c),inicio:i*1440+m});
   }
  });
