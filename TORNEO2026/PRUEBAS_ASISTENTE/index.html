@@ -1436,6 +1436,13 @@ body[data-nc-theme=light] #view .nc-z01-confirmado{color:#167849}
 .nc-partidos-panel .nc-partidos-celda.nc-fixture-seleccionado{outline:2px solid #b6ff2e!important;outline-offset:-2px;box-shadow:0 0 0 1px #b6ff2e55!important;z-index:2}
 .nc-partidos-panel .nc-partidos-celda.nc-fixture-seleccionado.nc-fx-conflicto,.nc-partidos-panel .nc-partidos-celda.nc-fixture-seleccionado.nc-partidos-conflicto{outline-color:#ff5555!important}
 </style>
+<style id="nc-reloj-lateral-estilos">
+.app>aside .nc-reloj-lateral{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;margin:39px 0 0;padding:0 10px;text-align:center;color:#fff}
+.app>aside .nc-reloj-hora{font-family:Roboto,Arial,sans-serif;font-size:48px;line-height:1.05;font-weight:700;letter-spacing:-1px;font-variant-numeric:tabular-nums;color:#fff}
+.app>aside .nc-reloj-fecha{font-family:Roboto,Arial,sans-serif;font-size:11px;line-height:1.5;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:#a9b7b8}
+.app>aside nav#nav{margin-top:45px!important}
+@media(max-width:760px){.app>aside .nc-reloj-lateral{margin-top:22px}.app>aside nav#nav{margin-top:30px!important}}
+</style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
@@ -1477,7 +1484,21 @@ body[data-nc-theme=light] #view .nc-z01-confirmado{color:#167849}
         font-weight="600"
         letter-spacing="4">NEWCOM</text>
 
-</svg><img class="brand-photo" src="cabecera.jpg" alt="Pelota de newcom junto a la red" loading="eager"><small>Administración privada · <span class="year"></span></small></div><nav id="nav"></nav><div class="credit"><strong>Desarrollo</strong>Gisella Cerra<br>Diseñadora en Comunicación Visual<br>Tel.: <a href="tel:2920411544">2920411544</a></div></aside><main><header class="top"><div><div class="eyebrow">PANEL DE ADMINISTRACIÓN</div><h1 id="heading">Inicio</h1><div class="nombre-torneo" id="tournamentTitle"><span class="torneo-edicion">VI</span> <span class="torneo-nombre">Torneo Nacional de Newcom 2026</span></div></div><div class="nc-top-actions"><span class="pill">● Administración privada</span><button type="button" id="nc-fullscreen-toggle" class="nc-fullscreen-button" aria-label="Activar pantalla completa" title="Pantalla completa" aria-pressed="false"><svg class="nc-expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5"/></svg><svg class="nc-collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h5V3M21 8h-5V3M3 16h5v5M21 16h-5v5"/></svg></button></div></header><div id="view"></div></main></div>
+</svg><img class="brand-photo" src="cabecera.jpg" alt="Pelota de newcom junto a la red" loading="eager"><small>Administración privada · <span class="year"></span></small></div><div id="nc-reloj-lateral" class="nc-reloj-lateral" aria-label="Hora actual en Argentina"><div id="nc-reloj-hora" class="nc-reloj-hora">--:--</div><div id="nc-reloj-fecha" class="nc-reloj-fecha"></div></div><nav id="nav"></nav><div class="credit"><strong>Desarrollo</strong>Gisella Cerra<br>Diseñadora en Comunicación Visual<br>Tel.: <a href="tel:2920411544">2920411544</a></div></aside><main><header class="top"><div><div class="eyebrow">PANEL DE ADMINISTRACIÓN</div><h1 id="heading">Inicio</h1><div class="nombre-torneo" id="tournamentTitle"><span class="torneo-edicion">VI</span> <span class="torneo-nombre">Torneo Nacional de Newcom 2026</span></div></div><div class="nc-top-actions"><span class="pill">● Administración privada</span><button type="button" id="nc-fullscreen-toggle" class="nc-fullscreen-button" aria-label="Activar pantalla completa" title="Pantalla completa" aria-pressed="false"><svg class="nc-expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5"/></svg><svg class="nc-collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h5V3M21 8h-5V3M3 16h5v5M21 16h-5v5"/></svg></button></div></header><div id="view"></div></main></div>
+<script id="nc-reloj-lateral-script">
+(function(){
+  function actualizarReloj(){
+    var hora=document.getElementById('nc-reloj-hora');
+    var fecha=document.getElementById('nc-reloj-fecha');
+    if(!hora||!fecha)return;
+    var ahora=new Date();
+    hora.textContent=new Intl.DateTimeFormat('es-AR',{timeZone:'America/Argentina/Buenos_Aires',hour:'2-digit',minute:'2-digit',hour12:false}).format(ahora);
+    fecha.textContent=new Intl.DateTimeFormat('es-AR',{timeZone:'America/Argentina/Buenos_Aires',weekday:'long',day:'numeric',month:'long'}).format(ahora);
+  }
+  actualizarReloj();
+  setInterval(actualizarReloj,30000);
+})();
+</script>
 <script>function formatoPrecioBufet(valor){const texto=String(valor??'').trim();if(!texto)return '';const numero=Number(texto.replace(/\$/g,'').replace(/\s/g,'').replace(/\./g,'').replace(',','.'));return Number.isFinite(numero)?'$ '+numero.toLocaleString('es-AR',{maximumFractionDigits:2}):texto;}</script>
 <script>
 (function(){
