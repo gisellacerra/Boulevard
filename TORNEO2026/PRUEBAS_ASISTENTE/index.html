@@ -1748,15 +1748,22 @@ function fxPrioridadViajeA02(distancias){
  return {kmPorEquipo,faltantes};
 }
 function fxPenalizacionViajeA02(p,slot,contexto,turno){
- if(!contexto||slot.fecha!==contexto.primerDia)return 0;
- const kms=[contexto.kmPorEquipo.get(p.local),contexto.kmPorEquipo.get(p.visitante)]
-  .filter(v=>Number.isFinite(v));
- if(!kms.length)return 0;
- // Preferencia blanda: sin datos de hora de llegada no se prohíbe jugar.
- // Se penaliza progresivamente el primer y segundo turno del viernes para viajeros.
- const km=Math.max(...kms),turnosDesdeApertura=Math.max(0,(slot.inicio-contexto.primerInicio)/turno);
- if(km<=30||turnosDesdeApertura>=2)return 0;
- return Math.min(1000,km*1.5)*(2-turnosDesdeApertura);
+ if(!contexto)return 0;
+ const kmA=contexto.kmPorEquipo.get(p.local),kmB=contexto.kmPorEquipo.get(p.visitante);
+ // Sin datos no se presupone una distancia: se mantiene la asignación deportiva.
+ if(!Number.isFinite(kmA)||!Number.isFinite(kmB))return 0;
+ // Un partido con un equipo viajero se considera prioritario aunque su rival sea local.
+ const viajero=kmA>=120||kmB>=120;
+ const inicioDia=slot.inicio%1440;
+ const ventana=contexto.ventanasPorDia?.get(slot.fecha);
+ if(!ventana)return 0;
+ const [desde,hasta]=ventana;
+ const amplitud=Math.max(turno,hasta-desde-turno);
+ const progreso=Math.max(0,Math.min(1,(inicioDia-desde)/amplitud));
+ // Penalización blanda: viajeros (>=120 km) prefieren turnos anteriores,
+ // locales/cercanos (<120 km) prefieren cerrar CADA jornada.
+ // No reemplaza restricciones de descansos, canchas ni rondas.
+ return viajero ? Math.round(progreso*440) : Math.round((1-progreso)*440);
 }
 function fxCalcularPropuesta(partidos,slots,turno,canchas,semilla,contextoViaje){
  const pendientes=partidos.map((p,i)=>({...p,_orden:i}));
@@ -1819,7 +1826,7 @@ async function generarFixtureAutomatico(){
  let contextoViaje;
  try{
   const distancias=await fxLeerDistanciasA02();
-  contextoViaje={...fxPrioridadViajeA02(distancias),primerDia:fechas[0],primerInicio:minutosHora(ventanasTorneo()[0][0])};
+  contextoViaje={...fxPrioridadViajeA02(distancias),ventanasPorDia:new Map(fechas.map((f,d)=>[f,ventanasTorneo()[d].map(minutosHora)]))};
  }catch(e){avisoIntegrado('No se pudo consultar DISTANCIAS. No se generó ningún fixture: '+e.message);return}
  // Múltiples alternativas: se conserva la que programe más partidos y equilibre descansos.
  let mejor=null;
@@ -1833,7 +1840,7 @@ async function generarFixtureAutomatico(){
  fixture=mejor.partidos;fixtureZonasHuella=zonasRemotas.huella;
  try{localStorage.setItem('asistente_fixture_huella_zonas',fixtureZonasHuella)}catch(e){}
  settings.fechasEtapa10=fechas;fxNumeroPropuesta++;
- fxResumenPropuesta=(fxModoDistribucion==='inteligente'?'Distribución inteligente':'Canchas reservadas')+' · '+(partidos.length-mejor.faltantes)+' de '+partidos.length+' partidos programados · '+mejor.faltantes+' sin horario · Prioridad de viaje aplicada'+(contextoViaje.faltantes.length?' · '+contextoViaje.faltantes.length+' equipos sin distancia':'')+'.';
+ fxResumenPropuesta=(fxModoDistribucion==='inteligente'?'Distribución inteligente':'Canchas reservadas')+' · '+(partidos.length-mejor.faltantes)+' de '+partidos.length+' partidos programados · '+mejor.faltantes+' sin horario · Prioridad de regreso (≥120 km: turnos anteriores; locales: cierre) aplicada'+(contextoViaje.faltantes.length?' · '+contextoViaje.faltantes.length+' equipos sin distancia':'')+'.';
  saveDraft();render();
  if(mejor.faltantes)avisoIntegrado('Se programaron '+(partidos.length-mejor.faltantes)+' partidos; '+mejor.faltantes+' quedaron pendientes. Revisá las reservas o ampliá los horarios. No se puede confirmar hasta completarlos.');
 }
