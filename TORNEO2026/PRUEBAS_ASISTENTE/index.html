@@ -348,6 +348,18 @@ body[data-nc-theme="light"] .equipo-edit-modal input[type="file"]::file-selector
 
 #jsonFile::file-selector-button,#jsonFile::-webkit-file-upload-button{background:#bbf04a!important;color:#172017!important;border:1px solid #bbf04a!important;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;margin-right:12px}
 .nc-f01-frame-wrap button,.nc-fx-confirmacion button,.nc-ux-partidos button{font-weight:500}
+
+/* Vista unificada del fixture automático: legibilidad y franjas de categoría */
+.nc-partidos-panel .nc-partidos-contenido{min-height:100px;border-radius:9px;background:#222b2f;padding:12px 10px 12px 15px;box-sizing:border-box}
+.nc-partidos-panel .nc-partidos-equipo{min-height:30px;gap:9px}
+.nc-partidos-panel .nc-partidos-escudo{width:26px;height:26px;object-fit:contain;flex-shrink:0}
+.nc-partidos-panel .nc-partidos-nombre{font-size:13px;line-height:1.35;white-space:normal;overflow-wrap:anywhere;text-overflow:clip}
+.nc-partidos-panel .nc-partidos-slot{min-width:0;padding:3px}
+.nc-partidos-panel .nc-partidos-cab{background:#26363d;border-radius:7px}
+.nc-partidos-panel .nc-partidos-hora{font-weight:700}
+.nc-partidos-panel .nc-partidos-contenido[draggable=true]{cursor:grab}
+.nc-partidos-panel .nc-partidos-contenido[draggable=true]:active{cursor:grabbing}
+.nc-fx-confirmacion button:disabled{background:#343c3e!important;color:#b8c3c5!important;border:1px solid #556064!important;opacity:.8;cursor:default;box-shadow:none}
 </style><style>
 /* Ajustes exclusivos de notificaciones registradas */
 .notice { padding: 18px 20px 20px; }
@@ -3127,7 +3139,7 @@ return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ga
   const ganaB=!!ganador&&ganador===nombreNormal(b);
   const reloj=!fx3UltimaPropuesta&&!p._cruce&&!datosMarcador?`<button type="button" class="nc-partidos-reloj" title="Modificar horario o cancha" aria-label="Modificar horario o cancha" data-nc-reprogramar="${esc(encodeURIComponent(JSON.stringify({fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||''),local:a,visitante:b})))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button>`:'';
   const marcador=puntos?`<div class="nc-partidos-puntos" aria-label="Puntos por set: ${esc(puntos)}">${esc(puntos)}</div>`:'';
-  return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" ${!fx3UltimaPropuesta&&!p._cruce&&!datosMarcador?'draggable="true" data-nc-arrastrable="1"':''} role="button" tabindex="0" title="${fx3UltimaPropuesta?'Propuesta pendiente de confirmación':'Cargar o corregir resultado'}" ${fx3UltimaPropuesta?'data-nc-borrador':'data-nc-resultado'}="${esc(encodeURIComponent(JSON.stringify({cruce:!!p._cruce,instancia:p.instancia,partido:p.partido,genero:p.genero,fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}"><div class="nc-partidos-equipos">${p._cruce?`<div class="nc-cruce-etiqueta-fixture">${esc(p.instancia==='SEMIFINAL'?'Semifinal '+p.partido:p.instancia==='FINAL'?'Final':'Tercer puesto')}</div>`:''}<div class="nc-partidos-equipo">${iconoEquipo(a)}<span class="nc-partidos-nombre ${ganaA?'nc-partidos-ganador':''}">${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span class="nc-partidos-nombre ${ganaB?'nc-partidos-ganador':''}">${esc(b)}</span></div>${marcador}</div>${reloj}</div>`;
+  return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" ${!p._cruce&&!datosMarcador?'draggable="true" data-nc-arrastrable="1"':''} role="button" tabindex="0" title="${fx3UltimaPropuesta?'Propuesta pendiente de confirmación':'Cargar o corregir resultado'}" ${fx3UltimaPropuesta?'data-nc-borrador':'data-nc-resultado'}="${esc(encodeURIComponent(JSON.stringify({cruce:!!p._cruce,instancia:p.instancia,partido:p.partido,genero:p.genero,fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}"><div class="nc-partidos-equipos">${p._cruce?`<div class="nc-cruce-etiqueta-fixture">${esc(p.instancia==='SEMIFINAL'?'Semifinal '+p.partido:p.instancia==='FINAL'?'Final':'Tercer puesto')}</div>`:''}<div class="nc-partidos-equipo">${iconoEquipo(a)}<span class="nc-partidos-nombre ${ganaA?'nc-partidos-ganador':''}">${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span class="nc-partidos-nombre ${ganaB?'nc-partidos-ganador':''}">${esc(b)}</span></div>${marcador}</div>${reloj}</div>`;
 
  };
  const matriz=horarios.length?`<div class="nc-partidos-scroll"><div class="nc-partidos-matriz" style="--canchas:${cantidad}"><div class="nc-partidos-celda nc-partidos-cab">Horario</div>${Array.from({length:cantidad},(_,i)=>`<div class="nc-partidos-celda nc-partidos-cab">Cancha ${i+1}</div>`).join('')}${horarios.map(h=>`<div class="nc-partidos-celda nc-partidos-hora">${esc(h)}</div>${Array.from({length:cantidad},(_,i)=>`<div class="nc-partidos-slot" data-nc-slot-fecha="${esc(ncDiaFixtureSeleccionado)}" data-nc-slot-hora="${esc(h)}" data-nc-slot-cancha="${i+1}">${celda(partidosVisibles.find(p=>hora(p)===h&&cancha(p)===i+1))}</div>`).join('')}`).join('')}</div></div>`:'<p class="muted">No hay partidos cargados para esta jornada.</p>';
@@ -3433,13 +3445,31 @@ function ncFxPintarArrastre(){
  };
 }
 
+// El borrador automático se modifica localmente. Nunca escribe en el fixture publicado.
+function ncFxMoverBorrador(origen,destino){
+ try{
+  const info=JSON.parse(decodeURIComponent(origen));
+  const coincide=p=>String(p.categoria||'').replace(/^\+/, '')===String(info.categoria||'').replace(/^\+/, '')&&String(p.local||p.equipoA)===String(info.local)&&String(p.visitante||p.equipoB)===String(info.visitante)&&ncFxFecha(p.fecha)===info.fecha&&String(p.hora).slice(0,5)===info.hora&&Number(p.cancha)===Number(info.cancha);
+  const i=fixture.findIndex(coincide);if(i<0)throw Error('No se encontró el partido en el borrador.');
+  if(ncFxFijo(fixture[i]))throw Error('Este partido está protegido o tiene resultado.');
+  const j=fixture.findIndex((p,k)=>k!==i&&ncFxFecha(p.fecha)===destino.fecha&&String(p.hora).slice(0,5)===destino.hora&&Number(p.cancha)===Number(destino.cancha));
+  if(j>=0&&ncFxFijo(fixture[j]))throw Error('El destino contiene un partido protegido.');
+  const previo=fixture.map(p=>({...p}));
+  const origenPos={fecha:fixture[i].fecha,hora:fixture[i].hora,cancha:fixture[i].cancha};
+  fixture[i]={...fixture[i],fecha:destino.fecha,hora:destino.hora,cancha:String(destino.cancha)};
+  if(j>=0)fixture[j]={...fixture[j],...origenPos};
+  const errores=validarFixtureEtapa10();
+  if(errores.length){fixture=previo;avisoIntegrado('Movimiento cancelado: '+errores[0]);return}
+  saveDraft();render();avisoIntegrado(j>=0?'Partidos intercambiados en el borrador.':'Partido movido en el borrador.');
+ }catch(e){avisoIntegrado(e.message||String(e))}
+}
 let ncArrastreOrigen=null;
 function ncEnlazarArrastreFixture(){
  const panel=document.querySelector('.nc-partidos-panel');if(!panel)return;
  panel.querySelectorAll('[data-nc-arrastrable]').forEach(celda=>{
   celda.addEventListener('dragstart',e=>{
-   const reloj=celda.querySelector('[data-nc-reprogramar]');if(!reloj){e.preventDefault();return}
-   ncArrastreOrigen=reloj.dataset.ncReprogramar;
+   const reloj=celda.querySelector('[data-nc-reprogramar], [data-nc-borrador]');if(!reloj){e.preventDefault();return}
+   ncArrastreOrigen=reloj.dataset.ncReprogramar||reloj.dataset.ncBorrador;
    e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',ncArrastreOrigen);
    celda.classList.add('nc-partidos-arrastrando');panel.classList.add('nc-partidos-modo-arrastre');
   });
@@ -3454,7 +3484,7 @@ function ncEnlazarArrastreFixture(){
    const origen=ncArrastreOrigen||e.dataTransfer.getData('text/plain');ncArrastreOrigen=null;if(!origen)return;
    const fecha=slot.dataset.ncSlotFecha,hora=slot.dataset.ncSlotHora,cancha=slot.dataset.ncSlotCancha;
    const reloj=document.createElement('button');reloj.dataset.ncReprogramar=origen;
-   ncFxArrastrar(origen,{fecha,hora,cancha});
+   if(fx3UltimaPropuesta)ncFxMoverBorrador(origen,{fecha,hora,cancha});else ncFxArrastrar(origen,{fecha,hora,cancha});
   });
  });
 }
@@ -3573,7 +3603,7 @@ else if(active==='zonas'){
 }
 else if(active==='fixture'){view.innerHTML=`<section class="nc-f01-choice"><h2>Elegí cómo organizar los partidos</h2><p>Seleccioná la modalidad de programación del torneo.</p><div class="nc-f01-choice-grid"><button type="button" data-fixture-mode="fixture-auto"><span class="nc-f01-choice-icon">▦</span><strong>Fixture automático</strong><small>Preparar y organizar partidos según la configuración del torneo.</small></button><button type="button" data-fixture-mode="fixture-abierto"><span class="nc-f01-choice-icon">▤</span><strong>Fixture abierto</strong><small>Crear y organizar libremente partidos en un borrador independiente.</small><em>En desarrollo · no publica partidos</em></button></div></section>`;view.querySelectorAll('[data-fixture-mode]').forEach(b=>b.onclick=()=>navigate(b.dataset.fixtureMode));}
 else if(active==='fixture-abierto'){view.innerHTML='<button type="button" class="secondary nc-f01-return" id="nc-f01-return">← Volver a modalidades</button><div class="nc-f01-frame-wrap"><p class="nc-f01-warning">Modo borrador: podés guardar y recuperar en tabla de datos. No modifica el fixture automático ni publica partidos.</p><iframe id="nc-f01-frame" title="Fixture abierto · prototipo interactivo" scrolling="no" style="display:block;width:100%;height:1050px;border:0;border-radius:12px;background:#191c1d;overflow:hidden"></iframe></div>';document.getElementById('nc-f01-frame').srcdoc=NC_F01_PROTOTIPO_HTML.replace('</head>','<style>#hoursToggle,#hoursPanel{display:none!important}</style></head>');consultarZonas();document.getElementById('nc-f01-return').onclick=()=>navigate('fixture');}
-else if(active==='fixture-auto'){const hayFixture=fixture.length>0;view.innerHTML=`<section class="nc-ux-config"><details class="nc-ux-config-detalle" ${(ncConfiguracionFixtureAbierta===null?!hayFixture:ncConfiguracionFixtureAbierta)?'open':''}><summary class="nc-ux-config-cabecera"><span class="nc-ux-config-numero">1</span><span class="nc-ux-config-textos"><strong>Configuración inicial de jornadas y canchas</strong><small>${hayFixture?'Ya hay una propuesta de fixture. Abrí esta sección solamente si necesitás revisar la configuración inicial.':'Empezá aquí: definí fechas, horarios y canchas antes de generar el fixture.'}</small></span><span class="nc-ux-config-estado">${hayFixture?'Ver configuración':'Primer paso'}</span></summary><div class="nc-ux-config-contenido">${renderFixtureEtapa10()}</div></details></section><section class="nc-ux-partidos"><div class="nc-ux-partidos-encabezado"><span class="nc-ux-config-numero">2</span><div><h2>Fixture y programación de partidos</h2><p>${fx3UltimaPropuesta?'Revisá la propuesta y confirmá el fixture para habilitar la carga de resultados.':hayFixture?'Arrastrá un partido pendiente o usá su reloj para modificar la programación.':'Prepará una propuesta para revisar los partidos.'}</p></div></div>${fx3AvisoCambio()?'<div class="fx3-aviso" role="status">La configuración cambió desde que se preparó esta propuesta. Los partidos se conservan sin cambios. Si querés aplicar los nuevos horarios, elegí «Regenerar propuesta».</div>':''}${fx3UltimaPropuesta?`<div class="nc-fx-confirmacion"><span>Propuesta sin confirmar · ${fixture.length} partidos</span><button class="secondary" type="button" id="nc-fx-repreparar">Volver a preparar propuesta</button><button class="primary" type="button" id="et11Save" ${fixture.some(p=>!p.fecha||!p.hora||!p.cancha)||validarFixtureEtapa10().length?'disabled':''}>Confirmar fixture</button></div>`:''}${ncVistaJornadasFixture()}</section>`;document.getElementById('nc-fx-repreparar')?.addEventListener('click',fx3PrepararConZonas);activarFixtureEtapa10();ncEnlazarJornadasFixture();view.insertAdjacentHTML('afterbegin','<button type="button" class="secondary nc-f01-return" id="nc-f01-return-auto">← Volver a modalidades</button>');document.getElementById('nc-f01-return-auto').onclick=()=>navigate('fixture');} 
+else if(active==='fixture-auto'){const hayFixture=fixture.length>0;view.innerHTML=`<section class="nc-ux-config"><details class="nc-ux-config-detalle" ${(ncConfiguracionFixtureAbierta===null?!hayFixture:ncConfiguracionFixtureAbierta)?'open':''}><summary class="nc-ux-config-cabecera"><span class="nc-ux-config-numero">1</span><span class="nc-ux-config-textos"><strong>Configuración inicial de jornadas y canchas</strong><small>${hayFixture?'Ya hay una propuesta de fixture. Abrí esta sección solamente si necesitás revisar la configuración inicial.':'Empezá aquí: definí fechas, horarios y canchas antes de generar el fixture.'}</small></span><span class="nc-ux-config-estado">${hayFixture?'Ver configuración':'Primer paso'}</span></summary><div class="nc-ux-config-contenido">${renderFixtureEtapa10()}</div></details></section><section class="nc-ux-partidos"><div class="nc-ux-partidos-encabezado"><span class="nc-ux-config-numero">2</span><div><h2>Fixture y programación de partidos</h2><p>${fx3UltimaPropuesta?'Revisá la propuesta y confirmá el fixture para habilitar la carga de resultados.':hayFixture?'Arrastrá un partido pendiente o usá su reloj para modificar la programación.':'Prepará una propuesta para revisar los partidos.'}</p></div></div>${fx3AvisoCambio()?'<div class="fx3-aviso" role="status">La configuración cambió desde que se preparó esta propuesta. Los partidos se conservan sin cambios. Si querés aplicar los nuevos horarios, elegí «Regenerar propuesta».</div>':''}${fixture.length?`<div class="nc-fx-confirmacion"><span>${fx3UltimaPropuesta?'Propuesta sin confirmar · '+fixture.length+' partidos':'✓ Fixture confirmado'}</span><button class="${fx3UltimaPropuesta?'primary':'secondary'}" type="button" id="et11Save" ${!fx3UltimaPropuesta||fixture.some(p=>!p.fecha||!p.hora||!p.cancha)||validarFixtureEtapa10().length?'disabled':''}>${fx3UltimaPropuesta?'Confirmar fixture':'✓ Fixture confirmado'}</button></div>`:''}${ncVistaJornadasFixture()}</section>`;activarFixtureEtapa10();ncEnlazarJornadasFixture();view.insertAdjacentHTML('afterbegin','<button type="button" class="secondary nc-f01-return" id="nc-f01-return-auto">← Volver a modalidades</button>');document.getElementById('nc-f01-return-auto').onclick=()=>navigate('fixture');} 
  else if(active==='resumen'){
  const partidos=resultados12Partidos();const jugados=partidos.filter(p=>!!resultados12Existente(p)).length;
  const competencias=new Set(teams.map(t=>claveCompetencia(t.categoria,t.genero)));
