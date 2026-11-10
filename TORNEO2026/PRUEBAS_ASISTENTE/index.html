@@ -360,6 +360,10 @@ body[data-nc-theme="light"] .equipo-edit-modal input[type="file"]::file-selector
 .nc-partidos-panel .nc-partidos-contenido[draggable=true]{cursor:grab}
 .nc-partidos-panel .nc-partidos-contenido[draggable=true]:active{cursor:grabbing}
 .nc-fx-confirmacion button:disabled{background:#343c3e!important;color:#b8c3c5!important;border:1px solid #556064!important;opacity:.8;cursor:default;box-shadow:none}
+
+/* Identificación visual de partidos: mismo índice que utiliza el validador del fixture. */
+.nc-partidos-panel .nc-partidos-contenido.nc-partidos-con-franja{padding-top:26px!important}
+.nc-partidos-numero{position:absolute;top:5px;right:8px;font-size:10px;line-height:1.25;font-weight:700;color:#c7d3d7;background:#344147;border:1px solid #4d5d62;border-radius:5px;padding:2px 6px;pointer-events:none;z-index:1}
 </style><style>
 /* Ajustes exclusivos de notificaciones registradas */
 .notice { padding: 18px 20px 20px; }
@@ -3439,6 +3443,7 @@ function ncVistaJornadasFixture(){
 return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ganador||'')};
 
  };
+ const numeroVisiblePartido=p=>{if(p._cruce)return '';const i=base.indexOf(p);return i>=0?String(i+1):''};
  const celda=p=>{if(!p)return '<div class="nc-partidos-celda nc-partidos-vacio nc-partidos-destino" title="Soltá aquí un partido pendiente">＋</div>';
   const a=String(p.equipoA||p.local||p.equipo1||'Equipo A'),b=String(p.equipoB||p.visitante||p.equipo2||'Equipo B');
   const datosMarcador=p._cruce?(()=>{
@@ -3453,8 +3458,10 @@ return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ga
   const ganaB=!!ganador&&ganador===nombreNormal(b);
   // El reloj se elimina de la grilla: la tarjeta completa selecciona el partido.
   const reloj='';
+  const numeroPartido=numeroVisiblePartido(p);
+  const insigniaPartido=numeroPartido?`<span class="nc-partidos-numero" aria-label="Partido número ${numeroPartido}" title="Partido N.º ${numeroPartido}">N.º ${numeroPartido}</span>`:'';
   const marcador=puntos?`<div class="nc-partidos-puntos" aria-label="Puntos por set: ${esc(puntos)}">${esc(puntos)}</div>`:'';
-  return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" ${!p._cruce&&!datosMarcador?'draggable="true" data-nc-arrastrable="1"':''} role="button" tabindex="0" title="${fx3UltimaPropuesta?'Seleccionar partido del borrador':'Seleccionar partido para editar'}" ${fx3UltimaPropuesta?'data-nc-borrador':'data-nc-resultado'}="${esc(encodeURIComponent(JSON.stringify({cruce:!!p._cruce,instancia:p.instancia,partido:p.partido,genero:p.genero,fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}"><div class="nc-partidos-equipos">${p._cruce?`<div class="nc-cruce-etiqueta-fixture">${esc(p.instancia==='SEMIFINAL'?'Semifinal '+p.partido:p.instancia==='FINAL'?'Final':'Tercer puesto')}</div>`:''}<div class="nc-partidos-equipo">${iconoEquipo(a)}<span class="nc-partidos-nombre ${ganaA?'nc-partidos-ganador':''}">${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span class="nc-partidos-nombre ${ganaB?'nc-partidos-ganador':''}">${esc(b)}</span></div>${marcador}</div>${reloj}</div>`;
+  return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" ${!p._cruce&&!datosMarcador?'draggable="true" data-nc-arrastrable="1"':''} role="button" tabindex="0" title="${fx3UltimaPropuesta?'Seleccionar partido del borrador':'Seleccionar partido para editar'}" ${fx3UltimaPropuesta?'data-nc-borrador':'data-nc-resultado'}="${esc(encodeURIComponent(JSON.stringify({cruce:!!p._cruce,instancia:p.instancia,partido:p.partido,genero:p.genero,fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}">${insigniaPartido}<div class="nc-partidos-equipos">${p._cruce?`<div class="nc-cruce-etiqueta-fixture">${esc(p.instancia==='SEMIFINAL'?'Semifinal '+p.partido:p.instancia==='FINAL'?'Final':'Tercer puesto')}</div>`:''}<div class="nc-partidos-equipo">${iconoEquipo(a)}<span class="nc-partidos-nombre ${ganaA?'nc-partidos-ganador':''}">${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span class="nc-partidos-nombre ${ganaB?'nc-partidos-ganador':''}">${esc(b)}</span></div>${marcador}</div>${reloj}</div>`;
 
  };
  const matriz=horarios.length?`<div class="nc-partidos-scroll"><div class="nc-partidos-matriz" style="--canchas:${cantidad}"><div class="nc-partidos-celda nc-partidos-cab">Horario</div>${Array.from({length:cantidad},(_,i)=>`<div class="nc-partidos-celda nc-partidos-cab">Cancha ${i+1}</div>`).join('')}${horarios.map(h=>`<div class="nc-partidos-celda nc-partidos-hora">${esc(h)}</div>${Array.from({length:cantidad},(_,i)=>`<div class="nc-partidos-slot" data-nc-slot-fecha="${esc(ncDiaFixtureSeleccionado)}" data-nc-slot-hora="${esc(h)}" data-nc-slot-cancha="${i+1}">${celda(partidosVisibles.find(p=>hora(p)===h&&cancha(p)===i+1))}</div>`).join('')}`).join('')}</div></div>`:'<p class="muted">No hay partidos cargados para esta jornada.</p>';
