@@ -3916,17 +3916,96 @@ function fx3Slots(){
 }
 function fx3Clave(p){return [p.categoria,p.genero,p.zona,p.ronda,p.local,p.visitante].join('|')}
 function fx3Proponer(partidos,fijos=[],corte=""){const slots=fx3Slots().filter(s=>fx3Dias.slice(0,2).some(d=>d.fecha===s.fecha)&&(!corte||(s.fecha+"T"+s.hora)>=corte)),turno=fx3Turno(),n=Number(settings.canchas),ocupados=new Set(fijos.map(p=>p.fecha+'|'+p.hora+'|'+p.cancha)),inicio=new Map();const comp=(p)=>fxComp(p);const posicion=(p)=>fx3Dias.findIndex(d=>d.fecha===p.fecha)*1440+minutosHora(p.hora);for(const p of fijos){const t=posicion(p);if(t<0)continue;for(const nombre of [p.local,p.visitante]){const key=comp(p)+'|'+nombre;if(!inicio.has(key))inicio.set(key,[]);inicio.get(key).push(t)}}const pendientes=partidos.map(p=>({...p})),asignados=[];for(const slot of slots){if(ocupados.has(slot.fecha+'|'+slot.hora+'|'+slot.cancha))continue;let candidato=-1,mejor=Infinity;for(let i=0;i<pendientes.length;i++){const p=pendientes[i],clave=comp(p);if([p.local,p.visitante].some(nombre=>{const tiempos=inicio.get(clave+'|'+nombre)||[];return tiempos.some(t=>Math.abs(slot.inicio-t)<2*turno)||tiempos.filter(t=>Math.floor(t/1440)===Math.floor(slot.inicio/1440)).length>=3}))continue;const puntaje=(Number(p.ronda)||1)*100+(i%19);if(puntaje<mejor){mejor=puntaje;candidato=i}}if(candidato<0)continue;const p=pendientes.splice(candidato,1)[0];asignados.push({...p,fecha:slot.fecha,hora:slot.hora,cancha:slot.cancha});for(const nombre of [p.local,p.visitante]){const key=comp(p)+'|'+nombre;if(!inicio.has(key))inicio.set(key,[]);inicio.get(key).push(slot.inicio)}}return [...fijos,...asignados,...pendientes.map(p=>({...p,fecha:'',hora:'',cancha:''}))]}
+// Planificador de rescate: vuelve a distribuir los partidos desde cero con
+// varios órdenes deterministas. Prioriza COMPLETAR los partidos antes de
+// optimizar los regresos. No utiliza la jornada 3.
+function fx3ProponerCompleto(partidos,contexto,propuestaInicial){
+ const turno=fx3Turno(), canchas=Number(settings.canchas);
+ const slots=fx3Slots().filter(s=>fx3Dias.slice(0,2).some(d=>d.fecha===s.fecha));
+ const mejorInicial=propuestaInicial||fx3Proponer(partidos);
+ let mejor=mejorInicial,mejorFaltan=mejor.filter(p=>!p.fecha).length;
+ if(!mejorFaltan)return mejor;
+ const equipos=p=>[fxComp(p)+'|'+p.local,fxComp(p)+'|'+p.visitante];
+ const indiceDia=s=>fx3Dias.findIndex(d=>d.fecha===s.fecha);
+ const todas=partidos.map((p,i)=>({...p,_indice:i,_equipos:equipos(p)}));
+ const indicesSlots=slots.map(s=>({...s,_dia:indiceDia(s),_min:minutosHora(s.hora)}));
+ const porEquipo=new Map();
+ for(const p of todas)for(const eq of p._equipos)porEquipo.set(eq,(porEquipo.get(eq)||0)+1);
+ let mejorCosto=Infinity;
+ // Semillas fijas: una misma configuración produce resultados reproducibles.
+ for(let intento=0;intento<320;intento++){
+  let semilla=(0x9e3779b9+intento*7919)>>>0;
+  const aleatorio=()=>{semilla^=semilla<<13;semilla^=semilla>>>17;semilla^=semilla<<5;return (semilla>>>0)/4294967296};
+  const pendientes=todas.slice(),asignados=[],ocupados=new Map(),usos=new Map();
+  const esValido=(p,s)=>{
+   if(ocupados.has(s.fecha+'|'+s.hora+'|'+s.cancha))return false;
+   if(!fxCanchasPermitidas(fxComp(p),canchas).includes(String(s.cancha)))return false;
+   for(const eq of p._equipos){
+    const lista=usos.get(eq)||[];
+    if(lista.filter(x=>x._dia===s._dia).length>=3)return false;
+    if(lista.some(x=>x._dia===s._dia&&Math.abs(x._min-s._min)<2*turno))return false;
+   }
+   // Comprobar solapamiento real por cancha, incluso con slots desfasados.
+   for(const q of asignados){
+    if(q.fecha===s.fecha&&String(q.cancha)===String(s.cancha)&&Math.abs(minutosHora(q.hora)-s._min)<turno)return false;
+   }
+   return true;
+  };
+  // Intercalar jornadas para no agotar los cupos de tres partidos por equipo
+  // en la primera jornada; alterar levemente el orden en cada intento.
+  const orden=indicesSlots.slice().sort((a,b)=>{
+   const ma=a._min+(a._dia===0?0:((intento%5)-2)*turno);
+   const mb=b._min+(b._dia===0?0:((intento%5)-2)*turno);
+   return ma-mb||a._dia-b._dia||Number(a.cancha)-Number(b.cancha);
+  });
+  for(const slot of orden){
+   let opciones=[];
+   for(const p of pendientes){
+    if(!esValido(p,slot))continue;
+    const kmA=contexto?.kmPorEquipo?.get(p.local),kmB=contexto?.kmPorEquipo?.get(p.visitante);
+    const viajero=kmA>=120||kmB>=120;
+    const urgencia=p._equipos.reduce((v,eq)=>v+(porEquipo.get(eq)||0)*2+(usos.get(eq)||[]).length*3,0);
+    const ronda=Number(p.ronda)||1;
+    const progreso=slot._min/1440;
+    const sesgoViaje=viajero?progreso*10:(1-progreso)*10;
+    const puntuacion=ronda*6+sesgoViaje-urgencia*0.45+aleatorio()*(4+(intento%11)*1.8);
+    opciones.push({p,puntuacion});
+   }
+   if(!opciones.length)continue;
+   opciones.sort((a,b)=>a.puntuacion-b.puntuacion);
+   // Variar entre los mejores candidatos para escapar del mismo bloqueo.
+   const rango=Math.min(opciones.length,1+(intento%7));
+   const elegido=opciones[Math.floor(aleatorio()*rango)].p;
+   pendientes.splice(pendientes.indexOf(elegido),1);
+   const q={...elegido,fecha:slot.fecha,hora:slot.hora,cancha:slot.cancha};
+   asignados.push(q);ocupados.set(slot.fecha+'|'+slot.hora+'|'+slot.cancha,true);
+   for(const eq of elegido._equipos){if(!usos.has(eq))usos.set(eq,[]);usos.get(eq).push(slot)}
+   if(!pendientes.length)break;
+  }
+  const faltan=pendientes.length;
+  if(faltan<mejorFaltan){
+   mejorFaltan=faltan;
+   mejor=[...asignados,...pendientes].sort((a,b)=>a._indice-b._indice).map(({_indice,_equipos,...p})=>p);
+  }
+  if(faltan===0){
+   const costo=fxCostoRegresoA02(mejor,contexto);
+   if(costo<mejorCosto)mejorCosto=costo;
+   break;
+  }
+ }
+ return mejor;
+}
 async function fx3Preparar(reprogramacion=false){if(!fx3ValidarDias())return;try{await fx3CargarDisponibilidad()}catch(e){avisoIntegrado(e.message||String(e));return}fx3GuardarDias();fxModoDistribucion='inteligente';if(!Number.isInteger(Number(settings.canchas))||Number(settings.canchas)<1||!Number.isFinite(fx3Turno())||fx3Turno()<=0){avisoIntegrado('Revisá canchas, duración e intervalo en Configuración.');return}if(!reprogramacion){if(!zonasRemotas){avisoIntegrado('Primero deben estar disponibles las zonas confirmadas desde tabla de respaldo.');consultarZonas();return}let partidos;try{partidos=partidosConfirmadosFixture()}catch(e){avisoIntegrado(e.message);return}if(!partidos.length){avisoIntegrado('No hay partidos provenientes de zonas confirmadas.');return}const prev=fixture.slice();const fijados=prev.filter(p=>p.resultado||p.estado==='FINALIZADO'||p.protegido||p.bloqueado);if(fijados.length){avisoIntegrado('Hay partidos con resultados o protegidos. Para conservarlos, utilizá «Reorganizar partidos pendientes».');return}const distancias=await fxLeerDistanciasA02();
 const contexto={...fxPrioridadViajeA02(distancias),ventanasPorDia:new Map(fx3Dias.slice(0,2).map(d=>[d.fecha,[minutosHora(d.inicio),minutosHora(d.fin)]]))};
 const sinDistancia=partidos.flatMap(p=>[p.local,p.visitante]).filter((n,i,a)=>a.indexOf(n)===i&&!contexto.kmPorEquipo.has(n));
 if(sinDistancia.length){avisoIntegrado('No se generó el fixture: faltan distancias para '+sinDistancia.length+' equipos: '+sinDistancia.join(', ')+'. Revisá localidad y provincia en Equipos y DISTANCIAS.');return}
-const propuesta=fx3Proponer(partidos);
+const propuesta=fx3ProponerCompleto(partidos,contexto,fx3Proponer(partidos));
 const antes=fxCostoRegresoA02(propuesta,contexto);
 fixture=fxOptimizarRegresosA02(propuesta,contexto,fx3Turno(),Number(settings.canchas),fx3Slots().filter(s=>fx3Dias.slice(0,2).some(d=>d.fecha===s.fecha)));
 const despues=fxCostoRegresoA02(fixture,contexto);
 const cambios=fixture.filter((p,i)=>p.fecha!==propuesta[i].fecha||p.hora!==propuesta[i].hora||String(p.cancha)!==String(propuesta[i].cancha)).length;
 fxResumenPropuesta='Distancias comprobadas: '+contexto.kmPorEquipo.size+' equipos · '+cambios+' partidos reubicados · '+(fixture.filter(p=>p.fecha&&p.hora).length)+' de '+partidos.length+' programados · mejora de regreso: '+Math.round(antes-despues)+' puntos.';
-fixtureZonasHuella=zonasRemotas.huella;fx3EsReprogramacion=false;}else{fx3Leer();if(!fx3CorteFecha||!fx3CorteHora){avisoIntegrado('Indicá fecha y hora desde las que reorganizar.');return}if(!fixture.length){avisoIntegrado('Primero generá una propuesta de fixture.');return}const corte=fx3CorteFecha+'T'+fx3CorteHora;const fijos=[],pendientes=[];for(const p of fixture){const protegido=p.resultado||p.estado==='FINALIZADO'||p.protegido||p.bloqueado;const anterior=p.fecha&&p.hora&&(p.fecha+'T'+p.hora)<corte;if(protegido||(fx3Conservar&&anterior))fijos.push(p);else pendientes.push(p)}const nuevos=fx3Proponer(pendientes,fijos,corte);const fuera=nuevos.filter(p=>!fijos.includes(p)&&p.fecha&&p.hora&&(p.fecha+'T'+p.hora)<corte);if(fuera.length){avisoIntegrado('No se puede reprogramar: algunos partidos quedarían antes de la fecha y hora indicadas.');return}fixture=nuevos;fx3EsReprogramacion=true;}fx3UltimaPropuesta=true;fx3HuellaGenerada=fx3HuellaActual();ncConfiguracionFixtureAbierta=false;const config=document.querySelector('.nc-ux-config-detalle');if(config)config.open=false;saveDraft();render();const faltan=fixture.filter(p=>!p.fecha).length;if(faltan)avisoIntegrado('Quedaron '+faltan+' partidos sin horario. No confirmes hasta resolver la capacidad disponible.');}
+fixtureZonasHuella=zonasRemotas.huella;fx3EsReprogramacion=false;}else{fx3Leer();if(!fx3CorteFecha||!fx3CorteHora){avisoIntegrado('Indicá fecha y hora desde las que reorganizar.');return}if(!fixture.length){avisoIntegrado('Primero generá una propuesta de fixture.');return}const corte=fx3CorteFecha+'T'+fx3CorteHora;const fijos=[],pendientes=[];for(const p of fixture){const protegido=p.resultado||p.estado==='FINALIZADO'||p.protegido||p.bloqueado;const anterior=p.fecha&&p.hora&&(p.fecha+'T'+p.hora)<corte;if(protegido||(fx3Conservar&&anterior))fijos.push(p);else pendientes.push(p)}const nuevos=fx3Proponer(pendientes,fijos,corte);const fuera=nuevos.filter(p=>!fijos.includes(p)&&p.fecha&&p.hora&&(p.fecha+'T'+p.hora)<corte);if(fuera.length){avisoIntegrado('No se puede reprogramar: algunos partidos quedarían antes de la fecha y hora indicadas.');return}fixture=nuevos;fx3EsReprogramacion=true;}fx3UltimaPropuesta=true;fx3HuellaGenerada=fx3HuellaActual();ncConfiguracionFixtureAbierta=false;const config=document.querySelector('.nc-ux-config-detalle');if(config)config.open=false;saveDraft();render();const faltan=fixture.filter(p=>!p.fecha).length;if(faltan){const nombres=fixture.filter(p=>!p.fecha).map(p=>p.local+' vs. '+p.visitante).join('; ');avisoIntegrado('Quedaron '+faltan+' partidos sin horario: '+nombres+'. No confirmes el fixture.');}}
 function fx3Tabla(){const canchas=Math.max(1,Number(settings.canchas)||1),dias=fx3Dias.map(d=>d.fecha);return dias.map((dia,idx)=>{const partidos=fixture.filter(p=>p.fecha===dia).sort((a,b)=>a.hora.localeCompare(b.hora)||Number(a.cancha)-Number(b.cancha));const horas=[...new Set(partidos.map(p=>p.hora))].sort();return `<h3>Jornada ${idx+1} · ${esc(dia)} · ${esc(fx3Dias[idx].inicio)} a ${esc(fx3Dias[idx].fin)}</h3><div class="fx3-tabla"><table><thead><tr><th>Horario</th>${Array.from({length:canchas},(_,i)=>`<th>Cancha ${i+1}</th>`).join('')}</tr></thead><tbody>${horas.map(h=>`<tr><td><strong>${esc(h)}</strong></td>${Array.from({length:canchas},(_,i)=>{const p=partidos.find(p=>p.hora===h&&Number(p.cancha)===i+1);return `<td>${p?`${fxEtiquetaCategoria(p.categoria)} ${esc(p.local)} vs ${esc(p.visitante)}`:'—'}</td>`}).join('')}</tr>`).join('')||`<tr><td colspan="${canchas+1}">Sin partidos programados</td></tr>`}</tbody></table></div>`}).join('')}
 renderFixtureEtapa10=function(){fx3Inicializar();const tit=['Fechas y horarios','Datos del torneo','Vista previa'];const base=`<div class="fx3"><div class="fx3-steps">${tit.map((t,i)=>`<div class="fx3-step ${i===fx3Paso?'actual':i<fx3Paso?'hecho':''}">${i+1}. ${t}</div>`).join('')}</div>`;let html='';if(fx3Paso===0)html=`<h2>1. Configuración de jornadas y canchas</h2><p class="muted">Los horarios se administran exclusivamente en Configuración → Horarios por cancha. Aquí no se pueden modificar.</p>${fx3Dias.map((d,i)=>`<div class="fx3-dia"><strong>Jornada ${i+1} · ${esc(d.fecha)}</strong><p class="muted">Las cuatro canchas utilizarán sus propios horarios guardados en la tabla de datos.</p></div>`).join('')}<p class="muted">Para modificar fechas u horarios, ingresá a Configuración antes de generar la propuesta.</p>`;if(fx3Paso===1)html=`<h2>2. Estos son los datos de tu torneo</h2><p class="muted">Se toman automáticamente de la configuración y de los equipos inscriptos.</p><div class="fx3-resumen"><div class="fx3-dato"><small>Equipos inscriptos</small><strong>${teams.length} equipos</strong></div><div class="fx3-dato"><small>Canchas habilitadas</small><strong>${esc(settings.canchas)} canchas</strong></div><div class="fx3-dato"><small>Duración de los sets / juego</small><strong>${esc(settings.duracion)} minutos</strong></div><div class="fx3-dato"><small>Intervalo configurado</small><strong>${esc(settings.intervalo)} minutos</strong></div></div>`;if(fx3Paso===2){const faltantes=fixture.filter(p=>!p.fecha||!p.hora||!p.cancha).length;const errores=fixture.length?validarFixtureEtapa10():[];html=`<h2>3. Revisá la propuesta de fixture</h2><p class="muted">Esta sección se utiliza para generar el calendario inicial. Durante el torneo, modificá los partidos pendientes directamente desde la grilla.</p><div class="fx3-resumen"><div class="fx3-dato"><small>Equipos</small><strong>${teams.length}</strong></div><div class="fx3-dato"><small>Canchas</small><strong>${esc(settings.canchas)}</strong></div><div class="fx3-dato"><small>Jornadas</small><strong>3</strong></div><div class="fx3-dato"><small>Reglas de juego</small><strong>${esc(settings.duracion)} + ${esc(settings.intervalo)} min</strong></div></div>${fixture.length?`<p class="muted">${fixture.length-faltantes} de ${fixture.length} partidos con horario · ${faltantes} pendientes.</p>${fxResumenPropuesta?`<p class="status">${esc(fxResumenPropuesta)}</p>`:''}${fx3Tabla()}${errores.length?`<div class="fx3-aviso"><strong>${errores.length} observaciones por resolver</strong><ul>${errores.slice(0,12).map(e=>`<li>${esc(e)}</li>`).join('')}</ul></div>`:'<div class="fx3-aviso">Sin conflictos detectados por el validador del asistente.</div>'}`:''}</div>`}return panel('Administración de partidos y canchas',base+html+`<div class="fx3-acciones"><button class="secondary" id="fx3-anterior" type="button" ${fx3Paso===0?'disabled':''}>← Anterior</button>${fx3Paso<2?'<button class="primary" id="fx3-continuar" type="button">Continuar →</button>':`<div class="fx3-acciones-derecha"><button class="${fx3UltimaPropuesta?'secondary':'primary'}" type="button" id="fx3-generar">${fixture.length?'Regenerar propuesta':'Preparar propuesta de fixture'}</button></div>`}</div></div>`)};
 async function fx3PrepararConZonas(){
