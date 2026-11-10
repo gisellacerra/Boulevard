@@ -1945,6 +1945,69 @@ function fxOptimizarRegresosA02(partidos,contexto,turno,canchas,slotsReales=null
  indices.forEach((i,n)=>{arr[i].hora=mejorEstado[n].hora;arr[i].cancha=mejorEstado[n].cancha});
  return arr;
 }
+// A04: búsqueda acotada de reubicaciones encadenadas (hasta dos partidos
+// desbloqueadores). Acepta solo adelantos del ÚLTIMO partido de un viajero
+// sin atrasar el último partido de ningún otro viajero de esa jornada.
+function fxReordenarRegresosA04(partidos,contexto,turno,canchas,slots){
+ const a=partidos.map(p=>({...p})),d=Number(turno)||65;
+ const permitidos=(slots||[]).filter(s=>s&&s.fecha&&s.hora&&s.cancha);
+ const porDia=new Map();for(const s of permitidos){if(!porDia.has(s.fecha))porDia.set(s.fecha,[]);porDia.get(s.fecha).push(s)}
+ const viajero=p=>[p.local,p.visitante].some(n=>(contexto?.kmPorEquipo?.get(n)??-1)>=120);
+ const identidad=(p,n)=>fxComp(p)+'|'+n;
+ const finales=()=>{const m=new Map();for(const p of a){if(!p.fecha||!p.hora)continue;for(const n of [p.local,p.visitante]){if((contexto?.kmPorEquipo?.get(n)??-1)<120)continue;const k=p.fecha+'|'+identidad(p,n);m.set(k,Math.max(m.get(k)??-1,minutosHora(p.hora)))}}return m};
+ const inicial=finales();
+ const conflictos=(idx,slot)=>{const p=a[idx],t=minutosHora(slot.hora),r=[];
+  if(!fxCanchasPermitidas(fxComp(p),canchas).includes(String(slot.cancha)))return null;
+  for(let j=0;j<a.length;j++){if(j===idx)continue;const q=a[j];if(q.fecha!==slot.fecha||!q.hora)continue;const u=minutosHora(q.hora);
+   if(String(q.cancha)===String(slot.cancha)&&Math.abs(t-u)<d){r.push(j);continue}
+   if(fxComp(p)===fxComp(q)&&[p.local,p.visitante].some(n=>n===q.local||n===q.visitante)&&Math.abs(t-u)<2*d)r.push(j);
+  }return [...new Set(r)];
+ };
+ const cambiar=(i,s)=>{const old={hora:a[i].hora,cancha:a[i].cancha};a[i].hora=s.hora;a[i].cancha=s.cancha;return old};
+ const restaurar=(i,old)=>{a[i].hora=old.hora;a[i].cancha=old.cancha};
+ const noEmpeora=(base)=>{const nuevo=finales();for(const [k,t] of base)if((nuevo.get(k)??Infinity)>t)return false;return true};
+ const objetivos=()=>{const ult=new Map();for(let i=0;i<a.length;i++){const p=a[i];if(!p.fecha||!p.hora||!viajero(p))continue;for(const n of [p.local,p.visitante]){const km=contexto.kmPorEquipo.get(n);if(!(km>=120))continue;const k=p.fecha+'|'+identidad(p,n),prev=ult.get(k);if(!prev||minutosHora(p.hora)>minutosHora(a[prev.i].hora))ult.set(k,{i,km})}}return [...ult.values()].sort((x,y)=>minutosHora(a[y.i].hora)-minutosHora(a[x.i].hora)||y.km-x.km)};
+ let cambios=0,pruebas=0;const limite=70000;
+ // Cada cadena cambia un máximo de tres partidos. La búsqueda no altera fechas.
+ for(let pasada=0;pasada<4&&pruebas<limite;pasada++){
+  let progreso=false;
+  for(const obj of objetivos()){
+   const i=obj.i,p=a[i],base=finales(),t0=minutosHora(p.hora);
+   const opciones=(porDia.get(p.fecha)||[]).filter(s=>minutosHora(s.hora)<t0&&fxCanchasPermitidas(fxComp(p),canchas).includes(String(s.cancha))).sort((x,y)=>minutosHora(x.hora)-minutosHora(y.hora));
+   for(const destino of opciones){
+    if(pruebas++>limite)break;
+    const bloqueadores=conflictos(i,destino);
+    if(!bloqueadores||bloqueadores.length>2)continue;
+    // No mover otros partidos de fecha; nunca usar domingo para zonas.
+    const buscar=(pendientes,movidos)=>{
+     if(pruebas++>limite)return false;
+     if(!pendientes.length){
+      const old=cambiar(i,destino);
+      const valido=conflictos(i,destino)?.length===0&&movidos.every(j=>conflictos(j,{fecha:a[j].fecha,hora:a[j].hora,cancha:a[j].cancha})?.length===0);
+      const ok=valido&&noEmpeora(base)&&finales().get(p.fecha+'|'+identidad(p,p.local))!==undefined;
+      // Se exige que al menos un viajero termine antes; ningún viajero termina después.
+      const nuevo=ok?finales():null;
+      const mejora=ok&&[...base].some(([k,t])=>(nuevo.get(k)??t)<t);
+      if(ok&&mejora)return true;
+      restaurar(i,old);return false;
+     }
+     const j=pendientes[0],q=a[j],original={hora:q.hora,cancha:q.cancha};
+     const opcionesJ=(porDia.get(q.fecha)||[]).filter(s=>fxCanchasPermitidas(fxComp(q),canchas).includes(String(s.cancha))&&!(s.hora===destino.hora&&String(s.cancha)===String(destino.cancha))).sort((x,y)=>minutosHora(x.hora)-minutosHora(y.hora));
+     for(const s of opcionesJ){if(pruebas++>limite)break;
+      cambiar(j,s);
+      const otros=conflictos(j,s);
+      if(otros&&otros.every(k=>k===i||pendientes.slice(1).includes(k))&&buscar(pendientes.slice(1),[...movidos,j]))return true;
+      restaurar(j,original);
+     }return false;
+    };
+    if(buscar(bloqueadores,[])){cambios++;progreso=true;break}
+   }
+   if(progreso||pruebas>=limite)break;
+  }
+  if(!progreso)break;
+ }
+ return {partidos:a,cadenas:cambios,opcionesEvaluadas:pruebas,limiteAlcanzado:pruebas>=limite};
+}
 // Diagnóstico verificable: analiza el último partido de cada equipo viajero.
 // No declara imposibilidad global: informa si existe un adelanto DIRECTO válido.
 function fxDiagnosticoRegresosA03(partidos,contexto,slots,turno,canchas){
@@ -4094,10 +4157,12 @@ if(sinDistancia.length){avisoIntegrado('No se generó el fixture: faltan distanc
 const propuesta=fx3ProponerCompleto(partidos,contexto,fx3Proponer(partidos));
 const antes=fxCostoRegresoA02(propuesta,contexto);
 fixture=fxOptimizarRegresosA02(propuesta,contexto,fx3Turno(),Number(settings.canchas),fx3Slots().filter(s=>fx3Dias.slice(0,2).some(d=>d.fecha===s.fecha)));
+const cadenaA04=fxReordenarRegresosA04(fixture,contexto,fx3Turno(),Number(settings.canchas),fx3Slots().filter(s=>fx3Dias.slice(0,2).some(d=>d.fecha===s.fecha)));
+fixture=cadenaA04.partidos;
 const despues=fxCostoRegresoA02(fixture,contexto);
 const cambios=fixture.filter((p,i)=>p.fecha!==propuesta[i].fecha||p.hora!==propuesta[i].hora||String(p.cancha)!==String(propuesta[i].cancha)).length;
 const diagRegreso=fxResumenDiagnosticoA03(fixture,contexto,fx3Slots().filter(s=>fx3Dias.slice(0,2).some(d=>d.fecha===s.fecha)),fx3Turno(),Number(settings.canchas));
-fxResumenPropuesta='Distancias comprobadas: '+contexto.kmPorEquipo.size+' equipos · '+cambios+' partidos reubicados · '+(fixture.filter(p=>p.fecha&&p.hora).length)+' de '+partidos.length+' programados · mejora de regreso: '+Math.round(antes-despues)+' puntos.'+(diagRegreso.detalle?' DIAGNÓSTICO: '+diagRegreso.detalle:'');
+fxResumenPropuesta='Distancias comprobadas: '+contexto.kmPorEquipo.size+' equipos · '+cambios+' partidos reubicados · '+(fixture.filter(p=>p.fecha&&p.hora).length)+' de '+partidos.length+' programados · mejora de regreso: '+Math.round(antes-despues)+' puntos · cadenas adicionales: '+cadenaA04.cadenas+' · alternativas evaluadas: '+cadenaA04.opcionesEvaluadas+(cadenaA04.limiteAlcanzado?' (límite de búsqueda alcanzado)':'')+'.'+(diagRegreso.detalle?' DIAGNÓSTICO: '+diagRegreso.detalle:'');
 fixtureZonasHuella=zonasRemotas.huella;fx3EsReprogramacion=false;}else{fx3Leer();if(!fx3CorteFecha||!fx3CorteHora){avisoIntegrado('Indicá fecha y hora desde las que reorganizar.');return}if(!fixture.length){avisoIntegrado('Primero generá una propuesta de fixture.');return}const corte=fx3CorteFecha+'T'+fx3CorteHora;const fijos=[],pendientes=[];for(const p of fixture){const protegido=p.resultado||p.estado==='FINALIZADO'||p.protegido||p.bloqueado;const anterior=p.fecha&&p.hora&&(p.fecha+'T'+p.hora)<corte;if(protegido||(fx3Conservar&&anterior))fijos.push(p);else pendientes.push(p)}const nuevos=fx3Proponer(pendientes,fijos,corte);const fuera=nuevos.filter(p=>!fijos.includes(p)&&p.fecha&&p.hora&&(p.fecha+'T'+p.hora)<corte);if(fuera.length){avisoIntegrado('No se puede reprogramar: algunos partidos quedarían antes de la fecha y hora indicadas.');return}fixture=nuevos;fx3EsReprogramacion=true;}fx3UltimaPropuesta=true;fx3HuellaGenerada=fx3HuellaActual();ncConfiguracionFixtureAbierta=false;const config=document.querySelector('.nc-ux-config-detalle');if(config)config.open=false;saveDraft();render();const faltan=fixture.filter(p=>!p.fecha).length;if(faltan){const nombres=fixture.filter(p=>!p.fecha).map(p=>p.local+' vs. '+p.visitante).join('; ');avisoIntegrado('Quedaron '+faltan+' partidos sin horario: '+nombres+'. No confirmes el fixture.');}}
 function fx3Tabla(){const canchas=Math.max(1,Number(settings.canchas)||1),dias=fx3Dias.map(d=>d.fecha);return dias.map((dia,idx)=>{const partidos=fixture.filter(p=>p.fecha===dia).sort((a,b)=>a.hora.localeCompare(b.hora)||Number(a.cancha)-Number(b.cancha));const horas=[...new Set(partidos.map(p=>p.hora))].sort();return `<h3>Jornada ${idx+1} · ${esc(dia)} · ${esc(fx3Dias[idx].inicio)} a ${esc(fx3Dias[idx].fin)}</h3><div class="fx3-tabla"><table><thead><tr><th>Horario</th>${Array.from({length:canchas},(_,i)=>`<th>Cancha ${i+1}</th>`).join('')}</tr></thead><tbody>${horas.map(h=>`<tr><td><strong>${esc(h)}</strong></td>${Array.from({length:canchas},(_,i)=>{const p=partidos.find(p=>p.hora===h&&Number(p.cancha)===i+1);return `<td>${p?`${fxEtiquetaCategoria(p.categoria)} ${esc(p.local)} vs ${esc(p.visitante)}`:'—'}</td>`}).join('')}</tr>`).join('')||`<tr><td colspan="${canchas+1}">Sin partidos programados</td></tr>`}</tbody></table></div>`}).join('')}
 renderFixtureEtapa10=function(){fx3Inicializar();const tit=['Fechas y horarios','Datos del torneo','Vista previa'];const base=`<div class="fx3"><div class="fx3-steps">${tit.map((t,i)=>`<div class="fx3-step ${i===fx3Paso?'actual':i<fx3Paso?'hecho':''}">${i+1}. ${t}</div>`).join('')}</div>`;let html='';if(fx3Paso===0)html=`<h2>1. Configuración de jornadas y canchas</h2><p class="muted">Los horarios se administran exclusivamente en Configuración → Horarios por cancha. Aquí no se pueden modificar.</p>${fx3Dias.map((d,i)=>`<div class="fx3-dia"><strong>Jornada ${i+1} · ${esc(d.fecha)}</strong><p class="muted">Las cuatro canchas utilizarán sus propios horarios guardados en la tabla de datos.</p></div>`).join('')}<p class="muted">Para modificar fechas u horarios, ingresá a Configuración antes de generar la propuesta.</p>`;if(fx3Paso===1)html=`<h2>2. Estos son los datos de tu torneo</h2><p class="muted">Se toman automáticamente de la configuración y de los equipos inscriptos.</p><div class="fx3-resumen"><div class="fx3-dato"><small>Equipos inscriptos</small><strong>${teams.length} equipos</strong></div><div class="fx3-dato"><small>Canchas habilitadas</small><strong>${esc(settings.canchas)} canchas</strong></div><div class="fx3-dato"><small>Duración de los sets / juego</small><strong>${esc(settings.duracion)} minutos</strong></div><div class="fx3-dato"><small>Intervalo configurado</small><strong>${esc(settings.intervalo)} minutos</strong></div></div>`;if(fx3Paso===2){const faltantes=fixture.filter(p=>!p.fecha||!p.hora||!p.cancha).length;const errores=fixture.length?validarFixtureEtapa10():[];html=`<h2>3. Revisá la propuesta de fixture</h2><p class="muted">Esta sección se utiliza para generar el calendario inicial. Durante el torneo, modificá los partidos pendientes directamente desde la grilla.</p><div class="fx3-resumen"><div class="fx3-dato"><small>Equipos</small><strong>${teams.length}</strong></div><div class="fx3-dato"><small>Canchas</small><strong>${esc(settings.canchas)}</strong></div><div class="fx3-dato"><small>Jornadas</small><strong>3</strong></div><div class="fx3-dato"><small>Reglas de juego</small><strong>${esc(settings.duracion)} + ${esc(settings.intervalo)} min</strong></div></div>${fixture.length?`<p class="muted">${fixture.length-faltantes} de ${fixture.length} partidos con horario · ${faltantes} pendientes.</p>${fxResumenPropuesta?`<p class="status">${esc(fxResumenPropuesta)}</p>`:''}${fx3Tabla()}${errores.length?`<div class="fx3-aviso"><strong>${errores.length} observaciones por resolver</strong><ul>${errores.slice(0,12).map(e=>`<li>${esc(e)}</li>`).join('')}</ul></div>`:'<div class="fx3-aviso">Sin conflictos detectados por el validador del asistente.</div>'}`:''}</div>`}return panel('Administración de partidos y canchas',base+html+`<div class="fx3-acciones"><button class="secondary" id="fx3-anterior" type="button" ${fx3Paso===0?'disabled':''}>← Anterior</button>${fx3Paso<2?'<button class="primary" id="fx3-continuar" type="button">Continuar →</button>':`<div class="fx3-acciones-derecha"><button class="${fx3UltimaPropuesta?'secondary':'primary'}" type="button" id="fx3-generar">${fixture.length?'Regenerar propuesta':'Preparar propuesta de fixture'}</button></div>`}</div></div>`)};
