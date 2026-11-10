@@ -1813,6 +1813,47 @@ function fxCostoRegresoA02(partidos,contexto){
  }
  return costo;
 }
+// Reorganización posterior: mejora la hora de finalización de los equipos viajeros
+// sin alterar los enfrentamientos ni vulnerar canchas, solapamientos o descansos.
+function fxOptimizarRegresosA02(partidos,contexto,turno,canchas){
+ if(!contexto)return partidos;
+ const arr=partidos.map(p=>({...p}));
+ const programados=arr.map((p,i)=>p.fecha&&p.hora&&p.cancha?i:-1).filter(i=>i>=0);
+ const costo=()=>fxCostoRegresoA02(arr,contexto);
+ const valido=(idx)=>{
+  const p=arr[idx],inicio=minutosHora(p.hora),fin=inicio+turno;
+  if(!fxCanchasPermitidas(fxComp(p),canchas).includes(String(p.cancha)))return false;
+  const equipoA=String(p.local),equipoB=String(p.visitante);
+  for(let k=0;k<arr.length;k++){
+   if(k===idx)continue;
+   const q=arr[k];if(q.fecha!==p.fecha||!q.hora||!q.cancha)continue;
+   const m=minutosHora(q.hora);
+   if(String(q.cancha)===String(p.cancha)&&inicio<m+turno&&m<fin)return false;
+   if([q.local,q.visitante].some(n=>n===equipoA||n===equipoB)&&Math.abs(inicio-m)<turno*2)return false;
+  }
+  return true;
+ };
+ // Intercambiar horarios/canchas existentes, nunca crear turnos ni mover al domingo.
+ let actual=costo();
+ for(let pasada=0;pasada<3;pasada++){
+  let mejorDelta=0,mejorPar=null;
+  for(let a=0;a<programados.length;a++)for(let b=a+1;b<programados.length;b++){
+   const i=programados[a],j=programados[b],p=arr[i],q=arr[j];
+   if(p.fecha!==q.fecha||p.hora===q.hora&&p.cancha===q.cancha)continue;
+   const temp={hora:p.hora,cancha:p.cancha};p.hora=q.hora;p.cancha=q.cancha;q.hora=temp.hora;q.cancha=temp.cancha;
+   if(valido(i)&&valido(j)){
+    const nuevo=costo(),delta=actual-nuevo;
+    if(delta>mejorDelta+0.001){mejorDelta=delta;mejorPar=[i,j]}
+   }
+   q.hora=p.hora;q.cancha=p.cancha;p.hora=temp.hora;p.cancha=temp.cancha;
+  }
+  if(!mejorPar)break;
+  const [i,j]=mejorPar,p=arr[i],q=arr[j],temp={hora:p.hora,cancha:p.cancha};
+  p.hora=q.hora;p.cancha=q.cancha;q.hora=temp.hora;q.cancha=temp.cancha;
+  actual-=mejorDelta;
+ }
+ return arr;
+}
 function fxCalcularPropuesta(partidos,slots,turno,canchas,semilla,contextoViaje){
  const pendientes=partidos.map((p,i)=>({...p,_orden:i}));
  const asignados=[];const ultimaHora=new Map();const ultimaRonda=new Map();const conteo=new Map();
@@ -1862,7 +1903,8 @@ async function generarFixtureAutomatico(){
  const canchas=Number(settings.canchas);if(!Number.isInteger(canchas)||canchas<1){avisoIntegrado('Revisá la cantidad de canchas.');return}
  const comps=[...new Set(partidos.map(fxComp))];const reservaError=fxEvaluarReservas(comps,canchas);if(reservaError){avisoIntegrado(reservaError);return}
  const horarios=[];
- for(let d=0;d<3;d++){
+ for(let d=0;d<2;d++){
+  // El domingo queda reservado para cruces y finales; no programar fase de zonas.
   const desde=minutosHora(ventanasTorneo()[d][0]),hasta=minutosHora(ventanasTorneo()[d][1]);
   if(!Number.isFinite(desde)||!Number.isFinite(hasta)||hasta<=desde){avisoIntegrado('Revisá los horarios de la jornada '+(d+1)+'.');return}
   for(let m=desde;m+turno<=hasta;m+=turno)for(let c=1;c<=canchas;c++)horarios.push({fecha:fechas[d],hora:horaMinutos(m),cancha:String(c),inicio:d*1440+m});
@@ -1880,9 +1922,10 @@ async function generarFixtureAutomatico(){
  let mejor=null;
  for(let intento=0;intento<24;intento++){
   const propuesta=fxCalcularPropuesta(partidos,horarios,turno,canchas,fxNumeroPropuesta*29+intento+1,contextoViaje);
+  if(propuesta.faltantes===0)propuesta.partidos=fxOptimizarRegresosA02(propuesta.partidos,contextoViaje,turno,canchas);
   const puntaje=propuesta.faltantes*1000000+fxCostoRegresoA02(propuesta.partidos,contextoViaje)*8+Math.max(0,propuesta.descansoMax-propuesta.descansoMin);
   if(!mejor||puntaje<mejor.puntaje)mejor={...propuesta,puntaje};
-  if(propuesta.faltantes===0&&propuesta.descansoMax-propuesta.descansoMin<=turno)break;
+  // Evaluar todos los intentos: el primero válido no necesariamente respeta mejor los regresos.
  }
  if(fixture.length){const ok=await mostrarDialogoZonas({titulo:'¿Reemplazar el fixture borrador?',detalle:'Se generará una nueva propuesta con '+partidos.length+' partidos.',advertencia:'Solo se reemplaza el borrador de este navegador. No se modifican los datos confirmados ni la aplicación pública.'});if(!ok)return}
  fixture=mejor.partidos;fixtureZonasHuella=zonasRemotas.huella;
