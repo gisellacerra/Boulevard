@@ -1818,38 +1818,86 @@ function fxCostoRegresoA02(partidos,contexto){
 function fxOptimizarRegresosA02(partidos,contexto,turno,canchas){
  if(!contexto)return partidos;
  const arr=partidos.map(p=>({...p}));
- const programados=arr.map((p,i)=>p.fecha&&p.hora&&p.cancha?i:-1).filter(i=>i>=0);
- const costo=()=>fxCostoRegresoA02(arr,contexto);
+ const indices=arr.map((p,i)=>p.fecha&&p.hora&&p.cancha?i:-1).filter(i=>i>=0);
+ if(!indices.length)return arr;
+ // Conservar las fechas originales: la fase de zonas solo se disputa viernes y sábado.
+ const fechas=[...new Set(indices.map(i=>arr[i].fecha))];
+ const espacios=new Map();
+ for(const fecha of fechas){
+  const ventana=contexto.ventanasPorDia?.get(fecha);if(!ventana)continue;
+  const slots=[];
+  for(let minuto=ventana[0];minuto+turno<=ventana[1];minuto+=turno)
+   for(let cancha=1;cancha<=canchas;cancha++)slots.push({hora:horaMinutos(minuto),cancha:String(cancha)});
+  espacios.set(fecha,slots);
+ }
+ const claveEquipo=p=>fxComp(p)+'|';
  const valido=(idx)=>{
   const p=arr[idx],inicio=minutosHora(p.hora),fin=inicio+turno;
-  if(!fxCanchasPermitidas(fxComp(p),canchas).includes(String(p.cancha)))return false;
-  const equipoA=String(p.local),equipoB=String(p.visitante);
+  if(!Number.isFinite(inicio)||!fxCanchasPermitidas(fxComp(p),canchas).includes(String(p.cancha)))return false;
+  const comp=claveEquipo(p),a=comp+p.local,b=comp+p.visitante;
   for(let k=0;k<arr.length;k++){
    if(k===idx)continue;
    const q=arr[k];if(q.fecha!==p.fecha||!q.hora||!q.cancha)continue;
-   const m=minutosHora(q.hora);
+   const m=minutosHora(q.hora);if(!Number.isFinite(m))continue;
    if(String(q.cancha)===String(p.cancha)&&inicio<m+turno&&m<fin)return false;
-   if([q.local,q.visitante].some(n=>n===equipoA||n===equipoB)&&Math.abs(inicio-m)<turno*2)return false;
+   const cq=claveEquipo(q);
+   if([cq+q.local,cq+q.visitante].some(n=>n===a||n===b)&&Math.abs(inicio-m)<turno*2)return false;
   }
   return true;
  };
- // Intercambiar horarios/canchas existentes, nunca crear turnos ni mover al domingo.
- let actual=costo();
- for(let pasada=0;pasada<3;pasada++){
-  let mejorDelta=0,mejorPar=null;
-  for(let a=0;a<programados.length;a++)for(let b=a+1;b<programados.length;b++){
-   const i=programados[a],j=programados[b],p=arr[i],q=arr[j];
-   if(p.fecha!==q.fecha||p.hora===q.hora&&p.cancha===q.cancha)continue;
-   const temp={hora:p.hora,cancha:p.cancha};p.hora=q.hora;p.cancha=q.cancha;q.hora=temp.hora;q.cancha=temp.cancha;
-   if(valido(i)&&valido(j)){
-    const nuevo=costo(),delta=actual-nuevo;
-    if(delta>mejorDelta+0.001){mejorDelta=delta;mejorPar=[i,j]}
-   }
-   q.hora=p.hora;q.cancha=p.cancha;p.hora=temp.hora;p.cancha=temp.cancha;
+ // Priorizar el horario del ÚLTIMO partido de cada equipo por jornada.
+ // Como criterio secundario, adelantar los partidos con viajeros y dejar
+ // los espacios tardíos a partidos entre equipos cercanos.
+ const costo=()=>{
+  let valor=fxCostoRegresoA02(arr,contexto)*10;
+  for(const i of indices){
+   const p=arr[i],slot={fecha:p.fecha,inicio:minutosHora(p.hora)};
+   valor+=fxPenalizacionViajeA02(p,slot,contexto,turno)*0.12;
   }
-  if(!mejorPar)break;
-  const [i,j]=mejorPar,p=arr[i],q=arr[j],temp={hora:p.hora,cancha:p.cancha};
-  p.hora=q.hora;p.cancha=q.cancha;q.hora=temp.hora;q.cancha=temp.cancha;
+  return valor;
+ };
+ let actual=costo();
+ // Buscar el mejor movimiento, tanto hacia espacios libres como mediante
+ // intercambio de partidos. Cada cambio se confirma solo si mejora el costo.
+ // Límite de iteraciones para mantener fluida la interfaz.
+ const maxPasadas=Math.min(80,indices.length*3);
+ for(let pasada=0;pasada<maxPasadas;pasada++){
+  let mejorDelta=0,mejor=null;
+  const ocupados=new Set(indices.map(i=>arr[i].fecha+'|'+arr[i].hora+'|'+arr[i].cancha));
+  for(const i of indices){
+   const p=arr[i],anterior={hora:p.hora,cancha:p.cancha};
+   for(const slot of espacios.get(p.fecha)||[]){
+    if(slot.hora===anterior.hora&&slot.cancha===anterior.cancha)continue;
+    if(ocupados.has(p.fecha+'|'+slot.hora+'|'+slot.cancha))continue;
+    p.hora=slot.hora;p.cancha=slot.cancha;
+    if(valido(i)){
+     const delta=actual-costo();
+     if(delta>mejorDelta+0.001){mejorDelta=delta;mejor={tipo:'mover',i,hora:slot.hora,cancha:slot.cancha}}
+    }
+   }
+   p.hora=anterior.hora;p.cancha=anterior.cancha;
+  }
+  for(let a=0;a<indices.length;a++)for(let b=a+1;b<indices.length;b++){
+   const i=indices[a],j=indices[b],p=arr[i],q=arr[j];
+   if(p.fecha!==q.fecha)continue;
+   const previoP={hora:p.hora,cancha:p.cancha},previoQ={hora:q.hora,cancha:q.cancha};
+   if(previoP.hora===previoQ.hora)continue;
+   p.hora=previoQ.hora;p.cancha=previoQ.cancha;
+   q.hora=previoP.hora;q.cancha=previoP.cancha;
+   if(valido(i)&&valido(j)){
+    const delta=actual-costo();
+    if(delta>mejorDelta+0.001){mejorDelta=delta;mejor={tipo:'intercambiar',i,j}}
+   }
+   p.hora=previoP.hora;p.cancha=previoP.cancha;
+   q.hora=previoQ.hora;q.cancha=previoQ.cancha;
+  }
+  if(!mejor)break;
+  if(mejor.tipo==='mover'){
+   arr[mejor.i].hora=mejor.hora;arr[mejor.i].cancha=mejor.cancha;
+  }else{
+   const p=arr[mejor.i],q=arr[mejor.j],temp={hora:p.hora,cancha:p.cancha};
+   p.hora=q.hora;p.cancha=q.cancha;q.hora=temp.hora;q.cancha=temp.cancha;
+  }
   actual-=mejorDelta;
  }
  return arr;
