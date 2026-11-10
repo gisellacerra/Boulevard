@@ -1797,19 +1797,19 @@ function fxCostoRegresoA02(partidos,contexto){
   const m=minutosHora(p.hora);
   if(!Number.isFinite(m))continue;
   for(const equipo of [p.local,p.visitante]){
-   const clave=p.fecha+'|'+equipo;
+   const clave=p.fecha+'|'+fxComp(p)+'|'+equipo;
    ultimos.set(clave,Math.max(ultimos.get(clave)??-1,m));
   }
  }
  let costo=0;
  for(const [clave,minuto] of ultimos){
-  const sep=clave.indexOf('|'),fecha=clave.slice(0,sep),equipo=clave.slice(sep+1);
+  const sep=clave.indexOf('|'),fecha=clave.slice(0,sep),equipo=clave.slice(clave.lastIndexOf('|')+1);
   const km=contexto.kmPorEquipo.get(equipo);
   const ventana=contexto.ventanasPorDia.get(fecha);
   if(!Number.isFinite(km)||!ventana)continue;
   const amplitud=Math.max(1,ventana[1]-ventana[0]);
   const progreso=Math.max(0,Math.min(1,(minuto-ventana[0])/amplitud));
-  costo+=(km>=120?progreso:1-progreso)*1000;
+  costo+=(km>=120?progreso*(1100+Math.min(km,900)*1.5):(1-progreso)*350);
  }
  return costo;
 }
@@ -1899,6 +1899,50 @@ function fxOptimizarRegresosA02(partidos,contexto,turno,canchas,slotsReales=null
   }
   actual-=mejorDelta;
  }
+ // Segunda fase: búsqueda de movimientos encadenados. Un cambio intermedio
+ // puede empeorar temporalmente el puntaje y habilitar otro que adelante
+ // el ÚLTIMO partido de un equipo viajero. Se conserva siempre la mejor
+ // solución válida, sin alterar fecha, enfrentamientos ni categorías.
+ let semilla=0x61c88647;
+ const azar=()=>{semilla^=semilla<<13;semilla^=semilla>>>17;semilla^=semilla<<5;return (semilla>>>0)/4294967296};
+ let mejorCosto=actual;
+ let mejorEstado=indices.map(i=>({hora:arr[i].hora,cancha:arr[i].cancha}));
+ const intentos=Math.min(6500,Math.max(2200,indices.length*85));
+ for(let intento=0;intento<intentos;intento++){
+  const i=indices[Math.floor(azar()*indices.length)],p=arr[i];
+  const viejoP={hora:p.hora,cancha:p.cancha};
+  let j=-1,viejoQ=null;
+  if(azar()<0.38){
+   const candidatos=indices.filter(k=>k!==i&&arr[k].fecha===p.fecha);
+   if(!candidatos.length)continue;
+   j=candidatos[Math.floor(azar()*candidatos.length)];
+   const q=arr[j];viejoQ={hora:q.hora,cancha:q.cancha};
+   p.hora=viejoQ.hora;p.cancha=viejoQ.cancha;
+   q.hora=viejoP.hora;q.cancha=viejoP.cancha;
+  }else{
+   const libres=espacios.get(p.fecha)||[];
+   if(!libres.length)continue;
+   const slot=libres[Math.floor(azar()*libres.length)];
+   if(indices.some(k=>k!==i&&arr[k].fecha===p.fecha&&arr[k].hora===slot.hora&&String(arr[k].cancha)===slot.cancha))continue;
+   p.hora=slot.hora;p.cancha=slot.cancha;
+  }
+  if(valido(i)&&(j<0||valido(j))){
+   const nuevo=costo(),delta=nuevo-actual;
+   const progreso=intento/intentos;
+   const temperatura=150*(1-progreso)+4;
+   if(delta<=0||azar()<Math.exp(-delta/temperatura)){
+    actual=nuevo;
+    if(nuevo<mejorCosto-0.001){
+     mejorCosto=nuevo;
+     mejorEstado=indices.map(k=>({hora:arr[k].hora,cancha:arr[k].cancha}));
+    }
+    continue;
+   }
+  }
+  p.hora=viejoP.hora;p.cancha=viejoP.cancha;
+  if(j>=0){arr[j].hora=viejoQ.hora;arr[j].cancha=viejoQ.cancha}
+ }
+ indices.forEach((i,n)=>{arr[i].hora=mejorEstado[n].hora;arr[i].cancha=mejorEstado[n].cancha});
  return arr;
 }
 function fxCalcularPropuesta(partidos,slots,turno,canchas,semilla,contextoViaje){
