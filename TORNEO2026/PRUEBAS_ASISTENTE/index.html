@@ -3787,7 +3787,10 @@ function ncVistaJornadasFixture(){
  if(Number.isFinite(inicioGrilla)&&Number.isFinite(finGrilla)&&finGrilla>inicioGrilla){
   for(let m=inicioGrilla;m+duracionBloque<=finGrilla&&franjas.length<250;m+=duracionBloque)franjas.push(hhGrilla(m));
  }
- const horarios=[...new Set([...franjas,...horariosProgramados.map(h=>{const m=/^(\d{1,2}):(\d{2})/.exec(h);return m?m[1].padStart(2,'0')+':'+m[2]:h})])].sort((a,b)=>minutosGrilla(a)-minutosGrilla(b));
+ // Vista normal: ocultar únicamente las filas sin partidos en ninguna cancha.
+ // Al elegir un horario para Cruces, conservar todas las franjas libres para poder programar.
+ const horariosDisponibles=[...new Set([...franjas,...horariosProgramados.map(h=>{const m=/^(\d{1,2}):(\d{2})/.exec(h);return m?m[1].padStart(2,'0')+':'+m[2]:h})])].sort((a,b)=>minutosGrilla(a)-minutosGrilla(b));
+ const horarios=ncSeleccionCruceGrilla?horariosDisponibles:horariosDisponibles.filter(h=>partidosVisibles.some(p=>hora(p)===h));
  const nombreNormal=n=>String(n||'').trim().toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ');
  const iconoEquipo=n=>{const t=teams.find(t=>nombreNormal(t.nombre||t.equipo)===nombreNormal(n));return t?.escudo?`<img class="nc-partidos-escudo" src="${esc(t.escudo)}" alt="" loading="lazy">`:'<span class="nc-partidos-escudo-vacio" aria-hidden="true">🛡️</span>'};
  const marcadorFixture=p=>{
