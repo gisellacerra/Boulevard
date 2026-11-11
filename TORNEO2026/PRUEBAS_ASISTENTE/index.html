@@ -3277,7 +3277,7 @@ function ncBracketRender(){
  const bronzeWinner=finished?String(getResult(third).ganador||''):'';
  const podium=finished?`<div class="nc-podium"><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="M8 14.5 6 22l6-3 6 3-2-7.5"/></svg><b>Oro</b> ${esc(goldWinner)}</span><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="M8 14.5 6 22l6-3 6 3-2-7.5"/></svg><b>Plata</b> ${esc(silverWinner)}</span><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="M8 14.5 6 22l6-3 6 3-2-7.5"/></svg><b>Bronce</b> ${esc(bronzeWinner)}</span></div>`:'';
  const setup='';
- return `<section class="nc-bracket" aria-label="Cuadro de cruces"><header class="nc-bracket-head"><label>Competición <select id="ncBracketSelect">${options}</select></label></header><div class="nc-bracket-body"><div class="nc-bracket-side"><h3 class="nc-bracket-stage">Semifinales</h3>${sf}</div><div class="nc-bracket-links" aria-hidden="true"></div><div class="nc-bracket-side"><h3 class="nc-bracket-stage">Definiciones</h3>${card('Final · Oro y Plata',final,'gold',winners.length===2?winners:['Ganador semifinal 1','Ganador semifinal 2'])}${card('Tercer puesto · Bronce',third,'bronze',losers.length===2?losers:['Perdedor semifinal 1','Perdedor semifinal 2'])}</div></div>${program}${setup}<div class="nc-bracket-foot">${finished?'✓ Podio confirmado'+podium:semif.length!==2?'Semifinales pendientes de programación':winners.length===2?'✓ Semifinales completadas · '+(final&&third?'Partidos decisivos programados':'Final y tercer puesto pendientes'):'Semifinales pendientes de resultado'}</div></section>`;
+ return `<section class="nc-bracket" aria-label="Cuadro de cruces"><header class="nc-bracket-head"><label>Categoría: <select id="ncBracketSelect">${options}</select></label></header><div class="nc-bracket-body"><div class="nc-bracket-side"><h3 class="nc-bracket-stage">Semifinales</h3>${sf}</div><div class="nc-bracket-links" aria-hidden="true"></div><div class="nc-bracket-side"><h3 class="nc-bracket-stage">Definiciones</h3>${card('Final · Oro y Plata',final,'gold',winners.length===2?winners:['Ganador semifinal 1','Ganador semifinal 2'])}${card('Tercer puesto · Bronce',third,'bronze',losers.length===2?losers:['Perdedor semifinal 1','Perdedor semifinal 2'])}</div></div>${program}${setup}<div class="nc-bracket-foot">${finished?'✓ Podio confirmado'+podium:semif.length!==2?'Semifinales pendientes de programación':winners.length===2?'✓ Semifinales completadas · '+(final&&third?'Partidos decisivos programados':'Final y tercer puesto pendientes'):'Semifinales pendientes de resultado'}</div></section>`;
 }
 function ncActivarArrastreCruces(){
  const box=document.getElementById('ncProgram'),estado=document.getElementById('ncDomingoEstado');
@@ -4803,6 +4803,15 @@ body.nc-grilla-ampliada .nc-grilla-expandir{background:#a5eb37;color:#202a26;bor
 .nc-orden-categoria{background:transparent;border:0;color:inherit;font:inherit;font-weight:inherit;padding:0;cursor:pointer;white-space:nowrap}
 .nc-orden-categoria:hover{text-decoration:underline}
 .nc-orden-categoria span{margin-left:5px;font-size:12px}
+
+/* Cruces — selector Categoría y podio destacado, fondo plano */
+.nc-bracket-head label{font-weight:500!important}
+.nc-bracket-foot{padding:20px 22px!important;border-top:2px solid #a5eb37!important;gap:18px!important;font-weight:500!important}
+.nc-podium{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px!important;flex:1 1 660px;font-size:15px!important;font-weight:500!important}
+.nc-podium>span{display:flex!important;align-items:center;gap:9px!important;min-width:0;padding:12px 14px;border:1px solid #40514d;border-radius:9px;background:#20292a!important;background-image:none!important;line-height:1.45}
+.nc-podium svg{width:26px!important;height:26px!important;flex:none}
+.nc-podium b{font-weight:500!important;white-space:nowrap}
+@media(max-width:1000px){.nc-podium{grid-template-columns:1fr!important}}
 </style>
 <script>
 window.ncOrdenCategoria=0;
