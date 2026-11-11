@@ -3147,9 +3147,11 @@ function posiciones13Activar(){const b=$('#p13Actualizar');if(b)b.onclick=result
 
 let ncSeleccionCruceGrilla=null;
 const ncDefinicionesBorrador={};
+let ncProgramacionAbiertaComp="";
 function ncElegirEnFixture(comp,inst,indice){
  const clave=comp+'|'+inst+'|'+indice;
  ncSeleccionCruceGrilla={comp,inst,indice,clave};
+ ncProgramacionAbiertaComp=comp;
  ncDiaFixtureSeleccionado=(Array.isArray(settings.fechas)?settings.fechas[2]:'')||programaFechas()[2];
  ncCategoriaFixtureSeleccionada='todas';
  navigate('fixture-auto');
@@ -3161,6 +3163,9 @@ function ncSeleccionarCeldaCruce(slot){
  if(slot.querySelector('.nc-partidos-contenido')){avisoIntegrado('Esta cancha y horario ya tienen un partido. Elegí un espacio libre.');return;}
  const fecha=slot.dataset.ncSlotFecha,hora=slot.dataset.ncSlotHora,cancha=slot.dataset.ncSlotCancha;
  const comp=sel.comp;
+ const same=(v)=>v&&String(v.fecha)===String(fecha)&&String(v.hora)===String(hora)&&String(v.cancha)===String(cancha);
+ const occupiedDraft=Object.entries(ncDefinicionesBorrador).some(([k,v])=>k!==comp+'|'+sel.inst&&same(v))||Object.entries(cruces15Borradores).some(([k,v])=>!(sel.inst==='SEMIFINAL'&&k.endsWith('|'+sel.indice)&&k.startsWith(comp+'|'))&&same(v));
+ if(occupiedDraft){avisoIntegrado('Ese horario y cancha ya están reservados en otro partido pendiente. Elegí otra celda.');return;}
  if(sel.inst==='SEMIFINAL'){
   const [cat,genero]=comp.split('|');
   const d=etapa14Clasificacion().find(x=>x.cat===cat&&x.genero===genero);
@@ -3227,7 +3232,7 @@ function ncBracketRender(){
   inputRow('Final · Oro y Plata',winners[0],winners[1],k=>`data-c16-cat="${esc(comp)}" data-c16-inst="FINAL" data-c16-k="${k}"`,ncDefinicionesBorrador[comp+'|FINAL']),
   inputRow('Tercer puesto · Bronce',losers[0],losers[1],k=>`data-c16-cat="${esc(comp)}" data-c16-inst="TERCER_PUESTO" data-c16-k="${k}"`,ncDefinicionesBorrador[comp+'|TERCER_PUESTO'])
  ].join(''):'';
- const program=semRows&&!semif.length?`<section class="nc-program" id="ncProgram" hidden><h3>Programar semifinales · ${esc(cat)} · ${esc(genero)}</h3><p>Completá los dos partidos. El sistema comprobará horarios y superposiciones antes de guardar.</p>${semRows}<button type="button" class="primary" data-c15-save="${esc(c15Key)}">Confirmar y guardar semifinales</button></section>`:finalRows&&(!final||!third)?`<section class="nc-program" id="ncProgram" hidden><h3>Programar definiciones · ${esc(cat)} · ${esc(genero)}</h3><p>Completá ambos partidos antes de guardar.</p>${finalRows}<button type="button" class="primary" data-c16-program="${esc(comp)}">Guardar final y tercer puesto</button></section>`:'';
+ const program=semRows&&!semif.length?`<section class="nc-program" id="ncProgram" ${ncProgramacionAbiertaComp===comp?'':'hidden'}><h3>Programar semifinales · ${esc(cat)} · ${esc(genero)}</h3><p>Completá los dos partidos. El sistema comprobará horarios y superposiciones antes de guardar.</p>${semRows}<button type="button" class="primary" data-c15-save="${esc(c15Key)}">Confirmar y guardar semifinales</button></section>`:finalRows&&(!final||!third)?`<section class="nc-program" id="ncProgram" ${ncProgramacionAbiertaComp===comp?'':'hidden'}><h3>Programar definiciones · ${esc(cat)} · ${esc(genero)}</h3><p>Completá ambos partidos antes de guardar.</p>${finalRows}<button type="button" class="primary" data-c16-program="${esc(comp)}">Guardar final y tercer puesto</button></section>`:'';
  const finished=!!(final&&third&&getResult(final)&&getResult(third));
  const setup='';
  return `<section class="nc-bracket" aria-label="Cuadro de cruces"><header class="nc-bracket-head"><div><h2>Cruces · Instancias finales</h2><p>Semifinalistas, finalistas y resultados por partido</p></div><label>Competición <select id="ncBracketSelect">${options}</select></label></header><div class="nc-bracket-body"><div class="nc-bracket-side"><h3 class="nc-bracket-stage">Semifinales</h3>${sf}</div><div class="nc-bracket-links" aria-hidden="true"></div><div class="nc-bracket-side"><h3 class="nc-bracket-stage">Definiciones</h3>${card('Final · Oro y Plata',final,'gold',winners.length===2?winners:['Ganador semifinal 1','Ganador semifinal 2'])}${card('Tercer puesto · Bronce',third,'bronze',losers.length===2?losers:['Perdedor semifinal 1','Perdedor semifinal 2'])}</div></div>${program}${setup}<div class="nc-bracket-foot">${finished?'✓ Podio confirmado':semif.length!==2?'Semifinales pendientes de programación':winners.length===2?'✓ Semifinales completadas · '+(final&&third?'Partidos decisivos programados':'Final y tercer puesto pendientes'):'Semifinales pendientes de resultado'}</div></section>`;
@@ -4357,8 +4362,9 @@ else if(active==='resultados'){view.innerHTML=resultados12Render();resultados12A
   if(field.dataset.c15Cat){ncElegirEnFixture(ncBracketSelected,'SEMIFINAL',Number(field.dataset.c15I));}
   else{ncElegirEnFixture(field.dataset.c16Cat,field.dataset.c16Inst,0);}
  });
- document.querySelectorAll('[data-nc-program]').forEach(b=>b.onclick=()=>{const box=document.getElementById('ncProgram');if(box){box.hidden=false;box.scrollIntoView({behavior:'smooth',block:'nearest'});box.querySelector('input')?.focus();}});
- const sel=document.getElementById('ncBracketSelect');if(sel)sel.onchange=()=>{ncBracketSelected=sel.value;render();};
+ document.querySelectorAll('[data-nc-program]').forEach(b=>b.onclick=()=>{ncProgramacionAbiertaComp=ncBracketSelected;const box=document.getElementById('ncProgram');if(box){box.hidden=false;box.scrollIntoView({behavior:'smooth',block:'nearest'});box.querySelector('input')?.focus();}});
+ document.querySelectorAll('[data-c16-cat][data-c16-k], [data-c15-cat][data-c15-key]').forEach(el=>el.addEventListener('change',()=>{if(el.dataset.c16Cat){const key=el.dataset.c16Cat+'|'+el.dataset.c16Inst;ncDefinicionesBorrador[key]={...(ncDefinicionesBorrador[key]||{}),[el.dataset.c16K]:el.value};}else{const key=el.dataset.c15Cat+'|'+el.dataset.c15I;cruces15Borradores[key]={...(cruces15Borradores[key]||{}),[el.dataset.c15Key]:el.value};}}));
+ const sel=document.getElementById('ncBracketSelect');if(sel)sel.onchange=()=>{ncBracketSelected=sel.value;ncProgramacionAbiertaComp='';render();};
 }
 else if(active==='ayuda'){view.innerHTML=ayudaContenido();}
 
