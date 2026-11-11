@@ -366,18 +366,20 @@ body[data-nc-theme="light"] .equipo-edit-modal input[type="file"]::file-selector
 .nc-partidos-numero{position:absolute;top:5px;right:8px;font-size:10px;line-height:1.25;font-weight:700;color:#c7d3d7;background:#344147;border:1px solid #4d5d62;border-radius:5px;padding:2px 6px;pointer-events:none;z-index:1}
 
 /* Vista de consulta de instancias finales; no modifica el circuito de guardado */
-.nc-bracket{border:1px solid #344b4b;background:#102021;border-radius:17px;margin:0 0 24px;overflow:hidden;color:#eaf2f0}
-.nc-bracket-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:22px 25px;background:linear-gradient(110deg,#07593e,#11394b 55%,#14252c)}
-.nc-bracket-head h2{margin:0;color:#fff;font-size:24px}.nc-bracket-head p{margin:5px 0 0;color:#c7e2dc}
-.nc-bracket-head select{width:auto;min-width:170px;background:#102a33;color:white;border:1px solid #52717b;border-radius:10px;padding:11px}
-.nc-bracket-body{display:grid;grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr);gap:16px;align-items:center;padding:24px}
-.nc-bracket-side{display:grid;gap:18px}.nc-bracket-card{border:1px solid #315e54;border-radius:13px;padding:15px;background:#122d2b;min-width:0}
-.nc-bracket-card.gold{border-color:#d9b748;background:#332d1b}.nc-bracket-card.bronze{border-color:#bd8665;background:#30251f}
-.nc-bracket-card h3{margin:0 0 12px;font-size:17px;color:#9cf13c}.nc-bracket-card.gold h3{color:#ffdb6d}.nc-bracket-card.bronze h3{color:#edb68f}
-.nc-bracket-team{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #ffffff19;font-weight:600;overflow-wrap:anywhere}
-.nc-bracket-score{background:#36554f;border-radius:7px;min-width:34px;text-align:center;padding:5px 7px;font-weight:700}
-.nc-bracket-meta{margin-top:11px;color:#b6d1cb;font-size:13px}.nc-bracket-links{height:145px;border-right:3px solid #91ed56;position:relative;opacity:.75}.nc-bracket-links:before,.nc-bracket-links:after{content:'';position:absolute;right:-15px;width:16px;border-top:3px solid #91ed56}.nc-bracket-links:before{top:0}.nc-bracket-links:after{bottom:0}
-.nc-bracket-foot{padding:15px 24px;border-top:1px solid #34534d;background:#1a3430;color:#a4ec88;font-weight:600}
+.nc-bracket{border:1px solid #354547;background:#181d1f;border-radius:16px;margin:0 0 24px;overflow:hidden;color:#f4f7f7}
+.nc-bracket-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:20px 24px;background:#1c2527;border-bottom:1px solid #364648}
+.nc-bracket-head h2{margin:0;color:#f5f7f7;font-size:22px}.nc-bracket-head p{margin:5px 0 0;color:#b5c7c9}
+.nc-bracket-head select{width:auto;min-width:170px;background:#202a2d;color:white;border:1px solid #526267;border-radius:9px;padding:10px}
+.nc-bracket-body{display:grid;grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr);gap:14px;align-items:center;padding:22px}
+.nc-bracket-side{display:grid;gap:14px}.nc-bracket-card{border:1px solid #3a4b4e;border-radius:12px;padding:16px;background:#202829;min-width:0}
+.nc-bracket-card.gold{border-left:4px solid #d2b04b}.nc-bracket-card.bronze{border-left:4px solid #b17c58}
+.nc-bracket-card h3{margin:0 0 12px;font-size:16px;color:#a2ed34}.nc-bracket-card.gold h3{color:#e9c760}.nc-bracket-card.bronze h3{color:#e4b28c}
+.nc-bracket-team{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #ffffff16;font-weight:600;overflow-wrap:anywhere}
+.nc-bracket-score{background:#334246;border-radius:6px;min-width:30px;text-align:center;padding:4px 6px;font-weight:700}
+.nc-bracket-sets{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;font-size:13px;color:#c9d7d8}.nc-bracket-sets span{background:#293638;border:1px solid #3e4d50;padding:5px 8px;border-radius:6px}
+.nc-bracket-meta{margin-top:11px;color:#aebec0;font-size:13px}.nc-bracket-action{display:block;margin-top:12px;border:1px solid #93dd30;border-radius:8px;background:transparent;color:#b9f16e;padding:9px 12px;font:inherit;font-size:14px;cursor:pointer}.nc-bracket-action:hover{background:#33402b}
+.nc-bracket-links{height:140px;border-right:2px solid #7ba83e;position:relative;opacity:.7}.nc-bracket-links:before,.nc-bracket-links:after{content:'';position:absolute;right:-13px;width:13px;border-top:2px solid #7ba83e}.nc-bracket-links:before{top:0}.nc-bracket-links:after{bottom:0}
+.nc-bracket-foot{padding:14px 22px;border-top:1px solid #354547;background:#212b29;color:#a3e970;font-weight:600}
 @media(max-width:800px){.nc-bracket-body{grid-template-columns:1fr}.nc-bracket-links{display:none}.nc-bracket-head h2{font-size:21px}}
 </style><style>
 /* Ajustes exclusivos de notificaciones registradas */
@@ -3106,26 +3108,29 @@ function ncBracketRender(){
  const all=(cruces15Datos?.filas||[]).filter(x=>String(x.anio)===String(settings.anio)&&String(x.edicion)===String(settings.edicion));
  const key=x=>'+'+String(x.categoria||'').replace(/^\+/,'')+'|'+String(x.genero||'Mixto');
  const comps=[...new Set(all.map(key))].sort();
- if(!comps.length)return '<section class="nc-bracket"><div class="nc-bracket-head"><div><h2>Cruces · Instancias finales</h2><p>Los cruces aparecerán cuando estén confirmados.</p></div></div></section>';
+ if(!comps.length)return '<section class="nc-bracket"><div class="nc-bracket-head"><h2>Cruces · Instancias finales</h2><p>Los cruces aparecerán cuando estén confirmados.</p></div></section>';
  if(!comps.includes(ncBracketSelected))ncBracketSelected=comps[0];
- const comp=ncBracketSelected, [cat,genero]=comp.split('|');
+ const comp=ncBracketSelected,[cat,genero]=comp.split('|');
  const matches=all.filter(x=>key(x)===comp);
  const results=(cruces16Datos?.resultados||[]).filter(x=>String(x.anio)===String(settings.anio)&&String(x.edicion)===String(settings.edicion)&&key(x)===comp);
  const getResult=x=>x&&results.find(r=>r.instancia===x.instancia&&Number(r.partido)===Number(x.partido)&&r.local===x.local&&r.visitante===x.visitante);
  const semif=matches.filter(x=>x.instancia==='SEMIFINAL').sort((a,b)=>Number(a.partido)-Number(b.partido));
- const rsem=semif.map(getResult);
- const winners=semif.length===2&&rsem.every(Boolean)?rsem.map(r=>r.ganador):[];
+ const rsem=semif.map(getResult),winners=semif.length===2&&rsem.every(Boolean)?rsem.map(r=>r.ganador):[];
  const losers=winners.length===2?semif.map((x,i)=>x.local===winners[i]?x.visitante:x.local):[];
  const card=(title,x,tone,placeholder)=>{
   const r=getResult(x),names=x?[x.local,x.visitante]:placeholder||['Por definir','Por definir'];
   const scores=x&&r?[r.setsLocal,r.setsVisitante]:[null,null];
-  return `<article class="nc-bracket-card ${tone||''}"><h3>${esc(title)}</h3>${names.map((n,i)=>`<div class="nc-bracket-team"><span>${esc(n)}</span>${scores[i]!==null?`<span class="nc-bracket-score">${esc(scores[i])}</span>`:''}</div>`).join('')}<div class="nc-bracket-meta">${x?esc(String(x.fecha||'')+' · '+String(x.hora||'')+' · Cancha '+String(x.cancha||'')):'Pendiente de programación'}</div></article>`;
+  const pairs=r?[[r.set1?.[0],r.set1?.[1]],[r.set2?.[0],r.set2?.[1]],[r.tiebreak?.[0],r.tiebreak?.[1]]]:[];
+  const hasTb=r&&r.tiebreak&&r.tiebreak.every(v=>v!==''&&v!==null&&v!==undefined);
+  const detail=r?`<div class="nc-bracket-sets"><span>Set 1: ${esc(pairs[0][0])}–${esc(pairs[0][1])}</span><span>Set 2: ${esc(pairs[1][0])}–${esc(pairs[1][1])}</span>${hasTb?`<span>TB: ${esc(pairs[2][0])}–${esc(pairs[2][1])}</span>`:''}</div>`:'';
+  const action=x?`<button type="button" class="nc-bracket-action" data-c16-result="${esc([cat,genero,x.instancia,x.partido].join('|'))}">${r?'Corregir resultado':'Cargar resultado'}</button>`:'';
+  return `<article class="nc-bracket-card ${tone||''}"><h3>${esc(title)}</h3>${names.map((n,i)=>`<div class="nc-bracket-team"><span>${esc(n)}</span>${scores[i]!==null?`<span class="nc-bracket-score">${esc(scores[i])}</span>`:''}</div>`).join('')}${detail}<div class="nc-bracket-meta">${x?esc(String(x.fecha||'')+' · '+String(x.hora||'')+' · Cancha '+String(x.cancha||'')):'Pendiente de programación'}</div>${action}</article>`;
  };
  const sf=semif.map((x,i)=>card('Semifinal '+(i+1),x,'')).join('');
  const final=matches.find(x=>x.instancia==='FINAL'),third=matches.find(x=>x.instancia==='TERCER_PUESTO');
  const options=comps.map(k=>`<option value="${esc(k)}" ${k===comp?'selected':''}>${esc(k.replace('|',' · '))}</option>`).join('');
  const finished=!!(final&&third&&getResult(final)&&getResult(third));
- return `<section class="nc-bracket" aria-label="Cuadro de cruces"><header class="nc-bracket-head"><div><h2>🏆 Cruces · Instancias finales</h2><p>${esc(cat)} · ${esc(genero)} · Vista de seguimiento</p></div><label>Competición <select id="ncBracketSelect">${options}</select></label></header><div class="nc-bracket-body"><div class="nc-bracket-side">${sf||'<p>Semifinales pendientes.</p>'}</div><div class="nc-bracket-links" aria-hidden="true"></div><div class="nc-bracket-side">${card('🏆 Final · Oro y Plata',final,'gold',winners.length===2?winners:['Ganador semifinal 1','Ganador semifinal 2'])}${card('🥉 Tercer puesto · Bronce',third,'bronze',losers.length===2?losers:['Perdedor semifinal 1','Perdedor semifinal 2'])}</div></div><div class="nc-bracket-foot">${finished?'✓ Podio confirmado':winners.length===2?'✓ Semifinales completadas · '+(final&&third?'Partidos decisivos programados':'Final y tercer puesto pendientes'):'Semifinales pendientes de resultado'}</div></section>`;
+ return `<section class="nc-bracket" aria-label="Cuadro de cruces"><header class="nc-bracket-head"><div><h2>Cruces · Instancias finales</h2><p>${esc(cat)} · ${esc(genero)}</p></div><label>Competición <select id="ncBracketSelect">${options}</select></label></header><div class="nc-bracket-body"><div class="nc-bracket-side">${sf||'<p>Semifinales pendientes.</p>'}</div><div class="nc-bracket-links" aria-hidden="true"></div><div class="nc-bracket-side">${card('Final · Oro y Plata',final,'gold',winners.length===2?winners:['Ganador semifinal 1','Ganador semifinal 2'])}${card('Tercer puesto · Bronce',third,'bronze',losers.length===2?losers:['Perdedor semifinal 1','Perdedor semifinal 2'])}</div></div><div class="nc-bracket-foot">${finished?'✓ Podio confirmado':winners.length===2?'✓ Semifinales completadas · '+(final&&third?'Partidos decisivos programados':'Final y tercer puesto pendientes'):'Semifinales pendientes de resultado'}</div></section>`;
 }
 let cruces15Datos=null,cruces15Cargando=false,cruces15Borradores={};
 let cruces15VistaServidor=null,cruces15VistaCargando=false;
