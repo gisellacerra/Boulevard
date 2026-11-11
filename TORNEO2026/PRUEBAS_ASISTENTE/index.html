@@ -1637,7 +1637,14 @@ body[data-nc-theme="dark"] .equipo-edit-overlay .equipo-edit-modal .equipo-edit-
 @media(max-width:760px){#c17Editor .nc-result-editor .r12-sets{grid-template-columns:1fr!important}#c17Editor .nc-result-editor .r12-set-fields{padding:10px!important}#c17Editor .nc-result-editor .r12-modal-head{padding:20px 18px 8px!important}#c17Editor .nc-result-editor .r12-modal-body{padding:10px 18px 22px!important}#c17Editor .nc-result-editor .r12-versus strong{font-size:15px!important}#c17Editor .nc-result-editor .r12-team-shield{width:27px;height:30px}#c17Editor .nc-result-editor .r12-close{right:15px!important;top:16px!important}}
 @media(max-width:420px){#c17Editor .nc-result-editor .r12-versus-team{gap:5px}#c17Editor .nc-result-editor .r12-team-label .r12-team-shield{width:21px;height:24px}#c17Editor .nc-result-editor .r12-set-fields label{font-size:13px!important}}
 
-</style></head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
+</style><style id="nc-elegir-grilla-estilos">
+.nc-program-row .nc-elegir-grilla{align-self:end;white-space:nowrap;font-size:12px;padding:10px 12px}
+.nc-seleccion-aviso{padding:14px 16px;margin-bottom:14px;border:1px solid #91ce47;border-radius:10px;background:#223329;color:#fff;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.nc-seleccion-cruce .nc-partidos-slot{cursor:pointer}
+.nc-seleccion-cruce .nc-partidos-slot:has(.nc-partidos-vacio){outline:2px dashed #a2ed34;outline-offset:-3px;background:rgba(162,237,52,.1)}
+.nc-seleccion-cruce .nc-partidos-slot:has(.nc-partidos-contenido){cursor:not-allowed;opacity:.75}
+</style>
+</head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
      preserveAspectRatio="xMinYMin meet"
@@ -2450,7 +2457,7 @@ function renderFixtureEtapa10(){const f=programaFechas();const confirmadas=zonas
  const fechaCampos=dias.map((dia,i)=>`<label class="field">${dia} · ${ventanasTorneo()[i].join(' a ')}<input type="date" id="et10date${i}" value="${esc(f[i]||'')}"></label>`).join('');
  const info=`<p class="muted">Los partidos se generan exclusivamente a partir de las zonas confirmadas. Primero se asignan automáticamente los horarios y las canchas; después podés corregirlos. Esta etapa NO publica partidos.</p>${fxRenderModos()}<div class="form fechas-torneo-grid">${fechaCampos}</div><p class="status"><span id="fxZonasConfirmadas">${confirmadas.length}</span> zonas confirmadas consultadas · ${settings.canchas} canchas · ${Number(settings.duracion)+Number(settings.intervalo)} minutos por turno</p><div class="toolbar"><button class="secondary" id="et10Refresh">Actualizar zonas confirmadas</button><button class="primary" id="et10Generate">Generar y distribuir partidos</button><button class="secondary" id="et10Otra" ${fixture.length?'':'disabled'}>Generar otra propuesta</button><button class="secondary" id="et10Limpiar" ${fixture.length?'':'disabled'}>Limpiar fixture borrador</button><button class="secondary" id="et11Refresh">Consultar fixture guardado</button><button class="primary" id="et11Save" ${fixture.length&&!errores.length?'':'disabled'}>Confirmar y guardar fixture</button><button class="secondary" id="et10CSV" ${fixture.length?'':'disabled'}>Descargar fixture borrador</button></div><div role="alert" class="fx-important-alert"><strong>Importante:</strong> Primero seleccioná <strong>Actualizar zonas confirmadas</strong> y después <strong>Generar y distribuir partidos</strong> para asignar los horarios y las canchas con los datos más recientes.</div>${fxResumenPropuesta?`<div class="fx-propuesta">${esc(fxResumenPropuesta)}</div>`:''}<div class="notice fx-fixture-notice">${fixture.length?fixture.length+' partidos en borrador. '+(errores.length?errores.length+' observaciones por revisar.':'Sin conflictos de superposición detectados.'):'Todavía no hay partidos generados.'}</div>`;
    const filtroCat=fxCategoriaSeleccionada,filtroDia=fxDiaSeleccionado;
-  const selector=`<div class="fx-filtros"><label><select aria-label="Categoría" id="fxFiltroCat" style="background:${filtroCat==='todas'?'#fff':fxFondoCategoria(filtroCat)};color:#111"><option value="todas" ${filtroCat==='todas'?'selected':''}>Todas las categorías</option>${[...new Set([...catList,...fixture.map(p=>fxCategoriaNormalizada(p.categoria)).filter(c=>c!=='todas')])].map(c=>`<option value="${c}" ${filtroCat===c?'selected':''}>${c}</option>`).join('')}</select></label><label><select aria-label="Día" id="fxFiltroDia"><option value="todos" ${filtroDia==='todos'?'selected':''}>Todas las jornadas</option>${f.map((fecha,i)=>`<option value="${esc(fecha)}" ${filtroDia===fecha?'selected':''}>${dias[i]} ${esc(fecha)}</option>`).join('')}</select></label></div>`;
+  const selector=`<div class="fx-filtros"><label><select aria-label="Categoría" id="fxFiltroCat" style="background:${filtroCat==='todas'?'#fff':fxFondoCategoria(filtroCat)};color:#111"><option value="todas" ${filtroCat==='todas'?'selected':''}>Todas las categorías</option>${[...new Set([...catList,...fixture.map(p=>fxCategoriaNormalizada(p.categoria)).filter(c=>c!=='todas')])].map(c=>`<option value="${c}" ${filtroCat===c?'selected':''}>${c}</option>`).join('')}</select></label><label><select aria-label="Día" id="fxFiltroDia"><option value="todos" ${filtroDia==='todos'?'selected':''}>Todas las jornadas</option>${f.map((fecha,i)=>`<option value="${esc(fecha)}" ${filtroDia===fecha?'selected':''}>${dias[i]} ${esc(fecha)}</option>`).join('')}</select></label><button type="button" class="secondary nc-elegir-grilla" data-nc-elegir-grilla="1">Elegir en grilla</button></div>`;
   const fechaBonita=fecha=>{try{return new Date(fecha+'T12:00:00').toLocaleDateString('es-AR',{day:'numeric',month:'long',year:'numeric'})}catch(e){return fecha}};
   const jornadas=f.filter(fecha=>filtroDia==='todos'||fecha===filtroDia).map((fecha,di)=>{
     const indiceDia=f.indexOf(fecha);
@@ -3138,6 +3145,38 @@ function posiciones13Activar(){const b=$('#p13Actualizar');if(b)b.onclick=result
   return `<section class="nc-cruces-contenedor"><header class="nc-cruces-cabecera"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="#9bff3d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V12h4v9M10 21V4h4v17M15 21v-8h4v8"/></svg><h2>Cruces</h2></header><div class="nc-cruces-grid">${tarjetas}</div></section>`;
  }
 
+let ncSeleccionCruceGrilla=null;
+const ncDefinicionesBorrador={};
+function ncElegirEnFixture(comp,inst,indice){
+ const clave=comp+'|'+inst+'|'+indice;
+ ncSeleccionCruceGrilla={comp,inst,indice,clave};
+ ncDiaFixtureSeleccionado=(Array.isArray(settings.fechas)?settings.fechas[2]:'')||programaFechas()[2];
+ ncCategoriaFixtureSeleccionada='todas';
+ navigate('fixture-auto');
+ const panel=document.querySelector('.nc-partidos-panel');
+ if(panel){panel.scrollIntoView({block:'start'});}
+}
+function ncSeleccionarCeldaCruce(slot){
+ const sel=ncSeleccionCruceGrilla;if(!sel)return;
+ if(slot.querySelector('.nc-partidos-contenido')){avisoIntegrado('Esta cancha y horario ya tienen un partido. Elegí un espacio libre.');return;}
+ const fecha=slot.dataset.ncSlotFecha,hora=slot.dataset.ncSlotHora,cancha=slot.dataset.ncSlotCancha;
+ const comp=sel.comp;
+ if(sel.inst==='SEMIFINAL'){
+  const [cat,genero]=comp.split('|');
+  const d=etapa14Clasificacion().find(x=>x.cat===cat&&x.genero===genero);
+  if(!d){avisoIntegrado('Actualizá la clasificación antes de programar.');return;}
+  const clave=d.clave+'|'+sel.indice;
+  cruces15Borradores[clave]={...(cruces15Borradores[clave]||{}),fecha,hora,cancha};
+ }else{
+  ncDefinicionesBorrador[comp+'|'+sel.inst]={fecha,hora,cancha};
+ }
+ ncSeleccionCruceGrilla=null;
+ ncBracketSelected=comp;
+ navigate('cruces');
+ const program=document.getElementById('ncProgram');
+ if(program){program.hidden=false;program.scrollIntoView({block:'center'});}
+ avisoIntegrado('Horario elegido: '+hora+' · Cancha '+cancha+'. Completá el otro partido y confirmá ambos.');
+}
 let ncBracketSelected='';
 function ncBracketRender(){
  const all=(cruces15Datos?.filas||[]).filter(x=>String(x.anio)===String(settings.anio)&&String(x.edicion)===String(settings.edicion));
@@ -3185,8 +3224,8 @@ function ncBracketRender(){
   return inputRow('Semifinal '+(i+1),pair[0],pair[1],k=>`data-c15-cat="${esc(c15Key)}" data-c15-i="${i}" data-c15-key="${k}"`,draft);
  }).join(''):'';
  const finalRows=winners.length===2?[
-  inputRow('Final · Oro y Plata',winners[0],winners[1],k=>`data-c16-cat="${esc(comp)}" data-c16-inst="FINAL" data-c16-k="${k}"`),
-  inputRow('Tercer puesto · Bronce',losers[0],losers[1],k=>`data-c16-cat="${esc(comp)}" data-c16-inst="TERCER_PUESTO" data-c16-k="${k}"`)
+  inputRow('Final · Oro y Plata',winners[0],winners[1],k=>`data-c16-cat="${esc(comp)}" data-c16-inst="FINAL" data-c16-k="${k}"`,ncDefinicionesBorrador[comp+'|FINAL']),
+  inputRow('Tercer puesto · Bronce',losers[0],losers[1],k=>`data-c16-cat="${esc(comp)}" data-c16-inst="TERCER_PUESTO" data-c16-k="${k}"`,ncDefinicionesBorrador[comp+'|TERCER_PUESTO'])
  ].join(''):'';
  const program=semRows&&!semif.length?`<section class="nc-program" id="ncProgram" hidden><h3>Programar semifinales · ${esc(cat)} · ${esc(genero)}</h3><p>Completá los dos partidos. El sistema comprobará horarios y superposiciones antes de guardar.</p>${semRows}<button type="button" class="primary" data-c15-save="${esc(c15Key)}">Confirmar y guardar semifinales</button></section>`:finalRows&&(!final||!third)?`<section class="nc-program" id="ncProgram" hidden><h3>Programar definiciones · ${esc(cat)} · ${esc(genero)}</h3><p>Completá ambos partidos antes de guardar.</p>${finalRows}<button type="button" class="primary" data-c16-program="${esc(comp)}">Guardar final y tercer puesto</button></section>`:'';
  const sunday=(Array.isArray(settings.fechas)?settings.fechas[2]:'')||'';
@@ -4178,7 +4217,20 @@ function ncEditorFixtureEnlazar(){
   ncEditorFixtureSeleccion=ncEditorFixtureClave(i>=0?fixture[i]:fixture[fixture.length-1]);saveDraft();render();avisoIntegrado('Partido actualizado en el borrador.');
  });
 }
-function ncEnlazarJornadasFixture(){ncEnlazarArrastreFixture();ncEditorFixtureEnlazar();ncFxPintarArrastre();document.querySelectorAll('[data-nc-reprogramar]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const card=b.closest('[data-nc-resultado]');if(card){card.click()}else ncReprogramarIndividual(b)}));const ampliar=document.querySelector('[data-nc-grilla-expandir]');if(ampliar)ampliar.addEventListener('click',()=>{document.body.classList.toggle('nc-grilla-ampliada');render()});if(document.querySelector('[data-nc-resultado]')&&window.google?.script?.run)ncResultadosConsultarRapido().catch(()=>{});document.querySelectorAll('[data-nc-resultado]').forEach(b=>{b.addEventListener('dblclick',()=>ncAbrirResultadoDesdeFixture(b));b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();ncAbrirResultadoDesdeFixture(b)}})});document.querySelectorAll('[data-nc-dia-fixture]').forEach(b=>b.addEventListener('click',()=>{ncDiaFixtureSeleccionado=b.dataset.ncDiaFixture;render()}));document.querySelectorAll('[data-nc-categoria-fixture]').forEach(b=>b.addEventListener('click',()=>{ncCategoriaFixtureSeleccionada=b.dataset.ncCategoriaFixture;render()}))}
+function ncEnlazarJornadasFixture(){
+ if(ncSeleccionCruceGrilla){
+  const panel=document.querySelector('.nc-partidos-panel');
+  if(panel){
+   panel.classList.add('nc-seleccion-cruce');
+   const aviso=document.createElement('div');aviso.className='nc-seleccion-aviso';
+   aviso.innerHTML='<strong>Elegí una celda libre del domingo</strong> · Los partidos ocupados no se pueden seleccionar. <button type="button" class="secondary" id="ncCancelarSeleccionCruce">Cancelar</button>';
+   panel.prepend(aviso);
+   aviso.querySelector('button').onclick=()=>{ncSeleccionCruceGrilla=null;navigate('cruces')};
+   panel.querySelectorAll('.nc-partidos-slot').forEach(slot=>slot.addEventListener('click',e=>{e.stopPropagation();ncSeleccionarCeldaCruce(slot)},true));
+  }
+  return;
+ }
+ ncEnlazarArrastreFixture();ncEditorFixtureEnlazar();ncFxPintarArrastre();document.querySelectorAll('[data-nc-reprogramar]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const card=b.closest('[data-nc-resultado]');if(card){card.click()}else ncReprogramarIndividual(b)}));const ampliar=document.querySelector('[data-nc-grilla-expandir]');if(ampliar)ampliar.addEventListener('click',()=>{document.body.classList.toggle('nc-grilla-ampliada');render()});if(document.querySelector('[data-nc-resultado]')&&window.google?.script?.run)ncResultadosConsultarRapido().catch(()=>{});document.querySelectorAll('[data-nc-resultado]').forEach(b=>{b.addEventListener('dblclick',()=>ncAbrirResultadoDesdeFixture(b));b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();ncAbrirResultadoDesdeFixture(b)}})});document.querySelectorAll('[data-nc-dia-fixture]').forEach(b=>b.addEventListener('click',()=>{ncDiaFixtureSeleccionado=b.dataset.ncDiaFixture;render()}));document.querySelectorAll('[data-nc-categoria-fixture]').forEach(b=>b.addEventListener('click',()=>{ncCategoriaFixtureSeleccionada=b.dataset.ncCategoriaFixture;render()}))}
 /* ACCIÓN 02 — Únicamente actualización manual de distancias desde Equipos. */
 let ncDistanciasCalculando=false;
 function ncActualizarDistanciasEquipos(){
@@ -4307,6 +4359,12 @@ else if(active==='resultados'){view.innerHTML=resultados12Render();resultados12A
  else if(active==='cruces'){
  view.innerHTML=ncBracketRender();
  cruces15Activar();cruces16Activar();ncActivarArrastreCruces();
+ document.querySelectorAll('[data-nc-elegir-grilla]').forEach(b=>b.onclick=()=>{
+  const row=b.closest('.nc-program-row');if(!row)return;
+  const field=row.querySelector('[data-c15-cat], [data-c16-cat]');if(!field)return;
+  if(field.dataset.c15Cat){ncElegirEnFixture(ncBracketSelected,'SEMIFINAL',Number(field.dataset.c15I));}
+  else{ncElegirEnFixture(field.dataset.c16Cat,field.dataset.c16Inst,0);}
+ });
  document.querySelectorAll('[data-nc-program]').forEach(b=>b.onclick=()=>{const box=document.getElementById('ncProgram');if(box){box.hidden=false;box.scrollIntoView({behavior:'smooth',block:'nearest'});box.querySelector('input')?.focus();}});
  const sel=document.getElementById('ncBracketSelect');if(sel)sel.onchange=()=>{ncBracketSelected=sel.value;render();};
 }
