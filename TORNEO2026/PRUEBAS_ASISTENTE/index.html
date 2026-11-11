@@ -406,6 +406,16 @@ body[data-nc-theme="light"] .equipo-edit-modal input[type="file"]::file-selector
 .nc-program-row input,.nc-program-row select{width:100%;min-width:0;padding:9px;border:1px solid #6c7d7f;border-radius:7px;background:#f5f7f8;color:#1c2426;color-scheme:light}
 .nc-program .primary{margin-top:16px}
 @media(max-width:850px){.nc-program-row{grid-template-columns:repeat(2,minmax(0,1fr))}.nc-program-row>span{grid-column:span 2}}
+
+.nc-bracket-card[draggable=true]{cursor:grab}.nc-bracket-card.nc-cruce-dragging{opacity:.5}
+.nc-domingo{margin:12px 22px 20px;padding:15px;border:1px solid #3d5152;border-radius:10px;background:#202829;color:#eef4f3}
+.nc-domingo h3{font-size:16px;margin:0 0 6px}.nc-domingo p{font-size:12px;opacity:.85;margin:0 0 12px}
+.nc-domingo-scroll{overflow-x:auto}.nc-domingo-grid{display:grid;grid-template-columns:74px repeat(var(--nc-cols),minmax(130px,1fr));gap:4px;min-width:580px}
+.nc-domingo-th,.nc-domingo-hour{background:#293437;padding:9px;text-align:center;font-size:12px;font-weight:600;border-radius:5px}
+.nc-domingo-slot{min-height:43px;border:1px dashed #526164;border-radius:6px;text-align:center;padding:12px 5px;color:#93a7a4;font-size:12px}
+.nc-domingo-slot.nc-domingo-hover{background:#345a48;border-color:#a4ed39;color:white}
+.nc-domingo-slot.nc-domingo-asignado{background:#254b3a;color:#c5f59a;border-style:solid}
+.nc-domingo-status{margin-top:10px!important}
 </style><style>
 /* Ajustes exclusivos de notificaciones registradas */
 .notice { padding: 18px 20px 20px; }
@@ -3158,7 +3168,8 @@ function ncBracketRender(){
   const hasTb=r&&r.tiebreak&&r.tiebreak.every(v=>v!==''&&v!==null&&v!==undefined);
   const detail=r?`<div class="nc-bracket-sets"><span>Set 1: ${esc(pairs[0][0])}–${esc(pairs[0][1])}</span><span>Set 2: ${esc(pairs[1][0])}–${esc(pairs[1][1])}</span>${hasTb?`<span>TB: ${esc(pairs[2][0])}–${esc(pairs[2][1])}</span>`:''}</div>`:'';
   const action=x?`<button type="button" class="nc-bracket-action" data-c16-result="${esc([cat,genero,x.instancia,x.partido].join('|'))}">${r?'Corregir resultado':'Cargar resultado'}</button>`:placeholder&&placeholder.every(n=>!/^Ganador |^Perdedor |^Por definir/.test(n))?`<button type="button" class="nc-bracket-action" data-nc-program="semis">Programar partido</button>`:winners.length===2?`<button type="button" class="nc-bracket-action" data-nc-program="finales">Programar partido</button>`:'';
-  return `<article class="nc-bracket-card ${tone||''}" style="--nc-bracket-cat:${fxColorCategoria(cat)}"><h3>${esc(title)}</h3>${names.map((n,i)=>`<div class="nc-bracket-team"><span>${esc(n)}</span>${scores[i]!==null?`<span class="nc-bracket-score">${esc(scores[i])}</span>`:''}</div>`).join('')}${detail}<div class="nc-bracket-meta">${x?esc(String(x.fecha||'')+' · '+String(x.hora||'')+' · Cancha '+String(x.cancha||'')):'Pendiente de programación'}</div>${action}</article>`;
+  const dragId=!x&&title.startsWith('Semifinal ')?'SEMIFINAL|'+(title.includes('1')?'0':'1'):!x&&title.startsWith('Final')&&winners.length===2?'FINAL|0':!x&&title.startsWith('Tercer')&&losers.length===2?'TERCER_PUESTO|0':'';
+  return `<article class="nc-bracket-card ${tone||''}" ${dragId?`draggable="true" data-nc-cruce-drag="${dragId}" title="Arrastrá a la grilla del domingo"`:''} style="--nc-bracket-cat:${fxColorCategoria(cat)}"><h3>${esc(title)}</h3>${names.map((n,i)=>`<div class="nc-bracket-team"><span>${esc(n)}</span>${scores[i]!==null?`<span class="nc-bracket-score">${esc(scores[i])}</span>`:''}</div>`).join('')}${detail}<div class="nc-bracket-meta">${x?esc(String(x.fecha||'')+' · '+String(x.hora||'')+' · Cancha '+String(x.cancha||'')):'Pendiente de programación'}</div>${action}</article>`;
  };
  const sf=semif.length?semif.map((x,i)=>card('Semifinal '+(i+1),x,'')).join(''):propuestas.length===2?propuestas.map((p,i)=>card('Semifinal '+(i+1)+' · Propuesta oficial',null,'',p)).join(''):'<p class="nc-bracket-help">'+esc(!cruces15VistaServidor?'Consultando clasificación oficial…':oficial.vista?.motivo||'Todavía no hay semifinalistas habilitados.')+'</p>';
  const final=matches.find(x=>x.instancia==='FINAL'),third=matches.find(x=>x.instancia==='TERCER_PUESTO');
@@ -3178,9 +3189,50 @@ function ncBracketRender(){
   inputRow('Tercer puesto · Bronce',losers[0],losers[1],k=>`data-c16-cat="${esc(comp)}" data-c16-inst="TERCER_PUESTO" data-c16-k="${k}"`)
  ].join(''):'';
  const program=semRows&&!semif.length?`<section class="nc-program" id="ncProgram" hidden><h3>Programar semifinales · ${esc(cat)} · ${esc(genero)}</h3><p>Completá los dos partidos. El sistema comprobará horarios y superposiciones antes de guardar.</p>${semRows}<button type="button" class="primary" data-c15-save="${esc(c15Key)}">Confirmar y guardar semifinales</button></section>`:finalRows&&(!final||!third)?`<section class="nc-program" id="ncProgram" hidden><h3>Programar definiciones · ${esc(cat)} · ${esc(genero)}</h3><p>Completá ambos partidos antes de guardar.</p>${finalRows}<button type="button" class="primary" data-c16-program="${esc(comp)}">Guardar final y tercer puesto</button></section>`:'';
+ const sunday=(Array.isArray(settings.fechas)?settings.fechas[2]:'')||'';
+ const ventana=ventanasTorneo()?.[2]||['09:00','19:00'];
+ const aMin=h=>{const m=/^(\\d{1,2}):(\\d{2})$/.exec(String(h||''));return m?Number(m[1])*60+Number(m[2]):NaN};
+ const toHora=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+ const step=Math.max(5,Number(settings.duracion||60)+Number(settings.intervalo||0));
+ const slots=[];for(let t=aMin(ventana[0]);Number.isFinite(t)&&t+step<=aMin(ventana[1])&&slots.length<20;t+=step)slots.push(toHora(t));
+ const mostrarGrilla=!!program&&slots.length>0;
+ const grilla=mostrarGrilla?`<section class="nc-domingo"><h3>Domingo · Arrastrá los partidos a su cancha y horario</h3><p>La programación queda en borrador hasta que confirmes ambos partidos. También podés completar los campos manualmente.</p><div class="nc-domingo-scroll"><div class="nc-domingo-grid" style="--nc-cols:${Number(settings.canchas)||4}"><div class="nc-domingo-th">Hora</div>${Array.from({length:Number(settings.canchas)||4},(_,i)=>`<div class="nc-domingo-th">Cancha ${i+1}</div>`).join('')}${slots.map(h=>`<div class="nc-domingo-hour">${h}</div>${Array.from({length:Number(settings.canchas)||4},(_,i)=>`<div class="nc-domingo-slot" data-nc-domingo-hora="${h}" data-nc-domingo-cancha="${i+1}" tabindex="0" title="${h} · Cancha ${i+1}">+</div>`).join('')}`).join('')}</div></div><p class="nc-domingo-status" id="ncDomingoEstado">Arrastrá una semifinal o definición pendiente desde su card.</p></section>`:'';
  const finished=!!(final&&third&&getResult(final)&&getResult(third));
  const setup='';
- return `<section class="nc-bracket" aria-label="Cuadro de cruces"><header class="nc-bracket-head"><div><h2>Cruces · Instancias finales</h2><p>Semifinalistas, finalistas y resultados por partido</p></div><label>Competición <select id="ncBracketSelect">${options}</select></label></header><div class="nc-bracket-body"><div class="nc-bracket-side"><h3 class="nc-bracket-stage">Semifinales</h3>${sf}</div><div class="nc-bracket-links" aria-hidden="true"></div><div class="nc-bracket-side"><h3 class="nc-bracket-stage">Definiciones</h3>${card('Final · Oro y Plata',final,'gold',winners.length===2?winners:['Ganador semifinal 1','Ganador semifinal 2'])}${card('Tercer puesto · Bronce',third,'bronze',losers.length===2?losers:['Perdedor semifinal 1','Perdedor semifinal 2'])}</div></div>${program}${setup}<div class="nc-bracket-foot">${finished?'✓ Podio confirmado':semif.length!==2?'Semifinales pendientes de programación':winners.length===2?'✓ Semifinales completadas · '+(final&&third?'Partidos decisivos programados':'Final y tercer puesto pendientes'):'Semifinales pendientes de resultado'}</div></section>`;
+ return `<section class="nc-bracket" aria-label="Cuadro de cruces"><header class="nc-bracket-head"><div><h2>Cruces · Instancias finales</h2><p>Semifinalistas, finalistas y resultados por partido</p></div><label>Competición <select id="ncBracketSelect">${options}</select></label></header><div class="nc-bracket-body"><div class="nc-bracket-side"><h3 class="nc-bracket-stage">Semifinales</h3>${sf}</div><div class="nc-bracket-links" aria-hidden="true"></div><div class="nc-bracket-side"><h3 class="nc-bracket-stage">Definiciones</h3>${card('Final · Oro y Plata',final,'gold',winners.length===2?winners:['Ganador semifinal 1','Ganador semifinal 2'])}${card('Tercer puesto · Bronce',third,'bronze',losers.length===2?losers:['Perdedor semifinal 1','Perdedor semifinal 2'])}</div></div>${grilla}${program}${setup}<div class="nc-bracket-foot">${finished?'✓ Podio confirmado':semif.length!==2?'Semifinales pendientes de programación':winners.length===2?'✓ Semifinales completadas · '+(final&&third?'Partidos decisivos programados':'Final y tercer puesto pendientes'):'Semifinales pendientes de resultado'}</div></section>`;
+}
+function ncActivarArrastreCruces(){
+ const box=document.getElementById('ncProgram'),estado=document.getElementById('ncDomingoEstado');
+ if(!box)return;
+ let dragging='';
+ document.querySelectorAll('[data-nc-cruce-drag]').forEach(card=>{
+  card.addEventListener('dragstart',e=>{dragging=card.dataset.ncCruceDrag;e.dataTransfer.setData('text/plain',dragging);e.dataTransfer.effectAllowed='copy';card.classList.add('nc-cruce-dragging')});
+  card.addEventListener('dragend',()=>{dragging='';card.classList.remove('nc-cruce-dragging')});
+ });
+ const colocar=(id,slot)=>{
+  const [inst,i]=id.split('|'),hora=slot.dataset.ncDomingoHora,cancha=slot.dataset.ncDomingoCancha;
+  const comp=ncBracketSelected;
+  const fecha=Array.isArray(settings.fechas)?settings.fechas[2]:'';
+  if(!fecha||!hora||!cancha){if(estado)estado.textContent='Revisá la fecha del domingo en Configuración.';return}
+  const attrs=inst==='SEMIFINAL'?['data-c15-i',i]:['data-c16-inst',inst];
+  const selector=inst==='SEMIFINAL'?`[data-c15-i="${i}"]`:`[data-c16-inst="${inst}"]`;
+  const get=k=>box.querySelector(`${selector}[${inst==='SEMIFINAL'?'data-c15-key':'data-c16-k'}="${k}"]`);
+  const fields={fecha:get('fecha'),hora:get('hora'),cancha:get('cancha')};
+  if(Object.values(fields).some(v=>!v)){if(estado)estado.textContent='No se encontraron los controles de programación de este partido.';return}
+  const toISO=v=>{const m=/^(\\d{2})\\/(\\d{2})\\/(\\d{4})$/.exec(v);return m?`${m[3]}-${m[2]}-${m[1]}`:v};
+  const date=toISO(fecha);
+  fields.fecha.value=date;fields.hora.value=hora;fields.cancha.value=cancha;
+  Object.values(fields).forEach(el=>el.dispatchEvent(new Event('change',{bubbles:true})));
+  box.hidden=false;
+  slot.classList.add('nc-domingo-asignado');
+  slot.textContent=inst==='SEMIFINAL'?'Semifinal '+(Number(i)+1):inst==='FINAL'?'Final':'3.er puesto';
+  if(estado)estado.textContent='Ubicación propuesta: '+slot.textContent+' · '+hora+' · Cancha '+cancha+'. Completá los demás partidos y confirmá el guardado.';
+ };
+ document.querySelectorAll('[data-nc-domingo-hora]').forEach(slot=>{
+  slot.addEventListener('dragover',e=>{if(!dragging)return;e.preventDefault();e.dataTransfer.dropEffect='copy';slot.classList.add('nc-domingo-hover')});
+  slot.addEventListener('dragleave',()=>slot.classList.remove('nc-domingo-hover'));
+  slot.addEventListener('drop',e=>{e.preventDefault();slot.classList.remove('nc-domingo-hover');const id=dragging||e.dataTransfer.getData('text/plain');if(id)colocar(id,slot)});
+ });
 }
 let cruces15Datos=null,cruces15Cargando=false,cruces15Borradores={};
 let cruces15VistaServidor=null,cruces15VistaCargando=false;
@@ -4229,7 +4281,7 @@ else if(active==='resultados'){view.innerHTML=resultados12Render();resultados12A
  else if(active==='posiciones'){view.innerHTML=posiciones13Render();posiciones13Activar();}
  else if(active==='cruces'){
  view.innerHTML=ncBracketRender();
- cruces15Activar();cruces16Activar();
+ cruces15Activar();cruces16Activar();ncActivarArrastreCruces();
  document.querySelectorAll('[data-nc-program]').forEach(b=>b.onclick=()=>{const box=document.getElementById('ncProgram');if(box){box.hidden=false;box.scrollIntoView({behavior:'smooth',block:'nearest'});box.querySelector('input')?.focus();}});
  const sel=document.getElementById('ncBracketSelect');if(sel)sel.onchange=()=>{ncBracketSelected=sel.value;render();};
 }
