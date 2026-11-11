@@ -3163,7 +3163,7 @@ function cruces16Render(){
    bloque+=`<tr><td>${esc(x.instancia==='SEMIFINAL'?'Semifinal '+x.partido:x.instancia==='FINAL'?'Final · Oro/Plata':'Tercer puesto · Bronce')}</td><td>${esc(x.local)} vs ${esc(x.visitante)}<div class="status">${esc(x.fecha)} · ${esc(x.hora)} · Cancha ${esc(x.cancha)}</div></td><td>${r?(r.local!==x.local||r.visitante!==x.visitante||![x.local,x.visitante].includes(r.ganador)?'<strong style="color:#a12626">INCONSISTENCIA: resultado de otros equipos</strong>':esc(r.setsLocal+'–'+r.setsVisitante+' · Ganó '+r.ganador)):'Pendiente'}</td><td><button class="secondary" data-c16-result="${esc(key)}">${r?'Corregir resultado':'Cargar resultado'}</button></td></tr>`;
   }
   bloque+='</tbody></table></div>';
-  bloque+=`<div class="toolbar"><button class="secondary" data-c36-review="${esc(comp)}">Revisar integridad y reconstrucción de cruces</button></div>`;
+
   if(rsem.every(Boolean)&&rsem.every((r,i)=>r.local===ss[i].local&&r.visitante===ss[i].visitante&&[ss[i].local,ss[i].visitante].includes(r.ganador))){
    const winners=rsem.map(r=>r.ganador),losers=ss.map((x,i)=>x.local===winners[i]?x.visitante:x.local),final=fs.find(x=>x.instancia==='FINAL'),tercero=fs.find(x=>x.instancia==='TERCER_PUESTO');
    if(!final||!tercero){
@@ -3251,7 +3251,7 @@ function admin36Revisar(comp){
   google.script.run.withSuccessHandler(async r=>{await mostrarDialogoZonas({titulo:'Cruces reconstruidos',detalle:'Se generaron dos semifinales pendientes. Respaldos: '+r.respaldos.join(', '),soloAceptar:true});cruces15Leer();cruces16Leer();historial26Leer();}).withFailureHandler(e=>mostrarDialogoZonas({titulo:'No se completó la reconstrucción',detalle:String(e.message||e),soloAceptar:true})).admin36Reconstruir({...d,motivo,confirmacion});
  }).withFailureHandler(e=>mostrarDialogoZonas({titulo:'No se pudo revisar',detalle:String(e.message||e),soloAceptar:true})).admin36Resumen(settings.anio,settings.edicion,cat,genero);
 }
-function cruces16Activar(){const b=$('#c16Actualizar');if(b)b.onclick=()=>{cruces15Leer();cruces16Leer()};document.querySelectorAll('[data-c36-review]').forEach(b=>b.onclick=()=>admin36Revisar(b.dataset.c36Review));document.querySelectorAll('[data-c16-result]').forEach(b=>b.onclick=()=>cruces16Resultado(b.dataset.c16Result));document.querySelectorAll('[data-c16-program]').forEach(b=>b.onclick=()=>cruces16Programar(b.dataset.c16Program));}
+function cruces16Activar(){const b=$('#c16Actualizar');if(b)b.onclick=()=>{cruces15Leer();cruces16Leer()};document.querySelectorAll('[data-c16-result]').forEach(b=>b.onclick=()=>cruces16Resultado(b.dataset.c16Result));document.querySelectorAll('[data-c16-program]').forEach(b=>b.onclick=()=>cruces16Programar(b.dataset.c16Program));}
 
 // ETAPA 12: pantalla independiente de resultados. No modifica el fixture ni el menú.
 let resultados12Datos=null,resultados12Cargando=false,resultados12Seleccion='',resultados12Filtro='todas';
