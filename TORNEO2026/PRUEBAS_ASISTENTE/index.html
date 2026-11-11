@@ -401,7 +401,7 @@ body[data-nc-theme="light"] .equipo-edit-modal input[type="file"]::file-selector
 .nc-program[hidden]{display:none!important}
 .nc-program h3{font-size:17px;margin:0 0 6px;color:#b7ec71}
 .nc-program p{font-size:13px;margin:0 0 16px;color:#d5dfe0}
-.nc-program-row{display:grid;grid-template-columns:110px minmax(150px,1fr) minmax(125px,160px) minmax(100px,130px) minmax(95px,120px);gap:12px;align-items:end;padding:12px 0;border-top:1px solid #405154}
+.nc-program-row{display:grid;grid-template-columns:110px minmax(150px,1fr) 132px minmax(125px,160px) minmax(100px,130px) minmax(95px,120px);gap:12px;align-items:end;padding:12px 0;border-top:1px solid #405154}
 .nc-program-row label{font-size:12px;display:flex;flex-direction:column;gap:5px}
 .nc-program-row input,.nc-program-row select{width:100%;min-width:0;padding:9px;border:1px solid #6c7d7f;border-radius:7px;background:#f5f7f8;color:#1c2426;color-scheme:light}
 .nc-program .primary{margin-top:16px}
@@ -1638,7 +1638,7 @@ body[data-nc-theme="dark"] .equipo-edit-overlay .equipo-edit-modal .equipo-edit-
 @media(max-width:420px){#c17Editor .nc-result-editor .r12-versus-team{gap:5px}#c17Editor .nc-result-editor .r12-team-label .r12-team-shield{width:21px;height:24px}#c17Editor .nc-result-editor .r12-set-fields label{font-size:13px!important}}
 
 </style><style id="nc-elegir-grilla-estilos">
-.nc-program-row .nc-elegir-grilla{align-self:end;white-space:nowrap;font-size:12px;padding:10px 12px}
+.nc-program-row .nc-elegir-grilla{align-self:end;white-space:nowrap;font-size:12px;padding:10px 12px;background:#a2ed34!important;border:1px solid #a2ed34!important;color:#172317!important;font-weight:700}.nc-program-row .nc-elegir-grilla:hover{background:#b7fa54!important;border-color:#b7fa54!important}
 .nc-seleccion-aviso{padding:14px 16px;margin-bottom:14px;border:1px solid #91ce47;border-radius:10px;background:#223329;color:#fff;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .nc-seleccion-cruce .nc-partidos-slot{cursor:pointer}
 .nc-seleccion-cruce .nc-partidos-slot:has(.nc-partidos-vacio){outline:2px dashed #a2ed34;outline-offset:-3px;background:rgba(162,237,52,.1)}
@@ -3221,7 +3221,7 @@ function ncBracketRender(){
  const datesDefault=Array.isArray(settings.fechas)?settings.fechas[2]:'';
  const inputRow=(label,team1,team2,attrs,prev)=>{
    const val=k=>esc(String(prev?.[k]||''));
-   return `<div class="nc-program-row"><strong>${esc(label)}</strong><span>${esc(team1)} vs ${esc(team2)}</span><label>Fecha<input type="date" ${attrs('fecha')} value="${val('fecha')}"></label><label>Hora<input type="time" ${attrs('hora')} value="${val('hora')}"></label><label>Cancha<select ${attrs('cancha')}><option value="">Elegir</option>${Array.from({length:Number(settings.canchas)},(_,i)=>`<option value="${i+1}" ${String(prev?.cancha||'')===String(i+1)?'selected':''}>${i+1}</option>`).join('')}</select></label><button type="button" class="secondary nc-elegir-grilla" data-nc-elegir-grilla="1">Elegir en grilla</button></div>`;
+   return `<div class="nc-program-row"><strong>${esc(label)}</strong><span>${esc(team1)} vs ${esc(team2)}</span><button type="button" class="secondary nc-elegir-grilla" data-nc-elegir-grilla="1">Elegir en grilla</button><label>Fecha<input type="date" ${attrs('fecha')} value="${val('fecha')}"></label><label>Hora<input type="time" ${attrs('hora')} value="${val('hora')}"></label><label>Cancha<select ${attrs('cancha')}><option value="">Elegir</option>${Array.from({length:Number(settings.canchas)},(_,i)=>`<option value="${i+1}" ${String(prev?.cancha||'')===String(i+1)?'selected':''}>${i+1}</option>`).join('')}</select></label></div>`;
  };
  const c15Key=d?.clave;
  const semRows=propuestas.length===2&&c15Key?propuestas.map((pair,i)=>{
