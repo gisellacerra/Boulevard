@@ -3199,7 +3199,7 @@ function ncBracketRender(){
  const grilla=mostrarGrilla?`<section class="nc-domingo"><h3>Domingo · Arrastrá los partidos a su cancha y horario</h3><p>La programación queda en borrador hasta que confirmes ambos partidos. También podés completar los campos manualmente.</p><div class="nc-domingo-scroll"><div class="nc-domingo-grid" style="--nc-cols:${Number(settings.canchas)||4}"><div class="nc-domingo-th">Hora</div>${Array.from({length:Number(settings.canchas)||4},(_,i)=>`<div class="nc-domingo-th">Cancha ${i+1}</div>`).join('')}${slots.map(h=>`<div class="nc-domingo-hour">${h}</div>${Array.from({length:Number(settings.canchas)||4},(_,i)=>`<div class="nc-domingo-slot" data-nc-domingo-hora="${h}" data-nc-domingo-cancha="${i+1}" tabindex="0" title="${h} · Cancha ${i+1}">+</div>`).join('')}`).join('')}</div></div><p class="nc-domingo-status" id="ncDomingoEstado">Arrastrá una semifinal o definición pendiente desde su card.</p></section>`:'';
  const finished=!!(final&&third&&getResult(final)&&getResult(third));
  const setup='';
- return `<section class="nc-bracket" aria-label="Cuadro de cruces"><header class="nc-bracket-head"><div><h2>Cruces · Instancias finales</h2><p>Semifinalistas, finalistas y resultados por partido</p></div><label>Competición <select id="ncBracketSelect">${options}</select></label></header><div class="nc-bracket-body"><div class="nc-bracket-side"><h3 class="nc-bracket-stage">Semifinales</h3>${sf}</div><div class="nc-bracket-links" aria-hidden="true"></div><div class="nc-bracket-side"><h3 class="nc-bracket-stage">Definiciones</h3>${card('Final · Oro y Plata',final,'gold',winners.length===2?winners:['Ganador semifinal 1','Ganador semifinal 2'])}${card('Tercer puesto · Bronce',third,'bronze',losers.length===2?losers:['Perdedor semifinal 1','Perdedor semifinal 2'])}</div></div>${grilla}${program}${setup}<div class="nc-bracket-foot">${finished?'✓ Podio confirmado':semif.length!==2?'Semifinales pendientes de programación':winners.length===2?'✓ Semifinales completadas · '+(final&&third?'Partidos decisivos programados':'Final y tercer puesto pendientes'):'Semifinales pendientes de resultado'}</div></section>`;
+ return `<section class="nc-bracket" aria-label="Cuadro de cruces"><header class="nc-bracket-head"><div><h2>Cruces · Instancias finales</h2><p>Semifinalistas, finalistas y resultados por partido</p></div><label>Competición <select id="ncBracketSelect">${options}</select></label></header><div class="nc-bracket-body"><div class="nc-bracket-side"><h3 class="nc-bracket-stage">Semifinales</h3>${sf}</div><div class="nc-bracket-links" aria-hidden="true"></div><div class="nc-bracket-side"><h3 class="nc-bracket-stage">Definiciones</h3>${card('Final · Oro y Plata',final,'gold',winners.length===2?winners:['Ganador semifinal 1','Ganador semifinal 2'])}${card('Tercer puesto · Bronce',third,'bronze',losers.length===2?losers:['Perdedor semifinal 1','Perdedor semifinal 2'])}</div></div>${program}${setup}<div class="nc-bracket-foot">${finished?'✓ Podio confirmado':semif.length!==2?'Semifinales pendientes de programación':winners.length===2?'✓ Semifinales completadas · '+(final&&third?'Partidos decisivos programados':'Final y tercer puesto pendientes'):'Semifinales pendientes de resultado'}</div></section>`;
 }
 function ncActivarArrastreCruces(){
  const box=document.getElementById('ncProgram'),estado=document.getElementById('ncDomingoEstado');
@@ -3746,7 +3746,7 @@ return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ga
   const numeroPartido=numeroVisiblePartido(p);
   const insigniaPartido=numeroPartido?`<span class="nc-partidos-numero" aria-label="Partido número ${numeroPartido}" title="Partido N.º ${numeroPartido}">N.º ${numeroPartido}</span>`:'';
   const marcador=puntos?`<div class="nc-partidos-puntos" aria-label="Puntos por set: ${esc(puntos)}">${esc(puntos)}</div>`:'';
-  return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" ${!p._cruce&&!datosMarcador?'draggable="true" data-nc-arrastrable="1"':''} role="button" tabindex="0" title="${fx3UltimaPropuesta?'Seleccionar partido del borrador':'Seleccionar partido para editar'}" ${fx3UltimaPropuesta?'data-nc-borrador':'data-nc-resultado'}="${esc(encodeURIComponent(JSON.stringify({cruce:!!p._cruce,instancia:p.instancia,partido:p.partido,genero:p.genero,fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}">${insigniaPartido}<div class="nc-partidos-equipos">${p._cruce?`<div class="nc-cruce-etiqueta-fixture">${esc(p.instancia==='SEMIFINAL'?'Semifinal '+p.partido:p.instancia==='FINAL'?'Final':'Tercer puesto')}</div>`:''}<div class="nc-partidos-equipo">${iconoEquipo(a)}<span class="nc-partidos-nombre ${ganaA?'nc-partidos-ganador':''}">${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span class="nc-partidos-nombre ${ganaB?'nc-partidos-ganador':''}">${esc(b)}</span></div>${marcador}</div>${reloj}</div>`;
+  return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" ${p._cruce?'draggable="true" data-nc-cruce-confirmado="1"':!datosMarcador?'draggable="true" data-nc-arrastrable="1"':''} role="button" tabindex="0" title="${fx3UltimaPropuesta?'Seleccionar partido del borrador':'Seleccionar partido para editar'}" ${fx3UltimaPropuesta?'data-nc-borrador':'data-nc-resultado'}="${esc(encodeURIComponent(JSON.stringify({cruce:!!p._cruce,instancia:p.instancia,partido:p.partido,genero:p.genero,fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}">${insigniaPartido}<div class="nc-partidos-equipos">${p._cruce?`<div class="nc-cruce-etiqueta-fixture">${esc(p.instancia==='SEMIFINAL'?'Semifinal '+p.partido:p.instancia==='FINAL'?'Final':'Tercer puesto')}</div>`:''}<div class="nc-partidos-equipo">${iconoEquipo(a)}<span class="nc-partidos-nombre ${ganaA?'nc-partidos-ganador':''}">${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span class="nc-partidos-nombre ${ganaB?'nc-partidos-ganador':''}">${esc(b)}</span></div>${marcador}</div>${reloj}</div>`;
 
  };
  const matriz=horarios.length?`<div class="nc-partidos-scroll"><div class="nc-partidos-matriz" style="--canchas:${cantidad}"><div class="nc-partidos-celda nc-partidos-cab">Horario</div>${Array.from({length:cantidad},(_,i)=>`<div class="nc-partidos-celda nc-partidos-cab">Cancha ${i+1}</div>`).join('')}${horarios.map(h=>`<div class="nc-partidos-celda nc-partidos-hora">${esc(h)}</div>${Array.from({length:cantidad},(_,i)=>`<div class="nc-partidos-slot" data-nc-slot-fecha="${esc(ncDiaFixtureSeleccionado)}" data-nc-slot-hora="${esc(h)}" data-nc-slot-cancha="${i+1}">${celda(partidosVisibles.find(p=>hora(p)===h&&cancha(p)===i+1))}</div>`).join('')}`).join('')}</div></div>`:'<p class="muted">No hay partidos cargados para esta jornada.</p>';
@@ -4071,8 +4071,33 @@ function ncFxMoverBorrador(origen,destino){
  }catch(e){avisoIntegrado(e.message||String(e))}
 }
 let ncArrastreOrigen=null;
+function ncMoverCruceConfirmado(origen,destino){
+ let info;
+ try{info=JSON.parse(decodeURIComponent(origen));}catch(e){avisoIntegrado('No se pudo identificar el cruce.');return}
+ if(!info.cruce)return;
+ const fecha=String(destino.fecha||''),hora=String(destino.hora||''),cancha=Number(destino.cancha);
+ const titulo=info.instancia==='SEMIFINAL'?'Semifinal '+info.partido:info.instancia==='FINAL'?'Final':'Tercer puesto';
+ if(!window.confirm('Reprogramar '+titulo+' · '+info.local+' vs '+info.visitante+'\nDe '+info.hora+' · Cancha '+info.cancha+' a '+hora+' · Cancha '+cancha+'?\n\nLos resultados no se modificarán.'))return;
+ if(!window.google?.script?.run){avisoIntegrado('Necesitás iniciar sesión para guardar la reprogramación.');return}
+ const payload={anio:settings.anio,edicion:settings.edicion,categoria:info.categoria,genero:info.genero,instancia:info.instancia,partido:info.partido,local:info.local,visitante:info.visitante,fecha,hora,cancha,huella:cruces15Datos?.huella,horarios:ventanasTorneo(),duracion:Number(settings.duracion),intervalo:Number(settings.intervalo),canchas:Number(settings.canchas)};
+ if(!payload.huella){avisoIntegrado('Actualizá los cruces antes de mover partidos.');return}
+ google.script.run.withSuccessHandler(()=>{
+  avisoIntegrado('Cruce reprogramado. Resultados conservados.');
+  cruces15Leer();cruces16Leer();
+ }).withFailureHandler(e=>mostrarDialogoZonas({titulo:'No se movió el partido',detalle:'No se modificaron datos',advertencia:String(e.message||e),soloAceptar:true})).adminCrucesReprogramar(payload);
+}
 function ncEnlazarArrastreFixture(){
  const panel=document.querySelector('.nc-partidos-panel');if(!panel)return;
+ panel.querySelectorAll('[data-nc-cruce-confirmado]').forEach(celda=>{
+  celda.addEventListener('dragstart',e=>{
+   const origen=celda.dataset.ncResultado;
+   if(!origen){e.preventDefault();return}
+   ncArrastreOrigen='CRUCE:'+origen;
+   e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',ncArrastreOrigen);
+   celda.classList.add('nc-partidos-arrastrando');panel.classList.add('nc-partidos-modo-arrastre');
+  });
+  celda.addEventListener('dragend',()=>{celda.classList.remove('nc-partidos-arrastrando');ncArrastreOrigen=null;panel.classList.remove('nc-partidos-modo-arrastre')});
+ });
  panel.querySelectorAll('[data-nc-arrastrable]').forEach(celda=>{
   celda.addEventListener('dragstart',e=>{
    const origen=celda.dataset.ncBorrador||celda.dataset.ncResultado;
@@ -4092,7 +4117,7 @@ function ncEnlazarArrastreFixture(){
    const origen=ncArrastreOrigen||e.dataTransfer.getData('text/plain');ncArrastreOrigen=null;if(!origen)return;
    const fecha=slot.dataset.ncSlotFecha,hora=slot.dataset.ncSlotHora,cancha=slot.dataset.ncSlotCancha;
    const reloj=document.createElement('button');reloj.dataset.ncReprogramar=origen;
-   if(fx3UltimaPropuesta)ncFxMoverBorrador(origen,{fecha,hora,cancha});else ncFxArrastrar(origen,{fecha,hora,cancha});
+   if(origen.startsWith('CRUCE:'))ncMoverCruceConfirmado(origen.slice(6),{fecha,hora,cancha});else if(fx3UltimaPropuesta)ncFxMoverBorrador(origen,{fecha,hora,cancha});else ncFxArrastrar(origen,{fecha,hora,cancha});
   });
  });
 }
