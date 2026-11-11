@@ -1645,30 +1645,39 @@ body[data-nc-theme="dark"] .equipo-edit-overlay .equipo-edit-modal .equipo-edit-
 .nc-seleccion-cruce .nc-partidos-slot:has(.nc-partidos-contenido){cursor:not-allowed;opacity:.75}
 </style>
 <style id="nc-cruces-estilo-final">
-/* Solo Cruces: mantiene la estructura y los controles existentes */
-.nc-bracket{background:#191f20!important;color:#edf4f1!important;border:1px solid #3d4a49!important}
-.nc-bracket-head{background:#222b2b!important;border-color:#3b4b4b!important;justify-content:flex-end!important;padding:13px 22px!important;color:#f0f6f3!important}
-.nc-bracket-head label{display:flex;align-items:center;gap:10px;color:#edf4f1}
-.nc-bracket-head select{background:#1b2526!important;color:#f3f7f4!important;border:1px solid #596b68!important}
+/* Cruces: superficie plana, misma identidad del fixture */
+.nc-bracket{background:#191f20!important;color:#f1f4f2!important;border:1px solid #3d4a49!important}
+.nc-bracket-head{background:#22292a!important;border-color:#3b4b4b!important;justify-content:flex-end!important;padding:13px 22px!important}
+.nc-bracket-head label{display:flex;align-items:center;gap:10px;color:#fff!important}
+.nc-bracket-head select{background:#1b2526!important;color:#fff!important;border:1px solid #596b68!important}
 .nc-bracket-body{background:#191f20!important}
-.nc-bracket-card{background:#20292a!important;color:#f2f6f4!important;border:1px solid #455554!important;border-left:4px solid var(--nc-bracket-cat,#a4ee31)!important}
-.nc-bracket-card.gold{border-left-color:#e0b84c!important}.nc-bracket-card.bronze{border-left-color:#c18a65!important}
-.nc-bracket-card h3{display:flex;align-items:center;gap:8px}
-.nc-bracket-card:not(.gold):not(.bronze) h3{color:var(--nc-bracket-cat,#a4ee31)!important}
-.nc-bracket-team{color:#e7eeee;border-bottom-color:#3d4b4c!important;font-weight:500!important}
-.nc-bracket-team.nc-bracket-winner{background:linear-gradient(90deg,#2a4c25,#263e29 80%,transparent);border-radius:6px;padding-left:9px;padding-right:5px;color:#d4ff9c!important;font-weight:800!important}
+.nc-bracket-card,.nc-bracket-card.gold,.nc-bracket-card.bronze{background:#20292a!important;background-image:none!important;color:#f2f6f4!important;border:1px solid #455554!important;border-left:8px solid var(--nc-bracket-cat,#a4ee31)!important;box-shadow:none!important}
+.nc-bracket-card h3,.nc-bracket-card:not(.gold):not(.bronze) h3{color:#fff!important;display:flex;align-items:center;gap:8px;font-weight:600!important}
+.nc-bracket-team{color:#fff!important;border-bottom-color:#3d4b4c!important;font-weight:400!important;display:flex;align-items:center;gap:8px}
+.nc-bracket-team.nc-bracket-winner{background:transparent!important;background-image:none!important;padding-left:0!important;padding-right:0!important;border-radius:0!important;color:#ffdf26!important;font-weight:600!important}
 .nc-bracket-team.nc-bracket-winner .nc-bracket-score{color:#b6f52b!important;border:1px solid #a4ec27!important}
+.nc-bracket-team-name{display:inline-flex;align-items:center;gap:9px;min-width:0;flex:1}
+.nc-bracket-shield{width:25px;height:25px;object-fit:contain;flex:none}
 .nc-bracket-score{background:#354244!important;color:#f0f4f4!important}
 .nc-bracket-sets span{background:#293537!important;color:#dce8e6!important;border-color:#425352!important}
 .nc-bracket-meta,.nc-bracket-sets{color:#d0dcda!important;opacity:1!important}
-.nc-bracket-action{color:#d2ff8e!important;border-color:#a4ed31!important;background:transparent!important}
-.nc-bracket-action:hover{background:#34442a!important}
-.nc-bracket-foot{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;background:#222d28!important;color:#b6f27a!important;border-top-color:#40504a!important}
+.nc-bracket-action{color:#d2ff8e!important;border:1px solid #a4ed31!important;background:#20292a!important;background-image:none!important}
+.nc-bracket-action:hover{background:#303b31!important}
+.nc-bracket-foot{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;background:#22292a!important;background-image:none!important;color:#f1f4f2!important;border-top-color:#40504a!important}
 .nc-medal-icon{width:21px;height:21px;flex:none}.gold-medal{color:#e9c554}.bronze-medal{color:#d79b70}
 .nc-podium{display:flex;gap:20px;flex-wrap:wrap;font-size:13px;color:#e5eeeb;font-weight:500}
 .nc-podium span{display:inline-flex;align-items:center;gap:5px}.nc-podium svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
 .nc-podium span:nth-child(1) svg,.nc-podium span:nth-child(1) b{color:#e8c35d}.nc-podium span:nth-child(2) svg,.nc-podium span:nth-child(2) b{color:#c7d4d8}.nc-podium span:nth-child(3) svg,.nc-podium span:nth-child(3) b{color:#dba077}
 @media(max-width:850px){.nc-bracket-foot{align-items:flex-start}.nc-podium{gap:10px}}
+<style id="nc-cruces-sin-degrades">
+/* Cruces: prohibidos los degradados, incluso en estados de ganador */
+.nc-bracket,.nc-bracket-head,.nc-bracket-body,.nc-bracket-card,.nc-bracket-card.gold,.nc-bracket-card.bronze,.nc-bracket-foot{background-color:#20292a!important;background-image:none!important;box-shadow:none!important}
+.nc-bracket-body{background-color:#191f20!important}
+.nc-bracket-team,.nc-bracket-team.nc-bracket-winner,.nc-bracket-team-name,.nc-bracket-team-name span{background:transparent!important;background-image:none!important;box-shadow:none!important;text-shadow:none!important}
+.nc-bracket-team.nc-bracket-winner{color:#ffdf26!important;font-weight:600!important}
+.nc-bracket-card::before,.nc-bracket-card::after,.nc-bracket-team::before,.nc-bracket-team::after{background-image:none!important}
+.nc-bracket-action{background-color:#20292a!important;background-image:none!important}
+</style>
 </style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
@@ -3239,9 +3248,10 @@ function ncBracketRender(){
   const hasTb=r&&r.tiebreak&&r.tiebreak.every(v=>v!==''&&v!==null&&v!==undefined);
   const detail=r?`<div class="nc-bracket-sets"><span>Set 1: ${esc(pairs[0][0])}–${esc(pairs[0][1])}</span><span>Set 2: ${esc(pairs[1][0])}–${esc(pairs[1][1])}</span>${hasTb?`<span>TB: ${esc(pairs[2][0])}–${esc(pairs[2][1])}</span>`:''}</div>`:'';
   const action=x?`<button type="button" class="nc-bracket-action" data-c16-result="${esc([cat,genero,x.instancia,x.partido].join('|'))}">${r?'Corregir resultado':'Cargar resultado'}</button>`:placeholder&&placeholder.every(n=>!/^Ganador |^Perdedor |^Por definir/.test(n))?`<button type="button" class="nc-bracket-action" data-nc-program="semis">Programar partido</button>`:winners.length===2?`<button type="button" class="nc-bracket-action" data-nc-program="finales">Programar partido</button>`:'';
+  const escudoCruce=(nombre)=>{const t=(teams||[]).find(t=>nombreNormal(t.nombre||t.equipo)===nombreNormal(nombre)&&String(t.categoria||'').replace(/^\+/,'')===String(cat).replace(/^\+/,'')&&String(t.genero||'Mixto')===String(genero));return t?.escudo?`<img class="nc-bracket-shield" src="${esc(t.escudo)}" alt="" loading="lazy">`:'';};
   const dragId=!x&&title.startsWith('Semifinal ')?'SEMIFINAL|'+(title.includes('1')?'0':'1'):!x&&title.startsWith('Final')&&winners.length===2?'FINAL|0':!x&&title.startsWith('Tercer')&&losers.length===2?'TERCER_PUESTO|0':'';
   const medal=tone==='gold'?`<svg class="nc-medal-icon gold-medal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="M8 14.5 6 22l6-3 6 3-2-7.5"/><path d="M12 6v6"/></svg>`:tone==='bronze'?`<svg class="nc-medal-icon bronze-medal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="M8 14.5 6 22l6-3 6 3-2-7.5"/><path d="m10 8 2-2 2 2-2 4"/></svg>`:'';
-  return `<article class="nc-bracket-card ${tone||''}" ${dragId?`draggable="true" data-nc-cruce-drag="${dragId}" title="Arrastrá a la grilla del domingo"`:''} style="--nc-bracket-cat:${fxColorCategoria(cat)}"><h3>${medal}${esc(title)}</h3>${names.map((n,i)=>`<div class="nc-bracket-team ${winner&&String(n)===winner?'nc-bracket-winner':''}"><span>${esc(n)}</span>${scores[i]!==null?`<span class="nc-bracket-score">${esc(scores[i])}</span>`:''}</div>`).join('')}${detail}<div class="nc-bracket-meta">${x?esc(String(x.fecha||'')+' · '+String(x.hora||'')+' · Cancha '+String(x.cancha||'')):'Pendiente de programación'}</div>${action}</article>`;
+  return `<article class="nc-bracket-card ${tone||''}" ${dragId?`draggable="true" data-nc-cruce-drag="${dragId}" title="Arrastrá a la grilla del domingo"`:''} style="--nc-bracket-cat:${fxColorCategoria(cat)}"><h3>${medal}${esc(title)}</h3>${names.map((n,i)=>`<div class="nc-bracket-team ${winner&&String(n)===winner?'nc-bracket-winner':''}"><span class="nc-bracket-team-name">${escudoCruce(n)}<span>${esc(n)}</span></span>${scores[i]!==null?`<span class="nc-bracket-score">${esc(scores[i])}</span>`:''}</div>`).join('')}${detail}<div class="nc-bracket-meta">${x?esc(String(x.fecha||'')+' · '+String(x.hora||'')+' · Cancha '+String(x.cancha||'')):'Pendiente de programación'}</div>${action}</article>`;
  };
  const sf=semif.length?semif.map((x,i)=>card('Semifinal '+(i+1),x,'')).join(''):propuestas.length===2?propuestas.map((p,i)=>card('Semifinal '+(i+1)+' · Propuesta oficial',null,'',p)).join(''):'<p class="nc-bracket-help">'+esc(!cruces15VistaServidor?'Consultando clasificación oficial…':oficial.vista?.motivo||'Todavía no hay semifinalistas habilitados.')+'</p>';
  const final=matches.find(x=>x.instancia==='FINAL'),third=matches.find(x=>x.instancia==='TERCER_PUESTO');
