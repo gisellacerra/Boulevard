@@ -1448,7 +1448,144 @@ body[data-nc-theme=light] #view .nc-z01-confirmado{color:#167849}
 .app>aside nav#nav{margin-top:45px!important}
 @media(max-width:760px){.app>aside .nc-reloj-lateral{margin-top:22px}.app>aside nav#nav{margin-top:30px!important}}
 </style>
-</head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
+<style id="c17-modal-estilos-compartidos">
+
+/* Equipo: modal claro, inputs grises, sin foco lima. */
+body .equipo-edit-overlay .equipo-edit-modal{background:#fff!important;color:#17202b!important}
+body .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields :is(input:not([type=file]),select,textarea){background:#f3f6f7!important;color:#17202b!important;-webkit-text-fill-color:#17202b!important;border:1px solid #c9d4d8!important;color-scheme:light!important}
+body .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields :is(input,select,textarea):focus{outline:none!important;box-shadow:0 0 0 2px #aebac0!important;border-color:#8b9aa2!important}
+body .equipo-edit-overlay .equipo-edit-modal .as-modal-actions{justify-content:flex-end!important}
+body .equipo-edit-overlay .equipo-edit-modal .as-modal-actions .primary{background:#a5ef35!important;color:#17202b!important}
+body .equipo-edit-overlay .equipo-edit-modal .as-modal-actions .secondary{background:#edf0f1!important;color:#17202b!important}
+/* Resultados: claro solo en su editor; sin alterar panel general. */
+#c17Editor .nc-result-editor.nc-result-editor{background:#fff!important;color:#17202b!important;border-color:#d5dfe1!important;color-scheme:light!important}
+#c17Editor .nc-result-editor.nc-result-editor .muted,#c17Editor .nc-result-editor.nc-result-editor .status{color:#40525b!important}
+#c17Editor .nc-result-editor.nc-result-editor :is(input,textarea){background:#f3f6f7!important;color:#17202b!important;-webkit-text-fill-color:#17202b!important;border:1px solid #c9d4d8!important;color-scheme:light!important}
+#c17Editor .nc-result-editor.nc-result-editor :is(input,textarea):focus{outline:none!important;box-shadow:0 0 0 2px #aebac0!important;border-color:#8b9aa2!important}
+#c17Editor .nc-result-editor.nc-result-editor .nc-actions-right{justify-content:flex-end!important}
+#c17Editor .nc-result-editor.nc-result-editor .nc-actions-right .primary{background:#a5ef35!important;color:#17202b!important}
+#c17Editor .nc-result-editor.nc-result-editor .nc-actions-right .secondary{background:#edf0f1!important;color:#17202b!important}
+#c17Editor .nc-result-editor.nc-result-editor .nc-result-warning{background:#fff0f0!important;color:#aa232b!important;border:1px solid #ec7e83!important;border-left:4px solid #e33b45!important;border-radius:9px!important;margin:14px 0!important}
+/* Acciones de formularios alineadas a la derecha. */
+#view .toolbar:has(>button){justify-content:flex-start}
+.as-modal-actions{justify-content:flex-end!important}
+
+
+#c17Editor .nc-result-editor.nc-result-editor{width:min(100%,680px)!important;max-height:94vh;overflow-y:auto;border-radius:14px;background:#fff!important;color:#152024!important;box-shadow:0 20px 70px #0005;font-family:Arial,sans-serif;color-scheme:light}
+#c17Editor .nc-result-editor .r12-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;background:#cecece!important;padding:22px 24px 18px;color:#142024!important}
+#c17Editor .nc-result-editor .r12-modal-head h2{margin:0 0 7px;font-size:24px;line-height:1.2;font-weight:700;color:#142024!important}
+#c17Editor .nc-result-editor .r12-modal-head p{margin:0;font-size:17px;color:#142024!important}
+#c17Editor .nc-result-editor .r12-close{background:#fff!important;color:#334047!important;border:1px solid #e3e9e9!important;border-radius:8px;width:34px;height:34px;min-width:34px;padding:0;font-size:20px;line-height:1}
+#c17Editor .nc-result-editor .r12-modal-body{padding:18px 24px 22px;background:#fff!important}
+#c17Editor .nc-result-editor .r12-info,#c17Editor .nc-result-editor .r12-validation{display:flex;align-items:center;gap:11px;background:#f0f7f1!important;border-radius:8px;padding:12px 14px;color:#243638!important;font-size:13px;line-height:1.45}
+#c17Editor .nc-result-editor .r12-info-icon,#c17Editor .nc-result-editor .r12-warn-icon{display:inline-flex;align-items:center;justify-content:center;flex:none;width:20px;height:20px;border-radius:50%;font-size:14px;font-weight:800;background:#65ad26;color:#fff}
+#c17Editor .nc-result-editor .r12-warn-icon{background:#ff4a50}
+#c17Editor .nc-result-editor .r12-sets{display:flex;flex-direction:column;gap:10px;margin:12px 0}
+#c17Editor .nc-result-editor .r12-set{display:grid;grid-template-columns:100px minmax(0,1fr);border:1px solid #dce4e3;border-radius:10px;overflow:hidden;background:#fff!important;min-width:0}
+#c17Editor .nc-result-editor .r12-set-name{display:flex;align-items:center;justify-content:center;padding:12px 7px;font-size:16px;font-weight:700;color:#142024!important;text-align:center}
+#c17Editor .nc-result-editor .r12-set-one{background:#a3ef32!important}
+#c17Editor .nc-result-editor .r12-set-two{background:#a3ef32!important}
+#c17Editor .nc-result-editor .r12-set-tb{background:#e4f5e8!important}
+#c17Editor .nc-result-editor .r12-set-fields{display:flex;flex-direction:column;padding:9px 12px;gap:7px;background:#fff!important}
+#c17Editor .nc-result-editor .r12-set-fields label{display:flex;align-items:center;justify-content:space-between;gap:7px;min-width:0;font-size:16px;color:#18252b!important}
+#c17Editor .nc-result-editor .r12-set-fields label span{flex:1;overflow-wrap:anywhere}
+#c17Editor .nc-result-editor .r12-set-fields input{width:87px!important;min-width:75px!important;max-width:87px!important;padding:9px 8px!important;background:#f7f9fa!important;border:1px solid #d7dfe1!important;border-radius:7px!important;color:#17202b!important;-webkit-text-fill-color:#17202b!important;font-size:13px!important}
+#c17Editor .nc-result-editor .r12-set-fields input:focus{outline:none!important;border-color:#9caab0!important;box-shadow:0 0 0 2px #d9e0e3!important}
+#c17Editor .nc-result-editor .r12-reason{display:block;margin:12px 0;color:#18252b!important;font-size:13px}
+#c17Editor .nc-result-editor .r12-reason textarea{display:block;width:100%;margin-top:7px;background:#f7f9fa!important;color:#17202b!important}
+#c17Editor .nc-result-editor .r12-validation{margin:12px 0;background:#eff7f2!important}
+#c17Editor .nc-result-editor #r12Validacion{margin:0!important;min-height:0!important;color:#243638!important;font-size:13px}
+#c17Editor .nc-result-editor .r12-warning{display:flex;align-items:center;gap:11px;padding:13px 14px;background:#fff0f0!important;border:1px solid #ffc7c9!important;border-radius:9px;color:#db202b!important;font-size:13px;line-height:1.5}
+#c17Editor .nc-result-editor .r12-buttons{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;margin-top:17px}
+#c17Editor .nc-result-editor .r12-buttons button{border:0!important;border-radius:8px;padding:11px 17px;font-size:13px;font-weight:600}
+#c17Editor .nc-result-editor .r12-buttons .secondary{background:#f0f2f3!important;color:#17202b!important}
+#c17Editor .nc-result-editor .r12-buttons .primary{background:#a3ef32!important;color:#17202b!important;opacity:1!important}
+#c17Editor .nc-result-editor .r12-buttons .primary:disabled{opacity:1!important;color:#111111!important;cursor:not-allowed}
+@media(max-width:480px){#c17Editor .nc-result-editor .r12-modal-head{padding:17px 15px}#c17Editor .nc-result-editor .r12-modal-head h2{font-size:19px}#c17Editor .nc-result-editor .r12-modal-head p{font-size:14px}#c17Editor .nc-result-editor .r12-modal-body{padding:14px 12px}#c17Editor .nc-result-editor .r12-set{grid-template-columns:80px minmax(0,1fr)}#c17Editor .nc-result-editor .r12-set-name{font-size:13px}#c17Editor .nc-result-editor .r12-set-fields{padding:8px}#c17Editor .nc-result-editor .r12-set-fields input{width:75px!important;min-width:68px!important}}
+
+
+body[data-nc-theme="dark"] #c17Editor .nc-result-editor .r12-set-fields input[type="number"],
+body[data-nc-theme="light"] #c17Editor .nc-result-editor .r12-set-fields input[type="number"]{
+background:#f3f6f7!important;background-color:#f3f6f7!important;color:#17202b!important;-webkit-text-fill-color:#17202b!important;color-scheme:light!important;
+}
+#c17Editor .nc-result-editor .r12-set-fields input[type="number"]::placeholder,
+body[data-nc-theme="dark"] #c17Editor .nc-result-editor .r12-set-fields input[type="number"]::placeholder{color:#64747a!important;-webkit-text-fill-color:#64747a!important;opacity:1!important;background:transparent!important}
+body[data-nc-theme="dark"] .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields input:not([type="file"]),
+body[data-nc-theme="light"] .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields input:not([type="file"]){background:#fff!important;background-color:#fff!important;color:#17202b!important;-webkit-text-fill-color:#17202b!important;color-scheme:light!important}
+body[data-nc-theme="dark"] .equipo-edit-overlay .equipo-edit-modal .equipo-edit-fields input::placeholder{color:#64747a!important;-webkit-text-fill-color:#64747a!important}
+
+
+/* Nuevo diseño compartido: carga y corrección. Solo presentación; se conservan IDs y lógica. */
+#c17Editor .nc-result-editor.nc-result-editor{width:min(1080px,100%)!important;border-radius:20px!important;max-height:94dvh!important}
+#c17Editor .nc-result-editor .r12-modal-head{position:relative;display:block;background:#fff!important;padding:28px 32px 12px!important}
+#c17Editor .nc-result-editor .r12-modal-head h2{font-size:29px!important;letter-spacing:-.5px;margin:0 0 2px!important}
+#c17Editor .nc-result-editor .r12-modal-head .r12-category{font-size:19px!important;font-weight:600;margin:0 0 20px!important}
+#c17Editor .nc-result-editor .r12-head-content{padding-right:45px}
+#c17Editor .nc-result-editor .r12-versus{display:grid;grid-template-columns:minmax(0,1fr) 45px minmax(0,1fr);gap:14px;align-items:center;padding:14px 0 5px;border-top:1px solid #edf0f0}
+#c17Editor .nc-result-editor .r12-versus strong{font-size:20px;overflow-wrap:anywhere}
+#c17Editor .nc-result-editor .r12-versus strong:last-child{text-align:right}
+#c17Editor .nc-result-editor .r12-versus span{font-weight:800;color:#78848c;text-align:center}
+#c17Editor .nc-result-editor .r12-close{position:absolute;right:27px;top:26px;width:40px;height:40px;border-radius:50%!important;background:#f1f4f6!important;font-size:23px}
+#c17Editor .nc-result-editor .r12-modal-body{padding:12px 32px 30px!important}
+#c17Editor .nc-result-editor .r12-info{padding:15px 18px!important;font-size:14px!important}
+#c17Editor .nc-result-editor .r12-sets{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px!important;margin:17px 0!important}
+#c17Editor .nc-result-editor .r12-set{display:flex!important;flex-direction:column;border-radius:13px!important}
+#c17Editor .nc-result-editor .r12-set-name{min-height:49px;padding:12px!important;font-size:17px!important}
+#c17Editor .nc-result-editor .r12-set-fields{padding:15px 13px!important;gap:13px!important;flex:1}
+#c17Editor .nc-result-editor .r12-set-fields label{gap:8px!important;font-size:15px!important}
+#c17Editor .nc-result-editor .r12-set-fields input{width:82px!important;min-width:65px!important;max-width:82px!important;font-size:16px!important;padding:10px 8px!important;text-align:center}
+#c17Editor .nc-result-editor .r12-reason{font-size:15px!important;font-weight:700;margin:18px 0!important}
+#c17Editor .nc-result-editor .r12-reason textarea{font-weight:400;min-height:80px;font-size:14px!important;padding:13px!important;border-radius:9px!important}
+#c17Editor .nc-result-editor .r12-validation{padding:13px 17px!important}
+#c17Editor .nc-result-editor .r12-buttons{margin-top:20px!important}
+#c17Editor .nc-result-editor .r12-buttons button{font-size:15px!important;padding:13px 20px!important}
+#c17Editor .nc-result-editor .r12-buttons .primary:disabled{opacity:.55!important}
+@media(max-width:760px){
+ #c17Editor .nc-result-editor .r12-sets{grid-template-columns:1fr!important;gap:10px!important}
+ #c17Editor .nc-result-editor .r12-set{display:grid!important;grid-template-columns:95px minmax(0,1fr)!important}
+ #c17Editor .nc-result-editor .r12-set-name{min-height:100%;font-size:15px!important}
+ #c17Editor .nc-result-editor .r12-set-fields{padding:9px 12px!important;gap:7px!important}
+ #c17Editor .nc-result-editor .r12-modal-head{padding:22px 20px 10px!important}
+ #c17Editor .nc-result-editor .r12-modal-body{padding:12px 20px 23px!important}
+ #c17Editor .nc-result-editor .r12-close{right:17px;top:18px}
+ #c17Editor .nc-result-editor .r12-modal-head h2{font-size:23px!important}
+ #c17Editor .nc-result-editor .r12-versus strong{font-size:16px}
+}
+@media(max-width:420px){
+ #c17Editor .nc-result-editor .r12-modal-head{padding:17px 14px 8px!important}
+ #c17Editor .nc-result-editor .r12-modal-body{padding:10px 13px 18px!important}
+ #c17Editor .nc-result-editor .r12-set{grid-template-columns:76px minmax(0,1fr)!important}
+ #c17Editor .nc-result-editor .r12-set-fields input{width:73px!important;min-width:60px!important}
+ #c17Editor .nc-result-editor .r12-versus{gap:6px;grid-template-columns:minmax(0,1fr) 30px minmax(0,1fr)}
+ #c17Editor .nc-result-editor .r12-buttons button{font-size:13px!important;padding:12px!important}
+}
+
+
+#c17Editor .nc-result-editor.nc-result-editor{width:min(820px,calc(100vw - 28px))!important;max-width:820px!important;border-radius:18px!important}
+#c17Editor .nc-result-editor .r12-modal-head{padding:23px 26px 8px!important}
+#c17Editor .nc-result-editor .r12-modal-head h2{font-size:26px!important}
+#c17Editor .nc-result-editor .r12-modal-head .r12-category{font-size:17px!important;margin-bottom:12px!important}
+#c17Editor .nc-result-editor .r12-modal-body{padding:10px 26px 24px!important}
+#c17Editor .nc-result-editor .r12-versus{border-top:0!important;grid-template-columns:minmax(0,1fr) 32px minmax(0,1fr)!important;gap:8px!important;padding:6px 0 8px!important}
+#c17Editor .nc-result-editor .r12-versus strong{font-size:18px!important}
+#c17Editor .nc-result-editor .r12-versus-team{display:flex;align-items:center;gap:10px;min-width:0}
+#c17Editor .nc-result-editor .r12-versus-away{justify-content:flex-end;text-align:right}
+#c17Editor .nc-result-editor .r12-team-shield{width:34px;height:38px;object-fit:contain;flex-shrink:0}
+#c17Editor .nc-result-editor .r12-team-shield-empty{width:34px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-size:25px}
+#c17Editor .nc-result-editor .r12-team-label{display:flex;align-items:center;gap:7px;min-width:0;overflow-wrap:anywhere}
+#c17Editor .nc-result-editor .r12-team-label .r12-team-shield{width:24px;height:27px}
+#c17Editor .nc-result-editor .r12-team-label .r12-team-shield-empty{width:24px;font-size:18px}
+#c17Editor .nc-result-editor .r12-sets{gap:10px!important;margin:13px 0!important}
+#c17Editor .nc-result-editor .r12-set-fields{padding:12px 10px!important;gap:10px!important}
+#c17Editor .nc-result-editor .r12-set-fields label{font-size:14px!important;gap:5px!important}
+#c17Editor .nc-result-editor .r12-set-fields input{width:67px!important;min-width:58px!important;max-width:67px!important;padding:8px 4px!important}
+#c17Editor .nc-result-editor .r12-set-name{min-height:43px!important;padding:9px!important}
+#c17Editor .nc-result-editor .r12-close{display:flex!important;align-items:center;justify-content:center;right:22px!important;top:21px!important;width:38px!important;height:38px!important;border-radius:50%!important;color:#101820!important;background:#f1f4f7!important;padding:0!important}
+#c17Editor .nc-result-editor .r12-close svg{display:block;flex:none}
+@media(max-width:760px){#c17Editor .nc-result-editor .r12-sets{grid-template-columns:1fr!important}#c17Editor .nc-result-editor .r12-set-fields{padding:10px!important}#c17Editor .nc-result-editor .r12-modal-head{padding:20px 18px 8px!important}#c17Editor .nc-result-editor .r12-modal-body{padding:10px 18px 22px!important}#c17Editor .nc-result-editor .r12-versus strong{font-size:15px!important}#c17Editor .nc-result-editor .r12-team-shield{width:27px;height:30px}#c17Editor .nc-result-editor .r12-close{right:15px!important;top:16px!important}}
+@media(max-width:420px){#c17Editor .nc-result-editor .r12-versus-team{gap:5px}#c17Editor .nc-result-editor .r12-team-label .r12-team-shield{width:21px;height:24px}#c17Editor .nc-result-editor .r12-set-fields label{font-size:13px!important}}
+
+</style></head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
      preserveAspectRatio="xMinYMin meet"
@@ -2971,7 +3108,7 @@ function cruces15SemisServidor(d){
 function cruces15Leer(){
  if(!window.google?.script?.run)return;
  cruces15Cargando=true;const e=$('#c15Estado');if(e)e.textContent='Consultando semifinales guardadas...';
- google.script.run.withSuccessHandler(d=>{cruces15Datos=d;cruces15Cargando=false;if(active==='cruces'||active==='fixture')render()}).withFailureHandler(e=>{cruces15Cargando=false;mostrarDialogoZonas({titulo:'No se pudieron consultar las semifinales',detalle:'No se modificó ningún dato',advertencia:String(e.message||e),soloAceptar:true})}).adminCruces15Consultar();
+ google.script.run.withSuccessHandler(d=>{cruces15Datos=d;cruces15Cargando=false;if(active==='cruces'||active==='fixture'||active==='fixture-auto')render()}).withFailureHandler(e=>{cruces15Cargando=false;mostrarDialogoZonas({titulo:'No se pudieron consultar las semifinales',detalle:'No se modificó ningún dato',advertencia:String(e.message||e),soloAceptar:true})}).adminCruces15Consultar();
 }
 function cruces15Render(){
  if(!resultados12Datos)return '';
@@ -3007,7 +3144,7 @@ function cruces15Activar(){const b=$('#c15Actualizar');if(b)b.onclick=cruces15Le
 
 // ETAPA 16 — Resultados de semifinales, final, tercer puesto y podios (privados).
 let cruces16Datos=null,cruces16Cargando=false;
-function cruces16Leer(){if(!window.google?.script?.run)return;cruces16Cargando=true;google.script.run.withSuccessHandler(d=>{cruces16Datos=d;cruces16Cargando=false;if(active==='cruces'||active==='fixture')render()}).withFailureHandler(e=>{cruces16Cargando=false;mostrarDialogoZonas({titulo:'Error al consultar cruces',detalle:'No se modificó ningún dato',advertencia:String(e.message||e),soloAceptar:true})}).adminCruces16Consultar();}
+function cruces16Leer(){if(!window.google?.script?.run)return;cruces16Cargando=true;google.script.run.withSuccessHandler(d=>{cruces16Datos=d;cruces16Cargando=false;if(active==='cruces'||active==='fixture'||active==='fixture-auto')render()}).withFailureHandler(e=>{cruces16Cargando=false;mostrarDialogoZonas({titulo:'Error al consultar cruces',detalle:'No se modificó ningún dato',advertencia:String(e.message||e),soloAceptar:true})}).adminCruces16Consultar();}
 function cruces16Render(){
  if(!cruces15Datos)return '';
  const filas=(cruces15Datos.filas||[]).filter(x=>String(x.anio)===String(settings.anio)&&String(x.edicion)===String(settings.edicion));
@@ -3398,7 +3535,7 @@ function ncVistaJornadasFixture(){
  const filas=ncPlanArrastre?ncPlanArrastre.filas:(Array.isArray(fixtureSnapshot?.filas)?fixtureSnapshot.filas:[]);
  const filasTorneo=filas.filter(p=>String(p.anio||settings.anio)===String(settings.anio)&&String(p.edicion||settings.edicion)===String(settings.edicion));
  const base=ncPlanArrastre?filasTorneo:(fx3UltimaPropuesta?(Array.isArray(fixture)?fixture:[]):(fixtureSnapshot?filasTorneo:(Array.isArray(fixture)?fixture:[])));
- const decisivos=(cruces15Datos?.filas||[]).filter(p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion)&&String(p.estado)==='CONFIRMADO'&&['SEMIFINAL','FINAL','TERCER_PUESTO'].includes(String(p.instancia))).map(p=>({...p,categoria:'+'+String(p.categoria).replace(/^\+/,''),_cruce:true}));
+ const decisivos=(cruces15Datos?.filas||[]).filter(p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion)&&['CONFIRMADO','PROGRAMADO'].includes(String(p.estado).trim().toUpperCase())&&['SEMIFINAL','FINAL','TERCER_PUESTO'].includes(String(p.instancia))).map(p=>({...p,categoria:'+'+String(p.categoria).replace(/^\+/,''),_cruce:true}));
  const datos=[...base,...decisivos];
  const fechaNormal=p=>{const v=String(p.fecha||p.dia||'');if(/^\d{4}-\d{2}-\d{2}/.test(v))return v.slice(0,10);const m=v.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:''};
  const dias=[...new Set([...(Array.isArray(settings.fechasEtapa10)?settings.fechasEtapa10:[]),...datos.map(fechaNormal)].filter(Boolean))].sort();
