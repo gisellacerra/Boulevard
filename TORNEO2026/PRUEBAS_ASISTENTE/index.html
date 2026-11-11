@@ -3191,7 +3191,7 @@ function ncBracketRender(){
  const program=semRows&&!semif.length?`<section class="nc-program" id="ncProgram" hidden><h3>Programar semifinales · ${esc(cat)} · ${esc(genero)}</h3><p>Completá los dos partidos. El sistema comprobará horarios y superposiciones antes de guardar.</p>${semRows}<button type="button" class="primary" data-c15-save="${esc(c15Key)}">Confirmar y guardar semifinales</button></section>`:finalRows&&(!final||!third)?`<section class="nc-program" id="ncProgram" hidden><h3>Programar definiciones · ${esc(cat)} · ${esc(genero)}</h3><p>Completá ambos partidos antes de guardar.</p>${finalRows}<button type="button" class="primary" data-c16-program="${esc(comp)}">Guardar final y tercer puesto</button></section>`:'';
  const sunday=(Array.isArray(settings.fechas)?settings.fechas[2]:'')||'';
  const ventana=ventanasTorneo()?.[2]||['09:00','19:00'];
- const aMin=h=>{const m=/^(\\d{1,2}):(\\d{2})$/.exec(String(h||''));return m?Number(m[1])*60+Number(m[2]):NaN};
+ const aMin=h=>{const m=/^(\d{1,2}):(\d{2})$/.exec(String(h||''));return m?Number(m[1])*60+Number(m[2]):NaN};
  const toHora=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
  const step=Math.max(5,Number(settings.duracion||60)+Number(settings.intervalo||0));
  const slots=[];for(let t=aMin(ventana[0]);Number.isFinite(t)&&t+step<=aMin(ventana[1])&&slots.length<20;t+=step)slots.push(toHora(t));
@@ -3219,7 +3219,7 @@ function ncActivarArrastreCruces(){
   const get=k=>box.querySelector(`${selector}[${inst==='SEMIFINAL'?'data-c15-key':'data-c16-k'}="${k}"]`);
   const fields={fecha:get('fecha'),hora:get('hora'),cancha:get('cancha')};
   if(Object.values(fields).some(v=>!v)){if(estado)estado.textContent='No se encontraron los controles de programación de este partido.';return}
-  const toISO=v=>{const m=/^(\\d{2})\\/(\\d{2})\\/(\\d{4})$/.exec(v);return m?`${m[3]}-${m[2]}-${m[1]}`:v};
+  const toISO=v=>{const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(v);return m?`${m[3]}-${m[2]}-${m[1]}`:v};
   const date=toISO(fecha);
   fields.fecha.value=date;fields.hora.value=hora;fields.cancha.value=cancha;
   Object.values(fields).forEach(el=>el.dispatchEvent(new Event('change',{bubbles:true})));
