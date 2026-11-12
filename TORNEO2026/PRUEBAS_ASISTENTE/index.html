@@ -2389,7 +2389,7 @@ function validarFixtureEtapa10(){
  fixture.forEach((p,i)=>{
   if(!p.fecha||!p.hora||!p.cancha){errores.push(detalle(p,i)+': faltan fecha, hora o cancha');return}
   const d=f.indexOf(p.fecha),m=minutosHora(p.hora);
-  const rango=d>=0?fx3Disponibilidad?.[d+1]?.[Number(p.cancha)]:null;if(d<0||!Number.isFinite(m)||!rango||m<Number(rango.start)||m+turno>Number(rango.end))errores.push(detalle(p,i)+': fuera del horario habilitado para esa cancha');
+  const rango=d>=0?fx3Disponibilidad?.[d+1]?.[Number(p.cancha)]:null;if(d<0||!Number.isFinite(m)||!rango||!ncFranjasCancha(rango).some(([a,b])=>m>=a&&m+turno<=b))errores.push(detalle(p,i)+': fuera del horario habilitado para esa cancha');
   if(Number(p.cancha)<1||Number(p.cancha)>Number(settings.canchas))errores.push(detalle(p,i)+': cancha inválida');
   for(let j=0;j<i;j++){
    const q=fixture[j];if(q.fecha!==p.fecha||!q.hora)continue;
@@ -4483,6 +4483,7 @@ function fx3ValidarDias(){fx3Leer();if(fx3Dias.some(d=>!d.fecha||!d.inicio||!d.f
 function fx3GuardarDias(){}
 function fx3Mover(delta){if(delta>0&&fx3Paso===0){if(!fx3ValidarDias())return;fx3GuardarDias()}fx3Paso=Math.max(0,Math.min(2,fx3Paso+delta));render()}
 function fx3Turno(){return Number(settings.duracion)+Number(settings.intervalo)}
+function ncFranjasCancha(v){return v?.split===true?[[Number(v.start),Number(v.morningEnd)],[Number(v.eveningStart),Number(v.end)]]:[[Number(v?.start),Number(v?.end)]];}
 function fx3Slots(){
  const turno=fx3Turno(),n=Number(settings.canchas),out=[];
  if(!fx3Disponibilidad)throw Error('Primero hay que cargar los horarios por cancha desde Configuración.');
@@ -4492,12 +4493,10 @@ function fx3Slots(){
    if(!v)throw Error('Falta horario de Jornada '+(i+1)+', Cancha '+c);
    // La disponibilidad específica de cada cancha prevalece sobre el horario general de la jornada.
    // El horario general sigue siendo informativo, pero no retrasa el primer turno configurado.
-   const desde=Number(v.start);
-   const hasta=Number(v.end);
-   if(!Number.isFinite(desde)||!Number.isFinite(hasta))
-    throw Error('Horario inválido de Cancha '+c+' en Jornada '+(i+1));
-   for(let m=desde;m+turno<=hasta;m+=turno)
-    out.push({fecha:d.fecha,hora:horaMinutos(m),cancha:String(c),inicio:i*1440+m});
+   for(const [desde,hasta] of ncFranjasCancha(v)){
+   if(!Number.isFinite(desde)||!Number.isFinite(hasta))throw Error('Horario inválido de Cancha '+c+' en Jornada '+(i+1));
+   for(let m=desde;m+turno<=hasta;m+=turno)out.push({fecha:d.fecha,hora:horaMinutos(m),cancha:String(c),inicio:i*1440+m});
+   }
   }
  });
  return out.sort((a,b)=>a.inicio-b.inicio||Number(a.cancha)-Number(b.cancha));
@@ -4629,24 +4628,28 @@ function ncF01ConfigHorariosActivar(){
  const draw=()=>{root.innerHTML='';for(let d=1;d<=3;d++){
  const title=document.createElement('h3');title.textContent='Jornada '+d;title.style.cssText='font-size:15px;margin:20px 0 10px';root.append(title);
  const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:12px';
- for(let c=1;c<=4;c++){const wrap=document.createElement('div');wrap.style.cssText='padding:12px;border:1px solid #d7dedb;border-radius:9px';
- const label=document.createElement('div');label.textContent='Cancha '+c;label.style.cssText='font-weight:600;margin-bottom:9px';wrap.append(label);
- const pair=document.createElement('div');pair.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:9px';
- for(const field of ['start','end']){const lab=document.createElement('label');lab.style.cssText='font-size:12px;display:grid;gap:5px';lab.textContent=field==='start'?'Inicio':'Fin';const inp=document.createElement('input');inp.type='time';inp.value=fmt(horarios[d][c][field]);inp.dataset.day=d;inp.dataset.court=c;inp.dataset.field=field;inp.style.cssText='width:100%;min-width:0;padding:8px;border:1px solid #ccd5d0;border-radius:6px';lab.append(inp);pair.append(lab)}wrap.append(pair);grid.append(wrap)}root.append(grid)}};
+ for(let c=1;c<=4;c++){
+ const h=horarios[d][c],wrap=document.createElement('div');wrap.style.cssText='padding:12px;border:1px solid #526061;border-radius:9px';
+ const label=document.createElement('div');label.textContent='Cancha '+c;label.style.cssText='font-weight:500;margin-bottom:9px';wrap.append(label);
+ const toggle=document.createElement('label');toggle.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:12px';const check=document.createElement('input');check.type='checkbox';check.checked=h.split===true;check.style.accentColor='#a3e635';toggle.append(check,document.createTextNode('Horario partido'));wrap.append(toggle);
+ check.onchange=()=>{h.split=check.checked;if(h.split){if(!Number.isInteger(h.morningEnd))h.morningEnd=Math.floor(h.start+(h.end-h.start)/3);if(!Number.isInteger(h.eveningStart))h.eveningStart=Math.floor(h.start+2*(h.end-h.start)/3);}draw()};
+ const section=(name,fields)=>{const heading=document.createElement('div');heading.textContent=name;heading.style.cssText='font-weight:500;margin:10px 0 8px';wrap.append(heading);const pair=document.createElement('div');pair.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:9px';for(let i=0;i<2;i++){const field=fields[i],lab=document.createElement('label');lab.style.cssText='font-size:12px;display:grid;gap:5px';lab.textContent=i===0?'Inicio':'Fin';const inp=document.createElement('input');inp.type='time';inp.value=Number.isInteger(h[field])?fmt(h[field]):'';inp.style.cssText='width:100%;min-width:0;padding:8px;border:1px solid #526061;border-radius:6px';inp.oninput=()=>{h[field]=parse(inp.value);updateRest()};lab.append(inp);pair.append(lab)}wrap.append(pair)};
+ const rest=document.createElement('div');rest.style.cssText='font-size:12px;color:#ff7064;margin-top:12px';const updateRest=()=>{rest.textContent=Number.isInteger(h.morningEnd)&&Number.isInteger(h.eveningStart)&&h.morningEnd<h.eveningStart?'No disponible: '+fmt(h.morningEnd)+' a '+fmt(h.eveningStart):'Revisá el horario de descanso.'};
+ section(h.split?'Franja Matutina':'Horario corrido',['start',h.split?'morningEnd':'end']);if(h.split){section('Franja Vespertina',['eveningStart','end']);updateRest();wrap.append(rest)}grid.append(wrap)}root.append(grid)}};
  const key=()=>({anio:Number(settings.anio)||new Date().getFullYear(),edicion:String(settings.edicion||'VI')});
  const fail=e=>{status.textContent='No se pudo guardar/consultar: '+(e?.message||String(e));btn.disabled=false;cargando=false};
  btn.disabled=true;status.textContent='Cargando horarios guardados…';draw();
  if(!window.google?.script?.run){status.textContent='Sin conexión con la tabla de datos.';return}
  google.script.run.withSuccessHandler(data=>{
   if(!document.getElementById('nc-f01-config-hours'))return;
-  if(data?.horarios)horarios=data.horarios;revision=Number(data?.revision)||0;cargando=false;btn.disabled=false;draw();status.textContent='Horarios cargados desde la tabla de datos.';
+  if(data?.horarios){horarios=data.horarios;fx3Disponibilidad=horarios;ncF01HorasEstado=data;}revision=Number(data?.revision)||0;cargando=false;btn.disabled=false;draw();status.textContent='Horarios cargados desde la tabla de datos.';
  }).withFailureHandler(fail).adminF01ConsultarHorarios(key());
  btn.onclick=()=>{
   if(cargando)return;
-  const next=makeDefaults();for(const inp of root.querySelectorAll('input[type="time"]'))next[inp.dataset.day][inp.dataset.court][inp.dataset.field]=parse(inp.value);
-  for(let d=1;d<=3;d++)for(let c=1;c<=4;c++){const h=next[d][c];if(!Number.isInteger(h.start)||!Number.isInteger(h.end)||h.start<0||h.end>1440||h.start>=h.end){status.textContent='Revisá la jornada '+d+', cancha '+c+': el fin debe ser posterior al inicio.';return}}
+  const next=JSON.parse(JSON.stringify(horarios));
+  for(let d=1;d<=3;d++)for(let c=1;c<=4;c++){const h=next[d][c];if(!Number.isInteger(h.start)||!Number.isInteger(h.end)||h.start<0||h.end>1440||h.start>=h.end||(h.split&&(!Number.isInteger(h.morningEnd)||!Number.isInteger(h.eveningStart)||!(h.start<h.morningEnd&&h.morningEnd<h.eveningStart&&h.eveningStart<h.end)))){status.textContent='Revisá la jornada '+d+', cancha '+c+': horarios o descanso inválidos.';return}}
   btn.disabled=true;status.textContent='Guardando horarios…';
-  google.script.run.withSuccessHandler(data=>{revision=Number(data?.revision)||revision+1;horarios=next;btn.disabled=false;status.textContent='Horarios guardados correctamente en la tabla de datos.';}).withFailureHandler(fail).adminF01GuardarHorarios({...key(),horarios:next,revision});
+  google.script.run.withSuccessHandler(data=>{revision=Number(data?.revision)||revision+1;horarios=next;fx3Disponibilidad=next;ncF01HorasEstado={horarios:next,revision};btn.disabled=false;status.textContent='Horarios guardados correctamente en la tabla de datos.';}).withFailureHandler(fail).adminF01GuardarHorarios({...key(),horarios:next,revision});
  };
 }
 
