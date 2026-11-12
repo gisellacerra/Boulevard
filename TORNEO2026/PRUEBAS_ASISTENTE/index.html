@@ -3873,7 +3873,7 @@ return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ga
  const escala=1.75, alto=(hasta-desde)*escala;
  const posicion=(a,b)=>`top:${(a-desde)*escala}px;height:${Math.max(1,(b-a)*escala)}px`;
  const marcas=Array.from({length:Math.floor((hasta-desde)/60)+1},(_,i)=>desde+i*60);
- const bloqueNoDisponible=(a,b)=>b>a?`<div class="nc-tiempo-bloqueado nc-horario-no-disponible" style="${posicion(a,b)}"><span>Horario no disponible<br>${hhGrilla(a)} – ${hhGrilla(b)}</span></div>`:'';
+ const bloqueNoDisponible=(a,b)=>b>a?`<div class="nc-tiempo-bloqueado nc-horario-no-disponible" style="${posicion(a,b)};--nc-bloque-alto:${Math.max(1,(b-a)*escala)}px"><span>Horario no disponible<br>${hhGrilla(a)} – ${hhGrilla(b)}</span></div>`:'';
  const columna=c=>{
   const rangos=rangosCancha(c).sort((a,b)=>a[0]-b[0]);let cursor=desde,bloqueos='';
   for(const [a,b] of rangos){bloqueos+=bloqueNoDisponible(cursor,a);cursor=Math.max(cursor,b);}
@@ -3889,7 +3889,7 @@ return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ga
   }).join('');
   return `<div class="nc-tiempo-columna" style="height:${alto}px">${bloqueos}${slots}</div>`;
  };
- const matriz=`<div class="nc-partidos-scroll"><div class="nc-partidos-matriz nc-tiempo-matriz" style="--canchas:${cantidad}"><div class="nc-partidos-celda nc-partidos-cab">Horario</div>${Array.from({length:cantidad},(_,i)=>`<div class="nc-partidos-celda nc-partidos-cab">Cancha ${i+1}</div>`).join('')}<div class="nc-tiempo-eje" style="height:${alto}px">${marcas.map(m=>`<span style="top:${(m-desde)*escala}px">${hhGrilla(m)}</span>`).join('')}</div>${Array.from({length:cantidad},(_,i)=>columna(i+1)).join('')}</div></div>`;
+ const matriz=`<div class="nc-partidos-scroll"><div class="nc-partidos-matriz nc-tiempo-matriz" style="--canchas:${cantidad}"><div class="nc-partidos-celda nc-partidos-cab">Horario</div>${Array.from({length:cantidad},(_,i)=>`<div class="nc-partidos-celda nc-partidos-cab">Cancha ${i+1}</div>`).join('')}<div class="nc-tiempo-eje" style="height:${alto}px">${marcas.map((m,i)=>`<span class="nc-tiempo-marca${i===0?' nc-tiempo-marca-inicial':''}" style="top:${(m-desde)*escala}px">${hhGrilla(m)}</span>`).join('')}</div>${Array.from({length:cantidad},(_,i)=>columna(i+1)).join('')}</div></div>`;
  return `<section class="nc-partidos-panel"><div class="nc-partidos-bar"><h3>Partidos del día</h3><div class="nc-partidos-bar-controles"><div class="nc-partidos-dias">${dias.map((d,i)=>`<button type="button" class="nc-partidos-dia ${d===ncDiaFixtureSeleccionado?'activo':''}" data-nc-dia-fixture="${esc(d)}">Jornada ${i+1} · ${esc(d.split('-').reverse().join('/'))}</button>`).join('')}</div><button type="button" class="nc-grilla-expandir" data-nc-grilla-expandir aria-label="Ampliar grilla a pantalla completa" title="Pantalla completa" aria-pressed="${document.body.classList.contains('nc-grilla-ampliada')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5"/></svg><span class="nc-grilla-expandir-texto">${document.body.classList.contains('nc-grilla-ampliada')?'Cerrar':'Ampliar'}</span></button></div></div>
   <div class="nc-partidos-filtros" aria-label="Filtrar partidos por categoría"><span class="nc-partidos-filtros-label">Mostrar horarios:</span><button type="button" class="nc-partidos-filtro ${ncCategoriaFixtureSeleccionada==='todas'?'activo':''}" data-nc-categoria-fixture="todas" aria-pressed="${ncCategoriaFixtureSeleccionada==='todas'}">Todas</button>${categoriasDia.map(cat=>`<button type="button" class="nc-partidos-filtro ${ncCategoriaFixtureSeleccionada===cat?'activo':''}" data-nc-categoria-fixture="${esc(cat)}" aria-pressed="${ncCategoriaFixtureSeleccionada===cat}" style="--nc-color-categoria:${fxColorCategoria(cat)}">+${esc(cat.replace(/^\+/,''))}</button>`).join('')}</div>${matriz}</section>`;
 }
@@ -4901,5 +4901,13 @@ body.nc-grilla-ampliada .nc-partidos-scroll:has(.nc-tiempo-matriz){overflow-y:au
 .nc-tiempo-hora{top:4px;left:24px}
 .nc-tiempo-bloqueado{left:2px;right:2px}
 @media(max-width:700px){.nc-partidos-matriz.nc-tiempo-matriz,body.nc-grilla-ampliada .nc-partidos-matriz.nc-tiempo-matriz{grid-template-columns:42px repeat(var(--canchas),minmax(0,1fr))!important;gap:3px!important}.nc-tiempo-slot .nc-partidos-escudo,.nc-tiempo-slot .nc-partidos-escudo-vacio{width:15px!important;height:15px!important}.nc-tiempo-hora{left:16px;font-size:10px}.nc-tiempo-bloqueado{font-size:10px}}
+</style>
+<style id="nc-temporal-separacion-final">
+.nc-partidos-matriz.nc-tiempo-matriz,body.nc-grilla-ampliada .nc-partidos-matriz.nc-tiempo-matriz{padding-top:2px!important;row-gap:22px!important;column-gap:8px!important;box-sizing:border-box}
+.nc-tiempo-eje .nc-tiempo-marca-inicial{transform:none!important;top:0!important;line-height:14px;padding:0 4px;z-index:1}
+.nc-tiempo-slot.nc-partidos-slot{padding:4px 3px!important}
+.nc-tiempo-slot>.nc-partidos-celda.nc-partidos-vacio{display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;text-align:center!important}
+.nc-tiempo-slot .nc-tiempo-hora{top:8px;left:25px}
+.nc-tiempo-bloqueado.nc-horario-no-disponible{left:3px!important;right:3px!important;box-sizing:border-box;clip-path:none;margin-bottom:8px;height:max(1px,calc(var(--nc-bloque-alto) - 8px))!important}
 </style>
 </body></html>
