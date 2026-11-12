@@ -1692,7 +1692,18 @@ body[data-nc-theme="dark"] .equipo-edit-overlay .equipo-edit-modal .equipo-edit-
 #nc-f01-config-hours .nc-hours-rest{background:#181c1d;border-radius:6px;padding:9px;font-size:12px;color:#ff7064;margin-top:12px;line-height:1.5}
 @media(max-width:1050px){#nc-f01-config-hours .nc-hours-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:550px){#nc-f01-config-hours .nc-hours-grid{grid-template-columns:1fr}}
-</style></head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
+</style><style>
+.nc-partidos-matriz.nc-tiempo-matriz{grid-template-columns:76px repeat(var(--canchas),minmax(175px,1fr))!important;min-width:calc(76px + var(--canchas)*175px)!important;grid-template-rows:32px auto!important;grid-auto-rows:auto!important;gap:5px;align-items:start}
+.nc-tiempo-columna,.nc-tiempo-eje{position:relative;min-width:0;background:repeating-linear-gradient(to bottom,rgba(130,150,155,.22) 0px,rgba(130,150,155,.22) 1px,transparent 1px,transparent 120px)}
+.nc-tiempo-eje span{position:absolute;right:8px;font-size:11px;color:#bac7ca;transform:translateY(-50%);background:#191d1d;padding:2px 4px}
+.nc-tiempo-bloqueado{position:absolute;left:3px;right:3px;display:flex;align-items:center;justify-content:center;text-align:center;background:#292f31;border:1px dashed #526063;border-radius:6px;color:#aebbbd;font-size:11px;overflow:hidden;box-sizing:border-box}
+.nc-tiempo-slot.nc-partidos-slot{position:absolute;left:0;right:0;min-height:0!important;padding:2px!important;box-sizing:border-box;z-index:1;display:flex;flex-direction:column;gap:0}
+.nc-tiempo-slot>.nc-partidos-celda{min-height:0!important;height:auto!important;flex:1;overflow:auto;padding-top:20px!important;box-sizing:border-box}
+.nc-tiempo-hora{position:absolute;top:6px;left:24px;z-index:2;font-size:11px;color:#b8c8ca;pointer-events:none;font-weight:600}
+.nc-tiempo-slot .nc-partidos-puntos{padding-top:2px!important;margin-top:1px!important}
+.nc-tiempo-slot .nc-partidos-equipo{flex-direction:row!important;align-items:center!important}
+</style>
+</head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
      preserveAspectRatio="xMinYMin meet"
@@ -3793,17 +3804,24 @@ function ncVistaJornadasFixture(){
  const inicioGrilla=Array.isArray(ventana)?minutosGrilla(ventana[0]):NaN;
  const finGrilla=Array.isArray(ventana)?minutosGrilla(ventana[1]):NaN;
  const disponibilidadGrilla=fx3Disponibilidad?.[posJornada+1];
- const noDisponible=(h,c)=>{const v=disponibilidadGrilla?.[c],m=minutosGrilla(h);return !!v&&Number.isFinite(m)&&!ncFranjasCancha(v).some(([a,b])=>m>=a&&m+duracionBloque<=b);};
- const horariosProgramados=partidosVisibles.map(hora).filter(Boolean);
- const franjas=[];
- if(disponibilidadGrilla){for(let c=1;c<=cantidad;c++){const v=disponibilidadGrilla[c];if(!v)continue;for(const [a,b] of ncFranjasCancha(v)){for(let m=a;Number.isFinite(m)&&m+duracionBloque<=b&&franjas.length<2000;m+=duracionBloque)franjas.push(hhGrilla(m));}}}
- if(Number.isFinite(inicioGrilla)&&Number.isFinite(finGrilla)&&finGrilla>inicioGrilla){
+ const turnosPorCancha=new Map(),franjas=[];
+ if(disponibilidadGrilla){
+  for(let c=1;c<=cantidad;c++){
+   const v=disponibilidadGrilla[c];if(!v)continue;
+   const turnos=new Set();turnosPorCancha.set(c,turnos);
+   for(const [a,b] of ncFranjasCancha(v)){
+    for(let m=a;Number.isFinite(m)&&m+duracionBloque<=b;m+=duracionBloque){turnos.add(m);franjas.push(hhGrilla(m));}
+   }
+   // Mostrar explícitamente el descanso, aunque no existan partidos.
+   if(v.split===true){for(let m=Number(v.morningEnd);Number.isFinite(m)&&m<Number(v.eveningStart);m+=duracionBloque)franjas.push(hhGrilla(m));}
+  }
+ }else if(Number.isFinite(inicioGrilla)&&Number.isFinite(finGrilla)&&finGrilla>inicioGrilla){
   for(let m=inicioGrilla;m+duracionBloque<=finGrilla&&franjas.length<250;m+=duracionBloque)franjas.push(hhGrilla(m));
  }
- // Vista normal: ocultar únicamente las filas sin partidos en ninguna cancha.
- // Al elegir un horario para Cruces, conservar todas las franjas libres para poder programar.
- const horariosDisponibles=[...new Set([...franjas,...horariosProgramados.map(h=>{const m=/^(\d{1,2}):(\d{2})/.exec(h);return m?m[1].padStart(2,'0')+':'+m[2]:h})])].sort((a,b)=>minutosGrilla(a)-minutosGrilla(b));
- const horarios=ncSeleccionCruceGrilla?horariosDisponibles:horariosDisponibles.filter(h=>partidosVisibles.some(p=>hora(p)===h)||(disponibilidadGrilla&&partidosVisibles.length&&Array.from({length:cantidad},(_,i)=>i+1).every(c=>noDisponible(h,c))&&minutosGrilla(h)>Math.min(...horariosProgramados.map(minutosGrilla))&&minutosGrilla(h)<Math.max(...horariosProgramados.map(minutosGrilla))));
+ const noDisponible=(h,c)=>turnosPorCancha.has(c)&&!turnosPorCancha.get(c).has(minutosGrilla(h));
+ // Incluir todos los turnos configurados y conservar partidos existentes, incluso fuera de horario.
+ const horariosProgramados=partidos.map(hora).filter(Boolean);
+ const horarios=[...new Set([...franjas,...horariosProgramados])].sort((a,b)=>minutosGrilla(a)-minutosGrilla(b));
  const nombreNormal=n=>String(n||'').trim().toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ');
  const iconoEquipo=n=>{const t=teams.find(t=>nombreNormal(t.nombre||t.equipo)===nombreNormal(n));return t?.escudo?`<img class="nc-partidos-escudo" src="${esc(t.escudo)}" alt="" loading="lazy">`:'<span class="nc-partidos-escudo-vacio" aria-hidden="true">🛡️</span>'};
  const marcadorFixture=p=>{
@@ -3843,7 +3861,35 @@ return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ga
   return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" ${p._cruce?'draggable="true" data-nc-cruce-confirmado="1"':!datosMarcador?'draggable="true" data-nc-arrastrable="1"':''} role="button" tabindex="0" title="${fx3UltimaPropuesta?'Seleccionar partido del borrador':'Seleccionar partido para editar'}" ${fx3UltimaPropuesta?'data-nc-borrador':'data-nc-resultado'}="${esc(encodeURIComponent(JSON.stringify({cruce:!!p._cruce,instancia:p.instancia,partido:p.partido,genero:p.genero,fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}">${insigniaPartido}<div class="nc-partidos-equipos">${p._cruce?`<div class="nc-cruce-etiqueta-fixture">${esc(p.instancia==='SEMIFINAL'?'Semifinal '+p.partido:p.instancia==='FINAL'?'Final':'Tercer puesto')}</div>`:''}<div class="nc-partidos-equipo">${iconoEquipo(a)}<span class="nc-partidos-nombre ${ganaA?'nc-partidos-ganador':''}">${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span class="nc-partidos-nombre ${ganaB?'nc-partidos-ganador':''}">${esc(b)}</span></div>${marcador}</div>${reloj}</div>`;
 
  };
- const matriz=horarios.length?`<div class="nc-partidos-scroll"><div class="nc-partidos-matriz" style="--canchas:${cantidad}"><div class="nc-partidos-celda nc-partidos-cab">Horario</div>${Array.from({length:cantidad},(_,i)=>`<div class="nc-partidos-celda nc-partidos-cab">Cancha ${i+1}</div>`).join('')}${horarios.map(h=>`<div class="nc-partidos-celda nc-partidos-hora">${esc(h)}</div>${Array.from({length:cantidad},(_,i)=>`<div class="nc-partidos-slot" data-nc-slot-fecha="${esc(ncDiaFixtureSeleccionado)}" data-nc-slot-hora="${esc(h)}" data-nc-slot-cancha="${i+1}">${(()=>{const p=partidosVisibles.find(p=>hora(p)===h&&cancha(p)===i+1);return !p&&noDisponible(h,i+1)?'<div class="nc-partidos-celda nc-horario-no-disponible">Horario no disponible</div>':celda(p)})()}</div>`).join('')}`).join('')}</div></div>`:'<p class="muted">No hay partidos cargados para esta jornada.</p>';
+ // Escala temporal común: 2 px por minuto; cada cancha conserva sus turnos reales.
+ const rangosCancha=c=>{const v=disponibilidadGrilla?.[c];return (v?ncFranjasCancha(v):[[inicioGrilla,finGrilla]]).filter(([a,b])=>Number.isFinite(a)&&Number.isFinite(b)&&b>a);};
+ const rangosTodos=Array.from({length:cantidad},(_,i)=>rangosCancha(i+1)).flat();
+ const duracionPartido=Math.max(1,Number(settings.duracion)||50);
+ const inicios=partidos.map(p=>minutosGrilla(hora(p))).filter(Number.isFinite);
+ const extremosInicio=[...rangosTodos.map(r=>r[0]),...inicios];
+ const extremosFin=[...rangosTodos.map(r=>r[1]),...inicios.map(m=>m+duracionPartido)];
+ const desde=extremosInicio.length?Math.floor(Math.min(...extremosInicio)/60)*60:480;
+ const hasta=extremosFin.length?Math.ceil(Math.max(...extremosFin)/60)*60:1260;
+ const escala=2, alto=(hasta-desde)*escala;
+ const posicion=(a,b)=>`top:${(a-desde)*escala}px;height:${Math.max(1,(b-a)*escala)}px`;
+ const marcas=Array.from({length:Math.floor((hasta-desde)/60)+1},(_,i)=>desde+i*60);
+ const bloqueNoDisponible=(a,b)=>b>a?`<div class="nc-tiempo-bloqueado nc-horario-no-disponible" style="${posicion(a,b)}"><span>Horario no disponible<br>${hhGrilla(a)} – ${hhGrilla(b)}</span></div>`:'';
+ const columna=c=>{
+  const rangos=rangosCancha(c).sort((a,b)=>a[0]-b[0]);let cursor=desde,bloqueos='';
+  for(const [a,b] of rangos){bloqueos+=bloqueNoDisponible(cursor,a);cursor=Math.max(cursor,b);}
+  bloqueos+=bloqueNoDisponible(cursor,hasta);
+  const propios=partidos.filter(p=>cancha(p)===c&&Number.isFinite(minutosGrilla(hora(p))));
+  const turnos=new Set();for(const [a,b] of rangos)for(let m=a;m+duracionBloque<=b;m+=duracionBloque)turnos.add(m);
+  propios.forEach(p=>turnos.add(minutosGrilla(hora(p))));
+  const slots=[...turnos].sort((a,b)=>a-b).map(m=>{
+   const h=hhGrilla(m),p=propios.find(q=>hora(q)===h),visible=p&&partidosVisibles.includes(p);
+   if(!p&&propios.some(q=>{const t=minutosGrilla(hora(q));return m<t+duracionBloque&&t<m+duracionBloque;}))return '';
+   const contenido=p&&!visible?'<div class="nc-partidos-celda nc-horario-no-disponible">Ocupado</div>':celda(p);
+   return `<div class="nc-partidos-slot nc-tiempo-slot" style="${posicion(m,m+duracionPartido)}" data-nc-slot-fecha="${esc(ncDiaFixtureSeleccionado)}" data-nc-slot-hora="${h}" data-nc-slot-cancha="${c}"><span class="nc-tiempo-hora">${h}</span>${contenido}</div>`;
+  }).join('');
+  return `<div class="nc-tiempo-columna" style="height:${alto}px">${bloqueos}${slots}</div>`;
+ };
+ const matriz=`<div class="nc-partidos-scroll"><div class="nc-partidos-matriz nc-tiempo-matriz" style="--canchas:${cantidad}"><div class="nc-partidos-celda nc-partidos-cab">Horario</div>${Array.from({length:cantidad},(_,i)=>`<div class="nc-partidos-celda nc-partidos-cab">Cancha ${i+1}</div>`).join('')}<div class="nc-tiempo-eje" style="height:${alto}px">${marcas.map(m=>`<span style="top:${(m-desde)*escala}px">${hhGrilla(m)}</span>`).join('')}</div>${Array.from({length:cantidad},(_,i)=>columna(i+1)).join('')}</div></div>`;
  return `<section class="nc-partidos-panel"><div class="nc-partidos-bar"><h3>Partidos del día</h3><div class="nc-partidos-bar-controles"><div class="nc-partidos-dias">${dias.map((d,i)=>`<button type="button" class="nc-partidos-dia ${d===ncDiaFixtureSeleccionado?'activo':''}" data-nc-dia-fixture="${esc(d)}">Jornada ${i+1} · ${esc(d.split('-').reverse().join('/'))}</button>`).join('')}</div><button type="button" class="nc-grilla-expandir" data-nc-grilla-expandir aria-label="Ampliar grilla a pantalla completa" title="Pantalla completa" aria-pressed="${document.body.classList.contains('nc-grilla-ampliada')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5"/></svg><span class="nc-grilla-expandir-texto">${document.body.classList.contains('nc-grilla-ampliada')?'Cerrar':'Ampliar'}</span></button></div></div>
   <div class="nc-partidos-filtros" aria-label="Filtrar partidos por categoría"><span class="nc-partidos-filtros-label">Mostrar horarios:</span><button type="button" class="nc-partidos-filtro ${ncCategoriaFixtureSeleccionada==='todas'?'activo':''}" data-nc-categoria-fixture="todas" aria-pressed="${ncCategoriaFixtureSeleccionada==='todas'}">Todas</button>${categoriasDia.map(cat=>`<button type="button" class="nc-partidos-filtro ${ncCategoriaFixtureSeleccionada===cat?'activo':''}" data-nc-categoria-fixture="${esc(cat)}" aria-pressed="${ncCategoriaFixtureSeleccionada===cat}" style="--nc-color-categoria:${fxColorCategoria(cat)}">+${esc(cat.replace(/^\+/,''))}</button>`).join('')}</div>${matriz}</section>`;
 }
