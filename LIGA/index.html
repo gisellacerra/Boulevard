@@ -500,7 +500,7 @@ th,td{border:1px solid #d0d0d0;text-align:center;vertical-align:middle} th{backg
 
   .col-horario{width:15%}
 
-  th:nth-child(3),th:nth-child(4),th:nth-child(5){width:26%}
+  th:nth-child(n+3){width:19.5%}
 
   td{height:auto;min-height:45px;padding:7px 3px;font-size:10px;line-height:1.15}
 
@@ -887,7 +887,7 @@ function dibujar(partidos){
 
   const s=document.createElement('section');s.className='bloque-dia';
 
-  s.innerHTML=`<div class="titulo-dia">${esc(dia)}</div><div class="tabla-scroll"><table><thead><tr><th class="col-numero">Nº</th><th class="col-horario">HORARIO</th><th>CANCHA 1</th><th>CANCHA 2</th><th>CANCHA 3</th></tr></thead><tbody></tbody></table></div>`;
+  s.innerHTML=`<div class="titulo-dia">${esc(dia)}</div><div class="tabla-scroll"><table><thead><tr><th class="col-numero">Nº</th><th class="col-horario">HORARIO</th><th>CANCHA 1</th><th>CANCHA 2</th><th>CANCHA 3</th><th>CANCHA 4</th></tr></thead><tbody></tbody></table></div>`;
 
   const tb=s.querySelector('tbody');
 
@@ -897,7 +897,10 @@ function dibujar(partidos){
 
    tr.innerHTML=`<td>${esc(p.numero)}</td><td>${esc(p.horario)}</td>`;
 
-   (p.canchas||[]).forEach(c=>tr.appendChild(celda(c)));
+   const canchas = p.canchas || [];
+   for (let i = 0; i < 4; i++) {
+     tr.appendChild(celda(canchas[i]));
+   }
 
    tb.appendChild(tr);
 
