@@ -416,7 +416,7 @@ let ncFotosPublicas=[];
 function ncFotosEsc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function ncFotosPintar(){for(const id of ['nc-photo-home','nc-photo-all']){const el=document.getElementById(id);if(!el)continue;const fotos=id==='nc-photo-home'?ncFotosPublicas.slice(0,3):ncFotosPublicas;el.innerHTML=fotos.length?fotos.map(p=>`<figure><img loading="lazy" src="${ncFotosEsc(p.url)}" alt="${ncFotosEsc(p.titulo)}"><figcaption>${ncFotosEsc(p.titulo)}</figcaption></figure>`).join(''):'<p class="photo-message">Todavía no hay fotografías publicadas.</p>';}}
 function ncFotosCargar(){ncFotosPintar();if(!NC_FOTOS_API)return;const callback='ncFotosCallback_'+Date.now();const tag=document.createElement('script');const clean=()=>{delete window[callback];tag.remove();};window[callback]=data=>{ncFotosPublicas=Array.isArray(data?.fotos)?data.fotos:[];ncFotosPintar();clean();};tag.onerror=()=>{clean();};tag.src=NC_FOTOS_API+(NC_FOTOS_API.includes('?')?'&':'?')+'api=fotos&callback='+callback;document.head.appendChild(tag);}
-const NC_DATOS_API='https://script.google.com/macros/s/AKfycbzuNp6cYlhi6cAn-dqoxMiArsKU5AbvAQkLes1wRRdI5ieb3YP7qd-jewsVuTU2Wx2VTg/exec'; // Pegá aquí la URL /exec del proyecto NEWCOM_LIVE_API_PUBLICA.gs.
+const NC_DATOS_API='https://script.google.com/macros/s/AKfycbxVEjBcTAc5-bdqvrEF7WL4BcG8Xhx6J7ASvCG_EqM9EMdoSXSe4pYdyoDYXasoYX1S/exec'; // Pegá aquí la URL /exec del proyecto NEWCOM_LIVE_API_PUBLICA.gs.
 function ncNormalCat(v){const s=String(v||'').trim();return s?(s.startsWith('+')?s:'+'+s):'';}
 let ncNotificaciones=[];
 const NC_AVISOS_LEIDOS_KEY='newcom_pruebas_avisos_leidos_v1';
