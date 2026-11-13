@@ -1694,7 +1694,7 @@ body[data-nc-theme="dark"] .equipo-edit-overlay .equipo-edit-modal .equipo-edit-
 @media(max-width:550px){#nc-f01-config-hours .nc-hours-grid{grid-template-columns:1fr}}
 </style><style>
 .nc-partidos-matriz.nc-tiempo-matriz{grid-template-columns:76px repeat(var(--canchas),minmax(175px,1fr))!important;min-width:calc(76px + var(--canchas)*175px)!important;grid-template-rows:32px auto!important;grid-auto-rows:auto!important;gap:5px;align-items:start}
-.nc-tiempo-columna,.nc-tiempo-eje{position:relative;min-width:0;background:repeating-linear-gradient(to bottom,rgba(130,150,155,.22) 0px,rgba(130,150,155,.22) 1px,transparent 1px,transparent 105px)}
+.nc-tiempo-columna,.nc-tiempo-eje{position:relative;min-width:0;background:repeating-linear-gradient(to bottom,rgba(130,150,155,.22) 0px,rgba(130,150,155,.22) 1px,transparent 1px,transparent 141px)}
 .nc-tiempo-eje span{position:absolute;right:8px;font-size:11px;color:#bac7ca;transform:translateY(-50%);background:#191d1d;padding:2px 4px}
 .nc-tiempo-bloqueado{position:absolute;left:3px;right:3px;display:flex;align-items:center;justify-content:center;text-align:center;background:#292f31;border:1px dashed #526063;border-radius:6px;color:#aebbbd;font-size:11px;overflow:hidden;box-sizing:border-box}
 .nc-tiempo-slot.nc-partidos-slot{position:absolute;left:0;right:0;min-height:0!important;padding:2px!important;box-sizing:border-box;z-index:1;display:flex;flex-direction:column;gap:0}
@@ -3861,7 +3861,7 @@ return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ga
   return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" ${p._cruce?'draggable="true" data-nc-cruce-confirmado="1"':!datosMarcador?'draggable="true" data-nc-arrastrable="1"':''} role="button" tabindex="0" title="${fx3UltimaPropuesta?'Seleccionar partido del borrador':'Seleccionar partido para editar'}" ${fx3UltimaPropuesta?'data-nc-borrador':'data-nc-resultado'}="${esc(encodeURIComponent(JSON.stringify({cruce:!!p._cruce,instancia:p.instancia,partido:p.partido,genero:p.genero,fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}">${insigniaPartido}<div class="nc-partidos-equipos">${p._cruce?`<div class="nc-cruce-etiqueta-fixture">${esc(p.instancia==='SEMIFINAL'?'Semifinal '+p.partido:p.instancia==='FINAL'?'Final':'Tercer puesto')}</div>`:''}<div class="nc-partidos-equipo">${iconoEquipo(a)}<span class="nc-partidos-nombre ${ganaA?'nc-partidos-ganador':''}">${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span class="nc-partidos-nombre ${ganaB?'nc-partidos-ganador':''}">${esc(b)}</span></div>${marcador}</div>${reloj}</div>`;
 
  };
- // Escala temporal común: 2 px por minuto; cada cancha conserva sus turnos reales.
+ // Escala temporal común: 2.35 px por minuto; cada cancha conserva sus turnos reales.
  const rangosCancha=c=>{const v=disponibilidadGrilla?.[c];return (v?ncFranjasCancha(v):[[inicioGrilla,finGrilla]]).filter(([a,b])=>Number.isFinite(a)&&Number.isFinite(b)&&b>a);};
  const rangosTodos=Array.from({length:cantidad},(_,i)=>rangosCancha(i+1)).flat();
  const duracionPartido=Math.max(1,Number(settings.duracion)||50);
@@ -3870,7 +3870,7 @@ return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ga
  const extremosFin=[...rangosTodos.map(r=>r[1]),...inicios.map(m=>m+duracionPartido)];
  const desde=extremosInicio.length?Math.floor(Math.min(...extremosInicio)/60)*60:480;
  const hasta=extremosFin.length?Math.ceil(Math.max(...extremosFin)/60)*60:1260;
- const escala=1.75, alto=(hasta-desde)*escala;
+ const escala=2.35, alto=(hasta-desde)*escala;
  const posicion=(a,b)=>`top:${(a-desde)*escala}px;height:${Math.max(1,(b-a)*escala)}px`;
  const marcas=Array.from({length:Math.floor((hasta-desde)/60)+1},(_,i)=>desde+i*60);
  const bloqueNoDisponible=(a,b)=>b>a?`<div class="nc-tiempo-bloqueado nc-horario-no-disponible" style="${posicion(a,b)};--nc-bloque-alto:${Math.max(1,(b-a)*escala)}px"><span>Horario no disponible<br>${hhGrilla(a)} – ${hhGrilla(b)}</span></div>`:'';
@@ -4891,7 +4891,7 @@ window.ncOrdenCategoria=0;
 body.nc-grilla-ampliada .nc-partidos-panel:has(.nc-tiempo-matriz){overflow:hidden!important;scrollbar-width:none}
 body.nc-grilla-ampliada .nc-partidos-scroll:has(.nc-tiempo-matriz){overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:none}
 .nc-tiempo-slot.nc-partidos-slot{padding:1px 2px!important}
-.nc-tiempo-slot>.nc-partidos-celda{overflow:hidden!important;padding-top:18px!important;padding-bottom:3px!important;align-items:center;min-width:0}
+.nc-tiempo-slot>.nc-partidos-celda{overflow:hidden!important;padding-top:18px!important;padding-bottom:10px!important;align-items:center;min-width:0}
 .nc-tiempo-slot .nc-partidos-equipos{gap:2px!important}
 .nc-tiempo-slot .nc-partidos-equipo{min-height:0!important;gap:5px!important;margin:0!important}
 .nc-tiempo-slot .nc-partidos-escudo,.nc-tiempo-slot .nc-partidos-escudo-vacio{width:20px!important;height:20px!important}
