@@ -465,7 +465,7 @@ function ncVistaBufet(){
  for(const p of items){const cat=String(p.categoria||'Otros').trim()||'Otros';if(!grupos.has(cat))grupos.set(cat,[]);grupos.get(cat).push(p);}
  const moneda=new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',minimumFractionDigits:0,maximumFractionDigits:2});
  const foto=v=>/^(?:https?:\/\/[^\s]+|data:image\/(?:png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=]+)$/i.test(String(v||''))?String(v):'';
- return head('Bufet','SERVICIOS')+(items.length?[...grupos].map(([cat,productos])=>`<section class="nc-bufet-grupo"><h2>${icon(/bebida/i.test(cat)?'coffee':'list')}${esc(cat)}</h2><div class="nc-bufet-list">${productos.map(p=>{const img=foto(p.imagen);const precio=p.precio!==null&&p.precio!==undefined&&String(p.precio).trim()!==''&&Number.isFinite(Number(p.precio))?moneda.format(Number(p.precio)):'Consultar precio';return `<article class="nc-bufet-item">${img?`<img src="${esc(img)}" alt="${esc(p.detalle)}" loading="lazy" onerror="this.hidden=true">`:''}<div class="nc-bufet-info"><strong>${esc(p.detalle)}</strong><span>${esc(precio)}</span></div></article>`;}).join('')}</div></section>`).join(''):`<div class="empty">${esc(ncEmptyData(ncBufetDisponible?'Todavía no hay productos publicados.':'El menú del bufet todavía no está disponible.'))}</div>`);
+ return head('Bufet','SERVICIOS')+(items.length?[...grupos].map(([cat,productos])=>`<section class="nc-bufet-grupo"><h2>${icon(/bebida/i.test(cat)?'coffee':'list')}${esc(cat)}</h2><div class="nc-bufet-list">${productos.map(p=>{const img=foto(p.imagen);const precio=p.precio!==null&&p.precio!==undefined&&String(p.precio).trim()!==''&&Number.isFinite(Number(p.precio))?moneda.format(Number(p.precio)):'Consultar precio';return `<article class="nc-bufet-item" ${img?'role="button" tabindex="0" aria-label="Ampliar imagen del producto" onclick="ncAbrirProducto(this)" onkeydown="if(event.key===&quot;Enter&quot;||event.key===&quot; &quot;){event.preventDefault();ncAbrirProducto(this)}"':''}>${img?`<img src="${esc(img)}" alt="${esc(p.detalle)}" loading="lazy" onerror="this.hidden=true">`:''}<div class="nc-bufet-info"><strong>${esc(p.detalle)}</strong><span>${esc(precio)}</span></div></article>`;}).join('')}</div></section>`).join(''):`<div class="empty">${esc(ncEmptyData(ncBufetDisponible?'Todavía no hay productos publicados.':'El menú del bufet todavía no está disponible.'))}</div>`);
 }
 function ncVistaAlojamientos(){
  const esc=ncFotosEsc;
@@ -981,4 +981,14 @@ generic=function(){
 #view .nc-cx-schedule{font-size:15px;font-weight:650}
 #view .nc-cx-schedule strong{color:var(--lime);font-size:19px;font-variant-numeric:tabular-nums}
 </style>
+
+<style>
+.nc-bufet-item[role="button"]{cursor:pointer}.nc-bufet-item[role="button"]:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+#ncProductoDialog{box-sizing:border-box;width:min(92vw,560px);max-height:90vh;max-height:90dvh;padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--surface2);color:inherit;overflow:auto;margin:auto}#ncProductoDialog::backdrop{background:rgba(0,0,0,.82)}#ncProductoDialog .nc-producto-cerrar{display:block;margin:0 0 12px auto;width:40px;height:40px;border:1px solid var(--line);border-radius:50%;background:transparent;color:inherit;font-size:27px;cursor:pointer}#ncProductoDialog img{display:block;width:100%;height:auto;max-height:60vh;max-height:60dvh;object-fit:contain;background:#e8ebea;border-radius:12px}#ncProductoDialog h2{font-size:18px;margin:16px 0 6px}#ncProductoDialog p{font-size:23px;font-weight:700;color:var(--lime);margin:0 0 4px}
+</style>
+<dialog id="ncProductoDialog" aria-labelledby="ncProductoNombre"><button type="button" class="nc-producto-cerrar" aria-label="Cerrar imagen" onclick="this.closest('dialog').close()">×</button><img id="ncProductoImagen" alt=""><h2 id="ncProductoNombre"></h2><p id="ncProductoPrecio"></p></dialog>
+<script>
+function ncAbrirProducto(card){const img=card.querySelector('img');if(!img||img.hidden)return;const d=document.getElementById('ncProductoDialog');const grande=document.getElementById('ncProductoImagen');grande.src=img.src;grande.alt=img.alt;document.getElementById('ncProductoNombre').textContent=card.querySelector('strong').textContent;document.getElementById('ncProductoPrecio').textContent=card.querySelector('.nc-bufet-info span').textContent;if(!d.open)d.showModal();}
+{const d=document.getElementById('ncProductoDialog');d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}});}
+</script>
 </body></html>
