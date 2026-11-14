@@ -1,6 +1,6 @@
 {
   "name": "Newcom Boulevard",
-  "short_name": "Torneo Boule",
+  "short_name": "Torneo\nBoulevard",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
