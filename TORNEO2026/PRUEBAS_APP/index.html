@@ -461,24 +461,61 @@ function ncMarcarAviso(id){try{const leidos=ncAvisosLeidos();leidos[id]=true;loc
 
 let ncDataPhase='loading',ncDataMessage='';
 function ncEmptyData(fallback){return ncDataPhase==='loading'?'Cargando datos del torneo…':ncDataPhase==='error'?'La información no se pudo cargar todavía.':fallback;}
-let ncDatosEnCurso=false;
-function ncDatosCargar(silencioso=false){
- if(ncDatosEnCurso)return;
- if(!silencioso){ncDataPhase='loading';ncDataMessage='';render();}
- if(!NC_DATOS_API){ncEstado('Para mostrar datos reales, configurá la URL de la API pública.');return;}
- ncDatosEnCurso=true;
- const cb='ncDatosCallback_'+Date.now(),tag=document.createElement('script');
- const timeout=setTimeout(()=>{clean();if(!silencioso)ncEstado('No se pudo conectar con la planilla.');},45000);
- function clean(){ncDatosEnCurso=false;clearTimeout(timeout);delete window[cb];tag.remove();}
- window[cb]=d=>{clean();if(!d||!d.ok){if(!silencioso)ncEstado('No se pudieron cargar los datos del torneo.');return;}
+const NC_SUPABASE_REST='https://ufdymwtrinmoddzkmdor.supabase.co/rest/v1/torneo_publico';
+const NC_SUPABASE_PUBLIC_KEY='sb_publishable_uuzEW03cxVgOOYNhIRtTxA_77nYHuwD';
+let ncDatosEnCurso=false,ncVersionSupabase=null,ncUltimoRespaldo=0;
+function ncAplicarDatos(d){
+ if(!d||!d.ok||!Array.isArray(d.equipos)||!Array.isArray(d.partidos))throw Error('Datos públicos inválidos');
  teams=(d.equipos||[]).map(t=>({name:t.nombre,cat:ncNormalCat(t.categoria),city:t.ciudad||t.provincia||'',zona:t.zona||'',escudo:t.escudo||''}));
  matches=(d.partidos||[]).map(p=>({a:p.local,b:p.visitante,cat:ncNormalCat(p.categoria),court:p.cancha||'—',time:p.hora||'—',fecha:p.fecha||'',status:p.resultado?'Finalizado':'Programado',score:p.resultado?`${p.resultado.setsLocal} – ${p.resultado.setsVisitante}`:'–',zona:p.zona||'',genero:p.genero||'',resultado:p.resultado||null,escudoLocal:p.escudoLocal||p.logoLocal||'',escudoVisitante:p.escudoVisitante||p.logoVisitante||''}));
  ncCruces=Array.isArray(d.cruces)?d.cruces:[];
  matches.push(...ncCruces.map(p=>({a:p.local,b:p.visitante,cat:ncNormalCat(p.categoria),court:p.cancha||'—',time:p.hora||'—',fecha:p.fecha||'',status:p.resultado?'Finalizado':'Programado',score:p.resultado?`${p.resultado.setsLocal} – ${p.resultado.setsVisitante}`:'–',zona:'',genero:p.genero||'',instancia:p.instancia||'',partido:p.partido||'',resultado:p.resultado||null,escudoLocal:p.escudoLocal||'',escudoVisitante:p.escudoVisitante||''})));
  ncBufetDisponible=Array.isArray(d.bufet);ncBufet=ncBufetDisponible?d.bufet:[];ncAlojamientos=Array.isArray(d.alojamientos)?d.alojamientos:[];ncArbitros=Array.isArray(d.arbitros)?d.arbitros:[];ncNotificaciones=Array.isArray(d.notificaciones)?[...d.notificaciones].reverse():[];const catsReal=[...new Set([...teams.map(x=>x.cat),...matches.map(x=>x.cat)].filter(Boolean))].sort((a,b)=>Number(a.slice(1))-Number(b.slice(1)));
- cats.splice(0,cats.length,'Todas',...catsReal);if(!cats.includes(category))category='Todas';ncDataPhase='ready';ncDataMessage='';render();if(page==='avisos')ncMarcarTodosAvisosLeidos();};
- tag.onerror=()=>{clean();if(!silencioso)ncEstado('No se pudo conectar con la planilla.');};
- tag.src=NC_DATOS_API+(NC_DATOS_API.includes('?')?'&':'?')+'api=datos&callback='+cb;document.head.appendChild(tag);
+ cats.splice(0,cats.length,'Todas',...catsReal);if(!cats.includes(category))category='Todas';ncDataPhase='ready';ncDataMessage='';render();if(page==='avisos')ncMarcarTodosAvisosLeidos();
+}
+async function ncConsultarSupabase(campos){
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),15000);
+ try{
+  const r=await fetch(NC_SUPABASE_REST+'?id=eq.1&select='+campos,{headers:{apikey:NC_SUPABASE_PUBLIC_KEY},cache:'no-store',signal:controller.signal});
+  if(!r.ok)throw Error('Supabase HTTP '+r.status);
+  const filas=await r.json();
+  if(!Array.isArray(filas)||!filas[0])throw Error('Sin datos publicados');
+  return filas[0];
+ }finally{clearTimeout(timer);}
+}
+function ncConsultarRespaldo(){return new Promise((resolve,reject)=>{
+ const cb='ncDatosCallback_'+Date.now(),tag=document.createElement('script');
+ const timer=setTimeout(()=>{clean();reject(Error('Tiempo de espera agotado'));},45000);
+ function clean(){clearTimeout(timer);delete window[cb];tag.remove();}
+ window[cb]=d=>{clean();resolve(d);};
+ tag.onerror=()=>{clean();reject(Error('API de respaldo no disponible'));};
+ tag.src=NC_DATOS_API+(NC_DATOS_API.includes('?')?'&':'?')+'api=datos&callback='+cb;
+ document.head.appendChild(tag);
+});}
+async function ncDatosCargar(silencioso=false){
+ if(ncDatosEnCurso)return;
+ ncDatosEnCurso=true;
+ if(!silencioso){ncDataPhase='loading';ncDataMessage='';render();}
+ try{
+  if(ncVersionSupabase!==null&&ncDataPhase==='ready'){
+   const version=await ncConsultarSupabase('actualizado');
+   if(version.actualizado===ncVersionSupabase)return;
+  }
+  const fila=await ncConsultarSupabase('datos,actualizado');
+  ncAplicarDatos(fila.datos);
+  ncVersionSupabase=fila.actualizado;
+ }catch(e){
+  // Conservar los últimos datos válidos; respaldo limitado a la carga inicial o reintento manual.
+  if(ncDataPhase==='ready')return;
+  try{
+   if(Date.now()-ncUltimoRespaldo<300000)throw Error('Respaldo temporalmente limitado');
+   ncUltimoRespaldo=Date.now();
+   await new Promise(resolve=>setTimeout(resolve,Math.random()*10000));
+   ncAplicarDatos(await ncConsultarRespaldo());
+   ncVersionSupabase=null;
+  }catch(err){ncEstado('No se pudieron cargar los datos del torneo. Intentá nuevamente.');}
+ }finally{ncDatosEnCurso=false;}
 }
 
 /* Árbitros: lectura desde la misma API pública que alimenta el torneo. */
