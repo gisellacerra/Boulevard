@@ -422,7 +422,7 @@ window.addEventListener('appinstalled', function() { window.ncInstallPrompt = nu
   <button class="notification-bell iconbtn" aria-label="Notificaciones" onclick="go('avisos')"><svg class="ic"><use href="#i-bell"/></svg><span class="nc-unread-count" id="nc-unread-count"></span></button></header>
 <main class="app"><div class="view" id="view"></div></main><div class="bottom"><nav id="nav"></nav></div><div class="drawer" id="drawer" onclick="if(event.target===this)drawer(false)"><aside><div class="head"><span class="drawer-brand"><img src="./logo_calado.png" alt="6.º Torneo Nacional de Newcom 2026"></span><button class="iconbtn" aria-label="Cerrar menú" onclick="drawer(false)"><svg class="ic"><use href="#i-close"/></svg></button></div><h3>COMPETENCIA</h3><div id="menuSports"></div><h3>SERVICIOS Y NOVEDADES</h3><div id="menuOther"></div><h3 class="nc-desarrollo-menu-title">DESARROLLO</h3><button type="button" class="menuitem nc-desarrollo-menu" onclick="go('desarrollo')"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>Desarrollo</button></aside></div>
 <dialog id="photo-upload" aria-labelledby="photo-upload-title"><button type="button" class="photo-close" aria-label="Cerrar" onclick="closePhotoUpload()">×</button><h2 id="photo-upload-title">Subí tu foto</h2><p class="muted">Hasta 3 MB · JPG, PNG o WebP<br>5 fotos por navegador por día.</p><form id="photo-upload-form"><label class="photo-picker">Elegí una foto<input type="file" id="photo-file" accept="image/jpeg,image/png,image/webp" required></label><div id="photo-preview"></div><label class="photo-title-label" for="photo-title">Título de la foto (opcional)</label><input type="text" id="photo-title" name="titulo" maxlength="60" placeholder="Ej.: Nombre de tu equipo" autocomplete="off"><p class="photo-title-help">Máximo 60 caracteres</p><p class="photo-public">Tu foto aparecerá públicamente en la app al publicarla.</p><button type="submit" id="photo-send" class="upload-photo">Publicar foto</button><p id="photo-upload-status" role="status" aria-live="polite"></p></form></dialog><script>
-const $=s=>document.querySelector(s);const icon=n=>`<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;let page='inicio',category='Todas',teamPage=0,search='',day='Hoy',subtab='Posiciones';const cats=['Todas','+50','+60','+68'];let teams=[];let matches=[];let ncCruces=[];let ncArbitros=[];let ncAlojamientos=[];let ncBufet=[];let ncBufetDisponible=false;const ncFechaHoy=()=>new Date().toLocaleDateString('en-CA');const routes=[['inicio','Inicio','home'],['partidos','Fixture','calendar'],['posiciones','Posiciones','trophy'],['cruces','Cruces','flag'],['bufet','Bufet','coffee'],['alojamiento','Hospedaje','bed']];const sports=[['fixture','Fixture','calendar'],['resultados','Resultados','list'],['zonas','Zonas','grid'],['posiciones','Posiciones','trophy'],['cruces','Cruces y finales','flag'],['reglamento','Reglamento','info'],['arbitros','Árbitros','flag']];const others=[['avisos','Avisos','bell'],['streaming','Transmisiones','radio'],['alojamiento','Alojamiento','bed'],['bufet','Bufet','coffee']];const title={inicio:'Inicio',partidos:'Fixture',torneo:'Torneo',equipos:'Equipos',...Object.fromEntries([...sports,...others].map(x=>[x[0],x[1]]))};function drawer(open){$('#drawer').classList.toggle('open',open)}let ncPaginaAntesAvisos='inicio';function ncVolverAvisos(){go(ncPaginaAntesAvisos&&ncPaginaAntesAvisos!=='avisos'?ncPaginaAntesAvisos:'inicio')}function go(p){if(p==='torneo')p='zonas';if(p==='avisos'&&page!=='avisos')ncPaginaAntesAvisos=page;page=p;teamPage=0;search='';drawer(false);render();if(p==='avisos')ncMarcarTodosAvisosLeidos();if(p==='alojamiento')ncDatosCargar(true);window.scrollTo(0,0)}function navRender(){let active=routes.some(r=>r[0]===page)?page:['fixture','resultados'].includes(page)?'partidos':['equipos'].includes(page)?'equipos':'torneo';$('#nav').innerHTML=routes.map(([p,t,i])=>`<button class="${active===p?'active':''}" onclick="go('${p}')" aria-label="${t}" ${active===p?'aria-current="page"':''}>${icon(i)}<span>${t}</span></button>`).join('');$('#menuSports').innerHTML=sports.map(([p,t,i])=>`<button class="menuitem" onclick="go('${p}')">${icon(i)}${t}</button>`).join('');$('#menuOther').innerHTML=others.map(([p,t,i])=>`<button class="menuitem" onclick="go('${p}')">${icon(i)}${t}</button>`).join('')}
+const $=s=>document.querySelector(s);const icon=n=>`<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;let page='inicio',category='Todas',teamPage=0,search='',day='Hoy',subtab='Posiciones';const cats=['Todas','+50','+60','+68'];let teams=[];let matches=[];let ncCruces=[];let ncArbitros=[];let ncAlojamientos=[];let ncBufet=[];let ncBufetDisponible=false;const ncFechaHoy=()=>new Date().toLocaleDateString('en-CA');const routes=[['inicio','Inicio','home'],['partidos','Fixture','calendar'],['posiciones','Posiciones','trophy'],['cruces','Cruces','flag'],['bufet','Bufet','coffee'],['alojamiento','Hospedaje','bed']];const sports=[['fixture','Fixture','calendar'],['resultados','Resultados','list'],['zonas','Zonas','grid'],['posiciones','Posiciones','trophy'],['cruces','Cruces y finales','flag'],['reglamento','Reglamento','info'],['arbitros','Árbitros','flag']];const others=[['avisos','Avisos','bell'],['streaming','Transmisiones','radio'],['alojamiento','Alojamiento','bed'],['bufet','Bufet','coffee']];const title={inicio:'Inicio',partidos:'Fixture',torneo:'Torneo',equipos:'Equipos',...Object.fromEntries([...sports,...others].map(x=>[x[0],x[1]]))};function drawer(open){$('#drawer').classList.toggle('open',open)}let ncPaginaAntesAvisos='inicio';function ncVolverAvisos(){go(ncPaginaAntesAvisos&&ncPaginaAntesAvisos!=='avisos'?ncPaginaAntesAvisos:'inicio')}function go(p){if(p==='torneo')p='zonas';if(p==='avisos'&&page!=='avisos')ncPaginaAntesAvisos=page;page=p;teamPage=0;search='';drawer(false);render();if(p==='avisos')ncMarcarTodosAvisosLeidos();if(['alojamiento','bufet','arbitros'].includes(p))ncDatosCargar(true);window.scrollTo(0,0)}function navRender(){let active=routes.some(r=>r[0]===page)?page:['fixture','resultados'].includes(page)?'partidos':['equipos'].includes(page)?'equipos':'torneo';$('#nav').innerHTML=routes.map(([p,t,i])=>`<button class="${active===p?'active':''}" onclick="go('${p}')" aria-label="${t}" ${active===p?'aria-current="page"':''}>${icon(i)}<span>${t}</span></button>`).join('');$('#menuSports').innerHTML=sports.map(([p,t,i])=>`<button class="menuitem" onclick="go('${p}')">${icon(i)}${t}</button>`).join('');$('#menuOther').innerHTML=others.map(([p,t,i])=>`<button class="menuitem" onclick="go('${p}')">${icon(i)}${t}</button>`).join('')}
 function head(t,tag='CENTRO DEL TORNEO'){return `<div class="pagehead nc-unified-pagehead">${page!=='inicio'?`<button type="button" class="nc-unified-back" onclick="go('inicio')" aria-label="Volver al inicio" title="Volver al inicio"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>`:''}<h1>${t}</h1><span class="tiny muted nc-page-year">${new Date().getFullYear()}</span></div>`}function tabs(arr,active,fn){return `<div class="strip">${arr.map(v=>`<button class="${v===active?'active':''}" onclick="${fn}('${v}')">${v}</button>`).join('')}</div>`}function catTabs(){return `<div class="nc-category-tabs"><div class="strip">${cats.map(v=>`<button data-nc-cat="${v}" class="${v==='Todas'?'nc-all-categories ':''}${v===category?'active':''}" onclick="setCat('${v}')">${v}</button>`).join('')}</div></div>`}function setCat(v){category=v;teamPage=0;render()}function setDay(v){day=v;render()}function setSub(v){subtab=v;render()}function filterMatches(){return matches.filter(m=>category==='Todas'||m.cat===category)}function matchRows(arr){return arr.length?arr.map(m=>`<div class="match"><div class="when">${m.time}<br>Cancha ${m.court}<br><span class="chip">${m.cat}</span></div><div class="teams">${m.a}<br>${m.b}</div><div class="score">${m.score}<small>${m.status}</small></div></div>`).join(''):`<div class="empty">${ncEmptyData('No hay partidos en esta selección.')}</div>`}function simpleRows(items){return items.map(([t,detail,p])=>`<button class="rowline" onclick="go('${p}')"><span class="grow">${t}<small>${detail}</small></span>${icon('chevron')}</button>`).join('')}function home(){return `<div class="hero"><img src="https://images.unsplash.com/photo-1592656094267-764a45160876?auto=format&fit=crop&w=1300&q=80" alt="Cancha de voleibol"><div class="over"><span>COMPETENCIA · NEWCOM</span><strong>Viví el torneo</strong></div></div>${head('Partidos de hoy')}${tabs(['Todas','+50','+60','+68'],category,'setCat')}${matchRows(filterMatches().slice(0,3))}<div style="text-align:right"><button class="link" onclick="go('partidos')">Ver todos los partidos →</button></div><div class="quick"><button onclick="go('fixture')">${icon('calendar')}Fixture</button><button onclick="go('posiciones')">${icon('trophy')}Posiciones</button><button onclick="go('streaming')">${icon('radio')}En vivo</button></div><div class="section-title"><h2>El torneo en imágenes</h2><button class="link" onclick="go('galeria')">Ver galería →</button></div><div id="nc-photo-home" class="photo-grid"></div><div class="photo-cta"><div><strong>¡Compartí tu momento!</strong><p>Muy pronto vas a poder enviar tus fotografías para que la organización las publique.</p></div><button onclick="go('galeria')">Subí tu foto!</button></div><div class="section-title"><h2>Novedades</h2><button class="link" onclick="go('avisos')">Ver avisos →</button></div><div class="rowline"><div class="grow">Información del torneo<small>Comunicados y novedades oficiales</small></div>${icon('chevron')}</div>`}function partidos(){return `${head('Fixture','COMPETENCIA')}${tabs(['Ayer','Hoy','Mañana'],day,'setDay')}${catTabs()}<div class="section-title"><h2>${day==='Hoy'?'Partidos de hoy':'Programación · '+day.toLowerCase()}</h2><span class="tiny muted">${day==='Hoy'?filterMatches().length+' partidos':'Demostración'}</span></div>${day==='Hoy'?matchRows(filterMatches()):`<div class="empty">La programación de ${day.toLowerCase()} se mostrará cuando esté disponible.</div>`}`}function equipos(){let found=teams.filter(t=>(category==='Todas'||t.cat===category)&&(`${t.name} ${t.city}`).toLowerCase().includes(search.toLowerCase()));return `${head('Equipos','PARTICIPANTES')}${catTabs()}<div class="search">${icon('search')}
 <input id="teamSearch" aria-label="Buscar equipo o localidad" type="search" placeholder="Buscar equipo o localidad" value="${search.replaceAll('"','&quot;')}" oninput="findTeams(this.value)" autocomplete="off">
 <button id="teamSearchClear" type="button" aria-label="Limpiar búsqueda" onclick="ncLimpiarBusquedaEquipos()" ${search?'':'hidden'}>×</button>
@@ -461,9 +461,12 @@ function ncMarcarAviso(id){try{const leidos=ncAvisosLeidos();leidos[id]=true;loc
 
 let ncDataPhase='loading',ncDataMessage='';
 function ncEmptyData(fallback){return ncDataPhase==='loading'?'Cargando datos del torneo…':ncDataPhase==='error'?'La información no se pudo cargar todavía.':fallback;}
-const NC_SUPABASE_REST='https://ufdymwtrinmoddzkmdor.supabase.co/rest/v1/torneo_publico';
+const NC_SUPABASE_REST='https://ufdymwtrinmoddzkmdor.supabase.co/rest/v1/torneo_bloques';
 const NC_SUPABASE_PUBLIC_KEY='sb_publishable_uuzEW03cxVgOOYNhIRtTxA_77nYHuwD';
-let ncDatosEnCurso=false,ncVersionSupabase=null,ncUltimoRespaldo=0;
+let ncDatosEnCurso=false,ncUltimoRespaldo=0,ncDatosPendientes=false;
+const ncBloques=Object.create(null),ncVersiones=Object.create(null);
+const ncBloquePagina=()=>({alojamiento:'alojamientos',bufet:'bufet',arbitros:'arbitros'}[page]||null);
+let ncErrorBloque='';
 function ncAplicarDatos(d){
  if(!d||!d.ok||!Array.isArray(d.equipos)||!Array.isArray(d.partidos))throw Error('Datos públicos inválidos');
  teams=(d.equipos||[]).map(t=>({name:t.nombre,cat:ncNormalCat(t.categoria),city:t.ciudad||t.provincia||'',zona:t.zona||'',escudo:t.escudo||''}));
@@ -473,15 +476,16 @@ function ncAplicarDatos(d){
  ncBufetDisponible=Array.isArray(d.bufet);ncBufet=ncBufetDisponible?d.bufet:[];ncAlojamientos=Array.isArray(d.alojamientos)?d.alojamientos:[];ncArbitros=Array.isArray(d.arbitros)?d.arbitros:[];ncNotificaciones=Array.isArray(d.notificaciones)?[...d.notificaciones].reverse():[];const catsReal=[...new Set([...teams.map(x=>x.cat),...matches.map(x=>x.cat)].filter(Boolean))].sort((a,b)=>Number(a.slice(1))-Number(b.slice(1)));
  cats.splice(0,cats.length,'Todas',...catsReal);if(!cats.includes(category))category='Todas';ncDataPhase='ready';ncDataMessage='';render();if(page==='avisos')ncMarcarTodosAvisosLeidos();
 }
-async function ncConsultarSupabase(campos){
+async function ncConsultarSupabase(campos,bloque){
  const controller=new AbortController();
- const timer=setTimeout(()=>controller.abort(),15000);
+ const timer=setTimeout(()=>controller.abort(),20000);
  try{
-  const r=await fetch(NC_SUPABASE_REST+'?id=eq.1&select='+campos,{headers:{apikey:NC_SUPABASE_PUBLIC_KEY},cache:'no-store',signal:controller.signal});
+  const url=NC_SUPABASE_REST+'?select='+campos+(bloque?'&bloque=eq.'+encodeURIComponent(bloque):'');
+  const r=await fetch(url,{headers:{apikey:NC_SUPABASE_PUBLIC_KEY},cache:'no-store',signal:controller.signal});
   if(!r.ok)throw Error('Supabase HTTP '+r.status);
   const filas=await r.json();
-  if(!Array.isArray(filas)||!filas[0])throw Error('Sin datos publicados');
-  return filas[0];
+  if(!Array.isArray(filas)||!filas.length)throw Error('Sin datos publicados');
+  return filas;
  }finally{clearTimeout(timer);}
 }
 function ncConsultarRespaldo(){return new Promise((resolve,reject)=>{
@@ -494,28 +498,55 @@ function ncConsultarRespaldo(){return new Promise((resolve,reject)=>{
  document.head.appendChild(tag);
 });}
 async function ncDatosCargar(silencioso=false){
- if(ncDatosEnCurso)return;
+ if(ncDatosEnCurso){ncDatosPendientes=true;return;}
  ncDatosEnCurso=true;
- if(!silencioso){ncDataPhase='loading';ncDataMessage='';render();}
+ const servicio=ncBloquePagina();
+ ncErrorBloque='';
+ if(!silencioso&&ncDataPhase!=='ready'){ncDataPhase='loading';ncDataMessage='';render();}
  try{
-  if(ncVersionSupabase!==null&&ncDataPhase==='ready'){
-   const version=await ncConsultarSupabase('actualizado');
-   if(version.actualizado===ncVersionSupabase)return;
+  const versiones=await ncConsultarSupabase('bloque,version');
+  const mapa=Object.fromEntries(versiones.map(r=>[r.bloque,r.version]));
+  const necesarios=['deportivo','equipos',...(servicio?[servicio]:[])];
+  let cambio=false;
+  // Descargar secuencialmente para evitar picos de transferencia por dispositivo.
+  for(const bloque of necesarios){
+   if(!mapa[bloque])throw Error('Bloque sin publicar: '+bloque);
+   if(ncVersiones[bloque]===mapa[bloque]&&ncBloques[bloque])continue;
+   const [fila]=await ncConsultarSupabase('bloque,datos,version',bloque);
+   if(fila.bloque!==bloque||!fila.version||!fila.datos||typeof fila.datos!=='object')throw Error('Bloque inválido: '+bloque);
+   if(bloque==='deportivo'&&(!fila.datos.ok||!Array.isArray(fila.datos.partidos)))throw Error('Datos deportivos inválidos');
+   if(bloque!=='deportivo'&&!Array.isArray(fila.datos[bloque]))throw Error('Datos inválidos: '+bloque);
+   ncBloques[bloque]=fila.datos;ncVersiones[bloque]=fila.version;cambio=true;
   }
-  const fila=await ncConsultarSupabase('datos,actualizado');
-  ncAplicarDatos(fila.datos);
-  ncVersionSupabase=fila.actualizado;
+  if(cambio||ncDataPhase!=='ready')ncAplicarDatos(Object.assign({},...Object.values(ncBloques)));
+  else if(servicio)render();
  }catch(e){
-  // Conservar los últimos datos válidos; respaldo limitado a la carga inicial o reintento manual.
-  if(ncDataPhase==='ready')return;
-  try{
-   if(Date.now()-ncUltimoRespaldo<300000)throw Error('Respaldo temporalmente limitado');
-   ncUltimoRespaldo=Date.now();
-   await new Promise(resolve=>setTimeout(resolve,Math.random()*10000));
-   ncAplicarDatos(await ncConsultarRespaldo());
-   ncVersionSupabase=null;
-  }catch(err){ncEstado('No se pudieron cargar los datos del torneo. Intentá nuevamente.');}
- }finally{ncDatosEnCurso=false;}
+  if(ncBloques.deportivo&&ncBloques.equipos){
+   ncErrorBloque=servicio&&!ncBloques[servicio]?servicio:'';
+   ncAplicarDatos(Object.assign({},...Object.values(ncBloques)));
+  }else if(ncDataPhase==='ready'){
+   if(servicio&&!ncBloques[servicio]){ncErrorBloque=servicio;render();}
+  }else{
+   // Respaldo únicamente mediante reintento explícito, para no saturar Apps Script.
+   ncEstado('No se pudieron cargar los datos del torneo. Intentá nuevamente.');
+  }
+ }finally{
+  ncDatosEnCurso=false;
+  if(ncDatosPendientes){ncDatosPendientes=false;ncDatosCargar(true);}
+ }
+}
+async function ncDatosRespaldoManual(){
+ if(ncDatosEnCurso)return;
+ if(Date.now()-ncUltimoRespaldo<300000)return;
+ ncDatosEnCurso=true;ncUltimoRespaldo=Date.now();
+ try{
+  const d=await ncConsultarRespaldo();
+  ncAplicarDatos(d);
+  for(const b of ['equipos','alojamientos','bufet','arbitros'])ncBloques[b]={[b]:d[b]||[]};
+  const deportivo={...d};for(const b of ['equipos','alojamientos','bufet','arbitros'])delete deportivo[b];
+  ncBloques.deportivo=deportivo;
+ }catch(e){ncEstado('No se pudieron cargar los datos de respaldo. Intentá nuevamente.');}
+ finally{ncDatosEnCurso=false;if(ncDatosPendientes){ncDatosPendientes=false;ncDatosCargar(true);}}
 }
 
 /* Árbitros: lectura desde la misma API pública que alimenta el torneo. */
@@ -706,7 +737,7 @@ setInterval(()=>{if(!document.hidden&&!photoBusy)ncFotosCargar();},60000);
 render();
 
 const ncRenderWithDataStatus=render;
-render=function(){ncRenderWithDataStatus();if(ncDataPhase==='error'){const box=document.createElement('div');box.className='data-status';box.setAttribute('role','status');box.innerHTML=`<span>${safe(ncDataMessage)}</span><button class="link" onclick="ncDatosCargar()">Reintentar</button>`;document.getElementById('view').prepend(box);}};
+render=function(){ncRenderWithDataStatus();const b=ncBloquePagina();if(ncDataPhase==='error'){const box=document.createElement('div');box.className='data-status';box.setAttribute('role','status');box.innerHTML=`<span>${safe(ncDataMessage)}</span><button class="link" onclick="ncDatosCargar()">Reintentar</button><button class="link" onclick="ncDatosRespaldoManual()">Usar respaldo</button>`;document.getElementById('view').prepend(box);}else if(b&&!ncBloques[b]){const view=document.getElementById('view');view.innerHTML=head(({alojamientos:'Hospedaje',bufet:'Bufet',arbitros:'Árbitros'})[b],'SERVICIOS')+`<p class="empty" role="status">${ncErrorBloque===b?'No se pudo cargar esta sección.':'Cargando información…'}</p>${ncErrorBloque===b?'<button class="link" onclick="ncDatosCargar(true)">Reintentar</button>':''}`;}};
 ncFotosCargar();ncDatosCargar();
 </script>
 <style>
