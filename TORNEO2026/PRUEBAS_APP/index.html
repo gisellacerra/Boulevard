@@ -461,12 +461,15 @@ function ncMarcarAviso(id){try{const leidos=ncAvisosLeidos();leidos[id]=true;loc
 
 let ncDataPhase='loading',ncDataMessage='';
 function ncEmptyData(fallback){return ncDataPhase==='loading'?'Cargando datos del torneo…':ncDataPhase==='error'?'La información no se pudo cargar todavía.':fallback;}
+let ncDatosEnCurso=false;
 function ncDatosCargar(silencioso=false){
+ if(ncDatosEnCurso)return;
  if(!silencioso){ncDataPhase='loading';ncDataMessage='';render();}
  if(!NC_DATOS_API){ncEstado('Para mostrar datos reales, configurá la URL de la API pública.');return;}
+ ncDatosEnCurso=true;
  const cb='ncDatosCallback_'+Date.now(),tag=document.createElement('script');
  const timeout=setTimeout(()=>{clean();if(!silencioso)ncEstado('No se pudo conectar con la planilla.');},45000);
- function clean(){clearTimeout(timeout);delete window[cb];tag.remove();}
+ function clean(){ncDatosEnCurso=false;clearTimeout(timeout);delete window[cb];tag.remove();}
  window[cb]=d=>{clean();if(!d||!d.ok){if(!silencioso)ncEstado('No se pudieron cargar los datos del torneo.');return;}
  teams=(d.equipos||[]).map(t=>({name:t.nombre,cat:ncNormalCat(t.categoria),city:t.ciudad||t.provincia||'',zona:t.zona||'',escudo:t.escudo||''}));
  matches=(d.partidos||[]).map(p=>({a:p.local,b:p.visitante,cat:ncNormalCat(p.categoria),court:p.cancha||'—',time:p.hora||'—',fecha:p.fecha||'',status:p.resultado?'Finalizado':'Programado',score:p.resultado?`${p.resultado.setsLocal} – ${p.resultado.setsVisitante}`:'–',zona:p.zona||'',genero:p.genero||'',resultado:p.resultado||null,escudoLocal:p.escudoLocal||p.logoLocal||'',escudoVisitante:p.escudoVisitante||p.logoVisitante||''}));
@@ -793,7 +796,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  window.ncCerrarResultado=function(){document.getElementById('nc-result-modal')?.remove();document.body.style.overflow='';};
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('nc-result-modal'))ncCerrarResultado()});
  // Reconsulta la API pública para reflejar los resultados confirmados por la organización.
- setInterval(()=>{if(!document.hidden&&typeof ncDatosCargar==='function')ncDatosCargar(true);},60000);
+ function ncProgramarActualizacion(){setTimeout(()=>{if(!document.hidden)ncDatosCargar(true);ncProgramarActualizacion();},55000+Math.random()*10000);}
+ ncProgramarActualizacion();
 })();
 </script>
 
