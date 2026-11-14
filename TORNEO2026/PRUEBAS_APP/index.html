@@ -898,7 +898,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  window.ncCerrarResultado=function(){document.getElementById('nc-result-modal')?.remove();document.body.style.overflow='';};
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('nc-result-modal'))ncCerrarResultado()});
  // Reconsulta la API pública para reflejar los resultados confirmados por la organización.
- function ncProgramarActualizacion(){setTimeout(()=>{if(!document.hidden)ncDatosCargar(true);ncProgramarActualizacion();},55000+Math.random()*10000);}
+ function ncProgramarActualizacion(){setTimeout(()=>{if(!document.hidden)ncDatosCargar(true);ncProgramarActualizacion();},13000+Math.random()*4000);}
  ncProgramarActualizacion();
 })();
 </script>
