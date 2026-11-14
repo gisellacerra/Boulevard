@@ -668,13 +668,27 @@ async function optimizePhoto(file){
  if(file.size>3*1024*1024)throw Error('La foto supera los 3 MB. Elegí una más liviana.');
  if(!file.size||!/^image\/(jpeg|png|webp)$/i.test(file.type))throw Error('Elegí una foto JPG, PNG o WebP.');
  const bitmap=await createImageBitmap(file,{imageOrientation:'from-image'});
- try{let scale=Math.min(1,1600/Math.max(bitmap.width,bitmap.height));const canvas=document.createElement('canvas');
- for(let attempt=0;attempt<5;attempt++){
-  canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));const ctx=canvas.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
-  for(const quality of [.84,.72,.60,.48]){const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));if(blob&&blob.size<=300*1024){const image=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob);});return {image,width:canvas.width,height:canvas.height,originalSize:file.size};}}
-  scale*=.75;
+ async function encode(maxSide,maxBytes){
+  let scale=Math.min(1,maxSide/Math.max(bitmap.width,bitmap.height));
+  const canvas=document.createElement('canvas');
+  for(let attempt=0;attempt<6;attempt++){
+   canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+   const ctx=canvas.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+   for(const quality of [.82,.75,.68,.60,.52,.44]){
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));
+    if(blob&&blob.type==='image/jpeg'&&blob.size<=maxBytes){
+     const image=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob);});
+     return {image,width:canvas.width,height:canvas.height};
+    }
+   }
+   scale*=.8;
+  }
+  throw Error('No se pudo reducir la foto. Probá con otra.');
  }
- throw Error('No se pudo reducir la foto. Probá con otra.');
+ try{
+  const grande=await encode(1000,150*1024);
+  const chica=await encode(400,30*1024);
+  return {...grande,miniatura:chica.image,originalSize:file.size};
  }finally{bitmap.close();}
 }
 // Confirmación por consulta al servidor, independiente de iframes y cookies de terceros.
