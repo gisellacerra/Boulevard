@@ -372,6 +372,8 @@ header.top>.notification-bell:last-child .ic{display:block!important;width:27px!
 @media(max-width:390px){.pagehead.nc-unified-pagehead{gap:7px!important}.pagehead.nc-unified-pagehead h1{font-size:20px!important}}
 </style>
 <style id="nc-alojamientos-style">
+.nc-aloj-orden{display:flex;flex-direction:column;gap:8px;margin:16px 0 20px}.nc-aloj-orden label{font-size:14px;color:#d1d7d3}.nc-aloj-orden select{width:100%;max-width:230px;appearance:auto;color:#f4f8f5;background:#101d21;border:1px solid #34474c;border-radius:22px;padding:9px 12px;font:inherit;font-weight:400;cursor:pointer;color-scheme:dark}.nc-aloj-orden select:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+
 .nc-aloj-list{display:grid;gap:18px}.nc-aloj-card{background:#242829;border:1px solid #3c4540;border-radius:12px;overflow:hidden}.nc-aloj-foto{display:block;width:100%;height:190px;object-fit:cover}.nc-aloj-info{padding:18px}.nc-aloj-info h2{margin:0 0 10px;color:#fff;font-size:23px}.nc-aloj-info p{color:#d1d7d3;margin:8px 0;overflow-wrap:anywhere}.nc-aloj-descripcion{white-space:pre-wrap;line-height:1.5}.nc-aloj-acciones{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.nc-aloj-acciones a{display:inline-flex;align-items:center;min-height:42px;padding:9px 14px;background:#a5eb37;color:#191c1d;text-decoration:none;border-radius:7px;font-weight:500}.nc-aloj-acciones a.nc-aloj-mapa{background:#9c9c9c;color:#000000}
 </style>
 <style>.nc-aloj-info .nc-aloj-distancia{display:flex;align-items:center;gap:9px;color:#a5eb37}.nc-aloj-distancia svg{flex-shrink:0}</style>
@@ -486,13 +488,31 @@ function ncVistaBufet(){
  const foto=v=>/^(?:https?:\/\/[^\s]+|data:image\/(?:png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=]+)$/i.test(String(v||''))?String(v):'';
  return head('Bufet','SERVICIOS')+filtros+(visibles.length?visibles.map(([cat,productos])=>`<section class="nc-bufet-grupo"><h2>${icon(/bebida/i.test(cat)?'coffee':'list')}${esc(cat)}</h2><div class="nc-bufet-list">${productos.map(p=>{const img=foto(p.imagen);const precio=p.precio!==null&&p.precio!==undefined&&String(p.precio).trim()!==''&&Number.isFinite(Number(p.precio))?moneda.format(Number(p.precio)):'Consultar precio';return `<article class="nc-bufet-item" ${img?'role="button" tabindex="0" aria-label="Ampliar imagen del producto" onclick="ncAbrirProducto(this)" onkeydown="if(event.key===&quot;Enter&quot;||event.key===&quot; &quot;){event.preventDefault();ncAbrirProducto(this)}"':''}>${img?`<img src="${esc(img)}" alt="${esc(p.detalle)}" loading="lazy" onerror="this.hidden=true">`:''}<div class="nc-bufet-info"><strong>${esc(p.detalle)}</strong><span>${esc(precio)}</span></div></article>`;}).join('')}</div></section>`).join(''):`<div class="empty">${esc(ncEmptyData(items.length?'No hay productos en esta categoría.':ncBufetDisponible?'Todavía no hay productos publicados.':'El menú del bufet todavía no está disponible.'))}</div>`);
 }
+let ncAlojOrden='cerca';
+function ncOrdenarAlojamientos(valor){ncAlojOrden=valor;render();}
+function ncAlojDistanciaMetros(valor){
+ if(typeof valor==='number')return Number.isFinite(valor)&&valor>=0?valor*1000:null;
+ const texto=String(valor??'').trim().toLowerCase();
+ const m=texto.match(/^(\d+(?:[.,]\d+)?)\s*(km|kil[oó]metros?|m|metros?)?$/i);
+ if(!m)return null;
+ const n=Number(m[1].replace(',','.'));
+ return Number.isFinite(n)?n*(m[2]&&/^(m|metros?)$/.test(m[2])?1:1000):null;
+}
 function ncVistaAlojamientos(){
  const esc=ncFotosEsc;
  const url=v=>/^https?:\/\/[^\s]+$/i.test(String(v||''))?String(v):'';
  const imagen=v=>/^(?:https?:\/\/[^\s]+|data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+)$/i.test(String(v||''))?String(v):'';
- const items=ncAlojamientos.filter(a=>a&&a.nombre&&a.direccion&&!['BAJA','ELIMINADO','INACTIVO'].includes(String(a.estado||'').trim().toUpperCase())).slice().sort((a,b)=>(Number(a.orden)||1)-(Number(b.orden)||1));
+ const items=ncAlojamientos.filter(a=>a&&a.nombre&&a.direccion&&!['BAJA','ELIMINADO','INACTIVO'].includes(String(a.estado||'').trim().toUpperCase())).slice().sort((a,b)=>{
+  const nombre=String(a.nombre).localeCompare(String(b.nombre),'es-AR',{sensitivity:'base'});
+  if(ncAlojOrden==='nombre')return nombre;
+  const da=ncAlojDistanciaMetros(a.distancia),db=ncAlojDistanciaMetros(b.distancia);
+  if(da===null||db===null)return da===db?nombre:da===null?1:-1;
+  return (ncAlojOrden==='lejos'?db-da:da-db)||nombre;
+ });
+ const opciones=[['cerca','Más cerca'],['lejos','Menos cerca'],['nombre','Todos']];
+ const filtro=`<div class="nc-aloj-orden"><label for="nc-aloj-orden">Ordenar por cercanía a la sede deportiva:</label><select id="nc-aloj-orden" onchange="ncOrdenarAlojamientos(this.value)">${opciones.map(([v,t])=>`<option value="${v}" ${ncAlojOrden===v?'selected':''}>${t}</option>`).join('')}</select></div>`;
  return head('Hospedaje','SERVICIOS')
-+'<p class="muted">Las reservas deben gestionarse directamente con cada establecimiento.</p>'
++'<p class="muted">Las reservas deben gestionarse directamente con cada establecimiento.</p>'+filtro
 +(items.length?'<div class="nc-aloj-list">'+items.map(a=>{
   const foto=imagen(a.imagen),tel=String(a.contacto||a.telefono||'').trim();
   const primero=tel.split(/\s*(?:\/|;|\||,|\bo\b)\s*/i)[0].trim();
