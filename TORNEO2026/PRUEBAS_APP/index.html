@@ -372,7 +372,7 @@ header.top>.notification-bell:last-child .ic{display:block!important;width:27px!
 @media(max-width:390px){.pagehead.nc-unified-pagehead{gap:7px!important}.pagehead.nc-unified-pagehead h1{font-size:20px!important}}
 </style>
 <style id="nc-alojamientos-style">
-.nc-aloj-orden{display:flex;flex-direction:column;gap:8px;margin:16px 0 20px}.nc-aloj-orden label{font-size:14px;color:#d1d7d3}.nc-aloj-orden select{width:100%;max-width:230px;appearance:auto;color:#f4f8f5;background:#101d21;border:1px solid #34474c;border-radius:22px;padding:9px 12px;font:inherit;font-weight:400;cursor:pointer;color-scheme:dark}.nc-aloj-orden select:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+.nc-aloj-orden{display:flex;flex-direction:column;gap:8px;margin:16px 0 20px}.nc-aloj-orden label{font-size:14px;color:#d1d7d3}.nc-aloj-orden select{width:100%;max-width:230px;appearance:none;-webkit-appearance:none;color:#f4f8f5;background:#101d21 url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23f4f8f5%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E") no-repeat right 15px center;border:1px solid #34474c;border-radius:8px;padding:9px 40px 9px 12px;font:inherit;font-weight:400;cursor:pointer;color-scheme:dark}.nc-aloj-orden select:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
 
 .nc-aloj-list{display:grid;gap:18px}.nc-aloj-card{background:#242829;border:1px solid #3c4540;border-radius:12px;overflow:hidden}.nc-aloj-foto{display:block;width:100%;height:190px;object-fit:cover}.nc-aloj-info{padding:18px}.nc-aloj-info h2{margin:0 0 10px;color:#fff;font-size:23px}.nc-aloj-info p{color:#d1d7d3;margin:8px 0;overflow-wrap:anywhere}.nc-aloj-descripcion{white-space:pre-wrap;line-height:1.5}.nc-aloj-acciones{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.nc-aloj-acciones a{display:inline-flex;align-items:center;min-height:42px;padding:9px 14px;background:#a5eb37;color:#191c1d;text-decoration:none;border-radius:7px;font-weight:500}.nc-aloj-acciones a.nc-aloj-mapa{background:#9c9c9c;color:#000000}
 </style>
@@ -406,7 +406,7 @@ window.addEventListener('appinstalled', function() { window.ncInstallPrompt = nu
 <style>
 #view .nc-bufet-filtros{display:flex;align-items:center;gap:10px;padding:5px 1px 8px}
 #view .nc-bufet-filtros label{color:#f4f8f5;font-weight:400}
-#view .nc-bufet-filtros select{flex:1;min-width:0;max-width:230px;appearance:auto;color:#f4f8f5;background:#101d21;border:1px solid #34474c;border-radius:22px;padding:9px 12px;font:inherit;font-weight:400;cursor:pointer;color-scheme:dark}
+#view .nc-bufet-filtros select{flex:1;min-width:0;max-width:230px;appearance:none;-webkit-appearance:none;color:#f4f8f5;background:#101d21 url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23f4f8f5%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E") no-repeat right 15px center;border:1px solid #34474c;border-radius:8px;padding:9px 40px 9px 12px;font:inherit;font-weight:400;cursor:pointer;color-scheme:dark}
 #view .nc-bufet-filtros select:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
 </style>
 </head><body>
@@ -960,10 +960,10 @@ generic=function(){
 <style id="nc-filtro-partidos-css">
 #view .nc-partidos-filter{display:flex;align-items:center;gap:12px;margin:9px 0 16px;width:100%;font-size:12px;color:#f0f4f2}
 #view .nc-partidos-filter label{display:flex;align-items:center;gap:7px;white-space:nowrap;font-weight:600}
-#view .nc-partidos-filter select{flex:1;min-width:0;max-width:230px;appearance:auto;color:#f4f8f5;background:#101d21;border:1px solid #34474c;border-radius:22px;padding:9px 12px;font:inherit;cursor:pointer}
+#view .nc-partidos-filter select{flex:1;min-width:0;max-width:230px;appearance:none;-webkit-appearance:none;color:#f4f8f5;background:#101d21 url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23f4f8f5%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E") no-repeat right 15px center;border:1px solid #34474c;border-radius:8px;padding:9px 40px 9px 12px;font:inherit;cursor:pointer}
 #view .nc-partidos-filter select:focus{outline:1px solid #a5eb37;outline-offset:2px}
 #view .nc-partidos-filter option{background:#14272a;color:#fff}
-@media(max-width:360px){#view .nc-partidos-filter{gap:7px;font-size:11px}#view .nc-partidos-filter select{padding:8px 5px}}
+@media(max-width:360px){#view .nc-partidos-filter{gap:7px;font-size:11px}#view .nc-partidos-filter select{padding:8px 40px 8px 10px}}
 </style>
 <style id="nc-partidos-search-css">
 #view .nc-partidos-search{display:flex;align-items:center;gap:9px;background:#101d21;border:1px solid #34474c;border-radius:22px;padding:8px 12px;margin:-6px 0 14px;color:#9dac9f}
