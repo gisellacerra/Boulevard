@@ -3,11 +3,12 @@
   'use strict';
   const CLIENT_ID='158432822961-m49sji0hneqt4u6rkobbngt08c8c2mhn.apps.googleusercontent.com';
   const SCRIPT_ID='1Ql41SpKI9gYX_ijoU-1MVmwGjObNuEr1AtsTQJC_b1UsGzOHHg8n3Kqs';
-  const SCOPES='https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email';
+  const SCOPES='https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/script.external_request';
   let token='', client, tokenExpiresAt=0, renewal=null, authorized=false, verifying=false;
   const pending=[];
   // La sesión dura como máximo lo que dura el token OAuth. No se guarda un refresh token.
-  const SESSION_KEY='newcom_google_access_v1';
+  const SESSION_KEY='newcom_google_access_v2';
+  try{sessionStorage.removeItem('newcom_google_access_v1');}catch(_e){}
   function clearSavedSession(){try{sessionStorage.removeItem(SESSION_KEY);}catch(_e){}}
   function saveSession(){try{sessionStorage.setItem(SESSION_KEY,JSON.stringify({token,expiresAt:tokenExpiresAt}));}catch(_e){}}
   const overlay=document.createElement('div');
@@ -34,7 +35,7 @@
       if(!client || verifying)return;
       verifying=true;
       showState(true,'Seleccioná tu cuenta de Google para continuar…');
-      try{client.requestAccessToken({prompt:''});}catch(e){verifying=false;showState(false,e.message||'No se pudo abrir Google.');}
+      try{client.requestAccessToken({prompt:'consent'});}catch(e){verifying=false;showState(false,e.message||'No se pudo abrir Google.');}
     };
     if(client && !verifying)showState(false,'');
   }
@@ -45,6 +46,12 @@
       if(response.error){
         if(renewal){renewal.reject(Error(response.error));renewal=null;}
         verifying=false;showState(false,'No se pudo autorizar: '+response.error);return;
+      }
+      if(!google.accounts.oauth2.hasGrantedAllScopes(response,...SCOPES.split(' '))){
+        const error=Error('Debés conceder todos los permisos de Google para administrar el torneo.');
+        if(renewal){renewal.reject(error);renewal=null;}
+        token='';tokenExpiresAt=0;authorized=false;verifying=false;clearSavedSession();
+        attach();showState(false,error.message);return;
       }
       token=response.access_token||'';
       tokenExpiresAt=Date.now()+Math.max(0,(Number(response.expires_in)||3500)-90)*1000;
