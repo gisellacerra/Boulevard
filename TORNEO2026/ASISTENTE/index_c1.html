@@ -1724,7 +1724,15 @@ body[data-nc-theme="dark"] #view .nc-aloj-enlaces a{color:#a5eb37}
 <style>.nc-demora{margin:10px 0;padding:10px;border:1px solid #aab8c2;border-radius:7px}.nc-demora summary{cursor:pointer;font-weight:600}.nc-demora-cambio .nc-partidos-contenido{outline:2px solid #239b56;outline-offset:-2px}.nc-demora-cambio .nc-tiempo-hora{color:#239b56;font-weight:700}</style><style>
 .nc-demora button[data-nc-minuto][aria-pressed="true"]{border-color:#a4e83d!important;color:#a4e83d!important;background:#303d25!important;box-shadow:inset 0 0 0 1px #a4e83d;}
 </style>
-<style id="nc-bufet-unificado">#view .nc-bufet-registro{border:1px solid #d6e0da!important;border-radius:12px;background:#f5f8f5!important}body[data-nc-theme="dark"] #view .nc-bufet-registro{background:#263027!important;border-color:#46534a!important}#view .nc-bufet-registro img,#vistaFotoBufet img{background:#fff;border-radius:8px}#view .nc-bufet-registro p{margin:8px 0;line-height:1.5;font-weight:400}</style></head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
+<style id="nc-bufet-unificado">#view .nc-bufet-registro{border:1px solid #d6e0da!important;border-radius:12px;background:#f5f8f5!important}body[data-nc-theme="dark"] #view .nc-bufet-registro{background:#263027!important;border-color:#46534a!important}#view .nc-bufet-registro img,#vistaFotoBufet img{background:#fff;border-radius:8px}#view .nc-bufet-registro p{margin:8px 0;line-height:1.5;font-weight:400}</style><style>
+.nc-ef-radios{border:0;padding:0;margin:0 0 13px;min-width:0}
+.nc-ef-radios legend{font-size:13px;margin-bottom:7px;color:inherit}
+.nc-ef-radiofila{display:flex;flex-wrap:wrap;gap:7px}
+.nc-ef-radio{display:inline-flex;align-items:center;gap:6px;padding:8px 11px;border:1px solid #53615f;border-radius:8px;cursor:pointer;font-size:13px}
+.nc-ef-radio input{accent-color:#a3ed30;width:16px;height:16px;margin:0}
+.nc-ef-radio:has(input:checked){border-color:#a3ed30;background:rgba(163,237,48,.10)}
+</style>
+</head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
      preserveAspectRatio="xMinYMin meet"
@@ -4363,12 +4371,13 @@ function ncEditorFixturePanel(){
  const equipos=participantes.filter(t=>!p?.genero||!t.genero||t.genero===p.genero).map(t=>t.nombre);
  const zonasPartido=ncEditorZonasDisponibles(categoria,p?.genero||generos[0]||'');
  const zonaDe=nombre=>zonasPartido.find(z=>z.nombre===nombre)?.zona||'';
- const selectorZona=(nombre,valor)=>`<label class="nc-ef-campo">Zona ${nombre}<select name="${valor}"><option value="">Elegir zona</option>${[...new Set(zonasPartido.map(z=>z.zona))].sort().map(z=>`<option value="${esc(z)}" ${zonaDe(nombre)===z?'selected':''}>Zona ${esc(z)}</option>`).join('')}</select></label>`;
+ const radios=(nombre,items,actual,etiqueta)=>`<fieldset class="nc-ef-radios"><legend>${etiqueta}</legend><div class="nc-ef-radiofila">${items.map(v=>`<label class="nc-ef-radio"><input type="radio" name="${nombre}" value="${esc(v)}" ${String(v)===String(actual)?'checked':''} required><span>${esc(v)}</span></label>`).join('')}</div></fieldset>`;
+ const selectorZona=(nombre,valor)=>`<div data-zonagrupo="${valor}">${radios(valor,[...new Set(zonasPartido.map(z=>z.zona))].sort(),zonaDe(nombre),'Zona '+(valor==='zonaLocal'?'equipo 1':'equipo 2'))}</div>`;
  for(const n of [p?.local,p?.visitante])if(n&&!equipos.includes(n))equipos.push(n);
  const fechas=programaFechas().filter(Boolean);
  if(ncDemoraPlan)return `<aside class="nc-ef-panel"><h3>Revisar programación</h3><p>${ncDemoraPlan.cambios.length} partido(s) modificado(s) · vista previa</p><p class="muted">No se guardaron cambios todavía.</p>${(ncDemoraPlan.advertencias||[]).length?`<div role="status" style="color:#f5cf67;background:#393321;padding:10px;border-radius:6px"><strong>Descanso reducido</strong>${ncDemoraPlan.advertencias.map(a=>`<p>${esc(a)}</p>`).join('')}<p>Podés confirmar el cambio.</p></div>`:''}${ncDemoraPlan.error?`<p role="alert" style="color:#f5cf67">${esc(ncDemoraPlan.error)}</p>`:''}<button type="button" class="primary" id="nc-demora-confirmar">Confirmar cambios</button><button type="button" class="secondary" id="nc-demora-cancelar">Cancelar</button></aside>`;
  const html=`<aside class="nc-ef-panel"><h3>Editar partido</h3>${!editable&&!p?'<p class="muted">Seleccioná un partido pendiente. Podés modificar su programación y guardar los cambios en el fixture confirmado. Los resultados permanecen protegidos.</p>':!p?'<p class="muted">Seleccioná una tarjeta de la grilla para editarla. Los cambios se revisan antes de confirmar.</p>':''}
- ${!editable&&p?`<div class="nc-ef-confirmado"><p><strong>${esc(p.local)} vs. ${esc(p.visitante)}</strong></p><p class="muted">${esc(ncFxFecha(p.fecha))} · ${esc(String(p.hora).slice(0,5))} · Cancha ${esc(p.cancha)}</p>${ncDemoraFijo(p)?'<p class="muted">Partido en juego, con resultado o protegido: no admite reprogramación.</p>':''}${ncDemoraControles(p)}</div>`:''}${editable?`<form id="nc-ef-form"><label class="nc-ef-campo">Categoría<select name="categoria" required>${lista(categoria,categorias)}</select></label><label class="nc-ef-campo">Género<select name="genero">${lista(p?.genero||generos[0]||'',generos)}</select></label><p class="muted" style="font-size:12px">Los equipos se filtran según las zonas asignadas a la categoría y género.</p>${selectorZona(p?.local||'','zonaLocal')}<label class="nc-ef-campo">Equipo 1<select name="local" required>${lista(p?.local||'',equipos)}</select></label>${selectorZona(p?.visitante||'','zonaVisitante')}<label class="nc-ef-campo">Equipo 2<select name="visitante" required>${lista(p?.visitante||'',equipos)}</select></label><label class="nc-ef-campo">Fecha<select name="fecha" required>${lista(p?.fecha||ncDiaFixtureSeleccionado,fechas)}</select></label><div class="nc-ef-dos"><label class="nc-ef-campo">Horario<input name="hora" type="time" required value="${esc(p?.hora||'14:00')}"></label><label class="nc-ef-campo">Cancha<select name="cancha">${lista(p?.cancha||1,Array.from({length:Math.max(1,Number(settings.canchas)||4)},(_,i)=>i+1))}</select></label></div><button type="submit" class="primary">${p?'Aplicar cambios':'Agregar partido'}</button>${p?'<button type="button" class="secondary" id="nc-ef-eliminar">Eliminar partido</button>':''}<button type="button" class="secondary" id="nc-ef-nuevo">+ Nuevo partido</button><p class="muted">Registro manual en borrador. No genera cruces ni partidos automáticamente.</p></form>`:''}</aside>`;
+ ${!editable&&p?`<div class="nc-ef-confirmado"><p><strong>${esc(p.local)} vs. ${esc(p.visitante)}</strong></p><p class="muted">${esc(ncFxFecha(p.fecha))} · ${esc(String(p.hora).slice(0,5))} · Cancha ${esc(p.cancha)}</p>${ncDemoraFijo(p)?'<p class="muted">Partido en juego, con resultado o protegido: no admite reprogramación.</p>':''}${ncDemoraControles(p)}</div>`:''}${editable?`<form id="nc-ef-form">${radios('categoria',categorias,categoria,'Categoría')}${radios('genero',generos,p?.genero||generos[0]||'','Género')}<p class="muted" style="font-size:12px">Los equipos se filtran según las zonas asignadas a la categoría y género.</p>${selectorZona(p?.local||'','zonaLocal')}<label class="nc-ef-campo">Equipo 1<select name="local" required>${lista(p?.local||'',equipos)}</select></label>${selectorZona(p?.visitante||'','zonaVisitante')}<label class="nc-ef-campo">Equipo 2<select name="visitante" required>${lista(p?.visitante||'',equipos)}</select></label><label class="nc-ef-campo">Fecha<select name="fecha" required>${lista(p?.fecha||ncDiaFixtureSeleccionado,fechas)}</select></label><div class="nc-ef-dos"><label class="nc-ef-campo">Horario<input name="hora" type="time" required value="${esc(p?.hora||'14:00')}"></label><label class="nc-ef-campo">Cancha<select name="cancha">${lista(p?.cancha||1,Array.from({length:Math.max(1,Number(settings.canchas)||4)},(_,i)=>i+1))}</select></label></div><button type="submit" class="primary">${p?'Aplicar cambios':'Agregar partido'}</button>${p?'<button type="button" class="secondary" id="nc-ef-eliminar">Eliminar partido</button>':''}<button type="button" class="secondary" id="nc-ef-nuevo">+ Nuevo partido</button><p class="muted">Registro manual en borrador. No genera cruces ni partidos automáticamente.</p></form>`:''}</aside>`;
  return html;
 }
 function ncEditorFixtureEnlazar(){
@@ -4389,26 +4398,28 @@ function ncEditorFixtureEnlazar(){
  document.getElementById('nc-ef-reprogramar')?.addEventListener('click',()=>{const card=buscarTarjeta();if(card){const btn=document.createElement('button');btn.dataset.ncReprogramar=card.dataset.ncResultado;ncReprogramarIndividual(btn)}else avisoIntegrado('No se encontró el partido confirmado para reprogramarlo. Actualizá la grilla.');});
  document.getElementById('nc-ef-resultado')?.addEventListener('click',()=>{const card=buscarTarjeta();if(card)ncAbrirResultadoDesdeFixture(card);else avisoIntegrado('No se encontró el partido seleccionado.');});
  const form=document.getElementById('nc-ef-form');if(!form)return;
+ const valorRadio=nombre=>form.querySelector(`input[name="${nombre}"]:checked`)?.value||'';
  const refrescarEquipos=(resetZonas=false)=>{
-  const cat=form.elements.categoria.value,gen=form.elements.genero.value;
+  const cat=valorRadio('categoria'),gen=valorRadio('genero');
   const rows=ncEditorZonasDisponibles(cat,gen);
   for(const [zonaCampo,equipoCampo] of [['zonaLocal','local'],['zonaVisitante','visitante']]){
-   const zsel=form.elements[zonaCampo],tsel=form.elements[equipoCampo];
-   const zonaAnterior=resetZonas?'':zsel.value,equipoAnterior=resetZonas?'':tsel.value;
-   const nombresZonas=[...new Set(rows.map(r=>r.zona))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
-   zsel.innerHTML='<option value="">Elegir zona</option>'+nombresZonas.map(z=>`<option value="${esc(z)}">Zona ${esc(z)}</option>`).join('');
-   if(nombresZonas.includes(zonaAnterior))zsel.value=zonaAnterior;
-   const nombres=[...new Set(rows.filter(r=>r.zona===zsel.value).map(r=>r.nombre))];
+   const cont=form.querySelector(`[data-zonagrupo="${zonaCampo}"]`),tsel=form.elements[equipoCampo];
+   const zonaAnterior=resetZonas?'':valorRadio(zonaCampo),equipoAnterior=resetZonas?'':tsel.value;
+   const zonas=[...new Set(rows.map(r=>r.zona))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
+   cont.innerHTML=`<fieldset class="nc-ef-radios"><legend>Zona ${zonaCampo==='zonaLocal'?'equipo 1':'equipo 2'}</legend><div class="nc-ef-radiofila">${zonas.map(z=>`<label class="nc-ef-radio"><input type="radio" name="${zonaCampo}" value="${esc(z)}" ${z===zonaAnterior?'checked':''} required><span>${esc(z)}</span></label>`).join('')||'<span class="muted">Sin zonas asignadas</span>'}</div></fieldset>`;
+   const nombres=[...new Set(rows.filter(r=>r.zona===zonaAnterior).map(r=>r.nombre))];
    tsel.innerHTML='<option value="">Seleccionar equipo</option>'+nombres.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
    if(nombres.includes(equipoAnterior))tsel.value=equipoAnterior;
   }
  };
- form.elements.categoria.addEventListener('change',()=>refrescarEquipos(true));
- form.elements.genero.addEventListener('change',()=>refrescarEquipos(true));
- for(const z of ['zonaLocal','zonaVisitante'])form.elements[z].addEventListener('change',()=>{
-  const campo=z==='zonaLocal'?'local':'visitante',cat=form.elements.categoria.value,gen=form.elements.genero.value;
-  const nombres=[...new Set(ncEditorZonasDisponibles(cat,gen).filter(r=>r.zona===form.elements[z].value).map(r=>r.nombre))];
-  form.elements[campo].innerHTML='<option value="">Seleccionar equipo</option>'+nombres.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+ form.addEventListener('change',e=>{
+  const nombre=e.target.name;
+  if(nombre==='categoria'||nombre==='genero')refrescarEquipos(true);
+  if(nombre==='zonaLocal'||nombre==='zonaVisitante'){
+   const campo=nombre==='zonaLocal'?'local':'visitante';
+   const nombres=[...new Set(ncEditorZonasDisponibles(valorRadio('categoria'),valorRadio('genero')).filter(r=>r.zona===valorRadio(nombre)).map(r=>r.nombre))];
+   form.elements[campo].innerHTML='<option value="">Seleccionar equipo</option>'+nombres.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+  }
  });
  refrescarEquipos();
  document.getElementById('nc-ef-nuevo')?.addEventListener('click',()=>{ncEditorFixtureSeleccion=null;render()});
