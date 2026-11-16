@@ -1159,8 +1159,52 @@ function ncAbrirProducto(card){const img=card.querySelector('img');if(!img||img.
 #view .nc-desarrollo-contacto h3{font-size:17px;color:var(--lime,#9DD64A);margin:0 0 14px;font-weight:700}
 #view .nc-desarrollo-contacto a{color:var(--lime,#9DD64A);font-weight:700;text-decoration:underline;text-underline-offset:3px}
 #view .nc-desarrollo-contacto p:last-child{margin-bottom:0}
+
+#view .nc-desarrollo-autor{
+  margin-top:28px;
+  padding-top:18px;
+  border-top:1px solid var(--line);
+  text-align:center;
+  font-size:12px;
+  line-height:1.6;
+  opacity:.75;
+}
+#view .nc-desarrollo-autor p{
+  margin:0 0 4px;
+}
+#view .nc-desarrollo-autor strong{
+  font-weight:700;
+}
 </style>
+
 <script>
-function ncVistaDesarrollo(){return `${head('Desarrollo')}<section class="nc-desarrollo"><h2>Todo el torneo, en un solo lugar.</h2><p>Creamos una aplicación web pensada para que jugadores, equipos y público puedan seguir el torneo de manera simple y desde cualquier dispositivo.</p><p>Lo más importante: la información <strong>se actualiza en vivo.</strong></p><p>A medida que avanza el torneo, vas a poder consultar resultados, horarios y llaves directamente desde tu teléfono, <strong>sin buscar planillas, archivos ni esperar nuevas publicaciones.</strong></p><p>Un desarrollo propio, creado por Boulevard, para que podamos disfrutarlo entre todos.</p><div class="nc-desarrollo-contacto"><h3>¿Querés algo así para tu torneo?</h3><p>Contactame: <a href="tel:+542920411544">2920 411544</a></p><p>Gisella</p></div></section>`;}
+function ncVistaDesarrollo(){
+  return `${head('Desarrollo')}
+  <section class="nc-desarrollo">
+    <h2>Todo el torneo, en un solo lugar.</h2>
+
+    
+    <div class="nc-desarrollo-contacto">
+      <h3>¿Querés algo así para tu torneo?</h3>
+      <p>Contactame: <a href="tel:+542920411544">2920 411544</a></p>
+      <p>Gisella</p>
+    </div>
+
+    <p>Creamos una aplicación web pensada para que jugadores, equipos y público puedan seguir el torneo de manera simple y desde cualquier dispositivo.</p>
+
+    <p>Lo más importante: la información <strong>se actualiza en vivo.</strong></p>
+
+    <p>A medida que avanza el torneo, vas a poder consultar resultados, horarios y llaves directamente desde tu teléfono, <strong>sin buscar planillas, archivos ni esperar nuevas publicaciones.</strong></p>
+
+    <p>Un desarrollo propio, creado por Boulevard, para que podamos disfrutarlo entre todos.</p>
+
+
+    <div class="nc-desarrollo-autor">
+      <p>Diseño visual y experiencia de usuario</p>
+      <p><strong>Gisella Cerra</strong></p>
+      <p>© 2026 · Autoría del diseño reservada</p>
+    </div>
+  </section>`;
+}
 </script>
 </body></html>
