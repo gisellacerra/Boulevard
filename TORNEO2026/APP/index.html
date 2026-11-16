@@ -559,7 +559,7 @@ function ncVistaBufet(){
  const items=ncBufet.filter(p=>p&&String(p.detalle??'').trim()).slice().sort((a,b)=>(Number(a.orden)||0)-(Number(b.orden)||0));
  const grupos=new Map();
  for(const p of items){const cat=String(p.categoria||'Otros').trim()||'Otros';if(!grupos.has(cat))grupos.set(cat,[]);grupos.get(cat).push(p);}
- const categorias=['Todas','Bebidas','Comidas','Menús','Sin TACC'];
+ const categorias=['Todas','Bebidas','Comidas','Menús','Dulce','Sin TACC'];
  for(const cat of grupos.keys())if(!categorias.includes(cat))categorias.push(cat);
  const filtros=`<div class="nc-bufet-filtros"><label for="nc-bufet-categoria">Categoría:</label><select id="nc-bufet-categoria" aria-label="Filtrar productos por categoría" onchange="ncFiltrarBufet(this.value)">${categorias.map(cat=>`<option value="${esc(cat)}" ${ncBufetFiltro===cat?'selected':''}>${esc(cat)}</option>`).join('')}</select></div>`;
  const visibles=[...grupos].filter(([cat])=>ncBufetFiltro==='Todas'||cat===ncBufetFiltro);
