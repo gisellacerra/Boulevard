@@ -4345,6 +4345,12 @@ let ncEditorFixtureSeleccion=null;
 function ncEditorFixtureClave(p){const norm=v=>String(v??'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').toLowerCase();return [norm(String(p.categoria||'').replace(/^\+/,'')),norm(p.genero),norm(p.equipoA||p.local||p.equipo1),norm(p.equipoB||p.visitante||p.equipo2),ncFxFecha(p.fecha||p.dia),ncFxMin(p.hora||p.horario),Number(String(p.cancha||'').match(/\d+/)?.[0]||0)].join('|')}
 function ncEditorFixtureFilas(){return fx3UltimaPropuesta?fixture:(fixtureSnapshot?.filas||fixture).filter(ncDemoraPertenece)}
 function ncEditorFixtureBuscar(info){if(info.cruce)return null;const candidatos=ncEditorFixtureFilas().filter(p=>ncEditorFixtureClave(p)===ncEditorFixtureClave(info));return candidatos.length===1?candidatos[0]:null;}
+function ncEditorZonasDisponibles(cat,gen){
+ const key=claveCompetencia(cat,gen);
+ const remotas=zonasParaCategoria(key).filter(r=>String(r.estado||'CONFIRMADO').toUpperCase()==='CONFIRMADO');
+ if(remotas.length)return remotas.map(r=>({zona:String(r.zona||'').replace(/^Zona\s+/i,'').trim(),nombre:String(r.equipo||'').trim()||teams.find(t=>String(t.id)===String(r.equipo_id||r.id||''))?.nombre||''})).filter(r=>r.zona&&r.nombre);
+ return (zones[key]||[]).flatMap(z=>(z.equipos||[]).map(nombre=>({zona:z.nombre,nombre})));
+}
 function ncEditorFixturePanel(){
  const editable=!!fx3UltimaPropuesta || !fixtureSnapshot?.filas?.length;
  const p=ncEditorFixtureFilas().find(x=>ncEditorFixtureClave(x)===ncEditorFixtureSeleccion);
@@ -4355,11 +4361,14 @@ function ncEditorFixturePanel(){
  const participantes=teams.filter(t=>String(t.categoria||'').replace(/^\+/, '')===String(categoria).replace(/^\+/, '')).map(t=>({nombre:String(t.nombre||t.equipo||''),genero:String(t.genero||'')})).filter(t=>t.nombre);
  const generos=[...new Set(participantes.map(t=>t.genero).concat(p?.genero||'').filter(Boolean))];
  const equipos=participantes.filter(t=>!p?.genero||!t.genero||t.genero===p.genero).map(t=>t.nombre);
+ const zonasPartido=ncEditorZonasDisponibles(categoria,p?.genero||generos[0]||'');
+ const zonaDe=nombre=>zonasPartido.find(z=>z.nombre===nombre)?.zona||'';
+ const selectorZona=(nombre,valor)=>`<label class="nc-ef-campo">Zona ${nombre}<select name="${valor}"><option value="">Elegir zona</option>${[...new Set(zonasPartido.map(z=>z.zona))].sort().map(z=>`<option value="${esc(z)}" ${zonaDe(nombre)===z?'selected':''}>Zona ${esc(z)}</option>`).join('')}</select></label>`;
  for(const n of [p?.local,p?.visitante])if(n&&!equipos.includes(n))equipos.push(n);
  const fechas=programaFechas().filter(Boolean);
  if(ncDemoraPlan)return `<aside class="nc-ef-panel"><h3>Revisar programación</h3><p>${ncDemoraPlan.cambios.length} partido(s) modificado(s) · vista previa</p><p class="muted">No se guardaron cambios todavía.</p>${(ncDemoraPlan.advertencias||[]).length?`<div role="status" style="color:#f5cf67;background:#393321;padding:10px;border-radius:6px"><strong>Descanso reducido</strong>${ncDemoraPlan.advertencias.map(a=>`<p>${esc(a)}</p>`).join('')}<p>Podés confirmar el cambio.</p></div>`:''}${ncDemoraPlan.error?`<p role="alert" style="color:#f5cf67">${esc(ncDemoraPlan.error)}</p>`:''}<button type="button" class="primary" id="nc-demora-confirmar">Confirmar cambios</button><button type="button" class="secondary" id="nc-demora-cancelar">Cancelar</button></aside>`;
  const html=`<aside class="nc-ef-panel"><h3>Editar partido</h3>${!editable&&!p?'<p class="muted">Seleccioná un partido pendiente. Podés modificar su programación y guardar los cambios en el fixture confirmado. Los resultados permanecen protegidos.</p>':!p?'<p class="muted">Seleccioná una tarjeta de la grilla para editarla. Los cambios se revisan antes de confirmar.</p>':''}
- ${!editable&&p?`<div class="nc-ef-confirmado"><p><strong>${esc(p.local)} vs. ${esc(p.visitante)}</strong></p><p class="muted">${esc(ncFxFecha(p.fecha))} · ${esc(String(p.hora).slice(0,5))} · Cancha ${esc(p.cancha)}</p>${ncDemoraFijo(p)?'<p class="muted">Partido en juego, con resultado o protegido: no admite reprogramación.</p>':''}${ncDemoraControles(p)}</div>`:''}${editable?`<form id="nc-ef-form"><label class="nc-ef-campo">Categoría<select name="categoria" required>${lista(categoria,categorias)}</select></label><label class="nc-ef-campo">Género<select name="genero">${lista(p?.genero||generos[0]||'',generos)}</select></label><label class="nc-ef-campo">Equipo 1<select name="local" required>${lista(p?.local||'',equipos)}</select></label><label class="nc-ef-campo">Equipo 2<select name="visitante" required>${lista(p?.visitante||'',equipos)}</select></label><label class="nc-ef-campo">Fecha<select name="fecha" required>${lista(p?.fecha||ncDiaFixtureSeleccionado,fechas)}</select></label><div class="nc-ef-dos"><label class="nc-ef-campo">Horario<input name="hora" type="time" required value="${esc(p?.hora||'14:00')}"></label><label class="nc-ef-campo">Cancha<select name="cancha">${lista(p?.cancha||1,Array.from({length:Math.max(1,Number(settings.canchas)||4)},(_,i)=>i+1))}</select></label></div><button type="submit" class="primary">${p?'Aplicar cambios':'Agregar partido'}</button>${p?'<button type="button" class="secondary" id="nc-ef-eliminar">Eliminar partido</button>':''}<button type="button" class="secondary" id="nc-ef-nuevo">+ Nuevo partido</button><p class="muted">Registro manual en borrador. No genera cruces ni partidos automáticamente.</p></form>`:''}</aside>`;
+ ${!editable&&p?`<div class="nc-ef-confirmado"><p><strong>${esc(p.local)} vs. ${esc(p.visitante)}</strong></p><p class="muted">${esc(ncFxFecha(p.fecha))} · ${esc(String(p.hora).slice(0,5))} · Cancha ${esc(p.cancha)}</p>${ncDemoraFijo(p)?'<p class="muted">Partido en juego, con resultado o protegido: no admite reprogramación.</p>':''}${ncDemoraControles(p)}</div>`:''}${editable?`<form id="nc-ef-form"><label class="nc-ef-campo">Categoría<select name="categoria" required>${lista(categoria,categorias)}</select></label><label class="nc-ef-campo">Género<select name="genero">${lista(p?.genero||generos[0]||'',generos)}</select></label><p class="muted" style="font-size:12px">Los equipos se filtran según las zonas asignadas a la categoría y género.</p>${selectorZona(p?.local||'','zonaLocal')}<label class="nc-ef-campo">Equipo 1<select name="local" required>${lista(p?.local||'',equipos)}</select></label>${selectorZona(p?.visitante||'','zonaVisitante')}<label class="nc-ef-campo">Equipo 2<select name="visitante" required>${lista(p?.visitante||'',equipos)}</select></label><label class="nc-ef-campo">Fecha<select name="fecha" required>${lista(p?.fecha||ncDiaFixtureSeleccionado,fechas)}</select></label><div class="nc-ef-dos"><label class="nc-ef-campo">Horario<input name="hora" type="time" required value="${esc(p?.hora||'14:00')}"></label><label class="nc-ef-campo">Cancha<select name="cancha">${lista(p?.cancha||1,Array.from({length:Math.max(1,Number(settings.canchas)||4)},(_,i)=>i+1))}</select></label></div><button type="submit" class="primary">${p?'Aplicar cambios':'Agregar partido'}</button>${p?'<button type="button" class="secondary" id="nc-ef-eliminar">Eliminar partido</button>':''}<button type="button" class="secondary" id="nc-ef-nuevo">+ Nuevo partido</button><p class="muted">Registro manual en borrador. No genera cruces ni partidos automáticamente.</p></form>`:''}</aside>`;
  return html;
 }
 function ncEditorFixtureEnlazar(){
@@ -4380,12 +4389,28 @@ function ncEditorFixtureEnlazar(){
  document.getElementById('nc-ef-reprogramar')?.addEventListener('click',()=>{const card=buscarTarjeta();if(card){const btn=document.createElement('button');btn.dataset.ncReprogramar=card.dataset.ncResultado;ncReprogramarIndividual(btn)}else avisoIntegrado('No se encontró el partido confirmado para reprogramarlo. Actualizá la grilla.');});
  document.getElementById('nc-ef-resultado')?.addEventListener('click',()=>{const card=buscarTarjeta();if(card)ncAbrirResultadoDesdeFixture(card);else avisoIntegrado('No se encontró el partido seleccionado.');});
  const form=document.getElementById('nc-ef-form');if(!form)return;
- const refrescarEquipos=()=>{
+ const refrescarEquipos=(resetZonas=false)=>{
   const cat=form.elements.categoria.value,gen=form.elements.genero.value;
-  const participantes=teams.filter(t=>String(t.categoria||'').replace(/^\+/,'')===cat.replace(/^\+/,'')&&(!gen||!t.genero||String(t.genero)===gen)).map(t=>String(t.nombre||t.equipo||'')).filter(Boolean);
-  for(const nombre of ['local','visitante']){const sel=form.elements[nombre],actual=sel.value;sel.innerHTML=[...new Set(participantes)].map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');if(participantes.includes(actual))sel.value=actual;}
+  const rows=ncEditorZonasDisponibles(cat,gen);
+  for(const [zonaCampo,equipoCampo] of [['zonaLocal','local'],['zonaVisitante','visitante']]){
+   const zsel=form.elements[zonaCampo],tsel=form.elements[equipoCampo];
+   const zonaAnterior=resetZonas?'':zsel.value,equipoAnterior=resetZonas?'':tsel.value;
+   const nombresZonas=[...new Set(rows.map(r=>r.zona))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
+   zsel.innerHTML='<option value="">Elegir zona</option>'+nombresZonas.map(z=>`<option value="${esc(z)}">Zona ${esc(z)}</option>`).join('');
+   if(nombresZonas.includes(zonaAnterior))zsel.value=zonaAnterior;
+   const nombres=[...new Set(rows.filter(r=>r.zona===zsel.value).map(r=>r.nombre))];
+   tsel.innerHTML='<option value="">Seleccionar equipo</option>'+nombres.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+   if(nombres.includes(equipoAnterior))tsel.value=equipoAnterior;
+  }
  };
- form.elements.categoria.addEventListener('change',refrescarEquipos);form.elements.genero.addEventListener('change',refrescarEquipos);
+ form.elements.categoria.addEventListener('change',()=>refrescarEquipos(true));
+ form.elements.genero.addEventListener('change',()=>refrescarEquipos(true));
+ for(const z of ['zonaLocal','zonaVisitante'])form.elements[z].addEventListener('change',()=>{
+  const campo=z==='zonaLocal'?'local':'visitante',cat=form.elements.categoria.value,gen=form.elements.genero.value;
+  const nombres=[...new Set(ncEditorZonasDisponibles(cat,gen).filter(r=>r.zona===form.elements[z].value).map(r=>r.nombre))];
+  form.elements[campo].innerHTML='<option value="">Seleccionar equipo</option>'+nombres.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+ });
+ refrescarEquipos();
  document.getElementById('nc-ef-nuevo')?.addEventListener('click',()=>{ncEditorFixtureSeleccion=null;render()});
  document.getElementById('nc-ef-eliminar')?.addEventListener('click',()=>{
   const i=fixture.findIndex(x=>ncEditorFixtureClave(x)===ncEditorFixtureSeleccion);if(i<0)return;
