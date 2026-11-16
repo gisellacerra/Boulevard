@@ -3752,18 +3752,13 @@ async function prepararFotoBufet(file){
  if(!file||!/^image\/(png|jpeg|webp)$/.test(file.type))throw Error('Elegí una foto JPG, PNG o WebP.');
  if(file.size>8*1024*1024)throw Error('La fotografía supera los 8 MB.');
  const img=await new Promise((resolve,reject)=>{const i=new Image(),u=URL.createObjectURL(file);i.onload=()=>{URL.revokeObjectURL(u);resolve(i)};i.onerror=()=>{URL.revokeObjectURL(u);reject(Error('No se pudo abrir la foto'))};i.src=u});
- // Conservar la mayor resolución útil sin superar el límite de la celda PNG.
+ // PNG sin alteración de colores ni eliminación del fondo original.
+ // Reducir únicamente las dimensiones cuando sea necesario para guardar en Sheets.
  for(const n of [640,560,480,400,360,320,280,240,200,160,120,96,72,48,32]){
   const escala=Math.min(1,n/img.width,n/img.height),w=Math.max(1,Math.round(img.width*escala)),h=Math.max(1,Math.round(img.height*escala));
-  const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d',{willReadFrequently:true});
+  const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');
   ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(img,0,0,w,h);
-  const pix=ctx.getImageData(0,0,w,h),d=pix.data;
-  for(const paso of [1,4,8,16,24,32]){
-   const copia=new ImageData(new Uint8ClampedArray(d),w,h);
-   if(paso>1)for(let j=0;j<copia.data.length;j+=4){if(!copia.data[j+3])continue;for(let k=0;k<3;k++)copia.data[j+k]=Math.min(255,Math.round(copia.data[j+k]/paso)*paso)}
-   ctx.putImageData(copia,0,0);
-   const out=c.toDataURL('image/png');if(out.length<=44000)return out;
-  }
+  const out=c.toDataURL('image/png');if(out.length<=44000)return out;
  }
  throw Error('No se pudo comprimir esta fotografía. Probá con otra imagen.');
 }
