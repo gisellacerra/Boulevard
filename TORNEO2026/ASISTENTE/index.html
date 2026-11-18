@@ -1809,6 +1809,42 @@ body[data-nc-theme="dark"] #view .nc-aloj-enlaces a{color:#a5eb37}
  .nc-card-cabecera .nc-partidos-titulo{font-size:9px!important}
 }
 </style>
+<style id="nc-tarjetas-legibles-20261118">
+/* Ajuste exclusivamente visual de tarjetas en la grilla horaria. */
+.nc-tiempo-slot > .nc-partidos-contenido.nc-partidos-con-franja{
+  padding:6px 8px 6px 20px!important;gap:4px!important;
+  justify-content:space-between!important;min-height:0!important;
+  overflow:hidden!important;
+}
+.nc-tiempo-slot .nc-card-cabecera{flex:0 0 auto;align-items:center;min-height:16px;
+  margin:0!important;padding:0 0 4px!important;gap:5px}
+.nc-tiempo-slot .nc-card-titulo-vacio{min-height:0!important}
+.nc-tiempo-slot .nc-card-cabecera .nc-partidos-titulo{font-size:11px!important;
+  line-height:1.15!important;font-weight:700;display:-webkit-box;
+  -webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nc-tiempo-slot .nc-card-cabecera .nc-partidos-numero{font-size:10px!important;
+  padding:2px 5px!important;line-height:1.1}
+.nc-tiempo-slot .nc-partidos-equipos{flex:1 1 auto!important;min-height:0!important;
+  justify-content:center!important;gap:4px!important;padding:0!important}
+.nc-tiempo-slot .nc-partidos-equipo{min-height:0!important;gap:6px!important;
+  margin:0!important;line-height:1.2!important;letter-spacing:0!important}
+.nc-tiempo-slot .nc-partidos-escudo,.nc-tiempo-slot .nc-partidos-escudo-vacio{
+  width:21px!important;height:21px!important;flex:0 0 21px!important}
+.nc-tiempo-slot .nc-partidos-nombre{font-size:12px!important;font-weight:600;
+  line-height:1.2!important;overflow-wrap:break-word!important;word-break:normal!important;
+  display:-webkit-box!important;-webkit-box-orient:vertical!important;
+  -webkit-line-clamp:2!important;line-clamp:2!important;overflow:hidden!important}
+.nc-tiempo-slot .nc-card-pie{flex:0 0 auto;min-height:14px;
+  padding-top:4px!important;margin:0!important;font-size:10px!important;
+  line-height:1.1!important;letter-spacing:0!important}
+@media(max-width:850px){
+ .nc-tiempo-slot > .nc-partidos-contenido.nc-partidos-con-franja{padding-left:14px!important;padding-right:4px!important;gap:2px!important}
+ .nc-tiempo-slot .nc-partidos-escudo,.nc-tiempo-slot .nc-partidos-escudo-vacio{width:17px!important;height:17px!important;flex-basis:17px!important}
+ .nc-tiempo-slot .nc-partidos-nombre{font-size:11px!important}
+ .nc-tiempo-slot .nc-card-cabecera .nc-partidos-titulo{font-size:10px!important}
+ .nc-tiempo-slot .nc-card-pie{font-size:9px!important}
+}
+</style>
 </head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
@@ -4053,7 +4089,7 @@ return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ga
   const numeroPartido=numeroVisiblePartido(p);
   const insigniaPartido=numeroPartido?`<span class="nc-partidos-numero" aria-label="Partido número ${numeroPartido}" title="Partido N.º ${numeroPartido}">N.º ${numeroPartido}</span>`:'';
   const marcador=puntos?`<div class="nc-partidos-puntos" aria-label="Puntos por set: ${esc(puntos)}">${esc(puntos)}</div>`:'';
-  return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" ${p._cruce?'draggable="true" data-nc-cruce-confirmado="1"':!datosMarcador?'draggable="true" data-nc-arrastrable="1"':''} role="button" tabindex="0" title="${fx3UltimaPropuesta?'Seleccionar partido del borrador':'Seleccionar partido para editar'}" ${(active==='fixture')?'data-nc-resultado':((ncEditorBorradorManual||fx3UltimaPropuesta)?'data-nc-borrador':'data-nc-resultado')}="${esc(encodeURIComponent(JSON.stringify({cruce:!!p._cruce,instancia:p.instancia,partido:p.partido,genero:p.genero,fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}"><div class="nc-card-cabecera">${p.titulo?`<div class="nc-partidos-titulo">${esc(p.titulo)}</div>`:`<div class="nc-card-titulo-vacio"></div>`}${insigniaPartido}</div><div class="nc-partidos-equipos">${p._cruce?`<div class="nc-cruce-etiqueta-fixture">${esc(p.instancia==='SEMIFINAL'?'Semifinal '+p.partido:p.instancia==='FINAL'?'Final':'Tercer puesto')}</div>`:''}<div class="nc-partidos-equipo">${iconoEquipo(a)}<span class="nc-partidos-nombre ${ganaA?'nc-partidos-ganador':''}">${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span class="nc-partidos-nombre ${ganaB?'nc-partidos-ganador':''}">${esc(b)}</span></div>${marcador}</div><div class="nc-card-pie"><span>${esc(hora(p))}</span><span>Cancha ${esc(String(cancha(p)))}</span></div>${reloj}</div>`;
+  return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" ${p._cruce?'draggable="true" data-nc-cruce-confirmado="1"':!datosMarcador?'draggable="true" data-nc-arrastrable="1"':''} role="button" tabindex="0" title="${fx3UltimaPropuesta?'Seleccionar partido del borrador':'Seleccionar partido para editar'}" ${(active==='fixture')?'data-nc-resultado':((ncEditorBorradorManual||fx3UltimaPropuesta)?'data-nc-borrador':'data-nc-resultado')}="${esc(encodeURIComponent(JSON.stringify({cruce:!!p._cruce,instancia:p.instancia,partido:p.partido,genero:p.genero,fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}"><div class="nc-card-cabecera">${p.titulo?`<div class="nc-partidos-titulo">${esc(p.titulo)}</div>`:`<div class="nc-card-titulo-vacio"></div>`}${insigniaPartido}</div><div class="nc-partidos-equipos">${p._cruce?`<div class="nc-cruce-etiqueta-fixture">${esc(p.instancia==='SEMIFINAL'?'Semifinal '+p.partido:p.instancia==='FINAL'?'Final':'Tercer puesto')}</div>`:''}<div class="nc-partidos-equipo">${iconoEquipo(a)}<span class="nc-partidos-nombre ${ganaA?'nc-partidos-ganador':''}" title="${esc(a)}">${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span class="nc-partidos-nombre ${ganaB?'nc-partidos-ganador':''}" title="${esc(b)}">${esc(b)}</span></div>${marcador}</div><div class="nc-card-pie"><span>${esc(hora(p))}</span><span>Cancha ${esc(String(cancha(p)))}</span></div>${reloj}</div>`;
 
  };
  // Escala temporal común: 2.35 px por minuto; cada cancha conserva sus turnos reales.
@@ -4403,7 +4439,7 @@ function ncFxSimularCascada(origen,destino){
  const horaDestino=ncFxMin(destino.hora);
  if(!Number.isFinite(horaDestino)||horaDestino%10!==0)throw Error('El horario debe ajustarse cada 10 minutos.');
  nuevo[i]={...nuevo[i],fecha:destino.fecha,hora:destino.hora,cancha:String(destino.cancha)};
- const cola=nuevo.map((p,k)=>({p,k})).filter(({p,k})=>k!==i&&ncFxFecha(p.fecha)===destino.fecha&&Number(p.cancha)===Number(destino.cancha)&&Number.isFinite(ncFxMin(p.hora))).sort((a,b)=>ncFxMin(a.p.hora)-ncFxMin(b.p.hora)||a.k-b.k);
+ const cola=nuevo.map((p,k)=>({p,k})).filter(({p,k})=>k!==i&&ncFxFecha(p.fecha)===destino.fecha&&Number(p.cancha)===Number(destino.cancha)&&Number.isFinite(ncFxMin(p.hora))&&ncFxMin(p.hora)+paso>horaDestino).sort((a,b)=>ncFxMin(a.p.hora)-ncFxMin(b.p.hora)||a.k-b.k);
  let fin=horaDestino+paso;
  const movidos=[];
  for(const {p,k} of cola){
