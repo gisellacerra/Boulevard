@@ -1910,9 +1910,10 @@ body[data-nc-theme="dark"] #view .nc-aloj-enlaces a{color:#a5eb37}
 <style id="nc-aviso-fixture-en-categorias">
 .nc-partidos-filtros{display:flex!important;align-items:stretch!important;gap:8px!important;flex-wrap:wrap!important}
 .nc-partidos-filtros>.nc-partidos-filtro,.nc-partidos-filtros>.nc-partidos-filtros-label{align-self:center}
-.nc-partidos-filtros .nc-fixture-pendiente-grilla{margin:0 0 0 auto!important;flex:1 1 300px;min-width:260px;min-height:76px;box-sizing:border-box;background:#fff!important;color:#273239!important;border:2px solid #e1aa35!important;border-radius:9px!important;padding:13px 18px!important;display:flex;flex-direction:column;justify-content:center;gap:5px;line-height:1.35;font-size:13px;box-shadow:0 2px 10px rgba(0,0,0,.12)}
-.nc-partidos-filtros .nc-fixture-pendiente-grilla strong{color:#a15400!important;font-size:16px!important;font-weight:750!important}
-.nc-partidos-filtros .nc-fixture-pendiente-grilla span{color:#263238!important;font-size:13px!important}
+.nc-partidos-filtros .nc-fixture-pendiente-grilla{margin:0 0 0 26px!important;flex:0 1 390px!important;width:390px!important;max-width:100%!important;min-width:285px;min-height:76px;box-sizing:border-box;background:#29382b!important;color:#e0f5b8!important;border:1px solid #708b4d!important;border-radius:12px!important;padding:12px 17px!important;display:flex;flex-direction:column;justify-content:center;gap:5px;line-height:1.4;font-size:13px;box-shadow:none!important}
+.nc-partidos-filtros .nc-fixture-pendiente-grilla strong{color:#e0f5b8!important;font-size:15px!important;font-weight:700!important}
+.nc-partidos-filtros .nc-fixture-pendiente-grilla span{color:#c1cdb2!important;font-size:12px!important}
+@media(max-width:850px){.nc-partidos-filtros .nc-fixture-pendiente-grilla{margin-left:0!important;flex-basis:390px!important}}
 </style>
 <script>function formatoPrecioBufet(valor){const texto=String(valor??'').trim();if(!texto)return '';const numero=Number(texto.replace(/\$/g,'').replace(/\s/g,'').replace(/\./g,'').replace(',','.'));return Number.isFinite(numero)?'$ '+numero.toLocaleString('es-AR',{maximumFractionDigits:2}):texto;}</script>
 <script>
