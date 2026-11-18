@@ -4768,7 +4768,7 @@ else if(active==='zonas'){
  activarTableroManual();const refresh=$('#refreshZonas');if(refresh)refresh.onclick=consultarZonas;
 } else if(active==='fixture'){
   const hayFixture=fixture.length>0;
- view.innerHTML=`<section class="nc-ux-partidos"><div class="nc-ux-partidos-encabezado"><div><h2>FIXTURE</h2><p>Seleccioná un bloque horario y registrá los equipos desde la barra derecha. Los cruces los decide el administrador consultando las posiciones. No se generan partidos automáticamente.</p></div></div><p class="muted">Las fechas y los horarios de cada cancha se administran exclusivamente en Configuración → Horarios por cancha.</p><div class="nc-ef-distribucion">${ncVistaJornadasFixture()}${ncEditorFixturePanel()}</div></section>`;
+ view.innerHTML=`<section class="nc-ux-partidos"><div class="nc-ux-partidos-encabezado"><div><p>Seleccioná un bloque horario y registrá los equipos desde la barra derecha. Los cruces los decide el administrador consultando las posiciones. No se generan partidos automáticamente.</p></div></div><p class="muted">Las fechas y los horarios de cada cancha se administran exclusivamente en Configuración → Horarios por cancha.</p><div class="nc-ef-distribucion">${ncVistaJornadasFixture()}${ncEditorFixturePanel()}</div></section>`;
  ncEnlazarJornadasFixture();
  document.getElementById('nc-confirmar-manual')?.addEventListener('click',ncCokiConfirmar);
 }
