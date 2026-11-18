@@ -2503,7 +2503,7 @@ function ncAplicarFixtureConsultado(data){
  const pertenece=p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion);
  const habiaConfirmado=Array.isArray(fixtureSnapshot?.filas)&&fixtureSnapshot.filas.some(pertenece);
  fixtureSnapshot=data;
- if(!data.filas.some(pertenece)&&(habiaConfirmado||!fx3UltimaPropuesta)){
+ if(!data.filas.some(pertenece)&&(habiaConfirmado||!fx3UltimaPropuesta)&&!fixture.length&&!ncCokiCargando&&!ncCokiGuardando&&!ncCokiPendiente){
   fixture=[];fixtureZonasHuella=null;ncPlanArrastre=null;ncDestellos.clear();fx3UltimaPropuesta=null;
   if(resultados12Datos&&Array.isArray(resultados12Datos.partidos))resultados12Datos.partidos=resultados12Datos.partidos.filter(p=>!pertenece(p));
   try{localStorage.removeItem('asistente_fixture_huella_zonas')}catch(e){}
@@ -3843,12 +3843,48 @@ const ncCokiMin=h=>{const m=String(h||'').match(/^(\d{1,2}):(\d{2})/);return m?N
 const ncCokiHora=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
 function ncCokiParaF01(){const fechas=programaFechas().filter(Boolean);return fixture.map((p,i)=>({id:i+1,day:Math.max(1,fechas.indexOf(String(p.fecha).slice(0,10))+1),cat:'+'+String(p.categoria||'50').replace(/^\+/,''),a:String(p.local||p.equipoA||''),b:String(p.visitante||p.equipoB||''),start:ncCokiMin(p.hora),duration:Math.max(5,Number(settings.duracion)||50),interval:Math.max(0,Number(settings.intervalo)||0),court:Number(p.cancha),title:String(p.titulo||''),gender:String(p.genero||'Mixto'),zone1:String(p.zonaLocal||p.zona||''),zone2:String(p.zonaVisitante||p.zona||'')}));}
 function ncCokiDesdeF01(rows){const fechas=programaFechas().filter(Boolean);return rows.map(p=>({titulo:p.title||'',categoria:p.cat,genero:p.gender||'Mixto',local:p.a,visitante:p.b,fecha:fechas[Number(p.day)-1]||'',hora:ncCokiHora(Number(p.start)),cancha:Number(p.court),zonaLocal:p.zone1||'',zonaVisitante:p.zone2||'',zona:p.zone1===p.zone2?p.zone1:(p.zone1||'')+'-'+(p.zone2||''),ronda:1}));}
-function ncCokiGuardarRemoto(){ncCokiPendiente=true;if(ncCokiCargando||ncCokiGuardando)return;if(!window.google?.script?.run){avisoIntegrado('Sin conexión con Apps Script: borrador local conservado.');return;}ncCokiGuardando=true;ncCokiPendiente=false;const payload={...ncCokiIdent(),revision:ncCokiRevision,partidos:ncCokiParaF01()};google.script.run.withSuccessHandler(r=>{ncCokiRevision=Number(r.revision);ncCokiGuardando=false;ncCokiUltimoError='';if(ncCokiPendiente)ncCokiGuardarRemoto();}).withFailureHandler(e=>{ncCokiGuardando=false;ncCokiUltimoError=String(e.message||e);ncCokiPendiente=false;avisoIntegrado('No se pudo guardar el borrador: '+ncCokiUltimoError);}).adminF01Guardar(payload);}
-function ncCokiCargarInicial(){if(!window.google?.script?.run)return;const key=ncCokiClave();if(ncCokiCargando||ncCokiInicializado===key)return;ncCokiCargando=true;const ident=ncCokiIdent();google.script.run.withSuccessHandler(r=>{if(key!==ncCokiClave())return;ncCokiRevision=Number(r.revision)||0;if(Array.isArray(r.partidos)&&r.partidos.length){fixture=ncCokiDesdeF01(r.partidos);ncEditorBorradorManual=true;saveDraft();}ncCokiCargando=false;ncCokiInicializado=key;render();}).withFailureHandler(e=>{ncCokiCargando=false;avisoIntegrado('No se pudo recuperar el borrador: '+String(e.message||e));}).adminF01Consultar(ident);
-if(!zonasRemotas)consultarZonas();fx3CargarDisponibilidad().then(()=>{if(active==='fixture')render()}).catch(e=>console.warn('Horarios no disponibles',e));}
+function ncCokiGuardarRemoto(){
+ ncCokiPendiente=true;
+ if(ncCokiCargando||ncCokiGuardando)return;
+ if(!window.google?.script?.run){ncCokiPendiente=false;ncCokiUltimoError='Sin conexión con Apps Script';avisoIntegrado('Sin conexión con Apps Script: borrador local conservado.');return;}
+ // Nunca reemplazar un borrador remoto existente con una lista vacía por un fallo de carga.
+ if(!fixture.length){ncCokiPendiente=false;ncCokiUltimoError='Borrador vacío: guardado remoto bloqueado para proteger los partidos';avisoIntegrado(ncCokiUltimoError);return;}
+ ncCokiGuardando=true;ncCokiPendiente=false;
+ const payload={...ncCokiIdent(),revision:ncCokiRevision,partidos:ncCokiParaF01()};
+ google.script.run.withSuccessHandler(r=>{
+  if(!r||!Number.isFinite(Number(r.revision))){ncCokiGuardando=false;ncCokiPendiente=false;ncCokiUltimoError='El servidor no confirmó una revisión válida';avisoIntegrado(ncCokiUltimoError);return;}
+  ncCokiRevision=Number(r.revision);ncCokiGuardando=false;ncCokiUltimoError='';
+  if(ncCokiPendiente)ncCokiGuardarRemoto();
+ }).withFailureHandler(e=>{ncCokiGuardando=false;ncCokiUltimoError=String(e.message||e);ncCokiPendiente=false;avisoIntegrado('No se pudo guardar el borrador: '+ncCokiUltimoError);}).adminF01Guardar(payload);
+}
+function ncCokiCargarInicial(forzar=false){
+ if(!window.google?.script?.run)return;
+ const key=ncCokiClave();
+ if(ncCokiCargando||(!forzar&&ncCokiInicializado===key&&fixture.length))return;
+ if(ncCokiGuardando||(ncCokiPendiente&&fixture.length)){return;} // No pisar cambios locales; una bandera pendiente sin partidos no impide recuperar desde Sheets.
+ if(ncCokiPendiente&&!fixture.length)ncCokiPendiente=false;
+ ncCokiCargando=true;
+ google.script.run.withSuccessHandler(r=>{
+  ncCokiCargando=false;
+  if(key!==ncCokiClave())return;
+  if(!r||!Array.isArray(r.partidos)){ncCokiUltimoError='La consulta del borrador no devolvió una lista válida';avisoIntegrado(ncCokiUltimoError);return;}
+  ncCokiRevision=Number(r.revision)||0;
+  if(r.partidos.length){
+   if(ncCokiPendiente||ncCokiGuardando){ncCokiUltimoError='Hay cambios locales pendientes: se conserva la edición actual';render();return;}
+   fixture=ncCokiDesdeF01(r.partidos);ncEditorBorradorManual=true;ncCokiUltimoError='';saveDraft();
+  }else if(fixture.length){
+   // No borrar una propuesta local ante una lectura vacía del servidor.
+   ncCokiUltimoError='La consulta devolvió un borrador vacío; se conservaron los partidos locales';
+   avisoIntegrado(ncCokiUltimoError);
+  }
+  ncCokiInicializado=key;render();
+ }).withFailureHandler(e=>{ncCokiCargando=false;ncCokiUltimoError='No se pudo recuperar el borrador: '+String(e.message||e);avisoIntegrado(ncCokiUltimoError);}).adminF01Consultar(ncCokiIdent());
+ if(!zonasRemotas)consultarZonas();
+ fx3CargarDisponibilidad().then(()=>{if(active==='fixture')render()}).catch(e=>console.warn('Horarios no disponibles',e));
+}
 function ncCokiConfirmar(){
  if(ncCokiCargando||ncCokiGuardando||ncCokiPendiente){
-  avisoIntegrado('Esperá a que termine la sincronización del borrador antes de confirmar.');return;
+  avisoIntegrado('El borrador sigue sincronizando. Si tarda más de 30 segundos, no confirmes: verificá la conexión y recuperá el borrador desde Sheets.');return;
  }
  if(ncCokiUltimoError){avisoIntegrado('No se puede confirmar: '+ncCokiUltimoError);return;}
  if(!fixture.length){avisoIntegrado('No hay partidos en el borrador.');return;}
@@ -3885,7 +3921,7 @@ function ncCokiConfirmar(){
  }).withFailureHandler(e=>avisoIntegrado('No se pudo confirmar: '+String(e.message||e))).adminF01Confirmar({...ncCokiIdent(),revision:ncCokiRevision});
 }
 
-function navigate(id){if(ncDemoraOcupado)return;ncDemoraPlan=null;if(id==='fixture-auto'||id==='fixture-abierto')id='fixture';if(!modules.some(m=>m[0]===id)&&!['fixture-auto','fixture-abierto'].includes(id))return;if(id==='ayuda'){window.open(AYUDA_PDF_RUTA,'_blank','noopener,noreferrer');return;}active=id;render();if(id==='fixture'){ncCokiCargarInicial();}if(id==='avisos')consultarNotificaciones();if(id==='arbitros')arbLeer();if(id==='equipos')leerEquiposPrivados();if(id==='zonas'){leerEquiposPrivados();consultarZonas()}else if(id==='fixture-auto'){fx3CargarDisponibilidad().then(()=>{if(active==='fixture-auto')render()}).catch(e=>console.warn('No se pudieron consultar horarios por cancha:',e));ncDashboardLeerFixture();consultarZonas();cruces15Leer();cruces16Leer();}if(id==='resultados'||id==='posiciones'||id==='cruces')resultados12Leer();if(id==='registro')historial26Leer();if(id==='cruces'){cruces15VistaServidor=null;cruces15LeerClasificados();cruces15Leer();cruces16Leer()}if(id==='resumen')resultados12Leer();if(id==='inicio')ncDashboardLeerFixture()};const menu38Abiertos={};
+function navigate(id){if(ncDemoraOcupado)return;ncDemoraPlan=null;if(id==='fixture-auto'||id==='fixture-abierto')id='fixture';if(!modules.some(m=>m[0]===id)&&!['fixture-auto','fixture-abierto'].includes(id))return;if(id==='ayuda'){window.open(AYUDA_PDF_RUTA,'_blank','noopener,noreferrer');return;}active=id;render();if(id==='fixture'){ncCokiCargarInicial(!fixture.length);}if(id==='avisos')consultarNotificaciones();if(id==='arbitros')arbLeer();if(id==='equipos')leerEquiposPrivados();if(id==='zonas'){leerEquiposPrivados();consultarZonas()}else if(id==='fixture-auto'){fx3CargarDisponibilidad().then(()=>{if(active==='fixture-auto')render()}).catch(e=>console.warn('No se pudieron consultar horarios por cancha:',e));ncDashboardLeerFixture();consultarZonas();cruces15Leer();cruces16Leer();}if(id==='resultados'||id==='posiciones'||id==='cruces')resultados12Leer();if(id==='registro')historial26Leer();if(id==='cruces'){cruces15VistaServidor=null;cruces15LeerClasificados();cruces15Leer();cruces16Leer()}if(id==='resumen')resultados12Leer();if(id==='inicio')ncDashboardLeerFixture()};const menu38Abiertos={};
 /* Vista de jornadas: únicamente dentro de Fixture y canchas.
    El acceso "Partidos hoy" del inicio ya navega a ese módulo. */
 let ncDiaFixtureSeleccionado='';
