@@ -5,6 +5,9 @@
   const SCRIPT_ID='1Ql41SpKI9gYX_ijoU-1MVmwGjObNuEr1AtsTQJC_b1UsGzOHHg8n3Kqs';
   const SCOPES='https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/script.external_request';
   let token='', client, tokenExpiresAt=0, renewal=null, authorized=false, verifying=false;
+  let loginWatchdog=null;
+  function stopLoginWatchdog(){if(loginWatchdog){clearTimeout(loginWatchdog);loginWatchdog=null;}}
+  function startLoginWatchdog(){stopLoginWatchdog();loginWatchdog=setTimeout(()=>{if(!verifying || authorized)return;verifying=false;showState(false,'Google no completó la autorización o la verificación demoró demasiado. Volvé a intentar. Si vuelve a ocurrir, abrí F12 → Consola y enviame el error.');},20000);}
   const pending=[];
   // La sesión dura como máximo lo que dura el token OAuth. No se guarda un refresh token.
   const SESSION_KEY='newcom_google_access_v2';
@@ -34,15 +37,17 @@
     button.onclick=()=>{
       if(!client || verifying)return;
       verifying=true;
+      startLoginWatchdog();
       showState(true,'Seleccioná tu cuenta de Google para continuar…');
-      try{client.requestAccessToken({prompt:'consent'});}catch(e){verifying=false;showState(false,e.message||'No se pudo abrir Google.');}
+      try{client.requestAccessToken({prompt:'consent'});}catch(e){stopLoginWatchdog();verifying=false;showState(false,e.message||'No se pudo abrir Google.');}
     };
     if(client && !verifying)showState(false,'');
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',attach,{once:true});else attach();
   function ready(){
     if(!window.google?.accounts?.oauth2){setTimeout(ready,100);return;}
-    client=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPES,callback:response=>{
+    client=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPES,error_callback:err=>{stopLoginWatchdog();verifying=false;showState(false,'Google no pudo completar el acceso: '+(err?.type||err?.message||'ventana cerrada o bloqueada'));},callback:response=>{
+      stopLoginWatchdog();
       if(response.error){
         if(renewal){renewal.reject(Error(response.error));renewal=null;}
         verifying=false;showState(false,'No se pudo autorizar: '+response.error);return;
@@ -57,16 +62,17 @@
       tokenExpiresAt=Date.now()+Math.max(0,(Number(response.expires_in)||3500)-90)*1000;
       if(renewal){saveSession();renewal.resolve(token);renewal=null;return;}
       verifying=true;
+      startLoginWatchdog();
       showState(true,'Verificando acceso…');
       runAPI('adminVerificarAccesoNewcom',[]).then(ok=>{
         if(ok!==true)throw Error('Esta cuenta no está autorizada para administrar el torneo.');
-        authorized=true;verifying=false;
+        stopLoginWatchdog();authorized=true;verifying=false;
         saveSession();
         overlay.remove();
         flushPending();
         document.dispatchEvent(new Event('newcom-autorizado'));
       }).catch(e=>{
-        token='';authorized=false;verifying=false;clearSavedSession();
+        stopLoginWatchdog();token='';authorized=false;verifying=false;clearSavedSession();
         showState(false,e.message||'No se pudo verificar el acceso.');
       });
     }});
@@ -82,7 +88,7 @@
         authorized=true;verifying=false;overlay.remove();flushPending();
         document.dispatchEvent(new Event('newcom-autorizado'));
       }).catch(()=>{
-        token='';authorized=false;verifying=false;clearSavedSession();
+        stopLoginWatchdog();token='';authorized=false;verifying=false;clearSavedSession();
         showState(false,'La sesión venció o no se pudo validar. Ingresá con Google.');
       });
     }else{
@@ -104,9 +110,12 @@
       await waitForToken;
       if(!token)throw Error('No se pudo renovar la sesión de Google.');
     }
-    const response=await fetch('https://script.googleapis.com/v1/scripts/'+encodeURIComponent(SCRIPT_ID)+':run',{
-      method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({function:func,parameters,devMode:false})
-    });
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),15000);
+    let response;
+    try{response=await fetch('https://script.googleapis.com/v1/scripts/'+encodeURIComponent(SCRIPT_ID)+':run',{
+      method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({function:func,parameters,devMode:false}),signal:controller.signal
+    });}catch(e){throw Error(e.name==='AbortError'?'La verificación con Apps Script tardó más de 15 segundos. Revisá la conexión o el despliegue de la API.':e.message);}finally{clearTimeout(timeout);}
     const data=await response.json();
     if(!response.ok)throw Error(data.error?.message||'Error HTTP '+response.status);
     if(data.error)throw Error(data.error.details?.[0]?.errorMessage||data.error.message||'Error del servidor');
