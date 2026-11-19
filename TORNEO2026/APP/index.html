@@ -644,7 +644,8 @@ function ncCambiarFiltroPartidos(valor){if(!['Todos','Jugados','Por jugar'].incl
 function ncFiltroPartidosHTML(){return `<div class="nc-partidos-filter"><label for="nc-partidos-estado"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16l-6.5 7.5V19l-3 1.5v-8L4 5Z"/></svg><span>Filtrar por partidos:</span></label><select id="nc-partidos-estado" aria-label="Filtrar por partidos" onchange="ncCambiarFiltroPartidos(this.value)">${['Todos','Jugados','Por jugar'].map(v=>`<option value="${v}" ${ncFiltroPartidos===v?'selected':''}>${v}</option>`).join('')}</select></div>`;}
 let ncBuscarPartido='';
 function ncNormalizarBusquedaPartido(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();}
-function ncPartidosBuscados(){const q=ncNormalizarBusquedaPartido(ncBuscarPartido);return filterMatches().filter(m=>(ncFiltroPartidos==='Todos'||(ncFiltroPartidos==='Jugados'?completed(m):!completed(m)))&&(!q||[m.a,m.b].some(n=>ncNormalizarBusquedaPartido(n).includes(q)))).sort((a,b)=>a.time.localeCompare(b.time));}
+function ncNumeroCancha(v){const n=Number(String(v||'').match(/\d+/)?.[0]);return Number.isFinite(n)?n:999;}
+function ncPartidosBuscados(){const q=ncNormalizarBusquedaPartido(ncBuscarPartido);return filterMatches().filter(m=>(ncFiltroPartidos==='Todos'||(ncFiltroPartidos==='Jugados'?completed(m):!completed(m)))&&(!q||[m.a,m.b].some(n=>ncNormalizarBusquedaPartido(n).includes(q)))).sort((a,b)=>normalizedDate(a.fecha).localeCompare(normalizedDate(b.fecha))||ncHoraMinutos(a.time)-ncHoraMinutos(b.time)||ncNumeroCancha(a.court)-ncNumeroCancha(b.court)||String(a.a).localeCompare(String(b.a),'es'));}
 function ncBuscarPartidos(v){ncBuscarPartido=v;const lista=document.getElementById('nc-partidos-lista');if(lista)lista.innerHTML=matchRows(ncPartidosBuscados());const limpiar=document.getElementById('nc-partidos-limpiar');if(limpiar)limpiar.hidden=!v;}
 function ncLimpiarBusquedaPartidos(){const campo=document.getElementById('nc-partidos-buscar');if(campo){campo.value='';ncBuscarPartidos('');campo.focus();}}
 partidos=function(){return `${head('Fixture','PROGRAMACIÓN')}${daySelector()}${catTabs()}${ncFiltroPartidosHTML()}<div class="nc-partidos-search">${icon('search')}<input id="nc-partidos-buscar" type="text" placeholder="Buscar equipo..." aria-label="Buscar equipo por nombre" autocomplete="off" value="${ncFotosEsc(ncBuscarPartido)}" oninput="ncBuscarPartidos(this.value)"><button id="nc-partidos-limpiar" type="button" aria-label="Limpiar búsqueda" onclick="ncLimpiarBusquedaPartidos()" ${ncBuscarPartido?'':'hidden'}>×</button></div><div id="nc-partidos-lista">${matchRows(ncPartidosBuscados())}</div>`;};
@@ -987,7 +988,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  const shield=(u,large=false)=>validLogo(u)?`<img class="${large?'nc-pos-large-shield':'nc-pos-shield'}" src="${esc(u)}" alt="Escudo" loading="lazy" onerror="this.style.visibility='hidden'">`:`<span class="nc-pos-placeholder" aria-label="Escudo no disponible">♢</span>`;
  function close(){document.getElementById('nc-pos-modal')?.remove();document.body.style.overflow='';}
  window.ncPosCerrar=close;
- const coeficiente=t=>(t.pts/t.pj).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+ const coeficiente=t=>(t.pj?t.pts/t.pj:0).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
  window.ncPosAbrir=function(id){const t=window.ncPosRows?.[id];if(!t)return;close();const e=document.createElement('div');e.id='nc-pos-modal';e.className='nc-pos-modal';e.setAttribute('role','presentation');e.innerHTML=`<section class="nc-pos-dialog" role="dialog" aria-modal="true" aria-label="Posiciones de ${esc(t.name)}"><button class="nc-pos-close" onclick="ncPosCerrar()" aria-label="Cerrar">×</button>${shield(t.logo,true)}<h2>${esc(t.name)}</h2><div class="nc-pos-sub">${esc(t.cat)} · ${esc(t.zona)}</div><div class="nc-pos-total">${coeficiente(t)}<small>COEFICIENTE</small></div><p class="nc-pos-puesto">Posición en su zona: <strong>${t.puesto}º</strong></p></section>`;e.addEventListener('click',ev=>{if(ev.target===e)close()});document.body.appendChild(e);document.body.style.overflow='hidden';e.querySelector('button').focus();};
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('nc-pos-modal'))close()});
  standings=function(){const groups=new Map(),logos=new Map();
@@ -997,6 +998,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  for(const t of teams){const z=String(t.zona||'').trim().replace(/^zona\s+/i,'');if(z)zonasEquipos.set(JSON.stringify([t.cat,normalizar(t.name)]),z);}
  for(const m of matches){if(validLogo(m.escudoLocal))logos.set(m.cat+'|'+m.a,m.escudoLocal);if(validLogo(m.escudoVisitante))logos.set(m.cat+'|'+m.b,m.escudoVisitante);}
  for(const m of matches.filter(completed)){
+  if(m.instancia||(!String(m.zona||'').trim()))continue; // Los cruces no suman a las posiciones de zonas.
   if(category!=='Todas'&&m.cat!==category)continue;
   const a=Number(m.resultado.setsLocal),b=Number(m.resultado.setsVisitante);
   if(!Number.isFinite(a)||!Number.isFinite(b)||a===b)continue;
