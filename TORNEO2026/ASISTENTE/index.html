@@ -3313,6 +3313,19 @@ const msg='<div class="notice">Esta sección está en preparación. Sus funcione
 
 
 // ETAPA 13 — Posiciones calculadas solo desde fixture y resultados confirmados.
+// Identificación de fase: la zona del partido debe ser una zona confirmada,
+// un interzonal explícito, o un cruce. No inferir la fase por los equipos.
+function ncP13Normalizar(v){return String(v??'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').toLowerCase();}
+function ncP13EsCruce(p,zonasValidas){
+ if(p.origenCrucesHoja===true||p.etapaCruce||p.etapaCruceId)return true;
+ const etiqueta=ncP13Normalizar(p.zona).replace(/^zona\s+/,'');
+ const interzonal=/^interzonal\b/.test(etiqueta)||/^[a-z]\s*[-–]\s*[a-z]$/.test(etiqueta);
+ if(interzonal)return false;
+ if(zonasValidas.has(etiqueta))return false;
+ // Cualquier etiqueta de etapa distinta de una zona confirmada no es fase de zonas.
+ if(etiqueta)return true;
+ return /final|semi|cuarto|octavo|preliminar|repechaje|cruce|clasificaci|tercer|bronce|oro|plata/i.test([p.titulo,p.tituloCruce,p.etapaCruce].join(' '));
+}
 let posiciones13Filtro='todas';
 function posiciones13Render(){
  const partidos=resultados12Partidos();
@@ -3335,11 +3348,18 @@ function posiciones13Render(){
   }
  }
  const sinZona=[];
+ const zonasValidasPorCompetencia=new Map();
+ for(const g of zonasConfirmadasFixture()){
+  const clave=JSON.stringify(['+'+String(g.cat).replace(/^\+/,''),String(g.genero||'Mixto')]);
+  if(!zonasValidasPorCompetencia.has(clave))zonasValidasPorCompetencia.set(clave,new Set());
+  zonasValidasPorCompetencia.get(clave).add(ncP13Normalizar(g.zona));
+ }
  for(const p of partidos){
   const cat='+'+String(p.categoria).replace(/^\+/,'');
   if(posiciones13Filtro!=='todas'&&cat!==posiciones13Filtro)continue;
   const genero=String(p.genero||'Mixto').trim()||'Mixto';
   const competencia=JSON.stringify([cat,genero]);
+  if(ncP13EsCruce(p,zonasValidasPorCompetencia.get(competencia)||new Set()))continue;
   const claveEquipo=nombre=>JSON.stringify([competencia,String(nombre||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('es')]);
   let zonaLocal=zonasPorEquipo.get(claveEquipo(p.local));
   let zonaVisitante=zonasPorEquipo.get(claveEquipo(p.visitante));
@@ -3402,18 +3422,18 @@ function posiciones13Render(){
   });
   const tabla=`<div class="tablewrap nc-posiciones-coef"><table><thead><tr><th>Pos.</th><th>Equipo</th><th class="nc-coef" title="Puntos por partido jugado">Coef.</th><th>PTS</th><th>PJ</th><th>PG</th><th>PP</th><th>SF</th><th>SC</th><th>Dif.</th><th>PF</th><th>PC</th></tr></thead><tbody>${filas.map((e,i)=>`<tr><td>${i+1}</td><td><strong>${esc(e.nombre)}</strong></td><td class="nc-coef">${e.PJ?(e.PTS/e.PJ).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2}):'—'}</td><td>${e.PTS}</td><td>${e.PJ}</td><td>${e.PG}</td><td>${e.PP}</td><td>${e.SF}</td><td>${e.SC}</td><td>${e.SF-e.SC}</td><td>${e.PF}</td><td>${e.PC}</td></tr>`).join('')}</tbody></table></div>`;
   const fondo=fxColorCategoria(g.cat);
-  contenido+=`<section class="panel section"><h2 style="background:${fondo};color:#000!important;padding:10px;border-radius:8px">Categoría ${esc(g.cat)} · ${esc(g.genero)} · Zona ${esc(g.zona)}</h2><p class="status">${jugados} de ${g.partidos.length} partidos con resultado · ${completo?'Zona completa':'Clasificación provisoria'}</p>${tabla}${posiciones13Diagnostico(g)}${completo?posiciones13EstadoCruces(g):'<p class="muted">Faltan resultados: la clasificación de zona es provisoria.</p>'}</section>`;
+  contenido+=`<section class="panel section"><h2 style="background:${fondo};color:#000!important;padding:10px;border-radius:8px">Categoría ${esc(g.cat)} · ${esc(g.genero)} · Zona ${esc(g.zona)}</h2><p class="status">${jugados} de ${g.partidos.length} partidos con resultado · ${completo?'Zona completa':'Clasificación provisoria'}</p>${tabla}${posiciones13Diagnostico(g)}${completo&&ordenados.find(z=>z.cat===g.cat&&z.genero===g.genero)===g?posiciones13EstadoCruces(g):!completo?'<p class="muted">Faltan resultados: la clasificación de zona es provisoria.</p>':''}</section>`;
  }
  return panel('Posiciones por zona',`<p class="muted">Cada zona se ordena por coeficiente (Coef. = PTS ÷ PJ). En caso de empate se comparan, en este orden, victorias, diferencia de sets y diferencia de tantos, todos por partido jugado. Si persiste el empate, se aplica el orden alfabético. Los equipos sin partidos jugados aparecen al final. Una victoria suma 3 puntos, una derrota 1–2 suma 2 y una derrota 0–2 suma 1. Los W.O. confirmados cuentan como partidos jugados, sin sumar sets ni tantos.</p>${selector}`)+contenido;
 }
 function posiciones13EstadoCruces(g){
- // No confundir la finalización de una zona con la confirmación de las eliminatorias.
- const norm=v=>String(v??'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
- const oficiales=typeof resultados12Partidos==='function'?resultados12Partidos():[];
- const cruces=oficiales.filter(p=>norm(String(p.categoria).replace(/^\+/,''))===norm(String(g.cat).replace(/^\+/,''))&&norm(p.genero)===norm(g.genero)&&!g.partidos.some(z=>resultados12Clave(z)===resultados12Clave(p))&&/final|semi|cuarto|cruce|clasificaci|tercer|bronce|oro|plata/i.test([p.ronda,p.zona,p.titulo,p.tituloCruce].join(' ')));
- if(!cruces.length)return '<p class="status">Resultados de zona completos. Posiciones calculadas. Sin cruces eliminatorios confirmados en el fixture oficial.</p>';
+ // Estado único de los cruces de la categoría: no depende de la zona mostrada.
+ const cat='+'+String(g.cat).replace(/^\+/,''),genero=ncP13Normalizar(g.genero);
+ const zonasValidas=new Set(zonasConfirmadasFixture().filter(z=>'+'+String(z.cat).replace(/^\+/, '')===cat&&ncP13Normalizar(z.genero)===genero).map(z=>ncP13Normalizar(z.zona)));
+ const cruces=resultados12Partidos().filter(p=>'+'+String(p.categoria).replace(/^\+/, '')===cat&&ncP13Normalizar(p.genero||'Mixto')===genero&&ncP13EsCruce(p,zonasValidas));
+ if(!cruces.length)return '<p class="status">Resultados de zona completos. Posiciones calculadas. No se registran cruces oficiales para esta categoría.</p>';
  const finalizados=cruces.filter(p=>{const r=resultados12Existente(p);return r&&String(r.estado).trim()==='CONFIRMADO'}).length;
- return `<p class="status">Resultados de zona completos. Posiciones calculadas. Cruces oficiales: ${cruces.length}; con resultado confirmado: ${finalizados}.</p>`;
+ return `<p class="status">Resultados de zona completos. Posiciones calculadas. Cruces oficiales de la categoría: ${cruces.length}; con resultado confirmado: ${finalizados}.</p>`;
 }
 function posiciones13Activar(){const b=$('#p13Actualizar');if(b)b.onclick=resultados12Leer;const f=$('#p13Filtro');if(f)f.onchange=()=>{posiciones13Filtro=f.value;render()};}
 
