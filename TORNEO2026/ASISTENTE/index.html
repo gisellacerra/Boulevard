@@ -3507,6 +3507,35 @@ function ncHojaAvisos(p,partidos){
  if(otros.some(q=>[p.a,p.b].some(n=>String(n||'').trim()&&[q.a,q.b].includes(n))))return 'Un participante aparece en dos cruces al mismo horario.';
  return '';
 }
+// Horarios reales por cancha: configuración del torneo + ocupación del fixture y de otros cruces.
+function ncHojaDisponibilidad(p,partidos,fecha){
+ const dia=programaFechas().indexOf(fecha);
+ const cantidad=Math.max(1,Number(settings.canchas)||4);
+ const bloque=Math.max(1,Number(settings.duracion||50)+Number(settings.intervalo||10));
+ const ventana=ventanasTorneo()[dia];
+ const horario=x=>String(x||'').slice(0,5);
+ const minuto=x=>{const m=/^(\d{1,2}):(\d{2})/.exec(String(x||''));return m?Number(m[1])*60+Number(m[2]):NaN;};
+ const formato=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+ const ocupados=[...(Array.isArray(fixture)?fixture:[]).filter(x=>String(x.id)!=='cruce-hoja-'+p.id),
+   ...(Array.isArray(fixtureSnapshot?.filas)?fixtureSnapshot.filas:[]).filter(x=>!fixture.some(y=>String(y.id)===String(x.id))),
+   ...partidos.filter(x=>x.id!==p.id)];
+ const resultado={};
+ for(let c=1;c<=cantidad;c++){
+  let turnos=[];
+  const disp=fx3Disponibilidad?.[dia+1]?.[c];
+  if(disp&&typeof ncFranjasCancha==='function'){
+   for(const [ini,fin] of ncFranjasCancha(disp))for(let m=ini;m+bloque<=fin;m+=bloque)turnos.push(formato(m));
+  }else if(ventana){
+   const ini=minuto(ventana[0]),fin=minuto(ventana[1]);
+   for(let m=ini;Number.isFinite(m)&&m+bloque<=fin&&turnos.length<100;m+=bloque)turnos.push(formato(m));
+  }
+  resultado[String(c)]=[...new Set(turnos)].filter(h=>!ocupados.some(x=>String(x.fecha||x.dia||'').slice(0,10)===fecha&&Number(String(x.cancha||'').match(/\d+/)?.[0])===c&&horario(x.hora||x.horario)===h));
+ }
+ // No perder el horario ya asignado al partido que se está editando.
+ if(p.fecha===fecha&&p.hora&&p.cancha){const c=String(p.cancha);if(resultado[c]&&!resultado[c].includes(horario(p.hora)))resultado[c].push(horario(p.hora));}
+ Object.values(resultado).forEach(a=>a.sort((x,y)=>minuto(x)-minuto(y)));
+ return resultado;
+}
 function ncHojaRender(){
  const categorias=ncHojaCategorias();if(!categorias.includes(ncHojaCategoria))ncHojaCategoria=categorias[0];
  const grupos=ncHojaDatos(),partidos=grupos.flatMap(g=>g.partidos);
@@ -3523,7 +3552,7 @@ function ncHojaRender(){
  const activa=grupos.find(g=>g.id===window.ncHojaActiva);
  const tabs=grupos.map((g,i)=>`<div class="nc-h-tab-wrap"><button type="button" class="nc-h-tab ${g.id===window.ncHojaActiva?'active':''}" data-h-action="select-stage" data-h-id="${esc(g.id)}">${esc(g.titulo||'Etapa')} <small>${g.partidos.length}</small></button><button type="button" class="nc-h-stage-move" title="Mover etapa hacia arriba" data-h-action="up" data-h-id="${esc(g.id)}" ${i===0?'disabled':''}>↑</button><button type="button" class="nc-h-stage-move" title="Mover etapa hacia abajo" data-h-action="down" data-h-id="${esc(g.id)}" ${i===grupos.length-1?'disabled':''}>↓</button></div>`).join('');
  const sel=(g,p,field,value,opts,placeholder)=>`<select data-h-field="${field}" data-h-id="${esc(g.id)}" data-h-p="${esc(p.id)}"><option value="">${placeholder}</option>${opts.map(x=>`<option value="${esc(x)}" ${String(value||'')===String(x)?'selected':''}>${esc(x)}</option>`).join('')}</select>`;
- const cards=activa?activa.partidos.map((p,j)=>{const editando=!!p.editando;const aviso=ncHojaAvisos(p,partidos);const programado=!!(p.fecha&&p.hora&&p.cancha);return `<article class="nc-h-card nc-h-card-new"><div class="nc-h-cardtop"><div><span class="nc-h-kicker">${esc(p.titulo||'Partido '+(j+1))}</span><span class="nc-h-status ${programado?'':'nc-h-pending'}">${programado?'Programado':'Pendiente de programación'}</span></div><button type="button" class="nc-h-small" data-h-action="edit-match" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}">${editando?'Cerrar edición':'✎ Editar'}</button></div><div class="nc-h-matchup"><div class="nc-h-team">${escudo(p.a)}<span>${esc(p.a||'Seleccionar participante')}</span></div><span class="nc-h-versus">VS</span><div class="nc-h-team">${escudo(p.b)}<span>${esc(p.b||'Seleccionar participante')}</span></div></div><div class="nc-h-schedule">${programado?`${esc(p.fecha)} · ${esc(p.hora)} · Cancha ${esc(p.cancha)}`:'Fecha, horario y cancha sin completar'}</div>${editando?`<div class="nc-h-editor"><label>Nombre del partido<input data-h-field="titulo" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}" value="${esc(p.titulo||'')}"></label><div class="nc-h-pair"><label>Participante 1<input list="ncHojaEquipos" data-h-field="a" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}" value="${esc(p.a||'')}" placeholder="Equipo o referencia libre"></label><span class="nc-h-versus">vs.</span><label>Participante 2<input list="ncHojaEquipos" data-h-field="b" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}" value="${esc(p.b||'')}" placeholder="Equipo o referencia libre"></label></div><div class="nc-h-program"><label>Fecha${sel(activa,p,'fecha',p.fecha,fechas,'Seleccionar jornada')}</label><label>Horario<input type="time" data-h-field="hora" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}" value="${esc(p.hora||'')}"></label><label>Cancha${sel(activa,p,'cancha',p.cancha,canchas,'Seleccionar cancha')}</label></div><div class="nc-h-editfoot"><span>Podés escribir el nombre de un equipo o una referencia.</span><button type="button" class="nc-h-small" data-h-action="delete-match" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}">Eliminar partido</button></div></div>`:''}${aviso?`<div class="nc-h-warn">⚠ ${esc(aviso)}</div>`:''}</article>`}).join(''):'<div class="nc-h-vacio">Creá una etapa para comenzar.</div>';
+ const cards=activa?activa.partidos.map((p,j)=>{const editando=!!p.editando;const aviso=ncHojaAvisos(p,partidos);const programado=!!(p.fecha&&p.hora&&p.cancha);const disponibilidad=ncHojaDisponibilidad(p,partidos,p.fecha);const canchasLibres=canchas.filter(c=>disponibilidad[c]?.length);const canchaElegida=String(p.cancha||'');const canchasElegibles=[...new Set([...canchasLibres,...(canchaElegida?[canchaElegida]:[])])];const horasLibres=disponibilidad[canchaElegida]||[];return `<article class="nc-h-card nc-h-card-new"><div class="nc-h-cardtop"><div><span class="nc-h-kicker">${esc(p.titulo||'Partido '+(j+1))}</span><span class="nc-h-status ${programado?'':'nc-h-pending'}">${programado?'Programado':'Pendiente de programación'}</span></div><button type="button" class="nc-h-small" data-h-action="edit-match" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}">${editando?'Cerrar edición':'✎ Editar'}</button></div><div class="nc-h-matchup"><div class="nc-h-team">${escudo(p.a)}<span>${esc(p.a||'Seleccionar participante')}</span></div><span class="nc-h-versus">VS</span><div class="nc-h-team">${escudo(p.b)}<span>${esc(p.b||'Seleccionar participante')}</span></div></div><div class="nc-h-schedule">${programado?`${esc(p.fecha)} · ${esc(p.hora)} · Cancha ${esc(p.cancha)}`:'Fecha, horario y cancha sin completar'}</div>${editando?`<div class="nc-h-editor"><label>Nombre del partido<input data-h-field="titulo" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}" value="${esc(p.titulo||'')}"></label><div class="nc-h-pair"><label>Participante 1<input list="ncHojaEquipos" data-h-field="a" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}" value="${esc(p.a||'')}" placeholder="Equipo o referencia libre"></label><span class="nc-h-versus">vs.</span><label>Participante 2<input list="ncHojaEquipos" data-h-field="b" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}" value="${esc(p.b||'')}" placeholder="Equipo o referencia libre"></label></div><div class="nc-h-program"><label>Fecha${sel(activa,p,'fecha',p.fecha,fechas,'Seleccionar jornada')}</label><label>Cancha${sel(activa,p,'cancha',p.cancha,canchasElegibles,'Seleccionar cancha disponible')}</label><label>Horario${sel(activa,p,'hora',p.hora,horasLibres,canchaElegida?'Seleccionar horario libre':'Elegí una cancha primero')}</label></div><div class="nc-h-editfoot"><span>Podés escribir el nombre de un equipo o una referencia.</span><button type="button" class="nc-h-small" data-h-action="delete-match" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}">Eliminar partido</button></div></div>`:''}${aviso?`<div class="nc-h-warn">⚠ ${esc(aviso)}</div>`:''}</article>`}).join(''):'<div class="nc-h-vacio">Creá una etapa para comenzar.</div>';
  return `<section class="nc-hoja nc-hoja-vista" aria-label="Organización de cruces"><header class="nc-hoja-barra"><div><h2>Cruces <span class="nc-h-badge">Borrador</span></h2><p>Organización de etapas y programación de partidos</p></div><label>Categoría <select id="ncHojaCat">${categorias.map(c=>`<option value="${esc(c)}" ${c===ncHojaCategoria?'selected':''}>${esc(c.replace('|',' · '))}</option>`).join('')}</select></label></header><div class="nc-hoja-main">${sugerencias}<section class="nc-h-zone"><div class="nc-h-zone-title"><strong>1. Etapas</strong><button type="button" class="nc-h-primary" data-h-action="add-section">+ Nueva etapa</button></div><div class="nc-h-tabs">${tabs||'<span class="nc-h-vacio">Todavía no hay etapas.</span>'}</div></section><section class="nc-h-zone"><div class="nc-h-zone-title"><strong>2. Partidos de la etapa seleccionada</strong>${activa?`<span class="nc-h-count">${activa.partidos.length} ${activa.partidos.length===1?'partido':'partidos'}</span>`:''}</div>${activa?`<div class="nc-h-stage-heading"><h3>${esc(activa.titulo)}</h3><div><button type="button" class="nc-h-small" data-h-action="rename" data-h-id="${esc(activa.id)}">Renombrar</button><button type="button" class="nc-h-small" data-h-action="delete-section" data-h-id="${esc(activa.id)}">Eliminar etapa</button></div></div>`:''}<div class="nc-h-cards">${cards||'<div class="nc-h-vacio">Esta etapa todavía no tiene partidos.</div>'}</div>${activa?`<button type="button" class="nc-h-add-match" data-h-action="add-match" data-h-id="${esc(activa.id)}">+ Agregar partido</button>`:''}</section><section class="nc-h-zone nc-h-control"><div class="nc-h-zone-title"><strong>3. Control de programación</strong></div><div class="nc-h-check">✓ ${partidos.length-incompletos.length} partidos completos de ${partidos.length}</div><div class="nc-h-check">${conflictos?'⚠ '+conflictos+' avisos de conflicto':'✓ Sin conflictos detectados entre los cruces'}</div><div class="nc-h-check">${incompletos.length?'○ '+incompletos.length+' partidos pendientes':'✓ Todos los partidos completos'}</div></section><div class="nc-h-bottom"><span>Borrador · Sin confirmar</span><div class="nc-h-actions"><button type="button" class="nc-h-primary" data-h-action="review">Revisar cruces</button><button type="button" class="nc-h-primary" data-h-action="integrate">Agregar al Fixture</button></div></div><p class="nc-h-nota">Los partidos se incorporan al borrador del Fixture. Para hacerlos oficiales, revisá y confirmá el Fixture desde su sección.</p></div></section>`;
 }
 function ncHojaIntegrar(){
@@ -3558,8 +3587,9 @@ function ncHojaIntegrar(){
  ncEditorFixtureSeleccion=null;
  ncEditorBloqueSeleccionado=null;
  saveDraft();
- avisoIntegrado(nuevos.length+' partidos incorporados al borrador del Fixture. Abrí Fixture para revisarlos antes de confirmar.');
+ avisoIntegrado(nuevos.length+' partidos incorporados al borrador del Fixture. Revisalos antes de confirmar.');
  ncHojaActualizar();
+ navigate('fixture');
 }
 
 function ncHojaActivar(){
@@ -3568,7 +3598,7 @@ function ncHojaActivar(){
   if(e.target.id==='ncHojaCat'){ncHojaCategoria=e.target.value;ncHojaActualizar();return;}
   const f=e.target.dataset.hField;if(!f)return;
   const g=ncHojaDatos().find(x=>x.id===e.target.dataset.hId),p=g?.partidos.find(x=>x.id===e.target.dataset.hP);
-  if(p){p[f]=e.target.value;ncHojaGuardar();}
+  if(p){p[f]=e.target.value;if(f==='fecha'||f==='cancha')p.hora='';ncHojaGuardar();if(['fecha','cancha','hora'].includes(f))ncHojaActualizar();}
  });
  root.addEventListener('input',e=>{
   const f=e.target.dataset.hField;if(!f)return;
