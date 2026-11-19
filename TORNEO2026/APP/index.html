@@ -553,7 +553,28 @@ function ncAplicarDatos(d){
   }
   return '';
  };
- for(const m of matches){const instancia=ncEtapaDetectar(m.zona,m.ronda);if(instancia){m.instancia=instancia;m.partido='';}}
+ // En la edición 2026, Mixto +60, las rondas 15-19 y 22 fueron guardadas
+ // como cruces interzonales (A-C, B-A, C-B) y no con su instancia real.
+ // Resolver SOLO estos partidos oficiales; no reinterpretar interzonales normales.
+ const ncCruces60_2026=new Map([
+  ['Tormenta de Arena|Impacto','PRELIMINAR'],
+  ['Los Lobos|Tormenta de Arena','CUARTOS'],
+  ['Boulevard|Galo Martínez','CUARTOS'],
+  ['Rio New|C.A.I. Club Atlético Independiente','CUARTOS'],
+  ['Almas Libres Newcom|La Lucinda','CUARTOS'],
+  ['Los Lobos|Rio New','FINAL']
+ ]);
+ const ncNombreCruce=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLocaleLowerCase('es-AR').replace(/\s+/g,' ');
+ const ncCruces60Claves=new Map([...ncCruces60_2026].map(([pareja,etapa])=>[pareja.split('|').map(ncNombreCruce).sort().join('|'),etapa]));
+ for(const m of matches){
+  let instancia=ncEtapaDetectar(m.zona,m.ronda);
+  const ronda=Number(m.ronda);
+  const fecha=normalizedDate(m.fecha);
+  if(!instancia&&m.cat==='+60'&&ncEtapaNormalizar(m.genero)==='mixto'&&fecha==='2026-11-22'&&[15,16,17,18,19,22].includes(ronda)){
+   instancia=ncCruces60Claves.get([ncNombreCruce(m.a),ncNombreCruce(m.b)].sort().join('|'))||'';
+  }
+  if(instancia){m.instancia=instancia;m.partido='';}
+ }
 
  ncCruces=Array.isArray(d.cruces)?d.cruces:[];
  // Si el mismo partido está en FIXTURE y CRUCES_ADMIN, mostrarlo una sola vez.
