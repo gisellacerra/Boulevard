@@ -4448,15 +4448,29 @@ async function ncAbrirResultadoDesdeFixture(b){if(ncPlanArrastre){avisoIntegrado
   const datos=await ncResultadosConsultarRapido();
   if(!datos||!Array.isArray(datos.partidos))throw new Error('No se recibió la lista de partidos desde Resultados.');
   resultados12Datos=datos;
+  // Asociar exclusivamente con partidos confirmados del backend. La programación
+  // puede cambiar después de confirmar: la fecha y la hora son desempates, no ID.
   const todos=resultados12Partidos();
-  const mismos=todos.filter(p=>cat(p.categoria)===cat(info.categoria)&&norm(p.local)===norm(info.local)&&norm(p.visitante)===norm(info.visitante));
-  const porFecha=mismos.filter(p=>fecha(p.fecha)===fecha(info.fecha));
+  const participantes=p=>[norm(p.local||p.equipoA||p.equipo1),norm(p.visitante||p.equipoB||p.equipo2)];
+  const mismoPar=p=>{const [a,b]=participantes(p);return (a===norm(info.local)&&b===norm(info.visitante))||(a===norm(info.visitante)&&b===norm(info.local));};
+  const mismoGenero=p=>!info.genero||!p.genero||norm(p.genero)===norm(info.genero);
+  const candidatos=todos.filter(p=>cat(p.categoria)===cat(info.categoria)&&mismoPar(p)&&mismoGenero(p));
+  const porFecha=candidatos.filter(p=>fecha(p.fecha)===fecha(info.fecha));
   const porHora=porFecha.filter(p=>String(p.hora||'').slice(0,5)===String(info.hora||'').slice(0,5));
-  // No seleccionar al azar cuando existen varios partidos entre los mismos equipos.
-  const partido=porHora.length===1?porHora[0]:porFecha.length===1?porFecha[0]:mismos.length===1?mismos[0]:null;
+  const elegir=lista=>lista.length===1?lista[0]:null;
+  let partido=elegir(porHora)||elegir(porFecha)||elegir(candidatos);
   if(!partido){
-   const sinConfirmar=(datos.partidos||[]).some(p=>cat(p.categoria)===cat(info.categoria)&&norm(p.local)===norm(info.local)&&norm(p.visitante)===norm(info.visitante));
-   mostrarDialogoZonas({titulo:'Resultado no disponible',detalle:info.local+' vs '+info.visitante,advertencia:sinConfirmar?'El partido figura en el sistema, pero aún no está confirmado para cargar resultados.':'Este partido no aparece entre los partidos confirmados del módulo Resultados. Puede faltar sincronizar la confirmación del Fixture con Resultados. No es necesario borrar el Fixture; revisá la sincronización antes de volver a confirmar.',soloAceptar:true});
+   // Evitar que una precarga anterior a la confirmación produzca falsos negativos.
+   ncResultadosPrecarga=null;ncResultadosPrecargaHora=0;
+   const actualizados=await ncResultadosConsultarRapido();
+   resultados12Datos=actualizados;
+   const candidatosActuales=resultados12Partidos().filter(p=>cat(p.categoria)===cat(info.categoria)&&mismoPar(p)&&mismoGenero(p));
+   partido=elegir(candidatosActuales.filter(p=>fecha(p.fecha)===fecha(info.fecha)&&String(p.hora||'').slice(0,5)===String(info.hora||'').slice(0,5)))||elegir(candidatosActuales.filter(p=>fecha(p.fecha)===fecha(info.fecha)))||elegir(candidatosActuales);
+  }
+  if(!partido){
+   const similares=(resultados12Datos.partidos||[]).filter(p=>cat(p.categoria)===cat(info.categoria)&&mismoPar(p));
+   const ambiguo=similares.filter(p=>String(p.estado||'').trim()==='CONFIRMADO').length>1;
+   mostrarDialogoZonas({titulo:'Resultado no disponible',detalle:info.local+' vs '+info.visitante,advertencia:ambiguo?'Hay varios partidos confirmados entre estos equipos. No se puede seleccionar uno sin riesgo de cargar un resultado incorrecto.':similares.length?'El partido está registrado, pero no figura como confirmado en Resultados. Revisá la sincronización del backend.':'El partido no figura en Resultados, aunque aparezca en la grilla. La confirmación del Fixture y el módulo Resultados deben sincronizarse en Google Apps Script; no borres el Fixture.',soloAceptar:true});
    return;
   }
  resultados12Seleccion=resultados12Clave(partido);
