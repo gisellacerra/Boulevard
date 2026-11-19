@@ -4290,10 +4290,14 @@ function ncCokiConfirmar(){
  if(!fixture.length){avisoIntegrado('No hay partidos en el borrador.');return;}
  if(!ncCokiRevision){avisoIntegrado('Primero guardá los partidos y esperá la sincronización.');return;}
  if(!window.google?.script?.run){avisoIntegrado('No hay conexión con el servicio de datos.');return;}
+ // Normalizar únicamente para verificar: Sheets puede devolver 9:00 en vez de 09:00.
+ const ncVerificarHora=v=>{const m=String(v??'').trim().match(/^(\d{1,2}):(\d{1,2})(?::\d{1,2})?$/);return m?m[1].padStart(2,'0')+':'+m[2].padStart(2,'0'):String(v??'').trim();};
+ const ncVerificarFecha=v=>{const t=String(v??'').trim();const m=t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);return m?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):t.slice(0,10);};
+ const ncVerificarNombre=v=>String(v??'').trim().replace(/\s+/g,' ');
  const esperados=fixture.map(p=>({
-  fecha:String(p.fecha||'').slice(0,10),hora:String(p.hora||'').slice(0,5),
-  cancha:Number(p.cancha),local:String(p.local||p.equipoA||'').trim(),
-  visitante:String(p.visitante||p.equipoB||'').trim()
+  fecha:ncVerificarFecha(p.fecha),hora:ncVerificarHora(p.hora),
+  cancha:Number(p.cancha),local:ncVerificarNombre(p.local||p.equipoA),
+  visitante:ncVerificarNombre(p.visitante||p.equipoB)
  }));
  const clave=p=>[p.fecha,p.hora,p.cancha,p.local,p.visitante].join('|');
  const firmaEsperada=esperados.map(clave).sort();
@@ -4305,8 +4309,8 @@ function ncCokiConfirmar(){
   google.script.run.withSuccessHandler(datos=>{
    const filas=Array.isArray(datos?.filas)?datos.filas:[];
    const actuales=filas.filter(x=>String(x.anio)===String(settings.anio)&&String(x.edicion)===String(settings.edicion))
-    .map(x=>({fecha:String(x.fecha||'').slice(0,10),hora:String(x.hora||'').slice(0,5),
-     cancha:Number(x.cancha),local:String(x.local||'').trim(),visitante:String(x.visitante||'').trim()}));
+    .map(x=>({fecha:ncVerificarFecha(x.fecha),hora:ncVerificarHora(x.hora),
+     cancha:Number(x.cancha),local:ncVerificarNombre(x.local),visitante:ncVerificarNombre(x.visitante)}));
    const firmaActual=actuales.map(clave).sort();
    if(JSON.stringify(firmaActual)!==JSON.stringify(firmaEsperada)){
     // Informar exactamente qué partido difiere. No marcar confirmado ni abrir Resultados.
