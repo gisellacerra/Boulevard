@@ -990,18 +990,23 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  const coeficiente=t=>(t.pts/t.pj).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
  window.ncPosAbrir=function(id){const t=window.ncPosRows?.[id];if(!t)return;close();const e=document.createElement('div');e.id='nc-pos-modal';e.className='nc-pos-modal';e.setAttribute('role','presentation');e.innerHTML=`<section class="nc-pos-dialog" role="dialog" aria-modal="true" aria-label="Posiciones de ${esc(t.name)}"><button class="nc-pos-close" onclick="ncPosCerrar()" aria-label="Cerrar">×</button>${shield(t.logo,true)}<h2>${esc(t.name)}</h2><div class="nc-pos-sub">${esc(t.cat)} · ${esc(t.zona)}</div><div class="nc-pos-total">${coeficiente(t)}<small>COEFICIENTE</small></div><p class="nc-pos-puesto">Posición en su zona: <strong>${t.puesto}º</strong></p></section>`;e.addEventListener('click',ev=>{if(ev.target===e)close()});document.body.appendChild(e);document.body.style.overflow='hidden';e.querySelector('button').focus();};
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('nc-pos-modal'))close()});
- standings=function(){const groups=new Map(),logos=new Map();for(const m of matches){if(validLogo(m.escudoLocal))logos.set(m.cat+'|'+m.a,m.escudoLocal);if(validLogo(m.escudoVisitante))logos.set(m.cat+'|'+m.b,m.escudoVisitante);}
+ standings=function(){const groups=new Map(),logos=new Map();
+ // La zona oficial pertenece al equipo; las etiquetas de partidos interzonales no crean nuevas tablas.
+ const normalizar=v=>String(v||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('es-AR');
+ const zonasEquipos=new Map();
+ for(const t of teams){const z=String(t.zona||'').trim().replace(/^zona\s+/i,'');if(z)zonasEquipos.set(JSON.stringify([t.cat,normalizar(t.name)]),z);}
+ for(const m of matches){if(validLogo(m.escudoLocal))logos.set(m.cat+'|'+m.a,m.escudoLocal);if(validLogo(m.escudoVisitante))logos.set(m.cat+'|'+m.b,m.escudoVisitante);}
  for(const m of matches.filter(completed)){
   if(category!=='Todas'&&m.cat!==category)continue;
   const a=Number(m.resultado.setsLocal),b=Number(m.resultado.setsVisitante);
   if(!Number.isFinite(a)||!Number.isFinite(b)||a===b)continue;
   const zona=String(m.zona||'').trim()||'General';
   const interzonal=/^INTERZONAL\s+(.+?)\s*[×x]\s*(.+)$/i.exec(zona);
-  const zonas=interzonal?interzonal.slice(1).map(z=>z.trim()):[zona,zona];
+  const zonas=interzonal?interzonal.slice(1).map(z=>z.trim().replace(/^zona\s+/i,'')):[zona.replace(/^zona\s+/i,''),zona.replace(/^zona\s+/i,'')];
   const genero=String(m.genero||'').trim();
   const ps=pairs(m.resultado);
   for(const [lado,name] of [m.a,m.b].entries()){
-   const zonaEquipo=zonas[lado];
+   const zonaEquipo=zonasEquipos.get(JSON.stringify([m.cat,normalizar(name)]))||zonas[lado];
    const key=JSON.stringify([m.cat,genero,zonaEquipo]);
    if(!groups.has(key))groups.set(key,{cat:m.cat,genero,zona:zonaEquipo,items:new Map()});
    const items=groups.get(key).items;
