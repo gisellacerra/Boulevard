@@ -3427,13 +3427,10 @@ function posiciones13Render(){
  return panel('Posiciones por zona',`<p class="muted">Cada zona se ordena por coeficiente (Coef. = PTS ÷ PJ). En caso de empate se comparan, en este orden, victorias, diferencia de sets y diferencia de tantos, todos por partido jugado. Si persiste el empate, se aplica el orden alfabético. Los equipos sin partidos jugados aparecen al final. Una victoria suma 3 puntos, una derrota 1–2 suma 2 y una derrota 0–2 suma 1. Los W.O. confirmados cuentan como partidos jugados, sin sumar sets ni tantos.</p>${selector}`)+contenido;
 }
 function posiciones13EstadoCruces(g){
- // Estado único de los cruces de la categoría: no depende de la zona mostrada.
- const cat='+'+String(g.cat).replace(/^\+/,''),genero=ncP13Normalizar(g.genero);
- const zonasValidas=new Set(zonasConfirmadasFixture().filter(z=>'+'+String(z.cat).replace(/^\+/, '')===cat&&ncP13Normalizar(z.genero)===genero).map(z=>ncP13Normalizar(z.zona)));
- const cruces=resultados12Partidos().filter(p=>'+'+String(p.categoria).replace(/^\+/, '')===cat&&ncP13Normalizar(p.genero||'Mixto')===genero&&ncP13EsCruce(p,zonasValidas));
- if(!cruces.length)return '<p class="status">Resultados de zona completos. Posiciones calculadas. No se registran cruces oficiales para esta categoría.</p>';
- const finalizados=cruces.filter(p=>{const r=resultados12Existente(p);return r&&String(r.estado).trim()==='CONFIRMADO'}).length;
- return `<p class="status">Resultados de zona completos. Posiciones calculadas. Cruces oficiales de la categoría: ${cruces.length}; con resultado confirmado: ${finalizados}.</p>`;
+ // Esta pantalla calcula exclusivamente posiciones de fase de zonas.
+ // No inferir el total de eliminatorias desde resultados12Partidos(),
+ // porque esa consulta puede no incluir todas las etapas de Cruces.
+ return '<p class="status">Resultados de zona completos. Posiciones calculadas. Los cruces eliminatorios y el podio se consultan en la sección Cruces.</p>';
 }
 function posiciones13Activar(){const b=$('#p13Actualizar');if(b)b.onclick=resultados12Leer;const f=$('#p13Filtro');if(f)f.onchange=()=>{posiciones13Filtro=f.value;render()};}
 
