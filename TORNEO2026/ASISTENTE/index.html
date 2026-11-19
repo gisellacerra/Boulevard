@@ -4271,7 +4271,7 @@ function ncCokiConfirmar(){
  if(!confirm('¿Confirmar '+esperados.length+' partidos y actualizar el fixture oficial?'))return;
  google.script.run.withSuccessHandler(r=>{
   if(!r||r.ok!==true||Number(r.cantidad)!==esperados.length){
-   avisoIntegrado('No se pudo verificar la cantidad de partidos confirmados. Revisá la tabla FIXTURE.');return;
+   const detalle=r==null?'El servidor no devolvió respuesta.':('Respuesta del servidor: '+JSON.stringify(r).slice(0,500));avisoIntegrado('No se pudo verificar la confirmación. Se esperaban '+esperados.length+' partidos. '+detalle+' Revisá la tabla FIXTURE.');return;
   }
   google.script.run.withSuccessHandler(datos=>{
    const filas=Array.isArray(datos?.filas)?datos.filas:[];
