@@ -4293,7 +4293,16 @@ function ncCokiConfirmar(){
      cancha:Number(x.cancha),local:String(x.local||'').trim(),visitante:String(x.visitante||'').trim()}));
    const firmaActual=actuales.map(clave).sort();
    if(JSON.stringify(firmaActual)!==JSON.stringify(firmaEsperada)){
-    avisoIntegrado('ATENCIÓN: la lectura del fixture oficial no coincide con el borrador. No se marcará como confirmado. Revisá la hoja FIXTURE.');return;
+    // Informar exactamente qué partido difiere. No marcar confirmado ni abrir Resultados.
+    const faltantes=[...firmaEsperada],sobrantes=[];
+    for(const firma of firmaActual){const i=faltantes.indexOf(firma);if(i>=0)faltantes.splice(i,1);else sobrantes.push(firma);}
+    const detalle=(firma)=>{const [fecha,hora,cancha,local,visitante]=firma.split('|');return `${local} vs ${visitante} · ${fecha} ${hora} · Cancha ${cancha}`;};
+    const resumen=['Esperados: '+esperados.length+' · Leídos en FIXTURE: '+actuales.length];
+    if(faltantes.length)resumen.push('Faltan o difieren ('+faltantes.length+'): '+faltantes.slice(0,3).map(detalle).join(' / '));
+    if(sobrantes.length)resumen.push('Figuran distintos ('+sobrantes.length+'): '+sobrantes.slice(0,3).map(detalle).join(' / '));
+    console.warn('Diferencia entre borrador y FIXTURE',{esperados,actuales,faltantes,sobrantes});
+    mostrarDialogoZonas({titulo:'Fixture sin confirmar',detalle:'La verificación detectó diferencias.',advertencia:resumen.join(' | '),soloAceptar:true});
+    return;
    }
    ncFixtureLimpiarPendiente();
    ncEditorBorradorManual=false;
@@ -4443,7 +4452,12 @@ function ncResultadosConsultarRapido(){
  }).withFailureHandler(reject).adminResultados12Consultar()).finally(()=>{ncResultadosPrecargaPromesa=null});
  return ncResultadosPrecargaPromesa;
 }
-async function ncAbrirResultadoDesdeFixture(b){if(ncPlanArrastre){avisoIntegrado('Guardá o descartá los cambios de horarios antes de cargar resultados.');return}
+async function ncAbrirResultadoDesdeFixture(b){
+ if(ncFixtureEstaPendiente()||ncEditorBorradorManual||ncCokiGuardando||ncCokiPendiente){
+  mostrarDialogoZonas({titulo:'Fixture sin confirmar',detalle:'No se pueden cargar resultados de un borrador.',advertencia:'Confirmá el Fixture y verificá que coincida con la hoja FIXTURE antes de cargar marcadores.',soloAceptar:true});
+  return;
+ }
+ if(ncPlanArrastre){avisoIntegrado('Guardá o descartá los cambios de horarios antes de cargar resultados.');return}
  let info;try{info=JSON.parse(decodeURIComponent(b.dataset.ncResultado))}catch(e){return}
  if(b.dataset.ncAbriendo==='1')return;
  b.dataset.ncAbriendo='1';
