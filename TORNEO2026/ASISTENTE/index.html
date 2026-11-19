@@ -3609,24 +3609,34 @@ function ncHojaDisponibilidad(p,partidos,fecha){
  return resultado;
 }
 function ncHojaPodio(etapa, grupos){
- // Se muestra únicamente con resultados confirmados del fixture oficial.
- const nombre=String(etapa?.titulo||'').toLowerCase();
- if(!/final|semi/.test(nombre))return '';
+ // Podio general: únicamente al completar la final y el partido por el tercer puesto.
+ // No inferir puestos a partir de partidos preliminares ni de semifinales.
+ const nombre=String(etapa?.titulo||'').trim().toLocaleLowerCase('es');
+ if(!/^(final(?:es)?|definiciones|final por el oro)(?:\s|$)/i.test(nombre))return '';
  const partes=ncHojaCategoria.split('|');
  const oficiales=typeof resultados12Partidos==='function'?resultados12Partidos():[];
  const normal=x=>String(x||'').trim().toLocaleLowerCase('es');
- const buscar=(p)=>{
-  const x=oficiales.find(f=>normal(f.local)===normal(p.a)&&normal(f.visitante)===normal(p.b)&&normal(String(f.categoria).replace(/^\+/,''))===normal(String(partes[0]).replace(/^\+/,''))&&normal(f.genero)===normal(partes[1]||'Mixto'));
-  return x?resultados12Existente(x):null;
+ const buscar=p=>{
+  const x=oficiales.find(f=>
+   ((normal(f.local)===normal(p.a)&&normal(f.visitante)===normal(p.b))||
+    (normal(f.local)===normal(p.b)&&normal(f.visitante)===normal(p.a)))&&
+   normal(String(f.categoria).replace(/^\+/,''))===normal(String(partes[0]).replace(/^\+/,''))&&
+   normal(f.genero)===normal(partes[1]||'Mixto'));
+  return x&&typeof resultados12Existente==='function'?resultados12Existente(x):null;
  };
  const todas=grupos.flatMap(g=>g.partidos.map(p=>({...p,etapa:g.titulo})));
- const final=todas.find(p=>/final/i.test(p.etapa)&&!/semi|tercer|3\.?|bronce/i.test(String(p.titulo||'')));
- const tercero=todas.find(p=>/tercer|3\.?\s*(puesto|lugar)|bronce/i.test(String(p.titulo||'')));
- const puesto=(n,ganador,clase,simbolo)=>`<div class="nc-h-puesto"><span class="nc-h-medal ${clase}" aria-hidden="true">${simbolo}</span><div><strong>${n}.º puesto</strong><div><small>${esc(ganador)}</small></div></div></div>`;
- let html='';
- if(/final/.test(nombre)&&!/semi/.test(nombre)&&final){const r=buscar(final);const w=String(r?.ganador||'');if(w&&[final.a,final.b].some(t=>normal(t)===normal(w))){html+=puesto(1,w,'gold','🥇');html+=puesto(2,normal(final.a)===normal(w)?final.b:final.a,'silver','🥈');}}
- if(/semi/.test(nombre)&&tercero){const r=buscar(tercero);const w=String(r?.ganador||'');if(w&&[tercero.a,tercero.b].some(t=>normal(t)===normal(w))){html+=puesto(3,w,'bronze','🥉');html+=puesto(4,normal(tercero.a)===normal(w)?tercero.b:tercero.a,'bronze','4.º');}}
- return html?`<div class="nc-h-podio" aria-label="Posiciones confirmadas">${html}</div>`:'';
+ const esFinal=p=>/^(final(?:\s+por\s+el\s+oro)?|final\s*[-·:]\s*oro)/i.test(String(p.titulo||'').trim())&&!/semi|tercer|3\.?\s*(puesto|lugar)|bronce|clasificaci[oó]n/i.test(String(p.titulo||''));
+ const esTercero=p=>/tercer|3\.?\s*(puesto|lugar)|bronce/i.test(String(p.titulo||''));
+ const final=todas.find(p=>esFinal(p)&&/final|definiciones/i.test(p.etapa));
+ const tercero=todas.find(p=>esTercero(p));
+ if(!final||!tercero)return '';
+ const rf=buscar(final),rt=buscar(tercero);
+ const oro=String(rf?.ganador||''),bronce=String(rt?.ganador||'');
+ if(!oro||!bronce||![final.a,final.b].some(t=>normal(t)===normal(oro))||
+    ![tercero.a,tercero.b].some(t=>normal(t)===normal(bronce)))return '';
+ const plata=normal(final.a)===normal(oro)?final.b:final.a;
+ const puesto=(n,equipo,clase,simbolo)=>`<div class="nc-h-puesto"><span class="nc-h-medal ${clase}" aria-hidden="true">${simbolo}</span><div><strong>${n}.º puesto</strong><div><small>${esc(equipo)}</small></div></div></div>`;
+ return `<div class="nc-h-podio" aria-label="Podio final confirmado">${puesto(1,oro,'gold','🥇')}${puesto(2,plata,'silver','🥈')}${puesto(3,bronce,'bronze','🥉')}</div>`;
 }
 function ncHojaRender(){
  const categorias=ncHojaCategorias();if(!categorias.includes(ncHojaCategoria))ncHojaCategoria=categorias[0];
