@@ -2677,6 +2677,30 @@ function ncAplicarFixtureConsultado(data){
  if(!data||!Array.isArray(data.filas))throw Error('Respuesta de fixture inválida.');
  const pertenece=p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion);
  const habiaConfirmado=Array.isArray(fixtureSnapshot?.filas)&&fixtureSnapshot.filas.some(pertenece);
+ // Conservar los títulos personalizados de los partidos al volver a leer el fixture confirmado.
+ // La tabla remota puede no devolver la columna «titulo» aunque el borrador sí la tenga.
+ const claveTitulo=p=>[
+   String(p.categoria||'').replace(/^\+/,'').trim().toLowerCase(),
+   String(p.genero||'').trim().toLowerCase(),
+   String(p.local||p.equipoA||'').trim().toLowerCase(),
+   String(p.visitante||p.equipoB||'').trim().toLowerCase(),
+   String(p.fecha||p.dia||'').trim(),
+   String(p.hora||p.horario||'').trim().replace(/^(\d):/,'0$1:'),
+   String(p.cancha||'').trim()
+ ].join('|');
+ const claveAlmacen='nc_fixture_titulos_'+settings.anio+'_'+settings.edicion;
+ let titulos={};
+ try{titulos=JSON.parse(localStorage.getItem(claveAlmacen)||'{}')||{}}catch(e){}
+ for(const p of fixture){
+   const titulo=String(p.titulo||p.tituloCruce||'').trim();
+   if(titulo)titulos[claveTitulo(p)]=titulo;
+ }
+ for(const p of data.filas){
+   if(!pertenece(p))continue;
+   const titulo=String(p.titulo||p.tituloCruce||titulos[claveTitulo(p)]||'').trim();
+   if(titulo){p.titulo=titulo;titulos[claveTitulo(p)]=titulo;}
+ }
+ try{localStorage.setItem(claveAlmacen,JSON.stringify(titulos))}catch(e){}
  fixtureSnapshot=data;
  if(!data.filas.some(pertenece)&&(habiaConfirmado||!fx3UltimaPropuesta)&&!ncEditorBorradorManual&&!ncCokiCargando&&!ncCokiGuardando&&!ncCokiPendiente){
   fixture=[];fixtureZonasHuella=null;ncPlanArrastre=null;ncDestellos.clear();fx3UltimaPropuesta=null;
@@ -4799,7 +4823,7 @@ function ncFxConflictoEquipoMismaCategoria(lista){
  for(let i=0;i<lista.length;i++)for(let j=i+1;j<lista.length;j++){
   const p=lista[i],q=lista[j],m=ncFxMin(p.hora),n=ncFxMin(q.hora);
   if(ncFxFecha(p.fecha)!==ncFxFecha(q.fecha)||!Number.isFinite(m)||!Number.isFinite(n)||!(m<n+paso&&n<m+paso))continue;
-  if(String(p.categoria||'').replace(/^\\+/,'')!==String(q.categoria||'').replace(/^\\+/,'')||String(p.genero||'')!==String(q.genero||''))continue;
+  if(String(p.categoria||'').replace(/^\+/,'')!==String(q.categoria||'').replace(/^\+/,'')||String(p.genero||'')!==String(q.genero||''))continue;
   const equipos=[p.local,p.visitante].filter(x=>x&&[q.local,q.visitante].includes(x));
   if(equipos.length)encontrados.push(...equipos);
  }
