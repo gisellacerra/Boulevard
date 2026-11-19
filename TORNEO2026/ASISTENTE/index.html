@@ -4439,6 +4439,29 @@ function ncVistaJornadasFixture(){
 return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ganador||'')};
 
  };
+ // Recuperar títulos de Cruces cuando el fixture oficial no conserva ese metadato.
+ // Prioridad: título oficial, borrador por ID y, por último, coincidencia inequívoca de partido.
+ const ncTituloNormal=v=>String(v||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').toLowerCase();
+ const ncTituloClave=p=>[ncTituloNormal(String(p.categoria||'').replace(/^\+/,'')),ncTituloNormal(p.genero||'Mixto'),ncTituloNormal(p.equipoA||p.local||p.equipo1),ncTituloNormal(p.equipoB||p.visitante||p.equipo2),fechaNormal(p),hora(p),cancha(p)].join('|');
+ const ncTituloFuentes=[];
+ for(const x of Array.isArray(fixture)?fixture:[])if(x.titulo||x.tituloCruce)ncTituloFuentes.push(x);
+ for(const [cat,etapas] of Object.entries(ncHojaEstado||{})){
+  if(!Array.isArray(etapas))continue;
+  const [categoria,genero='Mixto']=cat.split('|');
+  for(const etapa of etapas)for(const q of etapa.partidos||[]){
+   if(!q.titulo&&!etapa.titulo)continue;
+   ncTituloFuentes.push({id:'cruce-hoja-'+q.id,categoria,genero,local:q.a,visitante:q.b,fecha:q.fecha,hora:q.hora,cancha:q.cancha,titulo:q.titulo||etapa.titulo});
+  }
+ }
+ const ncTituloPartido=p=>{
+  const directo=String(p.titulo||p.tituloCruce||'').trim();if(directo)return directo;
+  const id=String(p.id||'');
+  if(id){const porId=ncTituloFuentes.find(q=>String(q.id||'')===id&&String(q.titulo||q.tituloCruce||'').trim());if(porId)return String(porId.titulo||porId.tituloCruce).trim();}
+  const clave=ncTituloClave(p);
+  const coincidencias=ncTituloFuentes.filter(q=>ncTituloClave(q)===clave);
+  const titulos=[...new Set(coincidencias.map(q=>String(q.titulo||q.tituloCruce||'').trim()).filter(Boolean))];
+  return titulos.length===1?titulos[0]:'';
+ };
  const numeroVisiblePartido=p=>{if(p._cruce)return '';const i=base.indexOf(p);return i>=0?String(i+1):''};
  const celda=p=>{if(!p)return '<div class="nc-partidos-celda nc-partidos-vacio nc-partidos-destino" title="Hacé clic para crear un partido"></div>';
   const a=String(p.equipoA||p.local||p.equipo1||'Equipo A'),b=String(p.equipoB||p.visitante||p.equipo2||'Equipo B');
@@ -4457,7 +4480,7 @@ return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ga
   const numeroPartido=numeroVisiblePartido(p);
   const insigniaPartido=numeroPartido?`<span class="nc-partidos-numero" aria-label="Partido número ${numeroPartido}" title="Partido N.º ${numeroPartido}">N.º ${numeroPartido}</span>`:'';
   const marcador=puntos?`<div class="nc-partidos-puntos" aria-label="Puntos por set: ${esc(puntos)}">${esc(puntos)}</div>`:'';
-  return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" ${p._cruce?'draggable="true" data-nc-cruce-confirmado="1"':!datosMarcador?'draggable="true" data-nc-arrastrable="1"':''} role="button" tabindex="0" title="${fx3UltimaPropuesta?'Seleccionar partido del borrador':'Seleccionar partido para editar'}" ${(active==='fixture')?'data-nc-resultado':((ncEditorBorradorManual||fx3UltimaPropuesta)?'data-nc-borrador':'data-nc-resultado')}="${esc(encodeURIComponent(JSON.stringify({cruce:!!p._cruce,instancia:p.instancia,partido:p.partido,genero:p.genero,fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}"><div class="nc-card-cabecera">${p.titulo?`<div class="nc-partidos-titulo">${esc(p.titulo)}</div>`:`<div class="nc-card-titulo-vacio"></div>`}${insigniaPartido}</div><div class="nc-partidos-equipos">${p._cruce?`<div class="nc-cruce-etiqueta-fixture">${esc(p.instancia==='SEMIFINAL'?'Semifinal '+p.partido:p.instancia==='FINAL'?'Final':'Tercer puesto')}</div>`:''}<div class="nc-partidos-equipo">${iconoEquipo(a)}<span class="nc-partidos-nombre ${ganaA?'nc-partidos-ganador':''}" title="${esc(a)}">${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span class="nc-partidos-nombre ${ganaB?'nc-partidos-ganador':''}" title="${esc(b)}">${esc(b)}</span></div>${marcador}</div><div class="nc-card-pie"><span>${esc(hora(p))}</span><span>Cancha ${esc(String(cancha(p)))}</span></div>${reloj}</div>`;
+  return `<div class="nc-partidos-celda nc-partidos-contenido nc-partidos-con-franja nc-partidos-click" ${p._cruce?'draggable="true" data-nc-cruce-confirmado="1"':!datosMarcador?'draggable="true" data-nc-arrastrable="1"':''} role="button" tabindex="0" title="${fx3UltimaPropuesta?'Seleccionar partido del borrador':'Seleccionar partido para editar'}" ${(active==='fixture')?'data-nc-resultado':((ncEditorBorradorManual||fx3UltimaPropuesta)?'data-nc-borrador':'data-nc-resultado')}="${esc(encodeURIComponent(JSON.stringify({cruce:!!p._cruce,instancia:p.instancia,partido:p.partido,genero:p.genero,fecha:fechaNormal(p),hora:hora(p),cancha:cancha(p),categoria:String(p.categoria||'').replace(/^\+/,''),local:a,visitante:b})))}" style="--nc-franja:${fxColorCategoria(p.categoria)}"><div class="nc-card-cabecera">${ncTituloPartido(p)?`<div class="nc-partidos-titulo">${esc(ncTituloPartido(p))}</div>`:`<div class="nc-card-titulo-vacio"></div>`}${insigniaPartido}</div><div class="nc-partidos-equipos">${p._cruce?`<div class="nc-cruce-etiqueta-fixture">${esc(p.instancia==='SEMIFINAL'?'Semifinal '+p.partido:p.instancia==='FINAL'?'Final':'Tercer puesto')}</div>`:''}<div class="nc-partidos-equipo">${iconoEquipo(a)}<span class="nc-partidos-nombre ${ganaA?'nc-partidos-ganador':''}" title="${esc(a)}">${esc(a)}</span></div><div class="nc-partidos-equipo">${iconoEquipo(b)}<span class="nc-partidos-nombre ${ganaB?'nc-partidos-ganador':''}" title="${esc(b)}">${esc(b)}</span></div>${marcador}</div><div class="nc-card-pie"><span>${esc(hora(p))}</span><span>Cancha ${esc(String(cancha(p)))}</span></div>${reloj}</div>`;
 
  };
  // Escala temporal común: 2.35 px por minuto; cada cancha conserva sus turnos reales.
