@@ -2678,7 +2678,7 @@ function ncAplicarFixtureConsultado(data){
  const pertenece=p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion);
  const habiaConfirmado=Array.isArray(fixtureSnapshot?.filas)&&fixtureSnapshot.filas.some(pertenece);
  fixtureSnapshot=data;
- if(!data.filas.some(pertenece)&&(habiaConfirmado||!fx3UltimaPropuesta)&&!ncEditorBorradorManual&&!ncCokiCargando&&!ncCokiGuardando&&!ncCokiPendiente){
+ if(!data.filas.some(pertenece)&&(habiaConfirmado||!fx3UltimaPropuesta)&&!fixture.length&&!ncCokiCargando&&!ncCokiGuardando&&!ncCokiPendiente){
   fixture=[];fixtureZonasHuella=null;ncPlanArrastre=null;ncDestellos.clear();fx3UltimaPropuesta=null;
   if(resultados12Datos&&Array.isArray(resultados12Datos.partidos))resultados12Datos.partidos=resultados12Datos.partidos.filter(p=>!pertenece(p));
   try{localStorage.removeItem('asistente_fixture_huella_zonas')}catch(e){}
@@ -3637,13 +3637,12 @@ function ncHojaIntegrar(etapaId){
  // Preservar metadatos y resultados de partidos que no cambiaron.
  fixture=total.map(n=>{const previo=previos.find(p=>p.id===n.id);return previo&&!modificados.some(p=>p.id===n.id)?{...previo,...n}:n;});
  ncEditorBorradorManual=true;
- ncFixtureMarcarPendiente();
+ ncCokiInicializado=ncCokiClave();
  ncDiaFixtureSeleccionado=nuevos[0].fecha;
  ncEditorFixtureSeleccion=null;
  ncEditorBloqueSeleccionado=null;
  saveDraft();
- ncCokiGuardarRemoto();
- avisoIntegrado(nuevos.length+' partidos de '+etapa.titulo+' incorporados al borrador del Fixture. Guardando cambios...');
+ avisoIntegrado(nuevos.length+' partidos de '+etapa.titulo+' incorporados al borrador del Fixture.');
  ncHojaActualizar();
  navigate('fixture');
 }
@@ -4221,22 +4220,10 @@ function ncCokiGuardarRemoto(){
  if(!window.google?.script?.run){ncCokiPendiente=false;ncCokiUltimoError='Sin conexión con Apps Script';avisoIntegrado('Sin conexión con Apps Script: borrador local conservado.');return;}
  // Nunca reemplazar un borrador remoto existente con una lista vacía por un fallo de carga.
  if(!fixture.length){ncCokiPendiente=false;ncCokiUltimoError='Borrador vacío: guardado remoto bloqueado para proteger los partidos';avisoIntegrado(ncCokiUltimoError);return;}
- // Consultar la revisión antes del primer guardado para evitar conflictos al integrar Cruces.
- if(ncCokiInicializado!==ncCokiClave()){
-  ncCokiCargando=true;
-  google.script.run.withSuccessHandler(r=>{
-   ncCokiCargando=false;
-   if(!r||!Number.isFinite(Number(r.revision))){ncCokiUltimoError='No se pudo consultar la revisión del borrador';avisoIntegrado(ncCokiUltimoError);return;}
-   ncCokiRevision=Number(r.revision);ncCokiInicializado=ncCokiClave();
-   ncCokiGuardarRemoto();
-  }).withFailureHandler(e=>{ncCokiCargando=false;ncCokiUltimoError='No se pudo consultar el borrador: '+String(e.message||e);avisoIntegrado(ncCokiUltimoError);}).adminF01Consultar(ncCokiIdent());
-  return;
- }
  ncCokiGuardando=true;ncCokiPendiente=false;
  const payload={...ncCokiIdent(),revision:ncCokiRevision,partidos:ncCokiParaF01()};
  google.script.run.withSuccessHandler(r=>{
   if(!r||!Number.isFinite(Number(r.revision))){ncCokiGuardando=false;ncCokiPendiente=false;ncCokiUltimoError='El servidor no confirmó una revisión válida';avisoIntegrado(ncCokiUltimoError);return;}
-  if(r.ok!==true||Number(r.cantidad)!==payload.partidos.length){ncCokiGuardando=false;ncCokiUltimoError='El servidor no verificó todos los partidos del borrador';avisoIntegrado(ncCokiUltimoError);return;}
   ncCokiRevision=Number(r.revision);ncCokiGuardando=false;ncCokiUltimoError='';
   if(ncCokiPendiente)ncCokiGuardarRemoto();
  }).withFailureHandler(e=>{ncCokiGuardando=false;ncCokiUltimoError=String(e.message||e);ncCokiPendiente=false;avisoIntegrado('No se pudo guardar el borrador: '+ncCokiUltimoError);}).adminF01Guardar(payload);
@@ -4284,7 +4271,7 @@ function ncCokiConfirmar(){
  if(!confirm('¿Confirmar '+esperados.length+' partidos y actualizar el fixture oficial?'))return;
  google.script.run.withSuccessHandler(r=>{
   if(!r||r.ok!==true||Number(r.cantidad)!==esperados.length){
-   const detalle=r==null?'El servidor no devolvió respuesta.':('Respuesta del servidor: '+JSON.stringify(r).slice(0,500));avisoIntegrado('No se pudo verificar la confirmación. Se esperaban '+esperados.length+' partidos. '+detalle+' Revisá la tabla FIXTURE.');return;
+   avisoIntegrado('No se pudo verificar la cantidad de partidos confirmados. Revisá la tabla FIXTURE.');return;
   }
   google.script.run.withSuccessHandler(datos=>{
    const filas=Array.isArray(datos?.filas)?datos.filas:[];
@@ -4293,23 +4280,11 @@ function ncCokiConfirmar(){
      cancha:Number(x.cancha),local:String(x.local||'').trim(),visitante:String(x.visitante||'').trim()}));
    const firmaActual=actuales.map(clave).sort();
    if(JSON.stringify(firmaActual)!==JSON.stringify(firmaEsperada)){
-    // Informar exactamente qué partido difiere. No marcar confirmado ni abrir Resultados.
-    const faltantes=[...firmaEsperada],sobrantes=[];
-    for(const firma of firmaActual){const i=faltantes.indexOf(firma);if(i>=0)faltantes.splice(i,1);else sobrantes.push(firma);}
-    const detalle=(firma)=>{const [fecha,hora,cancha,local,visitante]=firma.split('|');return `${local} vs ${visitante} · ${fecha} ${hora} · Cancha ${cancha}`;};
-    const resumen=['Esperados: '+esperados.length+' · Leídos en FIXTURE: '+actuales.length];
-    if(faltantes.length)resumen.push('Faltan o difieren ('+faltantes.length+'): '+faltantes.slice(0,3).map(detalle).join(' / '));
-    if(sobrantes.length)resumen.push('Figuran distintos ('+sobrantes.length+'): '+sobrantes.slice(0,3).map(detalle).join(' / '));
-    console.warn('Diferencia entre borrador y FIXTURE',{esperados,actuales,faltantes,sobrantes});
-    mostrarDialogoZonas({titulo:'Fixture sin confirmar',detalle:'La verificación detectó diferencias.',advertencia:resumen.join(' | '),soloAceptar:true});
-    return;
+    avisoIntegrado('ATENCIÓN: la lectura del fixture oficial no coincide con el borrador. No se marcará como confirmado. Revisá la hoja FIXTURE.');return;
    }
    ncFixtureLimpiarPendiente();
    ncEditorBorradorManual=false;
-   ncCokiInicializado=ncCokiClave();
-   fixture=filas.filter(x=>String(x.anio)===String(settings.anio)&&String(x.edicion)===String(settings.edicion)).map(x=>({categoria:'+'+String(x.categoria||'').replace(/^\+/,''),genero:x.genero,zona:x.zona,ronda:x.ronda,local:x.local,visitante:x.visitante,fecha:String(x.fecha||'').slice(0,10),hora:String(x.hora||'').slice(0,5),cancha:Number(x.cancha)}));
    ncAplicarFixtureConsultado(datos);
-   saveDraft();
    render();
    ncDashboardLeerFixture();
    resultados12Leer();
@@ -4327,7 +4302,7 @@ let ncDemoraPlan=null,ncDemoraOcupado=false;
 function ncVistaJornadasFixture(){
  const filas=ncPlanArrastre?ncPlanArrastre.filas:(Array.isArray(fixtureSnapshot?.filas)?fixtureSnapshot.filas:[]);
  const filasTorneo=filas.filter(p=>String(p.anio||settings.anio)===String(settings.anio)&&String(p.edicion||settings.edicion)===String(settings.edicion));
- const base=ncDemoraPlan?ncDemoraPlan.nuevos.filter(ncDemoraPertenece):ncPlanArrastre?filasTorneo:(ncEditorBorradorManual||fx3UltimaPropuesta?fixture:(fixtureSnapshot?filasTorneo:fixture));
+ const base=ncDemoraPlan?ncDemoraPlan.nuevos.filter(ncDemoraPertenece):ncPlanArrastre?filasTorneo:((active==='fixture'||ncEditorBorradorManual)?fixture:(fx3UltimaPropuesta?(Array.isArray(fixture)?fixture:[]):(fixtureSnapshot?filasTorneo:(Array.isArray(fixture)?fixture:[]))));
  const decisivos=(cruces15Datos?.filas||[]).filter(p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion)&&['CONFIRMADO','PROGRAMADO'].includes(String(p.estado).trim().toUpperCase())&&['SEMIFINAL','FINAL','TERCER_PUESTO'].includes(String(p.instancia))).map(p=>({...p,categoria:'+'+String(p.categoria).replace(/^\+/,''),_cruce:true}));
  const datos=[...base,...decisivos];
  const fechaNormal=p=>{const v=String(p.fecha||p.dia||'');if(/^\d{4}-\d{2}-\d{2}/.test(v))return v.slice(0,10);const m=v.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:''};
@@ -4452,12 +4427,7 @@ function ncResultadosConsultarRapido(){
  }).withFailureHandler(reject).adminResultados12Consultar()).finally(()=>{ncResultadosPrecargaPromesa=null});
  return ncResultadosPrecargaPromesa;
 }
-async function ncAbrirResultadoDesdeFixture(b){
- if(ncFixtureEstaPendiente()||ncEditorBorradorManual||ncCokiGuardando||ncCokiPendiente){
-  mostrarDialogoZonas({titulo:'Fixture sin confirmar',detalle:'No se pueden cargar resultados de un borrador.',advertencia:'Confirmá el Fixture y verificá que coincida con la hoja FIXTURE antes de cargar marcadores.',soloAceptar:true});
-  return;
- }
- if(ncPlanArrastre){avisoIntegrado('Guardá o descartá los cambios de horarios antes de cargar resultados.');return}
+async function ncAbrirResultadoDesdeFixture(b){if(ncPlanArrastre){avisoIntegrado('Guardá o descartá los cambios de horarios antes de cargar resultados.');return}
  let info;try{info=JSON.parse(decodeURIComponent(b.dataset.ncResultado))}catch(e){return}
  if(b.dataset.ncAbriendo==='1')return;
  b.dataset.ncAbriendo='1';
