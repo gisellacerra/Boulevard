@@ -417,6 +417,48 @@ body[data-nc-theme="light"] .equipo-edit-modal input[type="file"]::file-selector
 .nc-domingo-status{margin-top:10px!important}
 
 .nc-horario-no-disponible{display:flex;align-items:center;justify-content:center;text-align:center;color:#a5afad;background:#252a2a;border:1px dashed #53605d;font-size:12px;cursor:not-allowed;padding:8px;}
+
+/* Cruces: nueva hoja de planificación independiente */
+
+/* Hoja de cruces: refinamiento UX sin alterar fixture ni backend */
+.nc-h-resumen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:22px}
+.nc-h-resumen>div{background:#222d2b;border:1px solid #394b43;border-radius:9px;padding:13px 15px;display:flex;flex-direction:column;gap:3px}
+.nc-h-resumen strong{font-size:23px;color:#dff2bf}.nc-h-resumen span{font-size:12px;color:#b3c7bc}
+.nc-hoja .nc-hoja-acciones{justify-content:space-between;align-items:center}.nc-hoja-acciones>strong{font-size:15px;color:#e8f1eb}
+.nc-h-head .nc-h-toggle small{font-size:12px;font-weight:400;color:#bad0ba}
+.nc-h-card{border:1px solid #40534c;background:#202b2a;border-radius:10px;padding:13px;display:grid;gap:10px}
+.nc-h-cardtop,.nc-h-editfoot,.nc-h-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.nc-h-cardtop>div{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.nc-h-kicker{font-size:13px;color:#dff2bf;font-weight:700}.nc-h-status{font-size:11px;color:#badcc0}.nc-h-status.nc-h-pending{color:#e4bc80}
+.nc-h-pair{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:center}
+.nc-h-preview>div{background:#2a3634;border:1px solid #394b46;border-radius:7px;padding:12px;color:#f0f5f1;overflow-wrap:anywhere}
+.nc-h-cardfoot{font-size:12px;color:#aabfb3}.nc-h-editor{display:grid;gap:12px}.nc-h-editor label{font-size:12px;color:#b9cfbd;display:grid;gap:6px}
+.nc-h-editor input{width:100%;min-width:0;box-sizing:border-box;background:#151e20!important;color:#f2f6f2!important;border:1px solid #4a5d56!important;border-radius:7px;padding:10px}
+.nc-h-editfoot{font-size:12px;color:#a9bfb3}.nc-h-bottom{border:1px solid #4b6549;border-radius:9px;background:#223029;padding:13px 15px;margin-top:18px;color:#cce5c1;font-size:12px}
+@media(max-width:700px){.nc-h-resumen{gap:6px}.nc-h-resumen>div{padding:9px}.nc-h-pair{grid-template-columns:1fr}.nc-h-versus{text-align:center}.nc-h-cardtop{align-items:flex-start}.nc-h-head{flex-wrap:wrap}}
+.nc-hoja{background:#171d1e;border:1px solid #354746;border-radius:15px;overflow:hidden;color:#f2f5f2}
+.nc-hoja-barra{background:#222a2b;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:1px solid #3b4848}
+.nc-hoja-barra h2{margin:0;font-size:24px;color:#f3f6f4}.nc-hoja-barra p{margin:5px 0 0;color:#afc5b5;font-size:13px}
+.nc-hoja-barra label{display:flex;align-items:center;gap:10px;font-weight:600}.nc-hoja-barra select{min-width:185px}
+.nc-hoja-main{padding:20px 24px}.nc-hoja-info{color:#bdc9c5;font-size:13px;margin:0 0 18px}
+.nc-hoja-acciones{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:18px}
+.nc-hoja button{cursor:pointer}.nc-hoja .nc-h-sec{border:1px solid #40554b;border-radius:11px;overflow:hidden;margin:0 0 12px;background:#1e2927}
+.nc-h-head{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#293a2c}
+.nc-h-toggle{border:0!important;background:transparent!important;color:#dff1b7!important;font-size:16px!important;font-weight:700!important;flex:1;text-align:left;padding:4px!important}
+.nc-h-head .nc-h-tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.nc-hoja .nc-h-small{font-size:12px!important;padding:6px 10px!important;background:#263130!important;color:#e4eee6!important;border:1px solid #52645b!important;border-radius:7px!important}
+.nc-h-rows{padding:12px;display:grid;gap:9px}.nc-h-row{border:1px solid #3b4b48;background:#20292a;border-radius:9px;padding:12px;display:grid;grid-template-columns:minmax(90px,0.7fr) minmax(130px,1fr) auto minmax(130px,1fr) auto;align-items:center;gap:10px}
+.nc-h-row input{width:100%;min-width:0;box-sizing:border-box;background:#151e20!important;color:#f2f6f2!important;border:1px solid #4a5d56!important;border-radius:7px;padding:9px 10px}
+.nc-h-versus{color:#aebeb7;font-size:13px;font-weight:700}.nc-h-row .nc-h-small{white-space:nowrap}.nc-h-vacio{padding:14px;color:#b4c4bc;font-size:13px}
+.nc-h-footer{padding:0 12px 12px}.nc-hoja .nc-h-primary{background:#293a2c!important;color:#dff1b7!important;border:1px solid #718f47!important;border-radius:8px!important;padding:9px 13px!important;font-weight:600!important}
+.nc-h-nota{color:#a7bdb0;font-size:12px;margin:16px 0 0}
+@media(max-width:760px){.nc-hoja-main{padding:14px}.nc-hoja-barra{padding:15px}.nc-h-row{grid-template-columns:1fr 1fr;gap:8px}.nc-h-row input:first-child{grid-column:1/-1}.nc-h-versus{display:none}.nc-h-row .nc-h-small{grid-column:1/-1}}
+
+
+.nc-h-program{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.nc-h-program select,.nc-h-program input{width:100%;min-width:0;box-sizing:border-box;background:#151e20!important;color:#f2f6f2!important;border:1px solid #4a5d56!important;border-radius:7px;padding:10px}
+.nc-h-warn{border:1px solid #846b3c;background:#3b3021;color:#f4d8a0;padding:9px 12px;border-radius:7px;font-size:12px}
+@media(max-width:700px){.nc-h-program{grid-template-columns:1fr}}
 </style><style>
 /* Ajustes exclusivos de notificaciones registradas */
 .notice { padding: 18px 20px 20px; }
@@ -1847,6 +1889,8 @@ body[data-nc-theme="dark"] #view .nc-aloj-enlaces a{color:#a5eb37}
 </style>
 <style id="nc-cruces-libres-borrador-style">
 .nc-libre-panel{margin:22px 18px;padding:18px;background:#1c2624;border:1px solid #56734c;border-radius:12px;color:#e6f1e1}.nc-libre-top{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}.nc-libre-top strong{display:block;font-size:18px}.nc-libre-top small{display:block;color:#b8cfad;margin-top:5px}.nc-libre-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:16px}.nc-libre-card{border:1px solid #56734c;border-radius:10px;padding:13px;display:grid;gap:10px;background:#202d29}.nc-libre-card strong{font-size:15px}.nc-libre-card strong span{font-size:12px;color:#b7c6b7;font-weight:400}.nc-libre-card small{color:#b8cfad}.nc-libre-tag{font-size:12px;color:#d5edc7}.nc-libre-overlay{position:fixed;inset:0;z-index:999999;background:#000b;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}.nc-libre-modal{width:min(680px,100%);max-height:95vh;overflow:auto;padding:24px;background:#202a2a;color:#f4f5f5;border:1px solid #668653;border-radius:14px;box-shadow:0 12px 45px #0008}.nc-libre-modal header,.nc-libre-modal footer{display:flex;justify-content:space-between;align-items:center;gap:12px}.nc-libre-modal h2{margin:0;font-size:21px}.nc-libre-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}.nc-libre-fields label{display:grid;gap:7px;font-size:13px}.nc-libre-fields input,.nc-libre-fields select{width:100%;min-width:0;background:#101919;color:#fff;border:1px solid #52645b;border-radius:7px;padding:10px}.nc-libre-modal .muted{font-size:13px;color:#c5d4c5;margin-top:12px}@media(max-width:580px){.nc-libre-fields{grid-template-columns:1fr}}
+</style><style id="nc-hoja-vista-etapas">
+.nc-hoja-vista .nc-hoja-main{max-width:1150px;margin:auto}.nc-hoja-vista .nc-h-zone{border:1px solid #40534c;border-radius:13px;padding:19px;margin:0 0 16px;background:#202b2a}.nc-hoja-vista .nc-h-zone-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}.nc-hoja-vista .nc-h-zone-title strong{font-size:17px;color:#e8f1eb}.nc-hoja-vista .nc-h-tabs{display:flex;flex-wrap:wrap;gap:8px}.nc-hoja-vista .nc-h-tab-wrap{display:flex;border:1px solid #4b5b53;border-radius:9px;overflow:hidden}.nc-hoja-vista .nc-h-tab{border:0;background:#283630;color:#e0ebdf;padding:10px 14px;cursor:pointer}.nc-hoja-vista .nc-h-tab.active{background:#b8ef52;color:#17241a;font-weight:750}.nc-hoja-vista .nc-h-tab small{opacity:.8;margin-left:6px}.nc-hoja-vista .nc-h-stage-move{border:0;border-left:1px solid #48574d;background:#283630;color:#d8e8d5;padding:0 7px;cursor:pointer}.nc-hoja-vista .nc-h-stage-move:disabled{opacity:.3}.nc-hoja-vista .nc-h-stage-heading,.nc-hoja-vista .nc-h-cardtop,.nc-hoja-vista .nc-h-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.nc-hoja-vista .nc-h-stage-heading{margin-bottom:12px}.nc-hoja-vista .nc-h-stage-heading h3{margin:0;color:#dff2bf}.nc-hoja-vista .nc-h-stage-heading>div,.nc-hoja-vista .nc-h-actions{display:flex;gap:8px;flex-wrap:wrap}.nc-hoja-vista .nc-h-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:12px}.nc-hoja-vista .nc-h-card-new{background:#263330}.nc-hoja-vista .nc-h-matchup{display:grid;grid-template-columns:minmax(0,1fr) 32px minmax(0,1fr);align-items:center;gap:8px}.nc-hoja-vista .nc-h-team{display:flex;align-items:center;gap:9px;padding:11px;background:#192622;border-radius:8px;min-width:0;min-height:62px}.nc-hoja-vista .nc-h-team span:last-child{overflow-wrap:anywhere;font-size:13px}.nc-hoja-vista .nc-h-shield{width:36px;height:36px;object-fit:contain;flex:none}.nc-hoja-vista .nc-h-shield-empty{display:grid;place-items:center;font-size:20px;opacity:.65}.nc-hoja-vista .nc-h-versus{text-align:center;font-size:11px;color:#bed1c0;font-weight:700}.nc-hoja-vista .nc-h-schedule{color:#c0d3c1;font-size:12px;margin-top:9px}.nc-hoja-vista .nc-h-add-match{width:100%;margin-top:14px;padding:12px;background:transparent;border:1px dashed #95c85b;color:#c9edab;border-radius:8px;cursor:pointer}.nc-hoja-vista .nc-h-control{background:#26352c}.nc-hoja-vista .nc-h-check{padding:5px 0;color:#d5e5d1}.nc-hoja-vista .nc-h-badge{display:inline-block;font-size:11px;padding:4px 8px;border-radius:15px;background:#3d493a;color:#c7e3b5;vertical-align:middle}.nc-hoja-vista .nc-h-count{color:#b8cdb8;font-size:13px}.nc-hoja-vista .nc-h-editor{margin-top:14px}.nc-hoja-vista .nc-h-bottom{margin-top:12px}@media(max-width:700px){.nc-hoja-vista .nc-h-zone{padding:12px}.nc-hoja-vista .nc-h-cards{grid-template-columns:1fr}.nc-hoja-vista .nc-h-shield{width:28px;height:28px}}
 </style></head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
@@ -3436,6 +3480,103 @@ document.addEventListener('click',async e=>{
  const editar=e.target.closest('[data-nc-libre-editar]');if(editar){ncCrucesLibresEditor(editar.dataset.ncLibreEditar);return;}
  const borrar=e.target.closest('[data-nc-libre-borrar]');if(borrar){const id=borrar.dataset.ncLibreBorrar;if(!confirm('¿Eliminar este cruce en borrador?'))return;ncCrucesLibres=ncCrucesLibres.filter(x=>x.id!==id);ncCrucesLibresGuardar();ncCrucesLibresActualizar();}
 });
+
+/* Hoja nueva de Cruces: borrador independiente, sin publicar partidos. */
+const ncHojaClave='nc_hoja_cruces_v1';
+let ncHojaEstado={};
+try{ncHojaEstado=JSON.parse(localStorage.getItem(ncHojaClave)||'{}')||{};}catch(e){ncHojaEstado={};}
+let ncHojaCategoria='';
+function ncHojaGuardar(){try{localStorage.setItem(ncHojaClave,JSON.stringify(ncHojaEstado));}catch(e){}}
+function ncHojaId(){return 'h'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function ncHojaCategorias(){
+ const c=new Set();
+ for(const t of teams||[]){const n=String(t.categoria||'').replace(/^\+/,'');if(n)c.add('+'+n+'|'+String(t.genero||'Mixto'));}
+ for(const d of etapa14Clasificacion()){if(d.cat)c.add(d.cat+'|'+d.genero);}
+ for(const k of Object.keys(ncHojaEstado))c.add(k);
+ if(!c.size){['+50|Mixto','+60|Mixto','+68|Mixto'].forEach(x=>c.add(x));}
+ return [...c].sort((a,b)=>Number(a.split('|')[0].slice(1))-Number(b.split('|')[0].slice(1))||a.localeCompare(b,'es'));
+}
+function ncHojaDatos(){
+ if(!Array.isArray(ncHojaEstado[ncHojaCategoria]))ncHojaEstado[ncHojaCategoria]=[];
+ return ncHojaEstado[ncHojaCategoria];
+}
+function ncHojaAvisos(p,partidos){
+ if(!p.fecha||!p.hora||!p.cancha)return '';
+ const otros=partidos.filter(q=>q.id!==p.id&&q.fecha===p.fecha&&q.hora===p.hora);
+ if(otros.some(q=>String(q.cancha)===String(p.cancha)))return 'Otro cruce ocupa la misma cancha y horario.';
+ if(otros.some(q=>[p.a,p.b].some(n=>String(n||'').trim()&&[q.a,q.b].includes(n))))return 'Un participante aparece en dos cruces al mismo horario.';
+ return '';
+}
+function ncHojaRender(){
+ const categorias=ncHojaCategorias();if(!categorias.includes(ncHojaCategoria))ncHojaCategoria=categorias[0];
+ const grupos=ncHojaDatos(),partidos=grupos.flatMap(g=>g.partidos);
+ const incompletos=partidos.filter(p=>!String(p.a||'').trim()||!String(p.b||'').trim()||!p.fecha||!p.hora||!p.cancha);
+ const conflictos=partidos.filter(p=>ncHojaAvisos(p,partidos)).length;
+ const fechas=[...new Set([...(Array.isArray(settings.fechasEtapa10)?settings.fechasEtapa10:[]),...(Array.isArray(settings.fechas)?settings.fechas:[]),...programaFechas()].filter(Boolean))].sort();
+ const canchas=Array.from({length:Math.max(1,Number(settings.canchas)||4)},(_,i)=>String(i+1));
+ const catParts=ncHojaCategoria.split('|');
+ const equiposCat=(teams||[]).filter(t=>String(t.categoria||'').replace(/^\+/,'')===String(catParts[0]||'').replace(/^\+/,'')&&String(t.genero||'Mixto')===String(catParts[1]||'Mixto'));
+ const opciones=[...new Set(equiposCat.map(t=>String(t.nombre||t.equipo||t.name||'').trim()).filter(Boolean))];
+ const escudo=(nombre)=>{const t=equiposCat.find(t=>String(t.nombre||t.equipo||t.name||'').trim().toLowerCase()===String(nombre||'').trim().toLowerCase());return t?.escudo?`<img class="nc-h-shield" src="${esc(t.escudo)}" alt="" loading="lazy">`:`<span class="nc-h-shield nc-h-shield-empty" aria-hidden="true">🛡</span>`};
+ const sugerencias=`<datalist id="ncHojaEquipos">${opciones.map(n=>`<option value="${esc(n)}"></option>`).join('')}</datalist>`;
+ if(!window.ncHojaActiva||!grupos.some(g=>g.id===window.ncHojaActiva))window.ncHojaActiva=grupos[0]?.id||'';
+ const activa=grupos.find(g=>g.id===window.ncHojaActiva);
+ const tabs=grupos.map((g,i)=>`<div class="nc-h-tab-wrap"><button type="button" class="nc-h-tab ${g.id===window.ncHojaActiva?'active':''}" data-h-action="select-stage" data-h-id="${esc(g.id)}">${esc(g.titulo||'Etapa')} <small>${g.partidos.length}</small></button><button type="button" class="nc-h-stage-move" title="Mover etapa hacia arriba" data-h-action="up" data-h-id="${esc(g.id)}" ${i===0?'disabled':''}>↑</button><button type="button" class="nc-h-stage-move" title="Mover etapa hacia abajo" data-h-action="down" data-h-id="${esc(g.id)}" ${i===grupos.length-1?'disabled':''}>↓</button></div>`).join('');
+ const sel=(g,p,field,value,opts,placeholder)=>`<select data-h-field="${field}" data-h-id="${esc(g.id)}" data-h-p="${esc(p.id)}"><option value="">${placeholder}</option>${opts.map(x=>`<option value="${esc(x)}" ${String(value||'')===String(x)?'selected':''}>${esc(x)}</option>`).join('')}</select>`;
+ const cards=activa?activa.partidos.map((p,j)=>{const editando=!!p.editando;const aviso=ncHojaAvisos(p,partidos);const programado=!!(p.fecha&&p.hora&&p.cancha);return `<article class="nc-h-card nc-h-card-new"><div class="nc-h-cardtop"><div><span class="nc-h-kicker">${esc(p.titulo||'Partido '+(j+1))}</span><span class="nc-h-status ${programado?'':'nc-h-pending'}">${programado?'Programado':'Pendiente de programación'}</span></div><button type="button" class="nc-h-small" data-h-action="edit-match" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}">${editando?'Cerrar edición':'✎ Editar'}</button></div><div class="nc-h-matchup"><div class="nc-h-team">${escudo(p.a)}<span>${esc(p.a||'Seleccionar participante')}</span></div><span class="nc-h-versus">VS</span><div class="nc-h-team">${escudo(p.b)}<span>${esc(p.b||'Seleccionar participante')}</span></div></div><div class="nc-h-schedule">${programado?`${esc(p.fecha)} · ${esc(p.hora)} · Cancha ${esc(p.cancha)}`:'Fecha, horario y cancha sin completar'}</div>${editando?`<div class="nc-h-editor"><label>Nombre del partido<input data-h-field="titulo" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}" value="${esc(p.titulo||'')}"></label><div class="nc-h-pair"><label>Participante 1<input list="ncHojaEquipos" data-h-field="a" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}" value="${esc(p.a||'')}" placeholder="Equipo o referencia libre"></label><span class="nc-h-versus">vs.</span><label>Participante 2<input list="ncHojaEquipos" data-h-field="b" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}" value="${esc(p.b||'')}" placeholder="Equipo o referencia libre"></label></div><div class="nc-h-program"><label>Fecha${sel(activa,p,'fecha',p.fecha,fechas,'Seleccionar jornada')}</label><label>Horario<input type="time" data-h-field="hora" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}" value="${esc(p.hora||'')}"></label><label>Cancha${sel(activa,p,'cancha',p.cancha,canchas,'Seleccionar cancha')}</label></div><div class="nc-h-editfoot"><span>Podés escribir el nombre de un equipo o una referencia.</span><button type="button" class="nc-h-small" data-h-action="delete-match" data-h-id="${esc(activa.id)}" data-h-p="${esc(p.id)}">Eliminar partido</button></div></div>`:''}${aviso?`<div class="nc-h-warn">⚠ ${esc(aviso)}</div>`:''}</article>`}).join(''):'<div class="nc-h-vacio">Creá una etapa para comenzar.</div>';
+ return `<section class="nc-hoja nc-hoja-vista" aria-label="Organización de cruces"><header class="nc-hoja-barra"><div><h2>Cruces <span class="nc-h-badge">Borrador</span></h2><p>Organización de etapas y programación de partidos</p></div><label>Categoría <select id="ncHojaCat">${categorias.map(c=>`<option value="${esc(c)}" ${c===ncHojaCategoria?'selected':''}>${esc(c.replace('|',' · '))}</option>`).join('')}</select></label></header><div class="nc-hoja-main">${sugerencias}<section class="nc-h-zone"><div class="nc-h-zone-title"><strong>1. Etapas</strong><button type="button" class="nc-h-primary" data-h-action="add-section">+ Nueva etapa</button></div><div class="nc-h-tabs">${tabs||'<span class="nc-h-vacio">Todavía no hay etapas.</span>'}</div></section><section class="nc-h-zone"><div class="nc-h-zone-title"><strong>2. Partidos de la etapa seleccionada</strong>${activa?`<span class="nc-h-count">${activa.partidos.length} ${activa.partidos.length===1?'partido':'partidos'}</span>`:''}</div>${activa?`<div class="nc-h-stage-heading"><h3>${esc(activa.titulo)}</h3><div><button type="button" class="nc-h-small" data-h-action="rename" data-h-id="${esc(activa.id)}">Renombrar</button><button type="button" class="nc-h-small" data-h-action="delete-section" data-h-id="${esc(activa.id)}">Eliminar etapa</button></div></div>`:''}<div class="nc-h-cards">${cards||'<div class="nc-h-vacio">Esta etapa todavía no tiene partidos.</div>'}</div>${activa?`<button type="button" class="nc-h-add-match" data-h-action="add-match" data-h-id="${esc(activa.id)}">+ Agregar partido</button>`:''}</section><section class="nc-h-zone nc-h-control"><div class="nc-h-zone-title"><strong>3. Control de programación</strong></div><div class="nc-h-check">✓ ${partidos.length-incompletos.length} partidos completos de ${partidos.length}</div><div class="nc-h-check">${conflictos?'⚠ '+conflictos+' avisos de conflicto':'✓ Sin conflictos detectados entre los cruces'}</div><div class="nc-h-check">${incompletos.length?'○ '+incompletos.length+' partidos pendientes':'✓ Todos los partidos completos'}</div></section><div class="nc-h-bottom"><span>Borrador local · No publicado</span><div class="nc-h-actions"><button type="button" class="nc-h-primary" data-h-action="review">Revisar cruces</button><button type="button" class="nc-h-primary" data-h-action="integrate">Agregar al fixture de prueba</button></div></div><p class="nc-h-nota">Los partidos no se publican en Google Sheets ni en la app pública desde esta pantalla. La integración definitiva con el fixture sigue pendiente de validación.</p></div></section>`;
+}
+function ncHojaIntegrar(){
+ const grupos=ncHojaDatos(),ps=grupos.flatMap(g=>g.partidos.map(p=>({...p,etapa:g.titulo})));
+ if(!ps.length){avisoIntegrado('Agregá al menos un partido.');return;}
+ const incompletos=ps.filter(p=>!p.a?.trim()||!p.b?.trim()||!p.fecha||!p.hora||!p.cancha);
+ if(incompletos.length){avisoIntegrado('Completá participantes, fecha, horario y cancha en los '+incompletos.length+' partidos pendientes.');return;}
+ const nuevos=ps.map(p=>({id:'cruce-hoja-'+p.id,categoria:ncHojaCategoria.split('|')[0],genero:ncHojaCategoria.split('|')[1],zona:p.etapa||'Cruces',ronda:1,local:p.a.trim(),visitante:p.b.trim(),fecha:p.fecha,hora:p.hora,cancha:String(p.cancha),origenCrucesHoja:true,etapaCruce:p.etapa,tituloCruce:p.titulo}));
+ const ids=new Set(nuevos.map(p=>p.id));
+ const restantes=fixture.filter(p=>!ids.has(p.id));
+ const total=[...restantes,...nuevos];
+ for(const n of nuevos){
+  if(total.some(q=>q.id!==n.id&&q.fecha===n.fecha&&q.hora===n.hora&&String(q.cancha)===n.cancha)){
+   avisoIntegrado('Conflicto de cancha: '+n.fecha+' '+n.hora+' · Cancha '+n.cancha+'. Revisá el fixture.');return;
+  }
+ }
+ if(!confirm('Se incorporarán '+nuevos.length+' partidos al fixture de prueba. Los cruces ya agregados desde esta hoja se actualizarán sin duplicarse. No se publicará nada todavía. ¿Continuar?'))return;
+ fixture=total;saveDraft();avisoIntegrado(nuevos.length+' partidos de Cruces incorporados al fixture de prueba. Revisalos en Fixture antes de confirmar.');ncHojaActualizar();
+}
+function ncHojaActivar(){
+ const root=document.querySelector('.nc-hoja');if(!root)return;
+ root.addEventListener('change',e=>{
+  if(e.target.id==='ncHojaCat'){ncHojaCategoria=e.target.value;ncHojaActualizar();return;}
+  const f=e.target.dataset.hField;if(!f)return;
+  const g=ncHojaDatos().find(x=>x.id===e.target.dataset.hId),p=g?.partidos.find(x=>x.id===e.target.dataset.hP);
+  if(p){p[f]=e.target.value;ncHojaGuardar();}
+ });
+ root.addEventListener('input',e=>{
+  const f=e.target.dataset.hField;if(!f)return;
+  const g=ncHojaDatos().find(x=>x.id===e.target.dataset.hId),p=g?.partidos.find(x=>x.id===e.target.dataset.hP);
+  if(p){p[f]=e.target.value;ncHojaGuardar();}
+ });
+ root.addEventListener('click',e=>{
+  const b=e.target.closest('[data-h-action]');if(!b)return;
+  const act=b.dataset.hAction,grupos=ncHojaDatos(),idx=grupos.findIndex(x=>x.id===b.dataset.hId),g=grupos[idx];
+  if(act==='select-stage'){window.ncHojaActiva=b.dataset.hId;ncHojaActualizar();return;}
+  if(act==='integrate'){ncHojaIntegrar();return;}
+  if(act==='add-section'){const id=ncHojaId();grupos.push({id,titulo:'Nueva etapa',cerrado:false,partidos:[]});window.ncHojaActiva=id;}
+  else if(act==='toggle'&&g)g.cerrado=!g.cerrado;
+  else if(act==='rename'&&g){const t=prompt('Título de la etapa:',g.titulo);if(t===null)return;if(!t.trim())return;g.titulo=t.trim();}
+  else if(act==='up'&&idx>0)[grupos[idx-1],grupos[idx]]=[grupos[idx],grupos[idx-1]];
+  else if(act==='down'&&idx>=0&&idx<grupos.length-1)[grupos[idx+1],grupos[idx]]=[grupos[idx],grupos[idx+1]];
+  else if(act==='delete-section'&&g){if(!confirm('¿Eliminar esta etapa y todos sus partidos del borrador?'))return;grupos.splice(idx,1);}
+  else if(act==='add-match'&&g)g.partidos.push({id:ncHojaId(),titulo:'Cruce '+(grupos.flatMap(x=>x.partidos).length+1),a:'',b:'',editando:true});
+  else if(act==='edit-match'&&g){const p=g.partidos.find(x=>x.id===b.dataset.hP);if(!p)return;p.editando=!p.editando;}
+  else if(act==='review'){const ps=grupos.flatMap(x=>x.partidos),missing=ps.filter(p=>!String(p.a||'').trim()||!String(p.b||'').trim());alert('Revisión de borrador\n\nEtapas: '+grupos.length+'\nPartidos: '+ps.length+'\nPartidos incompletos: '+missing.length+'\nSin programación completa: '+ps.filter(p=>!p.fecha||!p.hora||!p.cancha).length+'\nAdvertencias de horario: '+ps.filter(p=>ncHojaAvisos(p,ps)).length+'\n\nEstos cruces todavía no están vinculados al fixture ni publicados.');return;}
+  else if(act==='delete-match'&&g){if(!confirm('¿Eliminar este partido del borrador?'))return;g.partidos=g.partidos.filter(x=>x.id!==b.dataset.hP);}
+  else return;
+  ncHojaGuardar();ncHojaActualizar();
+ });
+}
+function ncHojaActualizar(){const root=document.querySelector('.nc-hoja');if(root){root.outerHTML=ncHojaRender();ncHojaActivar();}}
+
 let ncBracketSelected='';
 function ncBracketRender(){
  const all=(cruces15Datos?.filas||[]).filter(x=>String(x.anio)===String(settings.anio)&&String(x.edicion)===String(settings.edicion));
@@ -4952,8 +5093,8 @@ else if(active==='registro'){view.innerHTML=historial26Render();const boton=$('#
 else if(active==='resultados'){view.innerHTML=resultados12Render();resultados12Activar();}
  else if(active==='posiciones'){view.innerHTML=posiciones13Render();posiciones13Activar();}
  else if(active==='cruces'){
- view.innerHTML=ncBracketRender();
- cruces15Activar();cruces16Activar();ncActivarArrastreCruces();
+ view.innerHTML=ncHojaRender();
+ ncHojaActivar();
  document.querySelectorAll('[data-nc-elegir-grilla]').forEach(b=>b.onclick=()=>{
   const row=b.closest('.nc-program-row');if(!row)return;
   const field=row.querySelector('[data-c15-cat], [data-c16-cat]');if(!field)return;
