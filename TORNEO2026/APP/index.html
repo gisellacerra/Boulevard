@@ -1474,11 +1474,13 @@ function ncVistaDesarrollo(){
 /* Mismo sistema visual y apertura nativa que Zonas. */
 #view .nc-cruces-compact-group{margin:22px 0 26px}
 #view .nc-cruces-compact-group .nc-cruces-category{font-size:17px!important;font-weight:500!important;margin:0 0 12px!important;color:var(--ink)}
+#view .nc-cruces-compact-group .nc-cruces-category::before{display:none!important;content:none!important}
+#view .nc-cruces-compact-group .nc-cruces-category{display:block!important;padding:0!important;border:0!important}
 #view .nc-cruces-compact-group .nc-cruces-accordion{
   border:1px solid var(--line)!important;
   border-left:5px solid var(--cruces-color)!important;
   border-radius:0 12px 12px 0!important;
-  background:var(--surface2)!important;
+  background:transparent!important;
   margin:0 0 10px!important;
   overflow:hidden!important;
 }
