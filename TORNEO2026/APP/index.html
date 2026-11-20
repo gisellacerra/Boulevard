@@ -1209,17 +1209,38 @@ generic=function(){
   const finalistas=new Set(semifinales.map(r=>normalizar(r[0])));
   const terceros=new Set(semifinales.map(r=>normalizar(r[1])));
   const son=m=>[normalizar(m.a),normalizar(m.b)];
-  // Primero buscar el partido por sus participantes reales (resultado de semifinales).
-  // No confundir un partido de tercer puesto con la final aunque ambos estén etiquetados 'Final'.
-  let partidoFinal=semifinales.length===2?decisivos.find(m=>son(m).every(n=>finalistas.has(n))):null;
-  let partidoTercero=semifinales.length===2?decisivos.find(m=>son(m).every(n=>terceros.has(n))):null;
-  if(!partidoTercero)partidoTercero=decisivos.find(m=>tipo(m)==='tercero');
-  if(!partidoFinal)partidoFinal=decisivos.find(m=>tipo(m)==='final'&&m!==partidoTercero);
-  // Si no se distingue inequívocamente el partido, no publicar puestos inventados.
+  const participantesCoinciden=(m,conjunto)=>conjunto.size===2&&son(m).every(n=>conjunto.has(n));
+  const codigo=m=>{
+    const campos=[m.partido,m.ronda,m.zona].map(normalizar).join(' ');
+    const match=campos.match(/(?:^|\s)c\s*(\d{1,2})(?:\s|$)/);
+    return match?Number(match[1]):null;
+  };
+  let partidoFinal=decisivos.find(m=>String(m.instancia).toUpperCase()==='FINAL'&&tipo(m)!=='tercero'&&decisivos.filter(x=>String(x.instancia).toUpperCase()==='FINAL').length===1);
+  let partidoTercero=decisivos.find(m=>String(m.instancia).toUpperCase()==='TERCER_PUESTO'||tipo(m)==='tercero');
+  // En algunas planillas ambos partidos se registraron con el mismo rótulo.
+  // La definición se basa en los semifinalistas, nunca en nombres de equipos fijos.
+  if(semifinales.length===2){
+    partidoFinal=decisivos.find(m=>participantesCoinciden(m,finalistas))||partidoFinal;
+    partidoTercero=decisivos.find(m=>participantesCoinciden(m,terceros))||partidoTercero;
+  }
+  // Identificación oficial por código de partido del PDF VI Torneo.
+  // 8 equipos: C11 tercer puesto, C12 final; 14: C14 tercer puesto, C15 final.
+  if(!partidoTercero||!partidoFinal||partidoTercero===partidoFinal){
+    const porCodigo=new Map(decisivos.filter(m=>codigo(m)!=null).map(m=>[codigo(m),m]));
+    const par=porCodigo.has(15)&&porCodigo.has(14)?[15,14]:porCodigo.has(12)&&porCodigo.has(11)?[12,11]:null;
+    if(par){partidoFinal=porCodigo.get(par[0]);partidoTercero=porCodigo.get(par[1]);}
+  }
+  if(!partidoTercero&&decisivos.length===2&&partidoFinal){
+    partidoTercero=decisivos.find(m=>m!==partidoFinal)||null;
+  }
+  if(!partidoFinal&&decisivos.length===2&&partidoTercero){
+    partidoFinal=decisivos.find(m=>m!==partidoTercero)||null;
+  }
   if(partidoFinal===partidoTercero)partidoTercero=null;
   const f=resultado(partidoFinal);
   const t=resultado(partidoTercero);
   if(!f||!t)return '';
+  if(new Set([...f,...t].map(normalizar)).size!==4)return '';
   const copa='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10v8a5 5 0 0 1-10 0V3Z"/><path d="M7 5H4v3a4 4 0 0 0 4 4M17 5h3v3a4 4 0 0 1-4 4M12 16v4m-4 1h8"/></svg>';
   const medalla='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="15" r="6"/><path d="m8 10-3-7h5l2 6m4 1 3-7h-5l-2 6"/><path d="m12 12 1 2 2 .3-1.5 1.5.4 2.2-1.9-1-1.9 1 .4-2.2L9 14.3l2-.3z"/></svg>';
   const puestos=[['1.º',f[0],'Oro','oro',copa],['2.º',f[1],'Plata','plata',medalla],['3.º',t[0],'Bronce','bronce',medalla],['4.º',t[1],'','cuarto',medalla]];
