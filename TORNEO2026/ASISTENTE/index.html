@@ -1930,6 +1930,9 @@ body[data-nc-theme="dark"] #view .nc-aloj-enlaces a{color:#a5eb37}
 .nc-c01-campos{min-width:0;border:0;padding:0}
 .nc-c01-pares{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))}
 .nc-c01-detalle .field{margin:8px 0}
+#c01Editor .nc-c01-categorias button[aria-pressed="true"],#c01Editor .nc-c01-zonas button[aria-pressed="true"],#c01Editor button.nc-c01-programado{background:var(--sp-green,#167c4a)!important;border-color:var(--sp-green,#167c4a)!important;color:#fff!important;opacity:1}
+body[data-nc-theme="dark"] #c01Editor .nc-c01-categorias button[aria-pressed="true"],body[data-nc-theme="dark"] #c01Editor .nc-c01-zonas button[aria-pressed="true"],body[data-nc-theme="dark"] #c01Editor button.nc-c01-programado{color:#141816!important}
+#c01Editor .nc-c01-ayuda{margin-block:5px 10px}
 #c01Editor .nc-c01-categorias{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
 #c01Editor .nc-c01-categorias button{flex:1 1 90px}
 #c01Editor .nc-c01-categorias button,#c01Editor .nc-c01-zonas button{border-radius:999px;font-weight:600}
@@ -4365,6 +4368,7 @@ function ncCokiGuardarRemoto(){
   if(!r||!Number.isFinite(Number(r.revision))){ncCokiGuardando=false;ncCokiPendiente=false;ncCokiUltimoError='El servidor no confirmó una revisión válida';avisoIntegrado(ncCokiUltimoError);return;}
   if(r.ok!==true||Number(r.cantidad)!==payload.partidos.length){ncCokiGuardando=false;ncCokiUltimoError='El servidor no verificó todos los partidos del borrador';avisoIntegrado(ncCokiUltimoError);return;}
   ncCokiRevision=Number(r.revision);ncCokiGuardando=false;ncCokiUltimoError='';
+  c01FixtureLeido=null;
   if(ncCokiPendiente)ncCokiGuardarRemoto();
  }).withFailureHandler(e=>{ncCokiGuardando=false;ncCokiUltimoError=String(e.message||e);ncCokiPendiente=false;avisoIntegrado('No se pudo guardar el borrador: '+ncCokiUltimoError);}).adminF01Guardar(payload);
 }
@@ -4426,7 +4430,7 @@ async function ncCokiGestionarBorrador(vaciar){
   ncCokiGuardando=false;
   if(clave!==ncCokiClave())return;
   ncCokiRevision=revision;
-  ncCokiInicializado=clave;
+  ncCokiInicializado=clave;c01FixtureLeido=null;
   if(vaciar)c01PorProgramar=null;
   ncCokiAplicarGuardado(ncCokiDesdeF01(partidos));
   render();
@@ -5529,7 +5533,24 @@ function arbVista(){const r=arbEdicion||{};return panel('Gestión de árbitros',
 function arbEnlazar(){document.getElementById('arbActualizar').onclick=arbLeer;const f=document.getElementById('arbForm');document.getElementById('arbCancelar')?.addEventListener('click',()=>{arbEdicion=null;arbFotoNueva='';arbQuitarFoto=false;render()});document.getElementById('arbFotoVista')?.addEventListener('click',e=>{if(!e.target.closest('[data-quitar-foto-arb]'))return;arbQuitarFoto=true;arbFotoNueva='';document.getElementById('arbFotoArchivo').value='';document.getElementById('arbFotoVista').innerHTML='<span class="muted">Fotografía quitada. Guardá los cambios para confirmar.</span>'});document.getElementById('arbFotoArchivo').onchange=async e=>{const file=e.target.files[0];if(!file)return;if(file.size>750000){await dialogoEquipo('Foto demasiado grande','El límite es 750 KB.');e.target.value='';return}const reader=new FileReader();reader.onload=()=>{arbFotoNueva=String(reader.result);arbQuitarFoto=false;document.getElementById('arbFotoVista').innerHTML=`<span style="display:inline-block;position:relative;width:120px;height:120px"><img class="arb-foto" src="${esc(arbFotoNueva)}" alt="Vista previa" style="width:120px;height:120px;object-fit:cover;display:block"><button type="button" data-quitar-foto-arb aria-label="Quitar fotografía" title="Quitar fotografía" style="position:absolute;top:6px;right:6px;border:0;border-radius:50%;background:#c62828;color:white;width:25px;height:25px;cursor:pointer;font-size:18px;line-height:25px;padding:0">×</button></span>`};reader.readAsDataURL(file)};f.onsubmit=e=>{e.preventDefault();if(!window.google?.script?.run){dialogoEquipo('Sin conexión','Esta operación necesita tabla de respaldo.');return}const d=Object.fromEntries(new FormData(f));d.activo=d.activo==='si';d.id=arbEdicion?.id||'';d.foto=arbFotoNueva;d.quitarFoto=arbQuitarFoto;const btn=f.querySelector('[type=submit]');btn.disabled=true;google.script.run.withSuccessHandler(()=>{arbEdicion=null;arbFotoNueva='';arbQuitarFoto=false;arbLeer()}).withFailureHandler(err=>{btn.disabled=false;dialogoEquipo('No se pudo guardar',String(err.message||err))}).adminArbitrosGuardar(d)};document.querySelectorAll('[data-arb-edit]').forEach(b=>b.onclick=()=>{arbEdicion=arbRegistros.find(a=>a.id===b.dataset.arbEdit);arbFotoNueva='';arbQuitarFoto=false;render()});document.querySelectorAll('[data-arb-del]').forEach(b=>b.onclick=async()=>{if(!await dialogoEquipo('Eliminar árbitro','¿Confirmás la eliminación?',true))return;google.script.run.withSuccessHandler(()=>{arbEdicion=null;arbLeer()}).withFailureHandler(e=>dialogoEquipo('Error',String(e.message||e))).adminArbitrosEliminar(b.dataset.arbDel)})}
 
 let c01PorProgramar = null;
-const c01ZonaVisible = new Map();
+const c01ZonaVisible = new Map(),c01Abiertos=new Map();
+let c01FixtureLeido=null;
+const c01Prio=t=>{
+ const n=String(t).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+ const orden=[/^reclasificacion/,/^semifinal/,/^3\D+4/,/^5\D+6/,/^7\D+8/];
+ const i=orden.findIndex(r=>r.test(n));
+ return i>=0?i:/^final(?:\s|$)/.test(n)?99:6;
+};
+function c01EstadoPartido(id){
+ const p=fixture.find(x=>x.c01Id===id)||c01FixtureLeido?.partidos.find(x=>x.c01Id===id);
+ if(!p)return null;
+ const oficial=resultados12Partidos().find(x=>
+  String(x.categoria).replace(/^\+/,'')===String(p.categoria).replace(/^\+/,'')&&
+  x.genero===p.genero&&x.local===p.local&&x.visitante===p.visitante&&
+  ncFxFecha(x.fecha)===ncFxFecha(p.fecha)&&String(x.hora).slice(0,5)===String(p.hora).slice(0,5)&&Number(x.cancha)===Number(p.cancha));
+ const resultado=oficial&&resultados12Existente(oficial);
+ return {...p,resultado:String(resultado?.estado||'').trim()==='CONFIRMADO'?resultado:null};
+}
 let c01Competencia = '', c01Snapshot = null, c01Solicitud = 0, c01Guardando = false, c01Error = '';
 const c01Borradores = new Map();
 const c01Sorteo = new Map();
@@ -5597,6 +5618,15 @@ function c01Plantilla(equipos) {
 }
 function c01Cargar() {
  if(c01Guardando) return;
+ const torneo=ncCokiClave();
+ if(window.google?.script?.run&&c01FixtureLeido?.torneo!==torneo){
+  c01FixtureLeido={torneo,partidos:[]};
+  google.script.run.withSuccessHandler(r=>{
+   if(torneo!==ncCokiClave())return;
+   c01FixtureLeido={torneo,partidos:ncCokiDesdeF01(r.partidos||[])};
+   if(active==='cruces')c01Montar(true);
+  }).withFailureHandler(()=>{c01FixtureLeido=null}).adminF01Consultar(ncCokiIdent());
+ }
  const cat=c01Competencia, solicitud=++c01Solicitud;
  c01Snapshot=null;c01Error='';
  c01Montar();
@@ -5656,6 +5686,7 @@ function c01Programar(m, equipos, competencia) {
  const [categoria,genero]=competencia.split('|');
  const [local,visitante]=m.equipos.map(id=>equipos.find(t=>t.id===id&&t.activo));
  if(!m.confirmado||!local||!visitante)return;
+ if(c01EstadoPartido(m.id))return;
  c01PorProgramar={id:m.id,categoria,genero,titulo:m.titulo,local:local.nombre,visitante:visitante.nombre};
  ncEditorFixtureSeleccion=null;
  ncEditorBloqueSeleccionado=null;
@@ -5667,7 +5698,8 @@ function c01Montar(conservar=false) {
  const competencias=c01OpcionesCompetencia();
  if(!competencias.includes(c01Competencia)) c01Competencia=competencias[0]||'';
  const actuales=c01Snapshot?.clave===c01Clave(c01Competencia)?c01Snapshot:null;
- const previo=new Set(conservar?[...root.querySelectorAll('details[open]')].map(d=>d.dataset.c01Panel):[]);
+ const previo=c01Abiertos.get(c01Clave(c01Competencia))||new Map();
+ c01Abiertos.set(c01Clave(c01Competencia),previo);
  const local=actuales&&c01Borradores.get(actuales.clave);
  const el=(tag,text,clase)=>{
   const n=document.createElement(tag);
@@ -5722,7 +5754,8 @@ function c01Montar(conservar=false) {
  root.append(el('p',equipos.length+' equipos · Zonas confirmadas · '+[...zonas.values()].map(z=>z.length).join(' + '),'status'),form);
  function seccion(titulo,id,abierta=false,parent=form){
   const d=el('details',undefined,'nc-c01-detalle');d.dataset.c01Panel=id;
-  d.open=conservar&&previo.size?previo.has(id):abierta;
+  d.open=previo.has(id)?previo.get(id):abierta;
+  d.addEventListener('toggle',()=>{if(d.isConnected)previo.set(id,d.open)});
   d.append(el('summary',titulo));parent.append(d);return d;
  }
  const clasifica=seccion('Zonas y clasificación','zonas',true);
@@ -5763,7 +5796,7 @@ function c01Montar(conservar=false) {
   return input;
  }
  for(const [etapa,titulo] of [['cuartos','Cuartos de final'],['interzonas','Interzonas E y F'],['definiciones','Semifinales, finales y definición de puestos']]){
-  const bloque=seccion(titulo,etapa);
+  const bloque=seccion(titulo,etapa,true);
   if(etapa==='definiciones'&&(opciones.length===9||opciones.length>=13&&opciones.length%2===1)){
    bloque.append(el('p',opciones.length===9?'Referencia de prueba · El equipo fuera de cuartos queda 9.º.':'Si conservás la distribución sugerida, el último equipo de E queda '+opciones.length+'.º.','muted'));
   }
@@ -5799,7 +5832,9 @@ function c01Montar(conservar=false) {
     bloque.append(pares);
    });
   }
-  for(const m of datos.partidos.filter(m=>m.etapa===etapa)){
+  const partidos=datos.partidos.filter(m=>m.etapa===etapa);
+  if(etapa==='definiciones')partidos.sort((a,b)=>c01Prio(a.titulo)-c01Prio(b.titulo));
+  for(const m of partidos){
    const d=seccion(m.titulo||'Partido sin título',m.id,false,bloque);
    const par=el('div',undefined,'nc-c01-pares');
    const nombres=m.equipos.map((id,i)=>equipoInput(id,[m.equipos[1-i]]));
@@ -5833,6 +5868,35 @@ function c01Montar(conservar=false) {
    const programar=button('Programar en Fixture',()=>c01Programar(m,equipos,c01Competencia));
    programar.disabled=!m.confirmado;
    acciones.append(programar);
+   const programado=c01EstadoPartido(m.id);
+   if(programado){
+    programar.textContent=programado.resultado?'✓ Jugado':'✓ Programado';
+    programar.classList.add('nc-c01-programado');
+    programar.disabled=true;
+    confirmar.disabled=true;
+    eliminar.disabled=true;
+    for(const control of [...nombres,tituloInput,referencia])control.disabled=true;
+    d.querySelector('summary').append(' · '+(programado.resultado?'Jugado':'Programado'));
+   }
+   const candidatos=[...m.referencia.matchAll(/(\d+)\s*\.?[º°]?\s+(?:Zona\s+)?([A-F])\b/gi)].map(([,puesto,zona])=>{
+    const grupo=ranking?.grupos.find(g=>g.zona===zona.toUpperCase());
+    return puesto+'.º Zona '+zona.toUpperCase()+' · '+(grupo?.completo?(grupo.ranking[Number(puesto)-1]?.nombre||'Pendiente'):'Pendiente de resultados');
+   });
+   const dependencia=/^(Ganadores|Perdedores) de (cuartos|semifinales|reclasificación)(?: (\d+) y (\d+))?$/i.exec(m.referencia.trim());
+   if(dependencia){
+    const [,tipo,etapa,a,b]=dependencia;
+    const base=etapa.toLowerCase()==='semifinales'?'Semifinal':etapa;
+    for(const n of [a||1,b||2]){
+     const anterior=datos.partidos.find(p=>p.titulo.toLowerCase()===(base+' '+n).toLowerCase());
+     const estado=anterior&&c01EstadoPartido(anterior.id);
+     const ganador=estado?.resultado?.ganador;
+     const pierde=ganador===estado?.local?estado?.visitante:ganador===estado?.visitante?estado?.local:null;
+     candidatos.push(base+' '+n+' · '+((tipo.toLowerCase()==='ganadores'?ganador:pierde)||'Pendiente de resultado'));
+    }
+   }
+   const ayuda=el('p',candidatos.join(' vs. ')||m.referencia||'Referencia pendiente','nc-c01-ayuda');
+   d.append(el('small','Ayuda memoria','muted'),ayuda);
+   if(programado)d.append(el('small',ncFxFecha(programado.fecha)+' · '+programado.hora+' · Cancha '+programado.cancha,'muted'));
    d.append(par,field('Título del partido',tituloInput),field('Referencia',referencia),acciones);
   }
   bloque.append(button('Agregar partido',()=>{
