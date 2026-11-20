@@ -12,7 +12,7 @@
 
 .top .tournament-brand{display:flex;justify-content:flex-end}.top .tournament-logo{object-position:right center}.drawer-brand{display:block;flex:1;min-width:0}.drawer-brand img{display:block;width:205px;max-width:100%;height:auto}.drawer .head{gap:12px;align-items:center}.drawer .head>.iconbtn{flex:0 0 auto}
 
-html,body,.top,.drawer aside{background-color:#191c1d}.top{background:#191c1d;color:#f5f6f7}.top>.notification-bell:last-child{display:flex;align-items:center;justify-content:center;order:2;flex:0 0 auto;padding:10px;color:#f5f6f7;background:transparent;border:0}.top>.notification-bell:last-child .ic{width:27px;height:27px}.top>.notification-bell:hover{color:var(--lime)}.tournament-brand{order:1}@media(max-width:420px){.top{gap:10px}.top .tournament-logo{width:220px}.top>.notification-bell:last-child{padding:7px}}
+html,body,.top,.drawer aside{background-color:#191c1d}.top{background:#191c1d;color:#f5f6f7}.top>.notification-bell:last-child{display:flex;align-items:center;justify-content:center;order:2;flex:0 0 auto;padding:10px;color:#f5f6f7;background:transparent;border:0}.top>.notification-bell:last-child .ic{width:23px;height:23px}.top>.notification-bell:hover{color:var(--lime)}.tournament-brand{order:1}@media(max-width:420px){.top{gap:10px}.top .tournament-logo{width:220px}.top>.notification-bell:last-child{padding:7px}}
 
 /* Solo la cabecera exterior cambia a blanco. */
 header.top{background:#191c1d;color:#191c1d}.top>button:first-child,.top>.notification-bell:last-child{color:#191c1d}.top>.notification-bell:hover,.top>button:first-child:hover{color:#008839}.drawer aside,.drawer .head,.app,.view,.bottom{background-color:#191c1d;color:var(--ink)}
@@ -1202,7 +1202,7 @@ generic=function(){
   const copa='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10v8a5 5 0 0 1-10 0V3Z"/><path d="M7 5H4v3a4 4 0 0 0 4 4M17 5h3v3a4 4 0 0 1-4 4M12 16v4m-4 1h8"/></svg>';
   const medalla='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="15" r="6"/><path d="m8 10-3-7h5l2 6m4 1 3-7h-5l-2 6"/><path d="m12 12 1 2 2 .3-1.5 1.5.4 2.2-1.9-1-1.9 1 .4-2.2L9 14.3l2-.3z"/></svg>';
   const puestos=[['1.º',f[0],'Oro','oro',copa],['2.º',f[1],'Plata','plata',medalla],['3.º',t[0],'Bronce','bronce',medalla],['4.º',t[1],'','cuarto',medalla]];
-  return `<div class="nc-cruces-podio" aria-label="Clasificación final de la categoría"><div class="nc-cruces-podio-titulo">CLASIFICACIÓN FINAL</div>${puestos.map(([pos,nombre,metal,clase,icono])=>`<div class="nc-cruces-podio-fila"><span class="nc-cruces-podio-icono nc-cruces-podio-${clase}">${icono}</span><span><strong>${pos} ${safe(nombre)}</strong>${metal?' — '+metal:''}</span></div>`).join('')}</div>`;
+  return `<div class="nc-cruces-podio" aria-label="Clasificación final de la categoría">${puestos.map(([pos,nombre,metal,clase,icono])=>`<div class="nc-cruces-podio-fila"><span class="nc-cruces-podio-icono nc-cruces-podio-${clase}">${icono}</span><span><strong>${pos} ${safe(nombre)}</strong>${metal?' — '+metal:''}</span></div>`).join('')}</div>`;
  };
  const grupos=[...new Set(lista.map(m=>m.cat))].sort((a,b)=>String(a).localeCompare(String(b),'es',{numeric:true}));
  return `${head('Cruces y finales','COMPETENCIA')}${catTabs()}${grupos.length?grupos.map((cat,ci)=>{
@@ -1211,22 +1211,23 @@ generic=function(){
    const partidos=items.filter(m=>etapaDe(m)===etapa.id).sort(ordenar);
    const id=`nc-cruces-accordion-${ci}-${ei}`;
    const abierto=ncCrucesAbiertos.has(id);
-   return `<details id="${id}" class="nc-cruces-accordion nc-cruces-etapa-${ei}" ${abierto?'open':''} ontoggle="if(this.open)ncCrucesAbiertos.add(this.id);else ncCrucesAbiertos.delete(this.id)"><summary class="nc-cruces-accordion-head">${etapa.id==='FINALES'?`<span class="nc-copas-premios" aria-label="Copa de oro"><svg class="nc-copa-vector nc-copa-vector-oro" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-trophy"/></svg></span>`:etapa.id==='SEMIFINAL'?`<span class="nc-copas-premios" aria-label="Copa de plata"><svg class="nc-copa-vector nc-copa-vector-plata" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-trophy"/></svg></span>`:''}<span class="nc-cruces-accordion-label">${safe(etapa.title)}</span><span class="nc-cruces-accordion-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary><div class="nc-cruces-accordion-body">${partidos.length?partidos.map(tarjeta).join(''):'<div class="nc-cruces-no-partidos">Sin partidos publicados en esta instancia.</div>'}</div></details>`;
+   return `<details id="${id}" class="nc-cruces-accordion nc-cruces-etapa-${ei}" ${abierto?'open':''} ontoggle="if(this.open)ncCrucesAbiertos.add(this.id);else ncCrucesAbiertos.delete(this.id)"><summary class="nc-cruces-accordion-head"><span class="nc-cruces-accordion-label">${safe(etapa.title)}</span><span class="nc-cruces-accordion-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary><div class="nc-cruces-accordion-body">${partidos.length?partidos.map(tarjeta).join(''):'<div class="nc-cruces-no-partidos">Sin partidos publicados en esta instancia.</div>'}</div></details>`;
   }).join('')}${ncPodioCruces(items)}</section>`;
  }).join(''):`<div class="empty">${ncEmptyData('Todavía no hay cruces publicados.')}</div>`}`;
 };
 </script>
 <style id="nc-cruces-podio-final-css">
-#view .nc-cruces-podio{margin:23px 0 12px;padding:4px 0;color:#e8ecea}
+#view .nc-cruces-podio{margin:15px 0 22px 40px;padding:6px 10px;background:#1d2223;color:#e8ecea;max-width:calc(100% - 40px)}
 #view .nc-cruces-podio-titulo{font-size:12px;font-weight:600;letter-spacing:.06em;color:#bfc8c7;margin:0 0 10px}
-#view .nc-cruces-podio-fila{display:flex;align-items:center;gap:12px;padding:9px 0;font-size:15px;line-height:1.4}
+#view .nc-cruces-podio-fila{display:flex;align-items:center;gap:9px;padding:8px 0;font-size:15px;line-height:1.4}
 #view .nc-cruces-podio-fila strong{font-weight:700}
-#view .nc-cruces-podio-icono{width:27px;height:27px;flex:none;display:inline-flex;align-items:center;justify-content:center}
+#view .nc-cruces-podio-icono{width:23px;height:23px;flex:none;display:inline-flex;align-items:center;justify-content:center}
 #view .nc-cruces-podio-icono svg{width:23px;height:23px}
 #view .nc-cruces-podio-oro{color:#f2c52d}
 #view .nc-cruces-podio-plata{color:#c6ccd1}
 #view .nc-cruces-podio-bronce{color:#e38a26}
 #view .nc-cruces-podio-cuarto{color:#92999d}
+@media(max-width:420px){#view .nc-cruces-podio{margin-left:28px;max-width:calc(100% - 28px)}#view .nc-cruces-podio-fila{font-size:14px}}
 </style>
 <style id="nc-cruces-compact-accordion-css">
 #view .nc-cruces-compact-group{margin:22px 0 32px}
