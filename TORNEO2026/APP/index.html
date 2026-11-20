@@ -1157,6 +1157,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 /* Cruces y finales: cuatro instancias desplegables, tarjetas compactas. */
 const ncGenericCrucesAnterior=generic;
 const ncCrucesAbiertos=new Set();
+/* Delegación: el encabezado responde al clic incluso sobre la copa SVG o el texto. */
+document.addEventListener('click',function(event){
+ const head=event.target.closest?.('.nc-cruces-accordion-head[data-nc-accordion]');
+ if(!head)return;
+ event.preventDefault();
+ ncAlternarInstancia(head.dataset.ncAccordion);
+});
 function ncAlternarInstancia(id){
  const section=document.getElementById(id);if(!section)return;
  const body=section.querySelector('.nc-cruces-accordion-body');
@@ -1192,7 +1199,7 @@ generic=function(){
    const partidos=items.filter(m=>etapaDe(m)===etapa.id).sort(ordenar);
    const id=`nc-cruces-accordion-${ci}-${ei}`;
    const abierto=ncCrucesAbiertos.has(id);
-   return `<section id="${id}" class="nc-cruces-accordion nc-cruces-etapa-${ei}"><button type="button" class="nc-cruces-accordion-head" onclick="ncAlternarInstancia('${id}')" aria-expanded="${abierto}">${etapa.id==='FINALES'?`<span class="nc-copas-premios" aria-label="Copa de oro"><svg class="nc-copa-vector nc-copa-vector-oro" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-trophy"/></svg></span>`:etapa.id==='SEMIFINAL'?`<span class="nc-copas-premios" aria-label="Copa de plata"><svg class="nc-copa-vector nc-copa-vector-plata" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-trophy"/></svg></span>`:''}<span class="nc-cruces-accordion-label">${safe(etapa.title)}</span><span class="nc-cruces-accordion-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="nc-cruces-accordion-body" ${abierto?'':'hidden'}>${partidos.length?partidos.map(tarjeta).join(''):'<div class="nc-cruces-no-partidos">Sin partidos publicados en esta instancia.</div>'}</div></section>`;
+   return `<section id="${id}" class="nc-cruces-accordion nc-cruces-etapa-${ei}"><button type="button" class="nc-cruces-accordion-head" data-nc-accordion="${id}" aria-expanded="${abierto}">${etapa.id==='FINALES'?`<span class="nc-copas-premios" aria-label="Copa de oro"><svg class="nc-copa-vector nc-copa-vector-oro" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-trophy"/></svg></span>`:etapa.id==='SEMIFINAL'?`<span class="nc-copas-premios" aria-label="Copa de plata"><svg class="nc-copa-vector nc-copa-vector-plata" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-trophy"/></svg></span>`:''}<span class="nc-cruces-accordion-label">${safe(etapa.title)}</span><span class="nc-cruces-accordion-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="nc-cruces-accordion-body" ${abierto?'':'hidden'}>${partidos.length?partidos.map(tarjeta).join(''):'<div class="nc-cruces-no-partidos">Sin partidos publicados en esta instancia.</div>'}</div></section>`;
   }).join('')}</section>`;
  }).join(''):`<div class="empty">${ncEmptyData('Todavía no hay cruces publicados.')}</div>`}`;
 };
@@ -1467,5 +1474,11 @@ function ncVistaDesarrollo(){
 #view .nc-cruces-compact-group .nc-copa-vector{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}
 #view .nc-cruces-compact-group .nc-copa-vector-oro{color:#e6bc45}
 #view .nc-cruces-compact-group .nc-copa-vector-plata{color:#c4cbd3}
+</style>
+<style id="nc-cruces-copa-clic-fix">
+#view .nc-cruces-accordion-head .nc-copas-premios,
+#view .nc-cruces-accordion-head .nc-copas-premios *,
+#view .nc-cruces-accordion-head .nc-cruces-accordion-chevron,
+#view .nc-cruces-accordion-head .nc-cruces-accordion-chevron *{pointer-events:none!important}
 </style>
 </body></html>
