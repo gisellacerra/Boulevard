@@ -1393,4 +1393,27 @@ function ncVistaDesarrollo(){
 #view .nc-cruces-compact-group .nc-cruces-accordion-label{font-weight:400!important}
 #view .nc-cruces-compact-group .nc-cruces-accordion-chevron{color:#f6fafb!important}
 </style>
+
+<style id="nc-cruces-bordes-transparentes">
+/* Cards desplegables: fondo transparente, borde fino y uniforme. */
+#view .nc-cruces-compact-group .nc-cruces-accordion{
+  background:transparent!important;
+  border:1px solid var(--line,#394747)!important;
+  border-radius:10px!important;
+}
+#view .nc-cruces-compact-group .nc-cruces-accordion-head,
+#view .nc-cruces-compact-group .nc-cruces-etapa-1 .nc-cruces-accordion-head,
+#view .nc-cruces-compact-group .nc-cruces-etapa-2 .nc-cruces-accordion-head,
+#view .nc-cruces-compact-group .nc-cruces-etapa-3 .nc-cruces-accordion-head{
+  background:transparent!important;
+  color:var(--ink)!important;
+}
+/* Cards de equipos: sin barra/filete lateral izquierdo. */
+#view .nc-cruces-compact-group .nc-cruces-compact-card{
+  border-left:1px solid #344447!important;
+  padding-left:12px!important;
+  background:transparent!important;
+}
+#view .nc-cruces-compact-group .nc-cruces-compact-stripe{display:none!important}
+</style>
 </body></html>
