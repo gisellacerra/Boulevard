@@ -108,12 +108,24 @@
       throw Error('La sesión venció. Ingresá con Google para continuar.');
     }
     const controller=new AbortController();
-    const timeout=setTimeout(()=>controller.abort(),20000);
-    let response;
-    try{response=await fetch('https://script.googleapis.com/v1/scripts/'+encodeURIComponent(SCRIPT_ID)+':run',{
-      method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({function:func,parameters,devMode:false}),signal:controller.signal
-    });}catch(e){throw Error(e.name==='AbortError'?'La verificación con Apps Script tardó más de 20 segundos. Revisá la conexión o el despliegue de la API.':e.message);}finally{clearTimeout(timeout);}
-    const data=await response.json();
+    const consultarResultados=func==='adminResultados12Consultar';
+    const guardarResultado=func==='adminResultados12Guardar';
+    const limite=consultarResultados?45000:guardarResultado?60000:20000;
+    const timeout=setTimeout(()=>controller.abort(),limite);
+    let response,data;
+    try{
+      response=await fetch('https://script.googleapis.com/v1/scripts/'+encodeURIComponent(SCRIPT_ID)+':run',{
+        method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({function:func,parameters,devMode:false}),signal:controller.signal
+      });
+      data=await response.json();
+    }catch(e){
+      if(e.name!=='AbortError')throw e;
+      const mensaje=guardarResultado?'No se pudo verificar el guardado en 60 segundos.':
+        consultarResultados?'La consulta de resultados tardó más de 45 segundos. Podés actualizar para volver a consultar.':
+        func==='adminVerificarAccesoNewcom'?'La verificación de acceso tardó más de 20 segundos.':
+        'Apps Script no respondió en 20 segundos.';
+      const error=new Error(mensaje);error.code='NEWCOM_API_TIMEOUT';throw error;
+    }finally{clearTimeout(timeout);}
     if(!response.ok)throw Error(data.error?.message||'Error HTTP '+response.status);
     if(data.error)throw Error(data.error.details?.[0]?.errorMessage||data.error.message||'Error del servidor');
     return data.response?.result;
