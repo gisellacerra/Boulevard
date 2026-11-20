@@ -1205,19 +1205,18 @@ generic=function(){
     return '';
   };
   const decisivos=items.filter(m=>resultado(m)&&['FINAL','TERCER_PUESTO'].includes(String(m.instancia||'').toUpperCase()));
-  let partidoFinal=decisivos.find(m=>tipo(m)==='final');
-  let partidoTercero=decisivos.find(m=>tipo(m)==='tercero');
-  // Cuando la fuente llama a ambos partidos 'Final y 3.º puesto',
-  // reconocerlos por los ganadores de semifinales, si están disponibles.
-  if((!partidoFinal||!partidoTercero)&&decisivos.length>=2){
-    const semifinales=items.filter(m=>String(m.instancia||'').toUpperCase()==='SEMIFINAL').map(resultado).filter(Boolean);
-    if(semifinales.length===2){
-      const finalistas=new Set(semifinales.map(r=>normalizar(r[0])));
-      const terceros=new Set(semifinales.map(r=>normalizar(r[1])));
-      partidoFinal ||= decisivos.find(m=>finalistas.has(normalizar(m.a))&&finalistas.has(normalizar(m.b)));
-      partidoTercero ||= decisivos.find(m=>terceros.has(normalizar(m.a))&&terceros.has(normalizar(m.b)));
-    }
-  }
+  const semifinales=items.filter(m=>String(m.instancia||'').toUpperCase()==='SEMIFINAL').map(resultado).filter(Boolean);
+  const finalistas=new Set(semifinales.map(r=>normalizar(r[0])));
+  const terceros=new Set(semifinales.map(r=>normalizar(r[1])));
+  const son=m=>[normalizar(m.a),normalizar(m.b)];
+  // Primero buscar el partido por sus participantes reales (resultado de semifinales).
+  // No confundir un partido de tercer puesto con la final aunque ambos estén etiquetados 'Final'.
+  let partidoFinal=semifinales.length===2?decisivos.find(m=>son(m).every(n=>finalistas.has(n))):null;
+  let partidoTercero=semifinales.length===2?decisivos.find(m=>son(m).every(n=>terceros.has(n))):null;
+  if(!partidoTercero)partidoTercero=decisivos.find(m=>tipo(m)==='tercero');
+  if(!partidoFinal)partidoFinal=decisivos.find(m=>tipo(m)==='final'&&m!==partidoTercero);
+  // Si no se distingue inequívocamente el partido, no publicar puestos inventados.
+  if(partidoFinal===partidoTercero)partidoTercero=null;
   const f=resultado(partidoFinal);
   const t=resultado(partidoTercero);
   if(!f||!t)return '';
@@ -1226,10 +1225,11 @@ generic=function(){
   const puestos=[['1.º',f[0],'Oro','oro',copa],['2.º',f[1],'Plata','plata',medalla],['3.º',t[0],'Bronce','bronce',medalla],['4.º',t[1],'','cuarto',medalla]];
   return `<div class="nc-cruces-podio" aria-label="Clasificación final de la categoría">${puestos.map(([pos,nombre,metal,clase,icono])=>`<div class="nc-cruces-podio-fila"><span class="nc-cruces-podio-icono nc-cruces-podio-${clase}">${icono}</span><span><strong>${pos} ${safe(nombre)}</strong></span></div>`).join('')}</div>`;
  };
- const grupos=[...new Set(lista.map(m=>m.cat))].sort((a,b)=>String(a).localeCompare(String(b),'es',{numeric:true}));
- return `${head('Cruces y finales','COMPETENCIA')}${catTabs()}${grupos.length?grupos.map((cat,ci)=>{
-  const items=lista.filter(m=>m.cat===cat);
-  return `<section class="nc-cruces-compact-group" style="--cruces-color:${palette[cat]||'#9DD64A'}"><h2 class="nc-cruces-category">Categoría ${safe(cat)}</h2>${etapas.map((etapa,ei)=>{
+ const grupos=[...new Set(lista.map(m=>[m.cat,String(m.genero||'').trim()].join('|')))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
+ return `${head('Cruces y finales','COMPETENCIA')}${catTabs()}${grupos.length?grupos.map((clave,ci)=>{
+  const [cat,genero]=clave.split('|');
+  const items=lista.filter(m=>m.cat===cat&&String(m.genero||'').trim()===genero);
+  return `<section class="nc-cruces-compact-group" style="--cruces-color:${palette[cat]||'#9DD64A'}"><h2 class="nc-cruces-category">${safe(genero?genero+' · ':'')}Categoría ${safe(cat)}</h2>${etapas.map((etapa,ei)=>{
    const partidos=items.filter(m=>etapaDe(m)===etapa.id).sort(ordenar);
    const id=`nc-cruces-accordion-${ci}-${ei}`;
    const abierto=ncCrucesAbiertos.has(id);
