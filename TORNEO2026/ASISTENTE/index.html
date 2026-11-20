@@ -533,7 +533,7 @@ body[data-nc-theme="light"] .primary {background:#18864f!important;border-color:
 </style>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="conexion-api.js?v=20261118-3"></script>
+<script src="conexion-api.js?v=20261120-resultados"></script>
 <style id="newcom-encabezados-unificados">
 /* Encabezado coherente en todos los paneles: icono SVG local, visible y sin dependencias. */
 #view .panel.newcom-panel{padding-top:0;overflow:hidden}
@@ -3463,7 +3463,7 @@ function posiciones13EstadoCruces(g){
  // porque esa consulta puede no incluir todas las etapas de Cruces.
  return '<p class="status">Resultados de zona completos. Posiciones calculadas. Los cruces eliminatorios y el podio se consultan en la sección Cruces.</p>';
 }
-function posiciones13Activar(){const b=$('#p13Actualizar');if(b)b.onclick=resultados12Leer;const f=$('#p13Filtro');if(f)f.onchange=()=>{posiciones13Filtro=f.value;render()};}
+function posiciones13Activar(){const b=$('#p13Actualizar');if(b)b.onclick=()=>resultados12Leer(true);const f=$('#p13Filtro');if(f)f.onchange=()=>{posiciones13Filtro=f.value;render()};}
 
 
  // ETAPA 14 — Vista previa de clasificados y cruces. Solo lectura, sin guardar ni publicar.
@@ -4069,15 +4069,27 @@ function cruces16Activar(){const b=$('#c16Actualizar');if(b)b.onclick=()=>{cruce
 let resultados12Datos=null,resultados12Cargando=false,resultados12Seleccion='',resultados12Filtro='todas';
 const resultados12Clave=p=>[p.anio,p.edicion,String(p.categoria).replace(/^\+/,''),p.genero,p.zona,p.ronda,p.local,p.visitante].map(v=>String(v??'').trim()).join('|');
 function resultados12Partidos(){return (resultados12Datos?.partidos||[]).filter(p=>String(p.anio)===String(settings.anio)&&String(p.edicion)===String(settings.edicion)&&String(p.estado).trim()==='CONFIRMADO');}
+const resultados12Indices=new WeakMap();
 function resultados12Existente(p){
- const resultados=resultados12Datos?.resultados||[];
- const exactos=resultados.filter(r=>resultados12Clave(r)===resultados12Clave(p));
- if(exactos.length===1)return exactos[0];
+ const resultados=resultados12Datos?.resultados;
+ if(!resultados?.length)return;
+ let indice=resultados12Indices.get(resultados);
+ if(!indice){
+  const exactos=new Map(),wo=[];
+  for(const r of resultados){
+   const clave=resultados12Clave(r);
+   exactos.set(clave,exactos.has(clave)?null:r);
+   if(r.wo===true)wo.push(r);
+  }
+  indice={exactos,wo};
+  resultados12Indices.set(resultados,indice);
+ }
+ const exacto=indice.exactos.get(resultados12Clave(p));
+ if(exacto)return exacto;
  // Para W.O. únicamente: tolerar diferencias de ronda/zona o inversión de localía,
  // pero nunca asignar resultados ambiguos ni de otra edición/categoría.
  const norm=v=>String(v??'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').toLowerCase();
- const candidatos=resultados.filter(r=>{
-  if(r.wo!==true)return false;
+ const candidatos=indice.wo.filter(r=>{
   if(norm(r.anio)!==norm(p.anio)||norm(r.edicion)!==norm(p.edicion)||norm(String(r.categoria).replace(/^\+/,''))!==norm(String(p.categoria).replace(/^\+/,'')))return false;
   const a=[norm(r.local),norm(r.visitante)].sort().join('|');
   const b=[norm(p.local),norm(p.visitante)].sort().join('|');
@@ -4102,11 +4114,23 @@ function posiciones13Diagnostico(g){
  }
  return fallos.length?'<details style="margin:10px 0"><summary style="cursor:pointer">Diagnóstico de '+fallos.length+' partidos sin contabilizar</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px">'+fallos.map(esc).join('\n')+'</pre></details>':'';
 }
-function resultados12Leer(){
- if(!window.google?.script?.run){mostrarDialogoZonas({titulo:'Sin conexión',detalle:'Abrí el Asistente privado',advertencia:'Los resultados no están disponibles en este momento.',soloAceptar:true});return}
+function resultados12Leer(forzar=false){
  if(resultados12Cargando)return;
- resultados12Cargando=true;const estado=$('#r12Estado');if(estado)estado.textContent='Actualizando partidos y resultados...';
- google.script.run.withSuccessHandler(d=>{resultados12Cargando=false;resultados12Datos=d;ncResultadosPrecarga=d;ncResultadosPrecargaHora=Date.now();if(active==='resultados'||active==='posiciones'||active==='resumen'||active==='fixture')render()}).withFailureHandler(e=>{resultados12Cargando=false;const msg=String(e.message||e);const st=$('#r12Estado');if(st)st.textContent='Error: '+msg;mostrarDialogoZonas({titulo:'No se pudieron consultar los resultados',detalle:'No se modificó ningún dato',advertencia:msg,soloAceptar:true})}).adminResultados12Consultar();
+ if(forzar!==true&&ncResultadosPrecarga&&resultados12Datos===ncResultadosPrecarga&&Date.now()-ncResultadosPrecargaHora<20000)return;
+ resultados12Cargando=true;
+ const estado=$('#r12Estado');if(estado)estado.textContent='Actualizando partidos y resultados...';
+ ncResultadosConsultarRapido(true).then(()=>{
+  resultados12Cargando=false;
+  if(document.querySelector('#r12ModalOverlay'))return;
+  if(['resultados','posiciones','resumen','fixture','cruces'].includes(active))render();
+ }).catch(e=>{
+  resultados12Cargando=false;
+  const msg=String(e.message||e),estado=$('#r12Estado');
+  if(estado)estado.textContent=msg;
+  if(['resultados','posiciones','resumen','cruces'].includes(active)&&!document.querySelector('#r12ModalOverlay')){
+   mostrarDialogoZonas({titulo:'No se pudieron consultar los resultados',detalle:msg,soloAceptar:true});
+  }
+ });
 }
 function resultados12Marcador(a,b,tie=false){
  if(a===null||a===undefined||b===null||b===undefined||String(a).trim()===''||String(b).trim()==='')return {estado:'incompleto'};
@@ -4212,7 +4236,7 @@ function resultados12Render(){
 function resultados12Activar(){
  const diag=$('#diagnostico28Actualizar');if(diag)diag.onclick=diagnostico28Leer;
  const hb=$('#historial26Actualizar');if(hb)hb.onclick=historial26Leer;
- const b=$('#r12Actualizar');if(b)b.onclick=resultados12Leer;
+ const b=$('#r12Actualizar');if(b)b.onclick=()=>resultados12Leer(true);
  const f=$('#r12Filtro');if(f)f.onchange=()=>{resultados12Filtro=f.value;resultados12Seleccion='';render()};
  document.querySelectorAll('[data-r12-partido]').forEach(b=>b.onclick=()=>{resultados12Seleccion=b.dataset.r12Partido;render()});
  const cancel=$('#r12Cancelar');if(cancel)cancel.onclick=()=>{resultados12Seleccion='';render()};const close=$('#r12Cerrar');if(close)close.onclick=()=>{resultados12Seleccion='';render()};
@@ -4229,14 +4253,8 @@ async function resultados12Guardar(){
  const anterior=resultados12Existente(partido);
  const motivo=anterior?String($('#r12Motivo')?.value||'').trim():'';
  if(anterior&&!motivo){avisoIntegrado('Indicá el motivo de la corrección.');return;}
- const clave=resultados12Clave(partido);
- const firmaResultado=x=>x?JSON.stringify({
-  clave:resultados12Clave(x),
-  set1:(x.set1||[]).map(String),set2:(x.set2||[]).map(String),
-  tiebreak:(x.tiebreak||[]).map(String),
-  ganador:String(x.ganador||'').trim(),estado:String(x.estado||'').trim()
- }):null;
- const snapshotAnterior=firmaResultado(anterior);
+ const {huella,huellaFixture}=resultados12Datos;
+ if(typeof huella!=='string'||typeof huellaFixture!=='string'){avisoIntegrado('Actualizá los resultados antes de guardar.');return;}
  const ok=await mostrarDialogoZonas({titulo:anterior?'Confirmar corrección de resultado':'Confirmar resultado',detalle:partido.local+' vs '+partido.visitante,advertencia:v.texto+'. '+(anterior?'Se registrará la corrección en el historial.':'Se guardará el resultado.')+' No se publica en la aplicación de jugadores.'});
  if(!ok)return;
  resultados12Guardando=true;
@@ -4245,16 +4263,11 @@ async function resultados12Guardar(){
  const error=async (e,actualizar=false)=>{
   terminar();
   const msg=String(e?.message||e);
-  await mostrarDialogoZonas({titulo:'No se guardó el resultado',detalle:'No se modificó el resultado',advertencia:msg,soloAceptar:true});
+  const sinRespuesta=e?.code==='NEWCOM_API_TIMEOUT'||/No se pudo verificar el guardado/.test(msg);
+  await mostrarDialogoZonas({titulo:sinRespuesta?'Guardado sin verificar':'No se pudo guardar el resultado',detalle:msg,advertencia:sinRespuesta?'Consultá los resultados antes de volver a guardar.':'',soloAceptar:true});
+  if(sinRespuesta)actualizar=true;
   if(actualizar){resultados12Seleccion='';resultados12Leer();}
  };
- // Releer las huellas inmediatamente antes de guardar para evitar datos obsoletos.
- google.script.run.withSuccessHandler(fresco=>{
-  const pActual=(fresco.partidos||[]).find(p=>resultados12Clave(p)===clave&&String(p.estado).trim()==='CONFIRMADO');
-  const rActual=(fresco.resultados||[]).find(r=>resultados12Clave(r)===clave);
-  if(!pActual||firmaResultado(rActual)!==snapshotAnterior){
-   error(new Error('El partido o su resultado original cambió desde que abriste el editor. Actualizá y revisá antes de corregir.'),true);return;
-  }
   google.script.run.withSuccessHandler(async r=>{
    terminar();
    // El guardado ya fue confirmado por el servidor. Mostrar la confirmación sin esperar una nueva lectura.
@@ -4264,8 +4277,7 @@ async function resultados12Guardar(){
    document.querySelector('#r12ModalOverlay')?.remove();
    ncResultadosPrecarga=null;ncResultadosPrecargaHora=0;
    resultados12Leer();
-  }).withFailureHandler(e=>error(e,/cambiaron|cambi[oó]|actualiz|cruces/i.test(String(e?.message||e)))).adminResultados12Guardar({partido,resultado:v.resultado,huella:fresco.huella,huellaFixture:fresco.huellaFixture,reemplazar:!!anterior,motivo});
- }).withFailureHandler(e=>error(e)).adminResultados12Consultar();
+  }).withFailureHandler(e=>error(e,/cambiaron|cambi[oó]|actualiz|cruces/i.test(String(e?.message||e)))).adminResultados12Guardar({partido,resultado:v.resultado,huella,huellaFixture,reemplazar:!!anterior,motivo});
 }
 
 async function prepararFotoAlojamiento(file){
@@ -4637,14 +4649,16 @@ return {puntos:[s1,s2,...(tb?[tb]:[])].join(' ● '),ganador:String(resultado.ga
 }
 // Precarga compartida: evita una consulta nueva en cada clic de la grilla.
 let ncResultadosPrecarga=null,ncResultadosPrecargaHora=0,ncResultadosPrecargaPromesa=null;
-function ncResultadosConsultarRapido(){
+function ncResultadosConsultarRapido(forzar=false){
  const ahora=Date.now();
- if(ncResultadosPrecarga&&ahora-ncResultadosPrecargaHora<20000)return Promise.resolve(ncResultadosPrecarga);
+ if(!forzar&&ncResultadosPrecarga&&ahora-ncResultadosPrecargaHora<20000)return Promise.resolve(ncResultadosPrecarga);
  if(ncResultadosPrecargaPromesa)return ncResultadosPrecargaPromesa;
  if(!window.google?.script?.run)return Promise.reject(new Error('Abrí el Asistente desde su enlace privado para consultar los resultados.'));
  ncResultadosPrecargaPromesa=new Promise((resolve,reject)=>google.script.run.withSuccessHandler(d=>{
-  if(!d||!Array.isArray(d.partidos)){reject(new Error('No se recibió la lista de partidos desde Resultados.'));return;}
-  ncResultadosPrecarga=d;ncResultadosPrecargaHora=Date.now();resultados12Datos=d;resolve(d);
+  if(!d||!Array.isArray(d.partidos)||!Array.isArray(d.resultados)){reject(new Error('No se recibió la lista de partidos y resultados.'));return;}
+  ncResultadosPrecarga=d;ncResultadosPrecargaHora=Date.now();
+  if(!document.querySelector('#r12ModalOverlay'))resultados12Datos=d;
+  resolve(d);
  }).withFailureHandler(reject).adminResultados12Consultar()).finally(()=>{ncResultadosPrecargaPromesa=null});
  return ncResultadosPrecargaPromesa;
 }
