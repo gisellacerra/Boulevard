@@ -1930,6 +1930,25 @@ body[data-nc-theme="dark"] #view .nc-aloj-enlaces a{color:#a5eb37}
 .nc-c01-campos{min-width:0;border:0;padding:0}
 .nc-c01-pares{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))}
 .nc-c01-detalle .field{margin:8px 0}
+#c01Editor .nc-c01-categorias{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+#c01Editor .nc-c01-categorias button{flex:1 1 90px}
+#c01Editor .nc-c01-categorias button,#c01Editor .nc-c01-zonas button{border-radius:999px;font-weight:600}
+#c01Editor button[aria-pressed=true]{background:var(--sp-green,#167c4a);color:#fff;border-color:var(--sp-green,#167c4a)}
+body[data-nc-theme="dark"] #c01Editor button[aria-pressed=true]{color:#141816}
+#c01Editor .nc-c01-detalle{padding:0;border:1px solid var(--sp-line);border-radius:16px;margin:10px 0;background:var(--sp-surface)}
+#c01Editor .nc-c01-detalle summary{padding:14px;font-size:16px}
+#c01Editor .nc-c01-detalle[open]>summary{margin:0 0 10px;border-bottom:1px solid var(--sp-line)}
+#c01Editor .nc-c01-detalle>:not(summary){margin-inline:14px}
+#c01Editor .nc-c01-detalle>:last-child:not(summary){margin-bottom:14px}
+#c01Editor .nc-c01-detalle .nc-c01-detalle{border-radius:10px}
+#c01Editor .nc-c01-detalle .nc-c01-detalle summary{font-size:14px;padding:10px 14px}
+#c01Editor .nc-c01-zonas{display:flex;flex-wrap:wrap;gap:6px;margin-block:12px}
+#c01Editor .nc-c01-tabla{overflow:auto}
+#c01Editor table{width:100%;border-collapse:collapse}
+#c01Editor td,#c01Editor th{text-align:left;border-bottom:1px solid var(--sp-line)}
+#c01Editor td:last-child,#c01Editor th:last-child{text-align:right}
+#c01Editor .nc-c01-pie{margin-top:12px}
+#c01Editor .nc-c01-estado:empty{display:none}
 </style></head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
@@ -5409,18 +5428,8 @@ else if(active==='registro'){view.innerHTML=historial26Render();const boton=$('#
 else if(active==='resultados'){view.innerHTML=resultados12Render();resultados12Activar();}
  else if(active==='posiciones'){view.innerHTML=posiciones13Render();posiciones13Activar();}
  else if(active==='cruces'){
- view.innerHTML=panel('Cruces y finales · C01','<div id="c01Editor"></div>')+
- '<details class="nc-c01-detalle"><summary>Etapas y partidos del editor anterior</summary>'+ncHojaRender()+'</details>';
- c01Montar();ncHojaActivar();
- document.querySelectorAll('[data-nc-elegir-grilla]').forEach(b=>b.onclick=()=>{
-  const row=b.closest('.nc-program-row');if(!row)return;
-  const field=row.querySelector('[data-c15-cat], [data-c16-cat]');if(!field)return;
-  if(field.dataset.c15Cat){ncElegirEnFixture(ncBracketSelected,'SEMIFINAL',Number(field.dataset.c15I));}
-  else{ncElegirEnFixture(field.dataset.c16Cat,field.dataset.c16Inst,0);}
- });
- document.querySelectorAll('[data-nc-program]').forEach(b=>b.onclick=()=>{ncProgramacionAbiertaComp=ncBracketSelected;const box=document.getElementById('ncProgram');if(box){box.hidden=false;box.scrollIntoView({behavior:'smooth',block:'nearest'});box.querySelector('input')?.focus();}});
- document.querySelectorAll('[data-c16-cat][data-c16-k], [data-c15-cat][data-c15-key]').forEach(el=>el.addEventListener('change',()=>{if(el.dataset.c16Cat){const key=el.dataset.c16Cat+'|'+el.dataset.c16Inst;ncDefinicionesBorrador[key]={...(ncDefinicionesBorrador[key]||{}),[el.dataset.c16K]:el.value};}else{const key=el.dataset.c15Cat+'|'+el.dataset.c15I;cruces15Borradores[key]={...(cruces15Borradores[key]||{}),[el.dataset.c15Key]:el.value};}}));
- const sel=document.getElementById('ncBracketSelect');if(sel)sel.onchange=()=>{ncBracketSelected=sel.value;ncProgramacionAbiertaComp='';render();};
+ view.innerHTML=panel('Cruces y finales · C01','<div id="c01Editor"></div>');
+ c01Montar();
 }
 else if(active==='ayuda'){view.innerHTML=ayudaContenido();}
 
@@ -5456,6 +5465,7 @@ function arbVista(){const r=arbEdicion||{};return panel('Gestión de árbitros',
 function arbEnlazar(){document.getElementById('arbActualizar').onclick=arbLeer;const f=document.getElementById('arbForm');document.getElementById('arbCancelar')?.addEventListener('click',()=>{arbEdicion=null;arbFotoNueva='';arbQuitarFoto=false;render()});document.getElementById('arbFotoVista')?.addEventListener('click',e=>{if(!e.target.closest('[data-quitar-foto-arb]'))return;arbQuitarFoto=true;arbFotoNueva='';document.getElementById('arbFotoArchivo').value='';document.getElementById('arbFotoVista').innerHTML='<span class="muted">Fotografía quitada. Guardá los cambios para confirmar.</span>'});document.getElementById('arbFotoArchivo').onchange=async e=>{const file=e.target.files[0];if(!file)return;if(file.size>750000){await dialogoEquipo('Foto demasiado grande','El límite es 750 KB.');e.target.value='';return}const reader=new FileReader();reader.onload=()=>{arbFotoNueva=String(reader.result);arbQuitarFoto=false;document.getElementById('arbFotoVista').innerHTML=`<span style="display:inline-block;position:relative;width:120px;height:120px"><img class="arb-foto" src="${esc(arbFotoNueva)}" alt="Vista previa" style="width:120px;height:120px;object-fit:cover;display:block"><button type="button" data-quitar-foto-arb aria-label="Quitar fotografía" title="Quitar fotografía" style="position:absolute;top:6px;right:6px;border:0;border-radius:50%;background:#c62828;color:white;width:25px;height:25px;cursor:pointer;font-size:18px;line-height:25px;padding:0">×</button></span>`};reader.readAsDataURL(file)};f.onsubmit=e=>{e.preventDefault();if(!window.google?.script?.run){dialogoEquipo('Sin conexión','Esta operación necesita tabla de respaldo.');return}const d=Object.fromEntries(new FormData(f));d.activo=d.activo==='si';d.id=arbEdicion?.id||'';d.foto=arbFotoNueva;d.quitarFoto=arbQuitarFoto;const btn=f.querySelector('[type=submit]');btn.disabled=true;google.script.run.withSuccessHandler(()=>{arbEdicion=null;arbFotoNueva='';arbQuitarFoto=false;arbLeer()}).withFailureHandler(err=>{btn.disabled=false;dialogoEquipo('No se pudo guardar',String(err.message||err))}).adminArbitrosGuardar(d)};document.querySelectorAll('[data-arb-edit]').forEach(b=>b.onclick=()=>{arbEdicion=arbRegistros.find(a=>a.id===b.dataset.arbEdit);arbFotoNueva='';arbQuitarFoto=false;render()});document.querySelectorAll('[data-arb-del]').forEach(b=>b.onclick=async()=>{if(!await dialogoEquipo('Eliminar árbitro','¿Confirmás la eliminación?',true))return;google.script.run.withSuccessHandler(()=>{arbEdicion=null;arbLeer()}).withFailureHandler(e=>dialogoEquipo('Error',String(e.message||e))).adminArbitrosEliminar(b.dataset.arbDel)})}
 
 let c01PorProgramar = null;
+const c01ZonaVisible = new Map();
 let c01Competencia = '', c01Snapshot = null, c01Solicitud = 0, c01Guardando = false, c01Error = '';
 const c01Borradores = new Map();
 const c01Sorteo = new Map();
@@ -5562,8 +5572,8 @@ function c01Guardar(local, estado, despues) {
  const root=$('#c01Editor');
  const contenido=root?.querySelector('fieldset');
  if(contenido) contenido.disabled=true;
- const selector=root?.querySelector('[data-c01-competencia]');
- if(selector) selector.disabled=true;
+ const pestañas=root?.querySelectorAll('[data-c01-competencia]');
+ pestañas?.forEach(tab=>tab.disabled=true);
  google.script.run.withSuccessHandler(r=>{
   c01Guardando=false;
   snapshot.revision=r.revision;
@@ -5573,7 +5583,7 @@ function c01Guardar(local, estado, despues) {
   c01Guardando=false;
   if(despues) despues();
   if(contenido) contenido.disabled=false;
-  if(selector) selector.disabled=false;
+  pestañas?.forEach(tab=>tab.disabled=false);
   estado.textContent=String(e.message||e);
   c01Error=estado.textContent;
  }).adminC01Guardar({...c01Identidad(cat),huella:snapshot.huella,revision:snapshot.revision,datos:local.datos});
@@ -5612,15 +5622,28 @@ function c01Montar(conservar=false) {
   opciones.forEach(([id,nombre])=>s.add(new Option(nombre,id)));
   s.value=valor;return s;
  }
- const barra=el('div',undefined,'toolbar');
- const categorias=selector(competencias.map(c=>[c,tituloCompetencia(c)]),c01Competencia);
- categorias.dataset.c01Competencia='';categorias.disabled=c01Guardando;
- categorias.onchange=()=>{c01Competencia=categorias.value;c01Cargar()};
- barra.append(field('Categoría y género',categorias),button('Actualizar zonas y cruces',c01Cargar));
- const estado=el('p',c01Error,'status');estado.setAttribute('aria-live','polite');
- root.replaceChildren(barra,estado);
+ const categorias=el('nav',undefined,'nc-c01-categorias');
+ categorias.setAttribute('aria-label','Categorías');
+ for(const competencia of competencias){
+  const {categoria,genero}=competenciaDeClave(competencia);
+  const repetida=competencias.filter(c=>competenciaDeClave(c).categoria===categoria).length>1;
+  const tab=button(repetida?categoria+' · '+genero:categoria,()=>{
+   if(c01Competencia!==competencia){c01Competencia=competencia;c01Cargar()}
+  });
+  tab.dataset.c01Competencia=competencia;
+  tab.setAttribute('aria-label',categoria+' '+genero);
+  tab.setAttribute('aria-pressed',String(competencia===c01Competencia));
+  tab.disabled=c01Guardando;
+  categorias.append(tab);
+ }
+ const estado=el('p',c01Error,'status nc-c01-estado');estado.setAttribute('aria-live','polite');
+ const refrescar=button('Actualizar zonas y cruces',c01Cargar);
+ refrescar.disabled=c01Guardando;
+ const pie=el('div',undefined,'toolbar nc-c01-pie');
+ pie.append(refrescar,estado);
+ root.replaceChildren(categorias);
  if(!local||!actuales.equipos.length){
-  root.append(el('p',c01Competencia?'Confirmá las zonas en Sorteo presencial y actualizá la categoría.':'No hay categorías disponibles.','muted'));
+  root.append(pie,el('p',c01Competencia?'Confirmá las zonas en Sorteo presencial y actualizá la categoría.':'No hay categorías disponibles.','muted'));
   return;
  }
  const datos=local.datos, equipos=actuales.equipos;
@@ -5635,12 +5658,20 @@ function c01Montar(conservar=false) {
  root.append(el('p',equipos.length+' equipos · Zonas confirmadas · '+[...zonas.values()].map(z=>z.length).join(' + '),'status'),form);
  function seccion(titulo,id,abierta=false,parent=form){
   const d=el('details',undefined,'nc-c01-detalle');d.dataset.c01Panel=id;
-  d.open=conservar?previo.has(id):abierta;
+  d.open=conservar&&previo.size?previo.has(id):abierta;
   d.append(el('summary',titulo));parent.append(d);return d;
  }
  const clasifica=seccion('Zonas y clasificación','zonas',true);
  const ranking=etapa14Clasificacion().find(x=>x.clave===c01Competencia);
- for(const [zona,nombres] of zonas) {
+ const controlesZona=el('div',undefined,'nc-c01-zonas');
+ controlesZona.setAttribute('role','group');
+ controlesZona.setAttribute('aria-label','Zonas');
+ const clasificacion=el('div',undefined,'nc-c01-tabla');
+ const claveZona=actuales.clave;
+ function mostrarZona(zona){
+  c01ZonaVisible.set(claveZona,zona);
+  for(const control of controlesZona.children)control.setAttribute('aria-pressed',String(control.dataset.zona===zona));
+  const nombres=zonas.get(zona);
   const tabla=el('table'), cabecera=tabla.createTHead().insertRow();
   ['Puesto','Equipo','PTS'].forEach(t=>cabecera.append(el('th',t)));
   const grupo=ranking?.grupos.find(g=>g.zona===zona);
@@ -5650,8 +5681,16 @@ function c01Montar(conservar=false) {
    const pos=orden.findIndex(r=>r.nombre===t.nombre), fila=tabla.insertRow();
    [pos<0?'—':(pos+1)+'º',t.nombre+(t.activo?'':' · BAJA'),pos<0?'—':orden[pos].pts].forEach(t=>fila.insertCell().textContent=t);
   });
-  clasifica.append(el('h3','Zona '+zona),tabla);
+  clasificacion.replaceChildren(tabla);
  }
+ for(const zona of zonas.keys()){
+  const control=button('Zona '+zona,()=>mostrarZona(zona));
+  control.dataset.zona=zona;
+  controlesZona.append(control);
+ }
+ clasifica.append(controlesZona,clasificacion);
+ const primeraZona=zonas.has(c01ZonaVisible.get(claveZona))?c01ZonaVisible.get(claveZona):zonas.keys().next().value;
+ if(primeraZona!==undefined)mostrarZona(primeraZona);
  function equipoInput(valor,excluidos=[]) {
   const lista=opciones.slice();
   if(valor&&!lista.some(([id])=>id===valor)) lista.push([valor,(equipos.find(t=>t.id===valor)?.nombre||valor)+' · revisar']);
@@ -5738,6 +5777,7 @@ function c01Montar(conservar=false) {
   }));
  }
  form.append(button('Guardar borrador',()=>c01Guardar(local,estado),'primary'));
+ root.append(pie);
  if(local.conflicto)root.append(button('Descartar borrador local y recargar',async()=>{
   if(!await dialogoEquipo('Recargar cruces','¿Descartar los cambios locales de esta categoría?',true))return;
   c01Borradores.delete(actuales.clave);c01Cargar();
