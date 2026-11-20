@@ -4315,8 +4315,8 @@ const ncCokiClave=()=>String(settings.anio)+'|'+String(settings.edicion);
 const ncCokiIdent=()=>({anio:Number(settings.anio),edicion:String(settings.edicion||'').trim()});
 const ncCokiMin=h=>{const m=String(h||'').match(/^(\d{1,2}):(\d{2})/);return m?Number(m[1])*60+Number(m[2]):NaN};
 const ncCokiHora=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
-function ncCokiParaF01(){const fechas=programaFechas().filter(Boolean);return fixture.map((p,i)=>({id:i+1,day:Math.max(1,fechas.indexOf(String(p.fecha).slice(0,10))+1),cat:'+'+String(p.categoria||'50').replace(/^\+/,''),a:String(p.local||p.equipoA||''),b:String(p.visitante||p.equipoB||''),start:ncCokiMin(p.hora),duration:Math.max(5,Number(settings.duracion)||50),interval:Math.max(0,Number(settings.intervalo)||0),court:Number(p.cancha),title:String(p.titulo||''),gender:String(p.genero||'Mixto'),zone1:String(p.zonaLocal||p.zona||''),zone2:String(p.zonaVisitante||p.zona||'')}));}
-function ncCokiDesdeF01(rows){const fechas=programaFechas().filter(Boolean);return rows.map(p=>({titulo:p.title||'',categoria:p.cat,genero:p.gender||'Mixto',local:p.a,visitante:p.b,fecha:fechas[Number(p.day)-1]||'',hora:ncCokiHora(Number(p.start)),cancha:Number(p.court),zonaLocal:p.zone1||'',zonaVisitante:p.zone2||'',zona:p.zone1===p.zone2?p.zone1:(p.zone1||'')+'-'+(p.zone2||''),ronda:1}));}
+function ncCokiParaF01(){const fechas=programaFechas().filter(Boolean);return fixture.map((p,i)=>({id:i+1,day:Math.max(1,fechas.indexOf(String(p.fecha).slice(0,10))+1),cat:'+'+String(p.categoria||'50').replace(/^\+/,''),a:String(p.local||p.equipoA||''),b:String(p.visitante||p.equipoB||''),start:ncCokiMin(p.hora),duration:Math.max(5,Number(settings.duracion)||50),interval:Math.max(0,Number(settings.intervalo)||0),court:Number(p.cancha),title:String(p.titulo||''),...(p.c01Id?{c01Id:p.c01Id}:{}),gender:String(p.genero||'Mixto'),zone1:String(p.zonaLocal||p.zona||''),zone2:String(p.zonaVisitante||p.zona||'')}));}
+function ncCokiDesdeF01(rows){const fechas=programaFechas().filter(Boolean);return rows.map(p=>({titulo:p.title||'',...(p.c01Id?{c01Id:p.c01Id}:{}),categoria:p.cat,genero:p.gender||'Mixto',local:p.a,visitante:p.b,fecha:fechas[Number(p.day)-1]||'',hora:ncCokiHora(Number(p.start)),cancha:Number(p.court),zonaLocal:p.zone1||'',zonaVisitante:p.zone2||'',zona:p.zone1===p.zone2?p.zone1:(p.zone1||'')+'-'+(p.zone2||''),ronda:1}));}
 function ncCokiGuardarRemoto(){
  ncCokiPendiente=true;
  if(ncCokiCargando||ncCokiGuardando)return;
@@ -5138,9 +5138,11 @@ function ncEditorFixturePanel(){
  const fechas=[...new Set([...programaFechas().filter(Boolean),...(ncEditorBloqueSeleccionado?[ncEditorBloqueSeleccionado.fecha]:[])])];
  if(ncDemoraPlan)return `<aside class="nc-ef-panel"><h3>Revisar programación</h3><p>${ncDemoraPlan.cambios.length} partido(s) modificado(s) · vista previa</p><p class="muted">No se guardaron cambios todavía.</p>${(ncDemoraPlan.advertencias||[]).length?`<div role="status" style="color:#f5cf67;background:#393321;padding:10px;border-radius:6px"><strong>Descanso reducido</strong>${ncDemoraPlan.advertencias.map(a=>`<p>${esc(a)}</p>`).join('')}<p>Podés confirmar el cambio.</p></div>`:''}${ncDemoraPlan.error?`<p role="alert" style="color:#f5cf67">${esc(ncDemoraPlan.error)}</p>`:''}<button type="button" class="primary" id="nc-demora-confirmar">Confirmar cambios</button><button type="button" class="secondary" id="nc-demora-cancelar">Cancelar</button></aside>`;
  const confirmarArriba=active==='fixture'?`<div style="display:flex;justify-content:flex-end;margin-bottom:14px"><button type="button" id="nc-confirmar-manual" ${!fixture.length?'disabled':''} style="background:#c62828;color:#fff;border:1px solid #b71c1c;border-radius:7px;padding:10px 16px;font-weight:700;cursor:pointer;${!fixture.length?'opacity:.5;cursor:not-allowed;':''}">Confirmar fixture</button></div>`:'';
+ const pendienteC01=active==='fixture'&&c01PorProgramar&&!p?c01PorProgramar:null;
+ const avisoC01=pendienteC01?'<p role="status"><strong>'+esc(pendienteC01.titulo)+'</strong><br>'+esc(pendienteC01.local)+' vs. '+esc(pendienteC01.visitante)+'<br>Elegí un bloque libre y agregá el partido.</p><button type="button" class="secondary" id="c01-cancelar-programacion">Cancelar programación C01</button>':'';
  const agregarArriba=editable?`<div style="margin-bottom:8px"><button type="submit" form="nc-ef-form" class="primary" style="width:100%">${p?'Aplicar cambios':'Agregar partido'}</button></div>`:'';
- const html=`<aside class="nc-ef-panel">${agregarArriba}${confirmarArriba}<h3>Editar partido</h3>${!editable&&!p?'<p class="muted">Seleccioná un partido pendiente. Podés modificar su programación y guardar los cambios en el fixture confirmado. Los resultados permanecen protegidos.</p>':!p?'<p class="muted">Seleccioná un bloque libre para agregar un partido, o una tarjeta para editarla. Los cambios se guardan automáticamente.</p>':''}
- ${!editable&&p?`<div class="nc-ef-confirmado"><p><strong>${esc(p.local)} vs. ${esc(p.visitante)}</strong></p><p class="muted">${esc(ncFxFecha(p.fecha))} · ${esc(String(p.hora).slice(0,5))} · Cancha ${esc(p.cancha)}</p>${ncDemoraFijo(p)?'<p class="muted">Partido en juego, con resultado o protegido: no admite reprogramación.</p>':''}${ncDemoraControles(p)}</div>`:''}${editable?`<form id="nc-ef-form"><label class="nc-ef-campo">Título del partido (opcional)<input name="titulo" maxlength="120" placeholder="Ej.: Semifinales, Final Oro" value="${esc(p?.titulo||'')}"></label>${radios('genero',generos,p?.genero||generos[0]||'','Género')}${radios('categoria',categorias,categoria,'Categoría')}<p class="muted" style="font-size:12px">Los equipos se filtran según las zonas asignadas a la categoría y género.</p>${selectorZona(p?.local||'','zonaLocal')}<label class="nc-ef-campo">Equipo 1<select name="local" required><option value="">Seleccionar equipo</option>${lista(p?.local||'',equipos)}</select></label>${selectorZona(p?.visitante||'','zonaVisitante')}<label class="nc-ef-campo">Equipo 2<select name="visitante" required><option value="">Seleccionar equipo</option>${lista(p?.visitante||'',equipos)}</select></label><label class="nc-ef-campo">Fecha<select name="fecha" required>${lista(p?.fecha||ncEditorBloqueSeleccionado?.fecha||ncDiaFixtureSeleccionado,fechas)}</select></label><div class="nc-ef-dos"><label class="nc-ef-campo">Horario<input name="hora" type="time" required value="${esc(p?.hora||ncEditorBloqueSeleccionado?.hora||'14:00')}"></label><label class="nc-ef-campo">Cancha<select name="cancha">${lista(p?.cancha||ncEditorBloqueSeleccionado?.cancha||1,Array.from({length:Math.max(1,Number(settings.canchas)||4)},(_,i)=>i+1))}</select></label></div>${p?'<button type="button" class="secondary" id="nc-ef-eliminar">Eliminar partido</button>':''}<p class="muted">Registro manual. No genera cruces ni partidos automáticamente.</p></form>`:''}</aside>`;
+ const html=`<aside class="nc-ef-panel">${agregarArriba}${confirmarArriba}<h3>Editar partido</h3>${avisoC01}${!editable&&!p?'<p class="muted">Seleccioná un partido pendiente. Podés modificar su programación y guardar los cambios en el fixture confirmado. Los resultados permanecen protegidos.</p>':!p?'<p class="muted">Seleccioná un bloque libre para agregar un partido, o una tarjeta para editarla. Los cambios se guardan automáticamente.</p>':''}
+ ${!editable&&p?`<div class="nc-ef-confirmado"><p><strong>${esc(p.local)} vs. ${esc(p.visitante)}</strong></p><p class="muted">${esc(ncFxFecha(p.fecha))} · ${esc(String(p.hora).slice(0,5))} · Cancha ${esc(p.cancha)}</p>${ncDemoraFijo(p)?'<p class="muted">Partido en juego, con resultado o protegido: no admite reprogramación.</p>':''}${ncDemoraControles(p)}</div>`:''}${editable?`<form id="nc-ef-form"><label class="nc-ef-campo">Título del partido (opcional)<input name="titulo" maxlength="${pendienteC01||p?.c01Id?160:120}" placeholder="Ej.: Semifinales, Final Oro" value="${esc(p?.titulo||'')}"></label>${radios('genero',generos,p?.genero||generos[0]||'','Género')}${radios('categoria',categorias,categoria,'Categoría')}<p class="muted" style="font-size:12px">Los equipos se filtran según las zonas asignadas a la categoría y género.</p>${selectorZona(p?.local||'','zonaLocal')}<label class="nc-ef-campo">Equipo 1<select name="local" required><option value="">Seleccionar equipo</option>${lista(p?.local||'',equipos)}</select></label>${selectorZona(p?.visitante||'','zonaVisitante')}<label class="nc-ef-campo">Equipo 2<select name="visitante" required><option value="">Seleccionar equipo</option>${lista(p?.visitante||'',equipos)}</select></label><label class="nc-ef-campo">Fecha<select name="fecha" required>${lista(p?.fecha||ncEditorBloqueSeleccionado?.fecha||ncDiaFixtureSeleccionado,fechas)}</select></label><div class="nc-ef-dos"><label class="nc-ef-campo">Horario<input name="hora" type="time" required value="${esc(p?.hora||ncEditorBloqueSeleccionado?.hora||'14:00')}"></label><label class="nc-ef-campo">Cancha<select name="cancha">${lista(p?.cancha||ncEditorBloqueSeleccionado?.cancha||1,Array.from({length:Math.max(1,Number(settings.canchas)||4)},(_,i)=>i+1))}</select></label></div>${p?'<button type="button" class="secondary" id="nc-ef-eliminar">Eliminar partido</button>':''}<p class="muted">Registro manual. No genera cruces ni partidos automáticamente.</p></form>`:''}</aside>`;
  return html;
 }
 let ncCokiClickPartidoTimer=null;
@@ -5203,6 +5205,24 @@ function ncEditorFixtureEnlazar(){
   }
  });
  refrescarEquipos();
+ const c01=active==='fixture'&&!seleccionado?c01PorProgramar:null;
+ if(c01){
+  const elegirRadio=(nombre,valor)=>{
+   const radio=[...form.querySelectorAll('input[type="radio"]')].find(x=>x.name===nombre&&x.value===valor);
+   if(!radio)return;
+   radio.checked=true;
+   radio.dispatchEvent(new Event('change',{bubbles:true}));
+  };
+  elegirRadio('categoria',c01.categoria);
+  elegirRadio('genero',c01.genero);
+  const zonasC01=ncEditorZonasDisponibles(c01.categoria,c01.genero);
+  for(const [campo,zona] of [['local','zonaLocal'],['visitante','zonaVisitante']]){
+   elegirRadio(zona,zonasC01.find(z=>z.nombre===c01[campo])?.zona||'');
+   form.elements[campo].value=c01[campo];
+  }
+  form.elements.titulo.value=c01.titulo;
+  document.getElementById('c01-cancelar-programacion').onclick=()=>{c01PorProgramar=null;render()};
+ }
 
  document.getElementById('nc-ef-eliminar')?.addEventListener('click',()=>{
   const i=fixture.findIndex(x=>ncEditorFixtureClave(x)===ncEditorFixtureSeleccion);if(i<0)return;
@@ -5212,9 +5232,22 @@ function ncEditorFixtureEnlazar(){
  form.addEventListener('submit',e=>{
   e.preventDefault();const d=new FormData(form);const local=String(d.get('local')||''),visitante=String(d.get('visitante')||'');if(!local||!visitante||local===visitante){avisoIntegrado('Elegí dos equipos diferentes.');return}
   const i=fixture.findIndex(x=>ncEditorFixtureClave(x)===ncEditorFixtureSeleccion);if(i>=0&&ncFxFijo(fixture[i])){avisoIntegrado('Este partido está protegido.');return}
-  const anterior=fixture.map(x=>({...x}));const cambio={zonaLocal:String(d.get('zonaLocal')||''),zonaVisitante:String(d.get('zonaVisitante')||''),titulo:String(d.get('titulo')||'').trim().slice(0,120),categoria:String(d.get('categoria')),genero:String(d.get('genero')),local,visitante,fecha:String(d.get('fecha')),hora:String(d.get('hora')),cancha:String(d.get('cancha'))};
+  if(c01&&(ncCokiCargando||ncCokiGuardando||ncCokiPendiente||ncCokiInicializado!==ncCokiClave())){
+   avisoIntegrado('Esperá a que se cargue y sincronice el borrador del Fixture.');return;
+  }
+  if(c01&&!ncEditorBloqueSeleccionado){avisoIntegrado('Seleccioná primero un bloque libre de la grilla.');return;}
+  if(c01&&(local!==c01.local||visitante!==c01.visitante||d.get('categoria')!==c01.categoria||d.get('genero')!==c01.genero)){
+   avisoIntegrado('Para cambiar los equipos, volvé a Cruces y confirmá la instancia actualizada.');return;
+  }
+  const C01Existente=c01?fixture.find(p=>p.c01Id===c01.id):null;
+  if(C01Existente){avisoIntegrado('Este cruce ya está en el borrador. Editalo desde su tarjeta en el Fixture.');return;}
+  if(c01&&fixture.some(p=>ncFxFecha(p.fecha)===String(d.get('fecha'))&&String(p.hora).slice(0,5)===String(d.get('hora'))&&Number(p.cancha)===Number(d.get('cancha')))){
+   avisoIntegrado('Ese bloque ya está ocupado. Elegí otro.');return;
+  }
+  const anterior=fixture.map(x=>({...x}));const cambio={zonaLocal:String(d.get('zonaLocal')||''),zonaVisitante:String(d.get('zonaVisitante')||''),titulo:String(d.get('titulo')||'').trim().slice(0,c01||fixture[i]?.c01Id?160:120),categoria:String(d.get('categoria')),genero:String(d.get('genero')),local,visitante,fecha:String(d.get('fecha')),hora:String(d.get('hora')),cancha:String(d.get('cancha'))};
   ncEditorBorradorManual=true;
-  if(i>=0)fixture[i]={...fixture[i],...cambio};else fixture.push({...cambio,zona:'',ronda:1});
+  if(i>=0)fixture[i]={...fixture[i],...cambio};else fixture.push({...cambio,zona:'',ronda:1,...(c01?{c01Id:c01.id}:{})});
+  if(c01)c01PorProgramar=null;
   
   ncEditorFixtureSeleccion=ncEditorFixtureClave(i>=0?fixture[i]:fixture[fixture.length-1]);ncEditorBloqueSeleccionado={fecha:cambio.fecha,hora:cambio.hora,cancha:Number(cambio.cancha)};ncDiaFixtureSeleccionado=cambio.fecha;ncCategoriaFixtureSeleccionada='todas';ncFixtureMarcarPendiente();saveDraft();ncCokiGuardarRemoto();render();avisoIntegrado('Partido registrado. Guardando borrador...');
  });
@@ -5376,7 +5409,8 @@ else if(active==='registro'){view.innerHTML=historial26Render();const boton=$('#
 else if(active==='resultados'){view.innerHTML=resultados12Render();resultados12Activar();}
  else if(active==='posiciones'){view.innerHTML=posiciones13Render();posiciones13Activar();}
  else if(active==='cruces'){
- view.innerHTML=panel('Cruces y finales · C01','<div id="c01Editor"></div>')+ncHojaRender();
+ view.innerHTML=panel('Cruces y finales · C01','<div id="c01Editor"></div>')+
+ '<details class="nc-c01-detalle"><summary>Etapas y partidos del editor anterior</summary>'+ncHojaRender()+'</details>';
  c01Montar();ncHojaActivar();
  document.querySelectorAll('[data-nc-elegir-grilla]').forEach(b=>b.onclick=()=>{
   const row=b.closest('.nc-program-row');if(!row)return;
@@ -5421,6 +5455,7 @@ function arbLeer(){if(!window.google?.script?.run)return;arbCargando=true;google
 function arbVista(){const r=arbEdicion||{};return panel('Gestión de árbitros',`<p class="muted">Registros privados · Sin asignación a partidos</p><div class="toolbar"><button class="secondary" type="button" id="arbActualizar">Actualizar árbitros</button><span class="status">${arbCargando?'Cargando…':arbRegistros.length+' registrados'}</span></div><form id="arbForm" class="form"><label class="field">Nombre *<input name="nombre" required maxlength="100" value="${esc(r.nombre||'')}"></label><label class="field">Apellido *<input name="apellido" required maxlength="100" value="${esc(r.apellido||'')}"></label><label class="field">Ciudad<input name="ciudad" maxlength="100" value="${esc(r.ciudad||'')}" placeholder="Ciudad de origen"></label><label class="field">Provincia<select name="provincia"><option value="">Seleccionar provincia</option>${provinciasArgentinas.map(p=>`<option value="${esc(p)}" ${p===(r.provincia||'')?'selected':''}>${esc(p)}</option>`).join('')}</select></label><label class="field">Federado<select name="federado"><option ${r.federado==='Sí'?'selected':''}>Sí</option><option ${r.federado!=='Sí'?'selected':''}>No</option></select></label><label class="field">Teléfono<input name="telefono" value="${esc(r.telefono||'')}"></label><label class="field">Correo<input name="email" type="email" value="${esc(r.email||'')}"></label><label class="field">Fotografía (JPG, PNG, WebP)<input type="file" id="arbFotoArchivo" accept="image/png,image/jpeg,image/webp"></label><label class="field full">Observaciones<textarea name="observaciones" maxlength="500">${esc(r.observaciones||'')}</textarea></label><label class="field"><span>Estado</span><select name="activo"><option value="si" ${r.activo!==false?'selected':''}>Activo</option><option value="no" ${r.activo===false?'selected':''}>Inactivo</option></select></label><div class="field full"><div id="arbFotoVista">${r.foto?`<span style="display:inline-block;position:relative;width:120px;height:120px"><img class="arb-foto" src="${esc(r.foto)}" alt="Fotografía actual" style="width:120px;height:120px;object-fit:cover;display:block"><button type="button" data-quitar-foto-arb aria-label="Quitar fotografía" title="Quitar fotografía" style="position:absolute;top:6px;right:6px;border:0;border-radius:50%;background:#c62828;color:white;width:25px;height:25px;cursor:pointer;font-size:18px;line-height:25px;padding:0">×</button></span>`:''}</div></div><div class="field full"><button type="submit" class="primary">${arbEdicion?'Guardar cambios':'Agregar árbitro'}</button> ${arbEdicion?'<button type="button" class="secondary" id="arbCancelar">Cancelar edición</button>':''}</div></form>`)+panel('Árbitros registrados',arbRegistros.length?`<div class="tablewrap"><table><thead><tr><th>Foto</th><th>Apellido y nombre</th><th>Ciudad</th><th>Provincia</th><th>Federado</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>${arbRegistros.map(a=>`<tr><td>${a.foto?`<img class="arb-foto" src="${esc(a.foto)}" alt="Fotografía del árbitro">`:`<span class="arb-foto arb-foto-placeholder" role="img" aria-label="Árbitro sin fotografía"><svg viewBox="0 0 24 24" width="29" height="29" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2"/></svg></span>`}</td><td>${esc(a.apellido)}, ${esc(a.nombre)}</td><td>${esc(a.ciudad||'—')}</td><td>${esc(a.provincia||'—')}</td><td><span class="arb-badge ${a.federado==='Sí'?'arb-si':''}">${esc(a.federado)}</span></td><td>${a.activo?'Activo':'Inactivo'}</td><td><button type="button" class="secondary" data-arb-edit="${esc(a.id)}">Editar</button> <button type="button" class="secondary" data-arb-del="${esc(a.id)}">Eliminar</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Todavía no hay árbitros registrados.</div>')}
 function arbEnlazar(){document.getElementById('arbActualizar').onclick=arbLeer;const f=document.getElementById('arbForm');document.getElementById('arbCancelar')?.addEventListener('click',()=>{arbEdicion=null;arbFotoNueva='';arbQuitarFoto=false;render()});document.getElementById('arbFotoVista')?.addEventListener('click',e=>{if(!e.target.closest('[data-quitar-foto-arb]'))return;arbQuitarFoto=true;arbFotoNueva='';document.getElementById('arbFotoArchivo').value='';document.getElementById('arbFotoVista').innerHTML='<span class="muted">Fotografía quitada. Guardá los cambios para confirmar.</span>'});document.getElementById('arbFotoArchivo').onchange=async e=>{const file=e.target.files[0];if(!file)return;if(file.size>750000){await dialogoEquipo('Foto demasiado grande','El límite es 750 KB.');e.target.value='';return}const reader=new FileReader();reader.onload=()=>{arbFotoNueva=String(reader.result);arbQuitarFoto=false;document.getElementById('arbFotoVista').innerHTML=`<span style="display:inline-block;position:relative;width:120px;height:120px"><img class="arb-foto" src="${esc(arbFotoNueva)}" alt="Vista previa" style="width:120px;height:120px;object-fit:cover;display:block"><button type="button" data-quitar-foto-arb aria-label="Quitar fotografía" title="Quitar fotografía" style="position:absolute;top:6px;right:6px;border:0;border-radius:50%;background:#c62828;color:white;width:25px;height:25px;cursor:pointer;font-size:18px;line-height:25px;padding:0">×</button></span>`};reader.readAsDataURL(file)};f.onsubmit=e=>{e.preventDefault();if(!window.google?.script?.run){dialogoEquipo('Sin conexión','Esta operación necesita tabla de respaldo.');return}const d=Object.fromEntries(new FormData(f));d.activo=d.activo==='si';d.id=arbEdicion?.id||'';d.foto=arbFotoNueva;d.quitarFoto=arbQuitarFoto;const btn=f.querySelector('[type=submit]');btn.disabled=true;google.script.run.withSuccessHandler(()=>{arbEdicion=null;arbFotoNueva='';arbQuitarFoto=false;arbLeer()}).withFailureHandler(err=>{btn.disabled=false;dialogoEquipo('No se pudo guardar',String(err.message||err))}).adminArbitrosGuardar(d)};document.querySelectorAll('[data-arb-edit]').forEach(b=>b.onclick=()=>{arbEdicion=arbRegistros.find(a=>a.id===b.dataset.arbEdit);arbFotoNueva='';arbQuitarFoto=false;render()});document.querySelectorAll('[data-arb-del]').forEach(b=>b.onclick=async()=>{if(!await dialogoEquipo('Eliminar árbitro','¿Confirmás la eliminación?',true))return;google.script.run.withSuccessHandler(()=>{arbEdicion=null;arbLeer()}).withFailureHandler(e=>dialogoEquipo('Error',String(e.message||e))).adminArbitrosEliminar(b.dataset.arbDel)})}
 
+let c01PorProgramar = null;
 let c01Competencia = '', c01Snapshot = null, c01Solicitud = 0, c01Guardando = false, c01Error = '';
 const c01Borradores = new Map();
 const c01Sorteo = new Map();
@@ -5542,6 +5577,15 @@ function c01Guardar(local, estado, despues) {
   estado.textContent=String(e.message||e);
   c01Error=estado.textContent;
  }).adminC01Guardar({...c01Identidad(cat),huella:snapshot.huella,revision:snapshot.revision,datos:local.datos});
+}
+function c01Programar(m, equipos, competencia) {
+ const [categoria,genero]=competencia.split('|');
+ const [local,visitante]=m.equipos.map(id=>equipos.find(t=>t.id===id&&t.activo));
+ if(!m.confirmado||!local||!visitante)return;
+ c01PorProgramar={id:m.id,categoria,genero,titulo:m.titulo,local:local.nombre,visitante:visitante.nombre};
+ ncEditorFixtureSeleccion=null;
+ ncEditorBloqueSeleccionado=null;
+ navigate('fixture');
 }
 function c01Montar(conservar=false) {
  const root=$('#c01Editor');
@@ -5668,7 +5712,7 @@ function c01Montar(conservar=false) {
    const referencia=el('input');referencia.value=m.referencia;referencia.maxLength=240;
    tituloInput.oninput=()=>{m.titulo=tituloInput.value;d.querySelector('summary').textContent=m.titulo||'Partido sin título';modificar()};
    referencia.oninput=()=>{m.referencia=referencia.value;modificar()};
-   function modificar(){m.confirmado=false;c01Cambiar(local);actualizarBoton();}
+   function modificar(){m.confirmado=false;programar.disabled=true;c01Cambiar(local);actualizarBoton();}
    const confirmar=button('Confirmar instancia',()=>{
     c01Cambiar(local);m.confirmado=true;
     c01Guardar(local,estado,()=>{m.confirmado=false;actualizarBoton()});
@@ -5683,6 +5727,9 @@ function c01Montar(conservar=false) {
     datos.partidos.splice(datos.partidos.indexOf(m),1);c01Cambiar(local);c01Montar(true);
    });
    const acciones=el('div',undefined,'toolbar');acciones.append(confirmar,eliminar);
+   const programar=button('Programar en Fixture',()=>c01Programar(m,equipos,c01Competencia));
+   programar.disabled=!m.confirmado;
+   acciones.append(programar);
    d.append(par,field('Título del partido',tituloInput),field('Referencia',referencia),acciones);
   }
   bloque.append(button('Agregar partido',()=>{
