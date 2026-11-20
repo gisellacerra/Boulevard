@@ -4342,16 +4342,10 @@ function ncCokiGuardarRemoto(){
  if(!window.google?.script?.run){ncCokiPendiente=false;ncCokiUltimoError='Sin conexión con Apps Script';avisoIntegrado('Sin conexión con Apps Script: borrador local conservado.');return;}
  // Nunca reemplazar un borrador remoto existente con una lista vacía por un fallo de carga.
  if(!fixture.length){ncCokiPendiente=false;ncCokiUltimoError='Borrador vacío: guardado remoto bloqueado para proteger los partidos';avisoIntegrado(ncCokiUltimoError);return;}
- // Consultar la revisión antes del primer guardado para evitar conflictos al integrar Cruces.
  if(ncCokiInicializado!==ncCokiClave()){
-  ncCokiCargando=true;
-  google.script.run.withSuccessHandler(r=>{
-   ncCokiCargando=false;
-   if(!r||!Number.isFinite(Number(r.revision))){ncCokiUltimoError='No se pudo consultar la revisión del borrador';avisoIntegrado(ncCokiUltimoError);return;}
-   ncCokiRevision=Number(r.revision);ncCokiInicializado=ncCokiClave();
-   ncCokiGuardarRemoto();
-  }).withFailureHandler(e=>{ncCokiCargando=false;ncCokiUltimoError='No se pudo consultar el borrador: '+String(e.message||e);avisoIntegrado(ncCokiUltimoError);}).adminF01Consultar(ncCokiIdent());
-  return;
+  ncCokiPendiente=false;
+  ncCokiUltimoError='Primero recuperá el borrador guardado desde el Fixture.';
+  avisoIntegrado(ncCokiUltimoError);return;
  }
  ncCokiGuardando=true;ncCokiPendiente=false;
  const payload={...ncCokiIdent(),revision:ncCokiRevision,partidos:ncCokiParaF01()};
@@ -4374,9 +4368,9 @@ function ncCokiCargarInicial(forzar=false){
   if(key!==ncCokiClave())return;
   if(!r||!Array.isArray(r.partidos)){ncCokiUltimoError='La consulta del borrador no devolvió una lista válida';avisoIntegrado(ncCokiUltimoError);return;}
   ncCokiRevision=Number(r.revision)||0;
-  if(r.partidos.length){
+  if(r.partidos.length||ncCokiRevision>0){
    if(ncCokiPendiente||ncCokiGuardando){ncCokiUltimoError='Hay cambios locales pendientes: se conserva la edición actual';render();return;}
-   fixture=ncCokiDesdeF01(r.partidos);ncEditorBorradorManual=true;ncCokiUltimoError='';saveDraft();
+   ncCokiAplicarGuardado(ncCokiDesdeF01(r.partidos));
   }else if(fixture.length){
    // No borrar una propuesta local ante una lectura vacía del servidor.
    ncCokiUltimoError='La consulta devolvió un borrador vacío; se conservaron los partidos locales';
@@ -4386,6 +4380,60 @@ function ncCokiCargarInicial(forzar=false){
  }).withFailureHandler(e=>{ncCokiCargando=false;ncCokiUltimoError='No se pudo recuperar el borrador: '+String(e.message||e);avisoIntegrado(ncCokiUltimoError);}).adminF01Consultar(ncCokiIdent());
  if(!zonasRemotas)consultarZonas();
  fx3CargarDisponibilidad().then(()=>{if(active==='fixture')render()}).catch(e=>console.warn('Horarios no disponibles',e));
+}
+function ncCokiAplicarGuardado(partidos){
+ fixture=partidos;
+ ncEditorBorradorManual=true;
+ ncCokiUltimoError='';
+ ncEditorFixtureSeleccion=null;
+ ncEditorBloqueSeleccionado=null;
+ ncPlanArrastre=null;
+ fx3UltimaPropuesta=null;
+ if(!partidos.length) ncFixtureMarcarPendiente();
+ saveDraft();
+}
+async function ncCokiGestionarBorrador(vaciar){
+ if(ncCokiCargando||ncCokiGuardando||ncCokiPendiente)return;
+ if(!window.google?.script?.run){avisoIntegrado('Sin conexión con Apps Script.');return;}
+ const clave=ncCokiClave(), identidad=ncCokiIdent();
+ const mensaje=vaciar
+  ? 'Se vaciará el borrador de esta edición en Sheets y en este navegador. Los partidos confirmados, resultados, zonas y cruces de C01 se conservan.'
+  : 'Se recuperará el último borrador guardado en Sheets. Se descartarán los cambios locales que no se hayan guardado.';
+ if(!await dialogoEquipo(vaciar?'Empezar de cero':'Recargar borrador',mensaje,true))return;
+ if(clave!==ncCokiClave()||ncCokiCargando||ncCokiGuardando||ncCokiPendiente)return;
+ ncCokiGuardando=true;
+ render();
+ const error=e=>{
+  ncCokiGuardando=false;
+  if(clave!==ncCokiClave())return;
+  ncCokiUltimoError=String(e.message||e);
+  render();
+  avisoIntegrado('No se pudo actualizar el borrador: '+ncCokiUltimoError);
+ };
+ const aplicar=(revision,partidos)=>{
+  ncCokiGuardando=false;
+  if(clave!==ncCokiClave())return;
+  ncCokiRevision=revision;
+  ncCokiInicializado=clave;
+  if(vaciar)c01PorProgramar=null;
+  ncCokiAplicarGuardado(ncCokiDesdeF01(partidos));
+  render();
+  avisoIntegrado(vaciar?'Borrador vacío. Ya podés empezar de cero.':'Borrador recuperado desde Sheets.');
+ };
+ google.script.run.withSuccessHandler(r=>{
+  if(clave!==ncCokiClave()){ncCokiGuardando=false;return;}
+  if(!r||!Array.isArray(r.partidos)||!Number.isInteger(Number(r.revision))||Number(r.revision)<0){
+   error(Error('La respuesta no contiene una revisión válida.'));return;
+  }
+  const revision=Number(r.revision);
+  if(!vaciar){aplicar(revision,r.partidos);return;}
+  google.script.run.withSuccessHandler(guardado=>{
+   if(guardado?.ok!==true||Number(guardado.cantidad)!==0||Number(guardado.revision)!==revision+1){
+    error(Error('El servidor no confirmó el borrador vacío.'));return;
+   }
+   aplicar(Number(guardado.revision),[]);
+  }).withFailureHandler(error).adminF01Guardar({...identidad,revision,partidos:[]});
+ }).withFailureHandler(error).adminF01Consultar(identidad);
 }
 function ncCokiConfirmar(){
  if(ncCokiCargando||ncCokiGuardando||ncCokiPendiente){
@@ -5412,9 +5460,11 @@ else if(active==='zonas'){
  activarTableroManual();const refresh=$('#refreshZonas');if(refresh)refresh.onclick=consultarZonas;
 } else if(active==='fixture'){
   const hayFixture=fixture.length>0;
- view.innerHTML=`<section class="nc-ux-partidos"><div class="nc-ux-partidos-encabezado"><div><p>Seleccioná un bloque horario y registrá los equipos desde la barra derecha. Los cruces los decide el administrador consultando las posiciones. No se generan partidos automáticamente.</p></div></div><p class="muted">Las fechas y los horarios de cada cancha se administran exclusivamente en Configuración → Horarios por cancha.</p><div class="nc-ef-distribucion">${ncVistaJornadasFixture()}${ncEditorFixturePanel()}</div></section>`;
+ view.innerHTML=`<section class="nc-ux-partidos"><div class="nc-ux-partidos-encabezado"><div><p>Seleccioná un bloque horario y registrá los equipos desde la barra derecha. Los cruces los decide el administrador consultando las posiciones. No se generan partidos automáticamente.</p></div></div><p class="muted">Las fechas y los horarios de cada cancha se administran exclusivamente en Configuración → Horarios por cancha.</p><div class="toolbar"><button type="button" class="secondary" id="nc-coki-recargar" ${ncCokiGuardando||ncCokiCargando?'disabled':''}>Recargar borrador</button><button type="button" class="secondary" id="nc-coki-vaciar" ${ncCokiGuardando||ncCokiCargando?'disabled':''}>Vaciar borrador</button></div><div class="nc-ef-distribucion">${ncVistaJornadasFixture()}${ncEditorFixturePanel()}</div></section>`;
  ncEnlazarJornadasFixture();
  document.getElementById('nc-confirmar-manual')?.addEventListener('click',ncCokiConfirmar);
+ document.getElementById('nc-coki-recargar')?.addEventListener('click',()=>ncCokiGestionarBorrador(false));
+ document.getElementById('nc-coki-vaciar')?.addEventListener('click',()=>ncCokiGestionarBorrador(true));
 }
 else if(active==='fixture-auto'){const hayFixture=fixture.length>0;view.innerHTML=`<section class="nc-ux-config"><details class="nc-ux-config-detalle" ${(ncConfiguracionFixtureAbierta===null?!hayFixture:ncConfiguracionFixtureAbierta)?'open':''}><summary class="nc-ux-config-cabecera"><span class="nc-ux-config-numero">1</span><span class="nc-ux-config-textos"><strong>Configuración inicial de jornadas y canchas</strong><small>${hayFixture?'Ya hay una propuesta de fixture. Abrí esta sección solamente si necesitás revisar la configuración inicial.':'Empezá aquí: definí fechas, horarios y canchas antes de generar el fixture.'}</small></span><span class="nc-ux-config-estado">${hayFixture?'Ver configuración':'Primer paso'}</span></summary><div class="nc-ux-config-contenido">${renderFixtureEtapa10()}</div></details></section><section class="nc-ux-partidos"><div class="nc-ux-partidos-encabezado"><span class="nc-ux-config-numero">2</span><div><h2>Fixture y programación de partidos</h2><p>${fx3UltimaPropuesta?'Revisá la propuesta y confirmá el fixture para habilitar la carga de resultados.':hayFixture?'Arrastrá un partido pendiente o usá su reloj para modificar la programación.':'Prepará una propuesta para revisar los partidos.'}</p></div></div>${fx3AvisoCambio()?'<div class="fx3-aviso" role="status">La configuración cambió desde que se preparó esta propuesta. Los partidos se conservan sin cambios. Si querés aplicar los nuevos horarios, elegí «Regenerar propuesta».</div>':''}${fixture.length?`<div class="nc-fx-confirmacion"><span>${fx3UltimaPropuesta?'Propuesta sin confirmar · '+fixture.length+' partidos':'✓ Fixture confirmado'}</span>${fx3UltimaPropuesta?'<button class="secondary" type="button" id="fx3-borrar">Borrar propuesta fixture</button>':''}<button class="${fx3UltimaPropuesta?'primary':'secondary'}" type="button" id="et11Save" ${ncDemoraPlan||!fx3UltimaPropuesta||fixture.some(p=>!p.fecha||!p.hora||!p.cancha)||validarFixtureEtapa10().length?'disabled':''}>${fx3UltimaPropuesta?'Confirmar fixture':'✓ Fixture confirmado'}</button></div>`:''}${fixture.length&&fx3UltimaPropuesta&&validarFixtureEtapa10().length?`<ul class="fx3-aviso">${validarFixtureEtapa10().slice(0,35).map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`:''}${fixture.length&&fx3UltimaPropuesta?`<p class="muted" style="margin:10px 0 12px">${validarFixtureEtapa10().length?'Hay observaciones por resolver antes de confirmar.':'Revisá los horarios en la grilla. Si estás conforme, seleccioná «Confirmar fixture».'}</p>`:''}<div class="nc-ef-distribucion">${ncVistaJornadasFixture()}${ncEditorFixturePanel()}</div></section>`;activarFixtureEtapa10();ncEnlazarJornadasFixture();} 
  else if(active==='resumen'){
