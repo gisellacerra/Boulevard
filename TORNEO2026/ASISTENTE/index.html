@@ -1923,7 +1923,14 @@ body[data-nc-theme="dark"] #view .nc-aloj-enlaces a{color:#a5eb37}
   .app>aside .credit{flex-shrink:0!important}
 }
 </style>
-</head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
+<style>
+.nc-c01-detalle{padding:12px;border:1px solid var(--sp-border,#89958e);border-radius:10px;margin:8px 0}
+.nc-c01-detalle>summary{font-weight:650}
+.nc-c01-detalle[open]>summary{margin-bottom:10px}
+.nc-c01-campos{min-width:0;border:0;padding:0}
+.nc-c01-pares{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))}
+.nc-c01-detalle .field{margin:8px 0}
+</style></head><body><header class="nc-light-header"><div class="nc-light-brand"><div class="nc-light-brand-text"><strong>ASISTENTE</strong><span id="nc-torneo-titulo">6° Torneo Nacional de Newcom</span></div></div><div class="nc-espn-controls"><div class="nc-light-season" id="nc-season">Temporada</div><button type="button" id="nc-theme-switch" class="nc-theme-button" aria-label="Cambiar tema claro u oscuro" title="Cambiar tema"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg><span>Modo oscuro</span></button></div></header><div class="app"><aside><div class="brand"><svg class="brand-logo"
      xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 147 83"
      preserveAspectRatio="xMinYMin meet"
@@ -2059,6 +2066,11 @@ function consultarZonas(){
   }
   // La consulta de zonas no debe reconstruir las tarjetas del fixture ya visible.
   if(active==='zonas')render();
+  else if(active==='cruces'){
+   const anterior=c01Competencia;
+   c01Montar(true);
+   if(c01Competencia!==anterior)c01Cargar();
+  }
   else if(active==='fixture'){const indicador=document.getElementById('fxZonasConfirmadas');if(indicador)indicador.textContent=zonasConfirmadasFixture().length;const form=document.getElementById('nc-ef-form');if(form){const valores=new FormData(form);const panel=form.closest('.nc-ef-panel');if(panel){const temp=document.createElement('div');temp.innerHTML=ncEditorFixturePanel();const nuevo=temp.querySelector('.nc-ef-panel');if(nuevo){panel.replaceWith(nuevo);ncEditorFixtureEnlazar();const f=document.getElementById('nc-ef-form');if(f){for(const [k,v] of valores){if(k==='categoria'||k==='genero'||k==='zonaLocal'||k==='zonaVisitante')continue;const el=f.elements[k];if(el&&[...el.options||[]].some(o=>o.value===v))el.value=v;else if(el&&el.tagName!=='SELECT')el.value=v;}}}}}}
  }).withFailureHandler(e=>{zonasConsultando=false;const st=document.getElementById('estadoZonas');if(st)st.textContent='Error: '+(e.message||e)}).adminConsultarZonas();
 }
@@ -4412,7 +4424,7 @@ function ncCokiConfirmar(){
  }).withFailureHandler(e=>avisoIntegrado('No se pudo confirmar: '+String(e.message||e))).adminF01Confirmar({...ncCokiIdent(),revision:ncCokiRevision});
 }
 
-function navigate(id){if(ncDemoraOcupado)return;ncDemoraPlan=null;if(id==='fixture-auto'||id==='fixture-abierto')id='fixture';if(!modules.some(m=>m[0]===id)&&!['fixture-auto','fixture-abierto'].includes(id))return;if(id==='ayuda'){window.open(AYUDA_PDF_RUTA,'_blank','noopener,noreferrer');return;}active=id;render();if(id==='fixture'){ncCokiCargarInicial(!fixture.length);}if(id==='avisos')consultarNotificaciones();if(id==='arbitros')arbLeer();if(id==='equipos')leerEquiposPrivados();if(id==='zonas'){leerEquiposPrivados();consultarZonas()}else if(id==='fixture-auto'){fx3CargarDisponibilidad().then(()=>{if(active==='fixture-auto')render()}).catch(e=>console.warn('No se pudieron consultar horarios por cancha:',e));ncDashboardLeerFixture();consultarZonas();cruces15Leer();cruces16Leer();}if(id==='resultados'||id==='posiciones'||id==='cruces')resultados12Leer();if(id==='registro')historial26Leer();if(id==='cruces'){cruces15VistaServidor=null;cruces15LeerClasificados();cruces15Leer();cruces16Leer()}if(id==='resumen')resultados12Leer();if(id==='inicio')ncDashboardLeerFixture()};const menu38Abiertos={};
+function navigate(id){if(ncDemoraOcupado)return;ncDemoraPlan=null;if(id==='fixture-auto'||id==='fixture-abierto')id='fixture';if(!modules.some(m=>m[0]===id)&&!['fixture-auto','fixture-abierto'].includes(id))return;if(id==='ayuda'){window.open(AYUDA_PDF_RUTA,'_blank','noopener,noreferrer');return;}active=id;render();if(id==='fixture'){ncCokiCargarInicial(!fixture.length);}if(id==='avisos')consultarNotificaciones();if(id==='arbitros')arbLeer();if(id==='equipos')leerEquiposPrivados();if(id==='zonas'){leerEquiposPrivados();consultarZonas()}else if(id==='fixture-auto'){fx3CargarDisponibilidad().then(()=>{if(active==='fixture-auto')render()}).catch(e=>console.warn('No se pudieron consultar horarios por cancha:',e));ncDashboardLeerFixture();consultarZonas();cruces15Leer();cruces16Leer();}if(id==='resultados'||id==='posiciones'||id==='cruces')resultados12Leer();if(id==='registro')historial26Leer();if(id==='cruces'){c01Cargar();cruces15VistaServidor=null;cruces15LeerClasificados();cruces15Leer();cruces16Leer()}if(id==='resumen')resultados12Leer();if(id==='inicio')ncDashboardLeerFixture()};const menu38Abiertos={};
 /* Vista de jornadas: únicamente dentro de Fixture y canchas.
    El acceso "Partidos hoy" del inicio ya navega a ese módulo. */
 let ncDiaFixtureSeleccionado='';
@@ -5315,7 +5327,7 @@ else if(active==='zonas'){
  const controles=categoriasConEquipos.map(cat=>{const n=teams.filter(t=>claveCompetencia(t.categoria,t.genero)===cat).length;
  const confirmadas=zonasParaCategoria(cat);
  if(confirmadas.length&&!ncZonasEnEdicion.has(cat))return '';
- return `<div class="nc-z01-control"><div class="nc-z01-control-top"><b class="cat-distintivo" style="background:${fxColorCategoria(competenciaDeClave(cat).categoria)};color:#111">${esc(tituloCompetencia(cat))}</b><span class="muted">${n} equipos</span></div><label class="field">Cantidad de zonas<input type="number" id="count${esc(cat)}" min="1" max="${Math.max(1,Math.min(26,n))}" value="${zones[cat]?.length||[...new Set(confirmadas.map(r=>r.zona))].filter(Boolean).length||1}"></label><button class="secondary" data-prepare="${esc(cat)}">Preparar zonas</button>${confirmadas.length?`<button type="button" class="secondary" data-cancel-zones="${esc(cat)}">Cancelar edición</button>`:''}</div>`;
+ return `<div class="nc-z01-control"><div class="nc-z01-control-top"><b class="cat-distintivo" style="background:${fxColorCategoria(competenciaDeClave(cat).categoria)};color:#111">${esc(tituloCompetencia(cat))}</b><span class="muted">${n} equipos</span></div>${c01SorteoControles(cat,n,confirmadas)}${confirmadas.length?`<button type="button" class="secondary" data-cancel-zones="${esc(cat)}">Cancelar edición</button>`:''}</div>`;
  }).join('');
  const grupos=categoriasConEquipos.map(cat=>{
  const confirmadas=ncZ01Confirmadas(cat),actuales=zones[cat]||[];
@@ -5332,7 +5344,18 @@ else if(active==='zonas'){
   ncZonasEnEdicion.add(cat);render();
  });
  document.querySelectorAll('[data-cancel-zones]').forEach(b=>b.onclick=()=>{ncZonasEnEdicion.delete(b.dataset.cancelZones);delete zones[b.dataset.cancelZones];saveDraft();render();});
- document.querySelectorAll('[data-prepare]').forEach(b=>b.onclick=()=>createZones(b.dataset.prepare,Number(document.getElementById('count'+b.dataset.prepare).value)));
+ document.querySelectorAll('[data-c01-total]').forEach(input=>input.onchange=()=>{
+  const cat=input.dataset.c01Total;
+  c01Sorteo.set(cat,{total:Number(input.value)});
+  render();
+ });
+ document.querySelectorAll('[data-prepare]').forEach(b=>b.onclick=()=>{
+  const cat=b.dataset.prepare;
+  const cantidad=Number(document.getElementById('count'+cat).value);
+  const total=Number(b.closest('.nc-z01-control').querySelector('[data-c01-total]').value);
+  c01Sorteo.set(cat,{cantidad,total});
+  if(total===teams.filter(t=>claveCompetencia(t.categoria,t.genero)===cat).length)createZones(cat,cantidad);
+ });
  document.querySelectorAll('[data-confirm-zones]').forEach(b=>b.onclick=()=>confirmarZonas(b.dataset.confirmZones));
  activarTableroManual();const refresh=$('#refreshZonas');if(refresh)refresh.onclick=consultarZonas;
 } else if(active==='fixture'){
@@ -5353,8 +5376,8 @@ else if(active==='registro'){view.innerHTML=historial26Render();const boton=$('#
 else if(active==='resultados'){view.innerHTML=resultados12Render();resultados12Activar();}
  else if(active==='posiciones'){view.innerHTML=posiciones13Render();posiciones13Activar();}
  else if(active==='cruces'){
- view.innerHTML=ncHojaRender();
- ncHojaActivar();
+ view.innerHTML=panel('Cruces y finales · C01','<div id="c01Editor"></div>')+ncHojaRender();
+ c01Montar();ncHojaActivar();
  document.querySelectorAll('[data-nc-elegir-grilla]').forEach(b=>b.onclick=()=>{
   const row=b.closest('.nc-program-row');if(!row)return;
   const field=row.querySelector('[data-c15-cat], [data-c16-cat]');if(!field)return;
@@ -5397,6 +5420,282 @@ let arbRegistros=[],arbCargando=false,arbEdicion=null,arbFotoNueva='',arbQuitarF
 function arbLeer(){if(!window.google?.script?.run)return;arbCargando=true;google.script.run.withSuccessHandler(rows=>{arbCargando=false;arbRegistros=Array.isArray(rows)?rows:[];if(active==='arbitros')render()}).withFailureHandler(e=>{arbCargando=false;dialogoEquipo('Error al consultar árbitros',String(e.message||e))}).adminArbitrosListar()}
 function arbVista(){const r=arbEdicion||{};return panel('Gestión de árbitros',`<p class="muted">Registros privados · Sin asignación a partidos</p><div class="toolbar"><button class="secondary" type="button" id="arbActualizar">Actualizar árbitros</button><span class="status">${arbCargando?'Cargando…':arbRegistros.length+' registrados'}</span></div><form id="arbForm" class="form"><label class="field">Nombre *<input name="nombre" required maxlength="100" value="${esc(r.nombre||'')}"></label><label class="field">Apellido *<input name="apellido" required maxlength="100" value="${esc(r.apellido||'')}"></label><label class="field">Ciudad<input name="ciudad" maxlength="100" value="${esc(r.ciudad||'')}" placeholder="Ciudad de origen"></label><label class="field">Provincia<select name="provincia"><option value="">Seleccionar provincia</option>${provinciasArgentinas.map(p=>`<option value="${esc(p)}" ${p===(r.provincia||'')?'selected':''}>${esc(p)}</option>`).join('')}</select></label><label class="field">Federado<select name="federado"><option ${r.federado==='Sí'?'selected':''}>Sí</option><option ${r.federado!=='Sí'?'selected':''}>No</option></select></label><label class="field">Teléfono<input name="telefono" value="${esc(r.telefono||'')}"></label><label class="field">Correo<input name="email" type="email" value="${esc(r.email||'')}"></label><label class="field">Fotografía (JPG, PNG, WebP)<input type="file" id="arbFotoArchivo" accept="image/png,image/jpeg,image/webp"></label><label class="field full">Observaciones<textarea name="observaciones" maxlength="500">${esc(r.observaciones||'')}</textarea></label><label class="field"><span>Estado</span><select name="activo"><option value="si" ${r.activo!==false?'selected':''}>Activo</option><option value="no" ${r.activo===false?'selected':''}>Inactivo</option></select></label><div class="field full"><div id="arbFotoVista">${r.foto?`<span style="display:inline-block;position:relative;width:120px;height:120px"><img class="arb-foto" src="${esc(r.foto)}" alt="Fotografía actual" style="width:120px;height:120px;object-fit:cover;display:block"><button type="button" data-quitar-foto-arb aria-label="Quitar fotografía" title="Quitar fotografía" style="position:absolute;top:6px;right:6px;border:0;border-radius:50%;background:#c62828;color:white;width:25px;height:25px;cursor:pointer;font-size:18px;line-height:25px;padding:0">×</button></span>`:''}</div></div><div class="field full"><button type="submit" class="primary">${arbEdicion?'Guardar cambios':'Agregar árbitro'}</button> ${arbEdicion?'<button type="button" class="secondary" id="arbCancelar">Cancelar edición</button>':''}</div></form>`)+panel('Árbitros registrados',arbRegistros.length?`<div class="tablewrap"><table><thead><tr><th>Foto</th><th>Apellido y nombre</th><th>Ciudad</th><th>Provincia</th><th>Federado</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>${arbRegistros.map(a=>`<tr><td>${a.foto?`<img class="arb-foto" src="${esc(a.foto)}" alt="Fotografía del árbitro">`:`<span class="arb-foto arb-foto-placeholder" role="img" aria-label="Árbitro sin fotografía"><svg viewBox="0 0 24 24" width="29" height="29" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2"/></svg></span>`}</td><td>${esc(a.apellido)}, ${esc(a.nombre)}</td><td>${esc(a.ciudad||'—')}</td><td>${esc(a.provincia||'—')}</td><td><span class="arb-badge ${a.federado==='Sí'?'arb-si':''}">${esc(a.federado)}</span></td><td>${a.activo?'Activo':'Inactivo'}</td><td><button type="button" class="secondary" data-arb-edit="${esc(a.id)}">Editar</button> <button type="button" class="secondary" data-arb-del="${esc(a.id)}">Eliminar</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Todavía no hay árbitros registrados.</div>')}
 function arbEnlazar(){document.getElementById('arbActualizar').onclick=arbLeer;const f=document.getElementById('arbForm');document.getElementById('arbCancelar')?.addEventListener('click',()=>{arbEdicion=null;arbFotoNueva='';arbQuitarFoto=false;render()});document.getElementById('arbFotoVista')?.addEventListener('click',e=>{if(!e.target.closest('[data-quitar-foto-arb]'))return;arbQuitarFoto=true;arbFotoNueva='';document.getElementById('arbFotoArchivo').value='';document.getElementById('arbFotoVista').innerHTML='<span class="muted">Fotografía quitada. Guardá los cambios para confirmar.</span>'});document.getElementById('arbFotoArchivo').onchange=async e=>{const file=e.target.files[0];if(!file)return;if(file.size>750000){await dialogoEquipo('Foto demasiado grande','El límite es 750 KB.');e.target.value='';return}const reader=new FileReader();reader.onload=()=>{arbFotoNueva=String(reader.result);arbQuitarFoto=false;document.getElementById('arbFotoVista').innerHTML=`<span style="display:inline-block;position:relative;width:120px;height:120px"><img class="arb-foto" src="${esc(arbFotoNueva)}" alt="Vista previa" style="width:120px;height:120px;object-fit:cover;display:block"><button type="button" data-quitar-foto-arb aria-label="Quitar fotografía" title="Quitar fotografía" style="position:absolute;top:6px;right:6px;border:0;border-radius:50%;background:#c62828;color:white;width:25px;height:25px;cursor:pointer;font-size:18px;line-height:25px;padding:0">×</button></span>`};reader.readAsDataURL(file)};f.onsubmit=e=>{e.preventDefault();if(!window.google?.script?.run){dialogoEquipo('Sin conexión','Esta operación necesita tabla de respaldo.');return}const d=Object.fromEntries(new FormData(f));d.activo=d.activo==='si';d.id=arbEdicion?.id||'';d.foto=arbFotoNueva;d.quitarFoto=arbQuitarFoto;const btn=f.querySelector('[type=submit]');btn.disabled=true;google.script.run.withSuccessHandler(()=>{arbEdicion=null;arbFotoNueva='';arbQuitarFoto=false;arbLeer()}).withFailureHandler(err=>{btn.disabled=false;dialogoEquipo('No se pudo guardar',String(err.message||err))}).adminArbitrosGuardar(d)};document.querySelectorAll('[data-arb-edit]').forEach(b=>b.onclick=()=>{arbEdicion=arbRegistros.find(a=>a.id===b.dataset.arbEdit);arbFotoNueva='';arbQuitarFoto=false;render()});document.querySelectorAll('[data-arb-del]').forEach(b=>b.onclick=async()=>{if(!await dialogoEquipo('Eliminar árbitro','¿Confirmás la eliminación?',true))return;google.script.run.withSuccessHandler(()=>{arbEdicion=null;arbLeer()}).withFailureHandler(e=>dialogoEquipo('Error',String(e.message||e))).adminArbitrosEliminar(b.dataset.arbDel)})}
+
+let c01Competencia = '', c01Snapshot = null, c01Solicitud = 0, c01Guardando = false, c01Error = '';
+const c01Borradores = new Map();
+const c01Sorteo = new Map();
+
+function c01SorteoControles(cat, inscritos, guardados) {
+ const guardado = c01Sorteo.get(cat);
+ const total = guardado?.total ?? inscritos;
+ const cantidad = Math.min(Math.floor(total/2),guardado?.cantidad ?? (zones[cat]?.length || new Set(guardados.map(r=>r.zona)).size || (total>=9?4:2)));
+ const formatos = Array.from({length:Math.floor(total/2)},(_,i)=>{
+  const grupos=i+1;
+  const tamaños=Array.from({length:grupos},(_,j)=>Math.floor(total/grupos)+(j<total%grupos?1:0));
+  return '<option value="'+grupos+'" '+(grupos===cantidad?'selected':'')+'>'+tamaños.join(' + ')+'</option>';
+ }).join('');
+ return '<label class="field">Cantidad de equipos<select data-c01-total="'+esc(cat)+'">'+
+  (inscritos<5||inscritos>26?'<option value="'+inscritos+'" '+(total===inscritos?'selected':'')+'>'+inscritos+'</option>':'')+
+  Array.from({length:22},(_,i)=>'<option '+(i+5===total?'selected':'')+'>'+(i+5)+'</option>').join('')+
+  '</select></label><label class="field">Distribución de zonas<select id="count'+esc(cat)+'">'+formatos+
+  '</select></label>'+(total!==inscritos?'<p class="muted">Hay '+inscritos+' equipos activos. Actualizá el padrón en Equipos para aplicar esta distribución.</p>':'')+
+  '<p><button class="secondary" data-prepare="'+esc(cat)+'" '+(total!==inscritos||inscritos<2?'disabled':'')+'>Preparar zonas</button></p>';
+}
+function c01Identidad(cat) {
+ const c=competenciaDeClave(cat);
+ return {anio:settings.anio,edicion:settings.edicion,categoria:c.categoria,genero:c.genero};
+}
+function c01Clave(cat) {
+ return JSON.stringify(c01Identidad(cat));
+}
+function c01OpcionesCompetencia() {
+ const filas=(zonasRemotas?.filas||[]).filter(r=>String(r.anio)===String(settings.anio)&&String(r.edicion)===String(settings.edicion));
+ return [...new Set([...competenciasActivas(),...filas.map(r=>claveCompetencia('+'+String(r.categoria).replace(/^\+/,''),r.genero))])].sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
+}
+function c01Nuevo(etapa,titulo,referencia='') {
+ return {id:crypto.randomUUID?.()||'c01-'+Date.now()+'-'+Math.random().toString(36).slice(2),etapa,titulo,referencia,equipos:['',''],confirmado:false};
+}
+function c01Plantilla(equipos) {
+ const grupos=[...new Set(equipos.map(t=>t.zona))].sort();
+ const n=equipos.length, extra=Math.max(0,n-8);
+ const exacto8=n===8&&grupos.length===2&&grupos.every(z=>equipos.filter(t=>t.zona===z).length===4);
+ const cuatroZonas=grupos.join('')==='ABCD';
+ const refs=exacto8?['1.º A / 4.º B','3.º A / 2.º B','2.º A / 3.º B','4.º A / 1.º B']:
+  cuatroZonas&&n>=8?['1.º A / 2.º C','1.º D / 2.º B','1.º B / 2.º D','1.º C / 2.º A']:[];
+ const partidos=Array.from({length:Math.max(0,Math.min(4,n-4))},(_,i)=>c01Nuevo('cuartos','Cuartos '+(i+1),refs[i]));
+ if(n>=4) {
+  partidos.push(c01Nuevo('definiciones','Semifinal 1',n>=8?'Ganadores de Cuartos 1 y 2':'Ganadores de cuartos y pases directos'),
+   c01Nuevo('definiciones','Semifinal 2',n>=8?'Ganadores de Cuartos 3 y 4':'Ganadores de cuartos y pases directos'),
+   c01Nuevo('definiciones','Final','Ganadores de semifinales'),c01Nuevo('definiciones','3.º y 4.º','Perdedores de semifinales'));
+ }
+ if(n>=8) {
+  partidos.splice(partidos.length-2,0,c01Nuevo('definiciones','Reclasificación 1','Perdedores de Cuartos 1 y 2'),c01Nuevo('definiciones','Reclasificación 2','Perdedores de Cuartos 3 y 4'));
+  partidos.push(c01Nuevo('definiciones','5.º y 6.º','Ganadores de reclasificación'),c01Nuevo('definiciones','7.º y 8.º','Perdedores de reclasificación'));
+ }
+ if(n===6) partidos.push(c01Nuevo('definiciones','5.º y 6.º','Perdedores de cuartos'));
+ if(n===10) partidos.push(c01Nuevo('definiciones','9.º y 10.º','Partido directo'));
+ if(n===7||n===11) for(let i=1;i<=3;i++) partidos.push(c01Nuevo('definiciones','Triangular · Partido '+i,n===7?'Puestos 5.º al 7.º':'Puestos 9.º al 11.º'));
+ if(n===5) partidos.find(m=>m.titulo==='Cuartos 1').referencia='El perdedor queda 5.º';
+ const cupos=extra>=4?[Math.ceil(extra/2),Math.floor(extra/2)]:[];
+ if(cupos.length) {
+  cupos.forEach((t,g)=>{
+   for(let a=1;a<=t;a++) for(let b=a+1;b<=t;b++)
+    partidos.push(c01Nuevo('interzonas','Zona '+['E','F'][g]+' · Partido '+a+'–'+b,'Lugar '+a+' / Lugar '+b));
+  });
+  for(let i=0;i<cupos[1];i++) partidos.push(c01Nuevo('definiciones',(9+i*2)+'.º y '+(10+i*2)+'.º',(i+1)+'.º E / '+(i+1)+'.º F'));
+ }
+ return {partidos,grupos:cupos.map(n=>Array(n).fill(''))};
+}
+function c01Cargar() {
+ if(c01Guardando) return;
+ const cat=c01Competencia, solicitud=++c01Solicitud;
+ c01Snapshot=null;c01Error='';
+ c01Montar();
+ if(!cat||!window.google?.script?.run) return;
+ google.script.run.withSuccessHandler(r=>{
+  if(solicitud!==c01Solicitud) return;
+  const clave=c01Clave(cat), local=c01Borradores.get(clave);
+  c01Snapshot={...r,clave};
+  if(!local || !local.sucio) {
+   const datos=r.datos||c01Plantilla(r.equipos.filter(t=>t.activo));
+   if(datos.huella && datos.huella!==r.huella){
+    datos.partidos.forEach(m=>m.confirmado=false);
+    c01Error='Las zonas o los equipos cambiaron. Revisá las instancias y confirmalas nuevamente.';
+   }
+   c01Borradores.set(clave,{datos,sucio:false});
+  } else if(local.revision!==r.revision||local.huella!==r.huella) {
+   local.conflicto=true;
+   c01Error='Cambió la configuración guardada. Revisá la versión guardada antes de continuar.';
+  }
+  c01Montar();
+ }).withFailureHandler(e=>{
+  if(solicitud!==c01Solicitud) return;
+  c01Error=String(e.message||e);c01Montar();
+ }).adminC01Consultar(c01Identidad(cat));
+}
+function c01Cambiar(local) {
+ if(!local.sucio){
+  local.revision=c01Snapshot.revision;
+  local.huella=c01Snapshot.huella;
+ }
+ local.sucio=true;
+}
+function c01Guardar(local, estado, despues) {
+ if(c01Guardando||local.conflicto) return;
+ const cat=c01Competencia, snapshot=c01Snapshot;
+ c01Guardando=true;
+ const root=$('#c01Editor');
+ const contenido=root?.querySelector('fieldset');
+ if(contenido) contenido.disabled=true;
+ const selector=root?.querySelector('[data-c01-competencia]');
+ if(selector) selector.disabled=true;
+ google.script.run.withSuccessHandler(r=>{
+  c01Guardando=false;
+  snapshot.revision=r.revision;
+  local.datos=r.datos;local.sucio=false;
+  if(c01Snapshot===snapshot){c01Error='Cambios guardados.';c01Montar(true);}
+ }).withFailureHandler(e=>{
+  c01Guardando=false;
+  if(despues) despues();
+  if(contenido) contenido.disabled=false;
+  if(selector) selector.disabled=false;
+  estado.textContent=String(e.message||e);
+  c01Error=estado.textContent;
+ }).adminC01Guardar({...c01Identidad(cat),huella:snapshot.huella,revision:snapshot.revision,datos:local.datos});
+}
+function c01Montar(conservar=false) {
+ const root=$('#c01Editor');
+ if(!root) return;
+ const competencias=c01OpcionesCompetencia();
+ if(!competencias.includes(c01Competencia)) c01Competencia=competencias[0]||'';
+ const actuales=c01Snapshot?.clave===c01Clave(c01Competencia)?c01Snapshot:null;
+ const previo=new Set(conservar?[...root.querySelectorAll('details[open]')].map(d=>d.dataset.c01Panel):[]);
+ const local=actuales&&c01Borradores.get(actuales.clave);
+ const el=(tag,text,clase)=>{
+  const n=document.createElement(tag);
+  if(text!==undefined)n.textContent=text;
+  if(clase)n.className=clase;
+  return n;
+ };
+ const button=(texto,fn,clase='secondary')=>{
+  const b=el('button',texto,clase);b.type='button';b.onclick=fn;return b;
+ };
+ const field=(texto,node)=>{
+  const label=el('label',texto,'field');label.append(node);return label;
+ };
+ function selector(opciones,valor) {
+  const s=el('select');
+  opciones.forEach(([id,nombre])=>s.add(new Option(nombre,id)));
+  s.value=valor;return s;
+ }
+ const barra=el('div',undefined,'toolbar');
+ const categorias=selector(competencias.map(c=>[c,tituloCompetencia(c)]),c01Competencia);
+ categorias.dataset.c01Competencia='';categorias.disabled=c01Guardando;
+ categorias.onchange=()=>{c01Competencia=categorias.value;c01Cargar()};
+ barra.append(field('Categoría y género',categorias),button('Actualizar zonas y cruces',c01Cargar));
+ const estado=el('p',c01Error,'status');estado.setAttribute('aria-live','polite');
+ root.replaceChildren(barra,estado);
+ if(!local||!actuales.equipos.length){
+  root.append(el('p',c01Competencia?'Confirmá las zonas en Sorteo presencial y actualizá la categoría.':'No hay categorías disponibles.','muted'));
+  return;
+ }
+ const datos=local.datos, equipos=actuales.equipos;
+ const zonas=new Map();
+ equipos.forEach(t=>{
+  if(!zonas.has(t.zona)) zonas.set(t.zona,[]);
+  zonas.get(t.zona).push(t);
+ });
+ const opciones=equipos.filter(t=>t.activo).map(t=>[t.id,t.nombre]);
+ const form=el('fieldset');
+ form.className='nc-c01-campos';form.disabled=c01Guardando||local.conflicto===true;
+ root.append(el('p',equipos.length+' equipos · Zonas confirmadas · '+[...zonas.values()].map(z=>z.length).join(' + '),'status'),form);
+ function seccion(titulo,id,abierta=false,parent=form){
+  const d=el('details',undefined,'nc-c01-detalle');d.dataset.c01Panel=id;
+  d.open=conservar?previo.has(id):abierta;
+  d.append(el('summary',titulo));parent.append(d);return d;
+ }
+ const clasifica=seccion('Zonas y clasificación','zonas',true);
+ const ranking=etapa14Clasificacion().find(x=>x.clave===c01Competencia);
+ for(const [zona,nombres] of zonas) {
+  const tabla=el('table'), cabecera=tabla.createTHead().insertRow();
+  ['Puesto','Equipo','PTS'].forEach(t=>cabecera.append(el('th',t)));
+  const grupo=ranking?.grupos.find(g=>g.zona===zona);
+  const orden=grupo?.ranking||[];
+  const ordenados=[...orden.map(r=>nombres.find(n=>n.nombre===r.nombre)).filter(Boolean),...nombres.filter(n=>!orden.some(r=>r.nombre===n.nombre))];
+  ordenados.forEach(t=>{
+   const pos=orden.findIndex(r=>r.nombre===t.nombre), fila=tabla.insertRow();
+   [pos<0?'—':(pos+1)+'º',t.nombre+(t.activo?'':' · BAJA'),pos<0?'—':orden[pos].pts].forEach(t=>fila.insertCell().textContent=t);
+  });
+  clasifica.append(el('h3','Zona '+zona),tabla);
+ }
+ function equipoInput(valor,excluidos=[]) {
+  const lista=opciones.slice();
+  if(valor&&!lista.some(([id])=>id===valor)) lista.push([valor,(equipos.find(t=>t.id===valor)?.nombre||valor)+' · revisar']);
+  const input=selector([['','Pendiente'],...lista],valor);
+  for(const opcion of input.options) opcion.disabled=!!opcion.value&&opcion.value!==valor&&excluidos.includes(opcion.value);
+  return input;
+ }
+ for(const [etapa,titulo] of [['cuartos','Cuartos de final'],['interzonas','Interzonas E y F'],['definiciones','Semifinales, finales y definición de puestos']]){
+  const bloque=seccion(titulo,etapa);
+  if(etapa==='definiciones'&&(opciones.length===9||opciones.length>=13&&opciones.length%2===1)){
+   bloque.append(el('p',opciones.length===9?'Referencia de prueba · El equipo fuera de cuartos queda 9.º.':'Si conservás la distribución sugerida, el último equipo de E queda '+opciones.length+'.º.','muted'));
+  }
+  if(etapa==='interzonas'){
+   const limite=Math.max(0,opciones.length-8);
+   const opcionesGrupos=[['','Sin interzonas']];
+   for(let i=1;i<=limite;i++){
+    opcionesGrupos.push([String(i),'Un grupo · '+i]);
+    for(let j=1;j<=limite-i;j++) opcionesGrupos.push([i+','+j,'E y F · '+i+' + '+j]);
+   }
+   const actual=datos.grupos.map(z=>z.length).join(',');
+   if(!opcionesGrupos.some(o=>o[0]===actual)) opcionesGrupos.push([actual,actual.replace(',',' + ')+' · revisar']);
+   const distribucion=selector(opcionesGrupos,actual);
+   distribucion.onchange=async()=>{
+    const tamaños=distribucion.value?distribucion.value.split(',').map(Number):[];
+    if(datos.grupos.some((g,i)=>g.slice(tamaños[i]||0).some(Boolean))&&
+      !await dialogoEquipo('Editar interzonas','Se quitarán algunos lugares ya asignados. ¿Continuar?',true)){
+      distribucion.value=datos.grupos.map(z=>z.length).join(',');return;
+    }
+    datos.grupos=tamaños.map((n,i)=>Array.from({length:n},(_,j)=>datos.grupos[i]?.[j]||''));
+    c01Cambiar(local);c01Error='Revisá las referencias de los partidos tras cambiar la distribución.';
+    c01Montar(true);
+   };
+   bloque.append(field('Distribución de interzonas',distribucion));
+   datos.grupos.forEach((grupo,i)=>{
+    bloque.append(el('h3','Zona '+['E','F'][i]));
+    const pares=el('div',undefined,'nc-c01-pares');
+    grupo.forEach((valor,j)=>{
+     const input=equipoInput(valor,datos.grupos.flatMap((g,k)=>g.filter((_,l)=>k!==i||j!==l)));
+     input.onchange=()=>{grupo[j]=input.value;c01Cambiar(local);c01Montar(true)};
+     pares.append(field('Lugar '+(j+1),input));
+    });
+    bloque.append(pares);
+   });
+  }
+  for(const m of datos.partidos.filter(m=>m.etapa===etapa)){
+   const d=seccion(m.titulo||'Partido sin título',m.id,false,bloque);
+   const par=el('div',undefined,'nc-c01-pares');
+   const nombres=m.equipos.map((id,i)=>equipoInput(id,[m.equipos[1-i]]));
+   nombres.forEach((s,i)=>{
+    s.onchange=()=>{
+     m.equipos[i]=s.value;
+     modificar();
+     for(const opcion of nombres[1-i].options) opcion.disabled=!!opcion.value&&opcion.value===s.value;
+    };
+    par.append(field('Equipo '+(i+1),s));
+   });
+   const tituloInput=el('input');tituloInput.value=m.titulo;tituloInput.maxLength=160;
+   const referencia=el('input');referencia.value=m.referencia;referencia.maxLength=240;
+   tituloInput.oninput=()=>{m.titulo=tituloInput.value;d.querySelector('summary').textContent=m.titulo||'Partido sin título';modificar()};
+   referencia.oninput=()=>{m.referencia=referencia.value;modificar()};
+   function modificar(){m.confirmado=false;c01Cambiar(local);actualizarBoton();}
+   const confirmar=button('Confirmar instancia',()=>{
+    c01Cambiar(local);m.confirmado=true;
+    c01Guardar(local,estado,()=>{m.confirmado=false;actualizarBoton()});
+   },'primary');
+   function actualizarBoton(){
+    confirmar.textContent=m.confirmado?'✓ Confirmado':'Confirmar instancia';
+    confirmar.disabled=m.confirmado||!m.titulo.trim()||m.equipos[0]===m.equipos[1]||m.equipos.some(id=>!opciones.some(o=>o[0]===id));
+   }
+   actualizarBoton();
+   const eliminar=button('Eliminar instancia',async()=>{
+    if(!await dialogoEquipo('Eliminar instancia','¿Quitar «'+m.titulo+'»?',true)) return;
+    datos.partidos.splice(datos.partidos.indexOf(m),1);c01Cambiar(local);c01Montar(true);
+   });
+   const acciones=el('div',undefined,'toolbar');acciones.append(confirmar,eliminar);
+   d.append(par,field('Título del partido',tituloInput),field('Referencia',referencia),acciones);
+  }
+  bloque.append(button('Agregar partido',()=>{
+   const m=c01Nuevo(etapa,'Nuevo partido');datos.partidos.push(m);c01Cambiar(local);c01Montar(true);
+   const detalle=root.querySelector('[data-c01-panel="'+m.id+'"]');detalle.open=true;detalle.querySelector('input')?.focus();
+  }));
+ }
+ form.append(button('Guardar borrador',()=>c01Guardar(local,estado),'primary'));
+ if(local.conflicto)root.append(button('Descartar borrador local y recargar',async()=>{
+  if(!await dialogoEquipo('Recargar cruces','¿Descartar los cambios locales de esta categoría?',true))return;
+  c01Borradores.delete(actuales.clave);c01Cargar();
+ }));
+}
 
 try{render()}catch(error){console.error('Error al iniciar el administrador:',error);window.dispatchEvent(new ErrorEvent('error',{error: error,message:String(error)}))}if(window.google?.script?.run){google.script.run.withSuccessHandler(r=>{if(r&&typeof r==='object'){const datos={};for(const k of ['nombre','edicion','anio','canchas','duracion','intervalo','direccionEvento','nombreSedeDeportiva','inscripcionesAbiertas','fechasEtapa10'])if(r[k]!==undefined&&r[k]!==null&&String(r[k]).trim()!=='')datos[k]=r[k];settings={...settings,...datos};saveDraft();if(active==='config'||active==='alojamiento')render()}}).withFailureHandler(err=>console.warn('No se pudo consultar configuración:',err)).adminConsultarConfiguracionTorneo();google.script.run.withSuccessHandler(rows=>{services=[...services.filter(s=>s.tipo!=='alojamiento'),...rows];saveDraft();if(active==='alojamiento')render()}).withFailureHandler(err=>console.warn('No se pudieron leer alojamientos:',err)).adminListarAlojamientos();google.script.run.withSuccessHandler(rows=>{services=[...services.filter(s=>s.tipo!=='bufet'),...rows.map(r=>({...r,tipo:'bufet'}))];saveDraft();if(active==='bufet')render()}).withFailureHandler(err=>console.warn('No se pudo leer bufet:',err)).adminListarBufet();consultarNotificaciones();if(!teams.length)navigate('equipos')}
 
