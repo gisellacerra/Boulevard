@@ -1173,8 +1173,8 @@ generic=function(){
  const etapas=[
   {id:'PRELIMINAR',title:'Clasificación a cuartos de final',icon:`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h5l5 6h4"/><path d="M2 18h5l5-6"/><path d="m13 8 4 4-4 4"/></svg>`},
   {id:'CUARTOS',title:'Cuartos de final',icon:`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx=".5"/><rect x="2" y="17" width="5" height="5" rx=".5"/><rect x="17" y="2" width="5" height="5" rx=".5"/><rect x="17" y="17" width="5" height="5" rx=".5"/><path d="M7 4.5h4v15H7M17 4.5h-4v15h4"/></svg>`},
-  {id:'SEMIFINAL',title:'Semifinales'},
-  {id:'FINALES',title:'Final y 3.º puesto'}
+  {id:'SEMIFINAL',title:'Semifinales',icon:`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx=".5"/><rect x="2" y="17" width="5" height="5" rx=".5"/><rect x="17" y="9.5" width="5" height="5" rx=".5"/><path d="M7 4.5h5v7.5h5M7 19.5h5V12"/></svg>`},
+  {id:'FINALES',title:'Final y 3.º puesto',icon:`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10v8a5 5 0 0 1-10 0V3Z"/><path d="M7 5H4v3a4 4 0 0 0 4 4M17 5h3v3a4 4 0 0 1-4 4M12 16v4m-4 1h8"/><circle cx="19" cy="18" r="3"/><path d="m17 21-1 2m5-2 1 2"/></svg>`}
  ];
  const etapaDe=m=>{const v=String(m.instancia||'').toUpperCase();return v==='FINAL'||v==='TERCER_PUESTO'?'FINALES':v;};
  const fecha=m=>normalizedDate(m.fecha)||String(m.fecha||'');
@@ -1185,23 +1185,24 @@ generic=function(){
   const ganador=done&&Number.isFinite(setsA)&&Number.isFinite(setsB)?Math.sign(setsA-setsB):0;
   const score=done?`${safe(r.setsLocal)} : ${safe(r.setsVisitante)}`:'';
   const etiqueta=done?'Finalizado':'Por jugar';
-  const tipoDefinicion=String(m.instancia||'').toUpperCase();
-  const rotuloDefinicion=tipoDefinicion==='FINAL'?'Final':tipoDefinicion==='TERCER_PUESTO'?'Tercer puesto':'';
-  return `<button type="button" class="nc-cruces-compact-card nc-cruces-vertical-card" ${done?`onclick="ncAbrirResultado(${idx})" aria-label="Ver resultado de ${safe(m.a)} contra ${safe(m.b)}"`:`disabled aria-label="Partido pendiente: ${safe(m.a)} contra ${safe(m.b)}"`}><span class="nc-cruces-compact-stripe"></span><span class="nc-cruces-compact-main">${rotuloDefinicion?`<span class="nc-cruces-definicion-label">${rotuloDefinicion}</span>`:''}<span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador>0?'nc-cruces-team-winner':''}">${safe(m.a)}</span></span><span class="nc-cruces-compact-vs">VS</span><span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador<0?'nc-cruces-team-winner':''}">${safe(m.b)}</span></span>${done?`<span class="nc-cruces-compact-score">${score}</span>`:''}<span class="nc-cruces-compact-meta">${safe(m.time||'Horario a confirmar')} · ${safe(courtLabel(m.court||'—'))} · ${etiqueta}</span></span>${done?`<span class="nc-cruces-compact-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>`:''}</button>`;
+  return `<button type="button" class="nc-cruces-compact-card nc-cruces-vertical-card" ${done?`onclick="ncAbrirResultado(${idx})" aria-label="Ver resultado de ${safe(m.a)} contra ${safe(m.b)}"`:`disabled aria-label="Partido pendiente: ${safe(m.a)} contra ${safe(m.b)}"`}><span class="nc-cruces-compact-stripe"></span><span class="nc-cruces-compact-main"><span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador>0?'nc-cruces-team-winner':''}">${safe(m.a)}</span></span><span class="nc-cruces-compact-vs">VS</span><span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador<0?'nc-cruces-team-winner':''}">${safe(m.b)}</span></span>${done?`<span class="nc-cruces-compact-score">${score}</span>`:''}<span class="nc-cruces-compact-meta">${safe(m.time||'Horario a confirmar')} · ${safe(courtLabel(m.court||'—'))} · ${etiqueta}</span></span>${done?`<span class="nc-cruces-compact-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>`:''}</button>`;
  };
- const podioDe=items=>{
-  const final=items.find(m=>String(m.instancia||'').toUpperCase()==='FINAL'&&completed(m));
-  const tercero=items.find(m=>String(m.instancia||'').toUpperCase()==='TERCER_PUESTO'&&completed(m));
-  const nombres=m=>{
-   if(!m)return null;
-   const r=m.resultado||{},a=Number(r.setsLocal),b=Number(r.setsVisitante);
+ const ncPodioCruces=items=>{
+  const resultado=m=>{
+   if(!m||!completed(m))return null;
+   const r=m.resultado||{};
+   if(r.setsLocal==null||r.setsVisitante==null||r.setsLocal===''||r.setsVisitante==='')return null;
+   const a=Number(r.setsLocal),b=Number(r.setsVisitante);
    if(!Number.isFinite(a)||!Number.isFinite(b)||a===b)return null;
    return a>b?[m.a,m.b]:[m.b,m.a];
   };
-  const f=nombres(final),t=nombres(tercero);
+  const f=resultado(items.find(m=>String(m.instancia||'').toUpperCase()==='FINAL'));
+  const t=resultado(items.find(m=>String(m.instancia||'').toUpperCase()==='TERCER_PUESTO'));
   if(!f||!t)return '';
-  const posiciones=[['🏆','1.º',f[0],'Oro'],['🥈','2.º',f[1],'Plata'],['🥉','3.º',t[0],'Bronce'],['🏅','4.º',t[1],'']];
-  return `<div class="nc-cruces-podio" aria-label="Clasificación final">${posiciones.map(([icono,puesto,nombre,medalla])=>`<div class="nc-cruces-podio-fila"><span class="nc-cruces-podio-icono" aria-hidden="true">${icono}</span><span><strong>${puesto} ${safe(nombre)}</strong>${medalla?' — '+medalla:''}</span></div>`).join('')}</div>`;
+  const copa='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10v8a5 5 0 0 1-10 0V3Z"/><path d="M7 5H4v3a4 4 0 0 0 4 4M17 5h3v3a4 4 0 0 1-4 4M12 16v4m-4 1h8"/></svg>';
+  const medalla='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="15" r="6"/><path d="m8 10-3-7h5l2 6m4 1 3-7h-5l-2 6"/><path d="m12 12 1 2 2 .3-1.5 1.5.4 2.2-1.9-1-1.9 1 .4-2.2L9 14.3l2-.3z"/></svg>';
+  const puestos=[['1.º',f[0],'Oro','oro',copa],['2.º',f[1],'Plata','plata',medalla],['3.º',t[0],'Bronce','bronce',medalla],['4.º',t[1],'','cuarto',medalla]];
+  return `<div class="nc-cruces-podio" aria-label="Clasificación final de la categoría"><div class="nc-cruces-podio-titulo">CLASIFICACIÓN FINAL</div>${puestos.map(([pos,nombre,metal,clase,icono])=>`<div class="nc-cruces-podio-fila"><span class="nc-cruces-podio-icono nc-cruces-podio-${clase}">${icono}</span><span><strong>${pos} ${safe(nombre)}</strong>${metal?' — '+metal:''}</span></div>`).join('')}</div>`;
  };
  const grupos=[...new Set(lista.map(m=>m.cat))].sort((a,b)=>String(a).localeCompare(String(b),'es',{numeric:true}));
  return `${head('Cruces y finales','COMPETENCIA')}${catTabs()}${grupos.length?grupos.map((cat,ci)=>{
@@ -1210,20 +1211,22 @@ generic=function(){
    const partidos=items.filter(m=>etapaDe(m)===etapa.id).sort(ordenar);
    const id=`nc-cruces-accordion-${ci}-${ei}`;
    const abierto=ncCrucesAbiertos.has(id);
-   return `<details id="${id}" class="nc-cruces-accordion nc-cruces-etapa-${ei}" ${abierto?'open':''} ontoggle="if(this.open)ncCrucesAbiertos.add(this.id);else ncCrucesAbiertos.delete(this.id)"><summary class="nc-cruces-accordion-head"><span class="nc-cruces-accordion-label">${safe(etapa.title)}</span><span class="nc-cruces-accordion-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary><div class="nc-cruces-accordion-body">${partidos.length?partidos.map(tarjeta).join(''):'<div class="nc-cruces-no-partidos">Sin partidos publicados en esta instancia.</div>'}</div></details>`;
-  }).join('')}${podioDe(items)}</section>`;
+   return `<details id="${id}" class="nc-cruces-accordion nc-cruces-etapa-${ei}" ${abierto?'open':''} ontoggle="if(this.open)ncCrucesAbiertos.add(this.id);else ncCrucesAbiertos.delete(this.id)"><summary class="nc-cruces-accordion-head">${etapa.id==='FINALES'?`<span class="nc-copas-premios" aria-label="Copa de oro"><svg class="nc-copa-vector nc-copa-vector-oro" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-trophy"/></svg></span>`:etapa.id==='SEMIFINAL'?`<span class="nc-copas-premios" aria-label="Copa de plata"><svg class="nc-copa-vector nc-copa-vector-plata" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-trophy"/></svg></span>`:''}<span class="nc-cruces-accordion-label">${safe(etapa.title)}</span><span class="nc-cruces-accordion-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary><div class="nc-cruces-accordion-body">${partidos.length?partidos.map(tarjeta).join(''):'<div class="nc-cruces-no-partidos">Sin partidos publicados en esta instancia.</div>'}</div></details>`;
+  }).join('')}${ncPodioCruces(items)}</section>`;
  }).join(''):`<div class="empty">${ncEmptyData('Todavía no hay cruces publicados.')}</div>`}`;
 };
 </script>
-
 <style id="nc-cruces-podio-final-css">
-#view .nc-cruces-podio{margin:20px 0 8px;padding:5px 2px;color:#e8ecea}
-#view .nc-cruces-podio-fila{display:flex;align-items:center;gap:12px;margin:0;padding:9px 0;font-size:15px;line-height:1.4}
+#view .nc-cruces-podio{margin:23px 0 12px;padding:4px 0;color:#e8ecea}
+#view .nc-cruces-podio-titulo{font-size:12px;font-weight:600;letter-spacing:.06em;color:#bfc8c7;margin:0 0 10px}
+#view .nc-cruces-podio-fila{display:flex;align-items:center;gap:12px;padding:9px 0;font-size:15px;line-height:1.4}
 #view .nc-cruces-podio-fila strong{font-weight:700}
-#view .nc-cruces-podio-icono{display:inline-flex;align-items:center;justify-content:center;width:26px;flex:none;font-size:21px}
-</style>
-<style id="nc-cruces-definiciones-label-css">
-#view .nc-cruces-definicion-label{display:block;font-size:12px;font-weight:700;color:#e9efea;margin:0 0 7px;letter-spacing:.02em}
+#view .nc-cruces-podio-icono{width:27px;height:27px;flex:none;display:inline-flex;align-items:center;justify-content:center}
+#view .nc-cruces-podio-icono svg{width:23px;height:23px}
+#view .nc-cruces-podio-oro{color:#f2c52d}
+#view .nc-cruces-podio-plata{color:#c6ccd1}
+#view .nc-cruces-podio-bronce{color:#e38a26}
+#view .nc-cruces-podio-cuarto{color:#92999d}
 </style>
 <style id="nc-cruces-compact-accordion-css">
 #view .nc-cruces-compact-group{margin:22px 0 32px}
@@ -1346,12 +1349,10 @@ function ncAbrirProducto(card){const img=card.querySelector('img');if(!img||img.
 {const d=document.getElementById('ncProductoDialog');d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}});}
 </script>
 <style id="nc-zonas-ux">
-#view .nc-zonas-cat{margin:22px 0 26px}#view .nc-zonas-cat h2{    font-size: 15px;
-    font-weight: 300 !important;margin:0 0 12px;color:var(--ink)}
-#view .nc-zona-card{border:1px solid var(--line);border-left:5px solid var(--zona-color);border-radius:0 12px 12px 0;margin:0 0 10px;overflow:hidden}
+#view .nc-zonas-cat{margin:22px 0 26px}#view .nc-zonas-cat h2{font-size:17px !important;font-weight:500;margin:0 0 12px;color:var(--ink)}
+#view .nc-zona-card{border:1px solid var(--line);border-left:5px solid var(--zona-color);border-radius:0 12px 12px 0;background:var(--surface2);margin:0 0 10px;overflow:hidden}
 #view .nc-zona-card summary{display:flex;align-items:center;gap:10px;min-height:58px;padding:10px 13px;cursor:pointer;list-style:none;color:var(--ink)}#view .nc-zona-card summary::-webkit-details-marker{display:none}#view .nc-zona-card summary:focus-visible{outline:2px solid var(--zona-color);outline-offset:-3px}#view .nc-zona-card summary strong{font-size:17px;flex:1}#view .nc-zona-count{font-size:12px;color:var(--muted);white-space:nowrap}#view .nc-zona-chevron{width:20px;height:20px;flex:none;transition:transform .18s}#view .nc-zona-card[open] .nc-zona-chevron{transform:rotate(180deg)}
-#view .nc-zona-equipos{padding:0 13px}#view .nc-zona-equipo{display:flex;align-items:center;gap:12px;min-height:57px;padding:9px 0;border-top:1px solid var(--line)}#view .nc-zona-equipo strong{font-size: 15px;
-    font-weight: 300 !important;overflow-wrap:anywhere}#view .nc-zona-escudo{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;color:var(--muted)}#view .nc-zona-escudo img{width:100%;height:100%;object-fit:contain}#view .nc-zona-escudo [hidden]{display:none!important}
+#view .nc-zona-equipos{padding:0 13px}#view .nc-zona-equipo{display:flex;align-items:center;gap:12px;min-height:57px;padding:9px 0;border-top:1px solid var(--line)}#view .nc-zona-equipo strong{font-size:14px;font-weight:600;overflow-wrap:anywhere}#view .nc-zona-escudo{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;color:var(--muted)}#view .nc-zona-escudo img{width:100%;height:100%;object-fit:contain}#view .nc-zona-escudo [hidden]{display:none!important}
 </style>
 <style id="nc-desarrollo-css">
 #drawer .nc-desarrollo-menu-title{color:var(--lime,#9DD64A)}
@@ -1501,7 +1502,7 @@ function ncVistaDesarrollo(){
 <style id="nc-cruces-normalizado-zonas">
 /* Mismo sistema visual y apertura nativa que Zonas. */
 #view .nc-cruces-compact-group{margin:22px 0 26px}
-#view .nc-cruces-compact-group .nc-cruces-category{font-size:18px!important;font-weight:500!important;margin:0 0 12px!important;color:var(--ink)}
+#view .nc-cruces-compact-group .nc-cruces-category{font-size:17px!important;font-weight:500!important;margin:0 0 12px!important;color:var(--ink)}
 #view .nc-cruces-compact-group .nc-cruces-category::before{display:none!important;content:none!important}
 #view .nc-cruces-compact-group .nc-cruces-category{display:block!important;padding:0!important;border:0!important}
 #view .nc-cruces-compact-group .nc-cruces-accordion{
@@ -1520,8 +1521,7 @@ function ncVistaDesarrollo(){
   font-weight:600!important;width:100%!important;
 }
 #view .nc-cruces-compact-group .nc-cruces-accordion-head::-webkit-details-marker{display:none}
-#view .nc-cruces-compact-group .nc-cruces-accordion-label{    font-size: 15px !important;
-    font-weight: 300 !important;flex:1}
+#view .nc-cruces-compact-group .nc-cruces-accordion-label{font-size:17px!important;font-weight:600!important;flex:1}
 #view .nc-cruces-compact-group .nc-cruces-accordion-chevron{width:20px!important;height:20px!important;flex:none;margin-left:auto}
 #view .nc-cruces-compact-group .nc-cruces-accordion-chevron svg{width:20px!important;height:20px!important}
 #view .nc-cruces-compact-group .nc-cruces-accordion[open] .nc-cruces-accordion-chevron{transform:rotate(180deg)}
