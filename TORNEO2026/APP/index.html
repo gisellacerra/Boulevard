@@ -12,7 +12,7 @@
 
 .top .tournament-brand{display:flex;justify-content:flex-end}.top .tournament-logo{object-position:right center}.drawer-brand{display:block;flex:1;min-width:0}.drawer-brand img{display:block;width:205px;max-width:100%;height:auto}.drawer .head{gap:12px;align-items:center}.drawer .head>.iconbtn{flex:0 0 auto}
 
-html,body,.top,.drawer aside{background-color:#191c1d}.top{background:#191c1d;color:#f5f6f7}.top>.notification-bell:last-child{display:flex;align-items:center;justify-content:center;order:2;flex:0 0 auto;padding:10px;color:#f5f6f7;background:transparent;border:0}.top>.notification-bell:last-child .ic{width:27px;height:27px}.top>.notification-bell:hover{color:var(--lime)}.tournament-brand{order:1}@media(max-width:420px){.top{gap:10px}.top .tournament-logo{width:220px}.top>.notification-bell:last-child{padding:7px}}
+html,body,.top,.drawer aside{background-color:#191c1d}.top{background:#191c1d;color:#f5f6f7}.top>.notification-bell:last-child{display:flex;align-items:center;justify-content:center;order:2;flex:0 0 auto;padding:10px;color:#f5f6f7;background:transparent;border:0}.top>.notification-bell:last-child .ic{width:23px;height:23px}.top>.notification-bell:hover{color:var(--lime)}.tournament-brand{order:1}@media(max-width:420px){.top{gap:10px}.top .tournament-logo{width:220px}.top>.notification-bell:last-child{padding:7px}}
 
 /* Solo la cabecera exterior cambia a blanco. */
 header.top{background:#191c1d;color:#191c1d}.top>button:first-child,.top>.notification-bell:last-child{color:#191c1d}.top>.notification-bell:hover,.top>button:first-child:hover{color:#008839}.drawer aside,.drawer .head,.app,.view,.bottom{background-color:#191c1d;color:var(--ink)}
@@ -410,6 +410,80 @@ window.addEventListener('appinstalled', function() { window.ncInstallPrompt = nu
 #view .nc-bufet-filtros select{flex:1;min-width:0;max-width:230px;appearance:none;-webkit-appearance:none;color:#f4f8f5;background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23f4f8f5%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E") no-repeat right 15px center;border:1px solid #34474c;border-radius:8px;padding:9px 40px 9px 12px;font:inherit;font-weight:400;cursor:pointer;color-scheme:dark}
 #view .nc-bufet-filtros select:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
 </style>
+
+<style id="nc-cruces-legibilidad-v2">
+/* Encabezados amplios, sin negrita; flechas coherentes con los selectores de la APP. */
+#view .nc-cruces-accordion-head{min-height:66px;gap:13px;padding:14px 14px;font-weight:400!important}
+#view .nc-cruces-accordion-icon{font-size:27px;width:33px;line-height:1.2}
+#view .nc-cruces-accordion-label{font-size:16px!important;font-weight:400!important;line-height:1.35;letter-spacing:0}
+#view .nc-cruces-accordion-count{font-size:13px!important;font-weight:500;padding:4px 9px;min-width:29px;text-align:center}
+#view .nc-cruces-accordion-chevron{display:flex;align-items:center;justify-content:center;color:#d8e1de!important;font-size:initial;line-height:1;transform:none;transition:transform .18s ease}
+#view .nc-cruces-accordion-head[aria-expanded="true"] .nc-cruces-accordion-chevron{transform:rotate(180deg)}
+#view .nc-cruces-compact-teams{font-size:14px!important;gap:6px}
+#view .nc-cruces-compact-vs{font-size:13px!important}
+#view .nc-cruces-compact-meta{font-size:12px!important}
+#view .nc-cruces-compact-score{font-size:17px!important}
+#view .nc-cruces-compact-chevron{display:flex;align-items:center;justify-content:center;color:#d8e1de!important;font-size:initial}
+#view .nc-cruces-compact-card{min-height:72px;gap:10px;padding-right:12px}
+#view .nc-cruces-compact-teams img{width:23px;height:23px}
+#view .nc-cruces-no-partidos{font-size:14px}
+@media(max-width:370px){#view .nc-cruces-accordion-label{font-size:15px!important}#view .nc-cruces-accordion-head{gap:9px}#view .nc-cruces-accordion-icon{width:30px;font-size:25px}}
+</style>
+<style id="nc-cruces-lectura-final">
+#view .nc-cruces-accordion-head{min-height:72px;padding:16px 14px;gap:12px}
+#view .nc-cruces-accordion-label{font-size:18px!important;font-weight:400!important;line-height:1.35!important;letter-spacing:0!important}
+#view .nc-cruces-accordion-icon{font-size:30px!important;width:37px!important;line-height:1.15}
+#view .nc-cruces-accordion-chevron{margin-left:auto;flex:none;color:#e4ece9!important}
+#view .nc-cruces-accordion-chevron svg{width:24px;height:24px}
+#view .nc-cruces-accordion-body{padding:10px;gap:10px}
+#view .nc-cruces-compact-card{min-height:94px;padding:12px 12px 12px 0;gap:10px}
+#view .nc-cruces-compact-main{gap:9px}
+#view .nc-cruces-compact-teams{font-size:16px!important;line-height:1.45!important;gap:7px!important}
+#view .nc-cruces-team-name{font-size:16px!important;font-weight:400!important;overflow-wrap:anywhere}
+#view .nc-cruces-compact-vs{font-size:15px!important;font-weight:400!important}
+#view .nc-cruces-compact-meta{font-size:14px!important;line-height:1.4!important}
+#view .nc-cruces-compact-score{font-size:20px!important;font-weight:500!important}
+#view .nc-cruces-compact-teams img{width:27px!important;height:27px!important}
+#view .nc-cruces-compact-chevron svg{width:22px;height:22px}
+@media(max-width:370px){#view .nc-cruces-accordion-label{font-size:17px!important}#view .nc-cruces-compact-teams,#view .nc-cruces-team-name{font-size:15px!important}}
+</style>
+
+<style id="nc-cruces-centrado-finalizado">
+/* Equipos, resultado y metadatos centrados; acceso lateral solo en partidos finalizados. */
+#view .nc-cruces-compact-card{position:relative;min-height:122px;padding:12px 43px 12px 0;cursor:pointer}
+#view .nc-cruces-compact-card:disabled{opacity:1;cursor:default}
+#view .nc-cruces-compact-main{align-items:center;justify-content:center;text-align:center;gap:8px;width:100%}
+#view .nc-cruces-compact-teams{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:7px;font-size:16px!important;line-height:1.35!important;width:100%;text-align:center}
+#view .nc-cruces-team{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:0;max-width:100%;flex-wrap:wrap}
+#view .nc-cruces-team-name{font-size:16px!important;font-weight:400!important;line-height:1.35!important}
+#view .nc-cruces-compact-vs{font-size:15px!important;font-weight:400!important}
+#view .nc-cruces-compact-score{display:block;font-size:23px!important;font-weight:500!important;line-height:1.2;text-align:center;color:#a6df6c}
+#view .nc-cruces-compact-meta{font-size:14px!important;text-align:center;line-height:1.35!important}
+#view .nc-cruces-compact-chevron{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;width:30px;height:38px;color:#e1ebe7!important}
+#view .nc-cruces-compact-chevron svg{width:28px!important;height:28px!important}
+@media(max-width:370px){#view .nc-cruces-compact-teams,#view .nc-cruces-team-name{font-size:15px!important}#view .nc-cruces-compact-meta{font-size:13px!important}}
+</style>
+<style id="nc-cruces-vertical-definitivo">
+#view .nc-cruces-vertical-card{position:relative;min-height:154px;padding:14px 44px 14px 0!important;align-items:center!important}
+#view .nc-cruces-vertical-card .nc-cruces-compact-main{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:7px!important;text-align:center!important;width:100%!important}
+#view .nc-cruces-vertical-team{display:flex!important;align-items:center!important;justify-content:center!important;gap:9px!important;max-width:100%;text-align:center!important}
+#view .nc-cruces-vertical-team img{width:28px!important;height:28px!important;object-fit:contain!important}
+#view .nc-cruces-vertical-team .nc-cruces-team-name{font-size:17px!important;font-weight:400!important;line-height:1.35!important;text-align:center!important;overflow-wrap:anywhere}
+#view .nc-cruces-vertical-card .nc-cruces-compact-vs{font-size:15px!important;font-weight:400!important;color:#b9c5c1!important}
+#view .nc-cruces-vertical-card .nc-cruces-compact-score{font-size:23px!important;font-weight:500!important;line-height:1.2!important}
+#view .nc-cruces-vertical-card .nc-cruces-compact-meta{font-size:14px!important;line-height:1.4!important;text-align:center!important;white-space:normal!important}
+#view .nc-cruces-vertical-card .nc-cruces-compact-chevron{position:absolute!important;right:9px!important;top:50%!important;transform:translateY(-50%)!important;color:#eaf0ed!important;display:flex!important;align-items:center!important}
+#view .nc-cruces-vertical-card .nc-cruces-compact-chevron svg{width:30px!important;height:30px!important}
+#view .nc-cruces-vertical-card:disabled{cursor:default!important;opacity:1!important}
+</style>
+<style id="nc-copas-premios-css">
+#view .nc-copas-premios{display:inline-flex;align-items:center;gap:3px;flex:none;line-height:1;font-size:22px}
+#view .nc-copas-premios span{display:inline-block;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+#view .nc-copa-oro{filter:sepia(1) saturate(5) hue-rotate(350deg) brightness(1.12)}
+#view .nc-copa-plata{filter:grayscale(1) brightness(1.4)}
+#view .nc-copa-bronce{filter:sepia(1) saturate(2.8) hue-rotate(330deg) brightness(.8)}
+@media(max-width:370px){#view .nc-copas-premios{font-size:18px;gap:1px}}
+</style>
 </head><body>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none"><symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol><symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11h-6v-7H9v7H3z"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M7 3v4m10-4v4M3 10h18m-13 4h2m4 0h2m-8 4h2"/></symbol><symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 3h10v8a5 5 0 0 1-10 0zM7 5H3v3a4 4 0 0 0 4 4m10-7h4v3a4 4 0 0 1-4 4m-5 4v4m-5 0h10"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6m2 9h2v-2a6 6 0 0 0-4-5.65"/></symbol><symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol><symbol id="i-left" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol><symbol id="i-radio" viewBox="0 0 24 24"><path d="M12 18v4m-4 0h8m-4-9a2 2 0 1 0 0-4 2 2 0 0 0 0 4M6 6a9 9 0 0 0 0 12m12-12a9 9 0 0 1 0 12M9 9a4 4 0 0 0 0 6m6-6a4 4 0 0 1 0 6"/></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="2.5"/></symbol><symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></symbol><symbol id="i-coffee" viewBox="0 0 24 24"><path d="M3 7h14v8a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6zm14 1h3a3 3 0 0 1 0 6h-3M2 22h18"/></symbol><symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 21V7m18 14V7M3 17h18M3 11h18v6M6 11V8h6v3"/></symbol><symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol><symbol id="i-list" viewBox="0 0 24 24"><path d="M9 5h12M9 12h12M9 19h12M3 5h1m-1 7h1m-1 7h1"/></symbol><symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 22V3m0 1c6-3 8 3 15 0v12c-7 3-9-3-15 0"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></symbol><symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></symbol></svg>
 <header class="top"><button aria-label="Abrir menú" onclick="drawer(true)"><svg class="ic"><use href="#i-menu"/></svg></button><div class="nc-live-left"><span class="nc-live-dot"></span><span>EN VIVO</span></div>
@@ -471,8 +545,50 @@ let ncErrorBloque='';
 function ncAplicarDatos(d){
  if(!d||!d.ok||!Array.isArray(d.equipos)||!Array.isArray(d.partidos))throw Error('Datos públicos inválidos');
  teams=(d.equipos||[]).map(t=>({name:t.nombre,cat:ncNormalCat(t.categoria),city:t.ciudad||t.provincia||'',zona:t.zona||'',escudo:t.escudo||''}));
- matches=(d.partidos||[]).map(p=>({a:p.local,b:p.visitante,cat:ncNormalCat(p.categoria),court:p.cancha||'—',time:p.hora||'—',fecha:p.fecha||'',status:p.resultado?'Finalizado':'Programado',score:p.resultado?`${p.resultado.setsLocal} – ${p.resultado.setsVisitante}`:'–',zona:p.zona||'',genero:p.genero||'',resultado:p.resultado||null,escudoLocal:p.escudoLocal||p.logoLocal||'',escudoVisitante:p.escudoVisitante||p.logoVisitante||''}));
+ matches=(d.partidos||[]).map(p=>({a:p.local,b:p.visitante,cat:ncNormalCat(p.categoria),court:p.cancha||'—',time:p.hora||'—',fecha:p.fecha||'',status:p.resultado?'Finalizado':'Programado',score:p.resultado?`${p.resultado.setsLocal} – ${p.resultado.setsVisitante}`:'–',zona:p.zona||'',ronda:p.ronda||'',genero:p.genero||'',resultado:p.resultado||null,escudoLocal:p.escudoLocal||p.logoLocal||'',escudoVisitante:p.escudoVisitante||p.logoVisitante||''}));
+ // En la planilla actual los cruces también se confirman en FIXTURE con zona 'Semifinales' / 'Final y 3°'.
+ // Conservar su resultado vinculado a RESULTADOS_ADMIN, sin depender de hojas CRUCES vacías.
+ // Identificar etapas tanto por zona como por ronda; los nombres pueden venir con prefijos y tildes.
+ const ncEtapaNormalizar=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[_-]+/g,' ').replace(/\s+/g,' ').trim();
+ const ncEtapaDetectar=(zona,ronda)=>{
+  const campos=[zona,ronda].map(ncEtapaNormalizar);
+  for(const v of campos){
+   if(/tercer\s+puesto|3\s*[.°ºo]?\s*puesto/.test(v))return 'TERCER_PUESTO';
+   if(/clasificacion\s+a\s+cuartos|preliminar|repechaje/.test(v))return 'PRELIMINAR';
+   if(/cuartos?\s+de\s+final/.test(v))return 'CUARTOS';
+   if(/semifinal/.test(v))return 'SEMIFINAL';
+   if(/final/.test(v))return 'FINAL';
+  }
+  return '';
+ };
+ // En la edición 2026, Mixto +60, las rondas 15-19 y 22 fueron guardadas
+ // como cruces interzonales (A-C, B-A, C-B) y no con su instancia real.
+ // Resolver SOLO estos partidos oficiales; no reinterpretar interzonales normales.
+ const ncCruces60_2026=new Map([
+  ['Tormenta de Arena|Impacto','PRELIMINAR'],
+  ['Los Lobos|Tormenta de Arena','CUARTOS'],
+  ['Boulevard|Galo Martínez','CUARTOS'],
+  ['Rio New|C.A.I. Club Atlético Independiente','CUARTOS'],
+  ['Almas Libres Newcom|La Lucinda','CUARTOS'],
+  ['Los Lobos|Rio New','FINAL']
+ ]);
+ const ncNombreCruce=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLocaleLowerCase('es-AR').replace(/\s+/g,' ');
+ const ncCruces60Claves=new Map([...ncCruces60_2026].map(([pareja,etapa])=>[pareja.split('|').map(ncNombreCruce).sort().join('|'),etapa]));
+ for(const m of matches){
+  let instancia=ncEtapaDetectar(m.zona,m.ronda);
+  const ronda=Number(m.ronda);
+  const fecha=normalizedDate(m.fecha);
+  if(!instancia&&m.cat==='+60'&&ncEtapaNormalizar(m.genero)==='mixto'&&fecha==='2026-11-22'&&[15,16,17,18,19,22].includes(ronda)){
+   instancia=ncCruces60Claves.get([ncNombreCruce(m.a),ncNombreCruce(m.b)].sort().join('|'))||'';
+  }
+  if(instancia){m.instancia=instancia;m.partido='';}
+ }
+
  ncCruces=Array.isArray(d.cruces)?d.cruces:[];
+ // Si el mismo partido está en FIXTURE y CRUCES_ADMIN, mostrarlo una sola vez.
+ const ncClaveCruce=(a,b,cat)=>[cat,String(a||'').trim().toLowerCase(),String(b||'').trim().toLowerCase()].join('|');
+ const ncClavesFixture=new Set(matches.filter(m=>m.instancia).map(m=>ncClaveCruce(m.a,m.b,m.cat)));
+ ncCruces=ncCruces.filter(p=>!ncClavesFixture.has(ncClaveCruce(p.local,p.visitante,ncNormalCat(p.categoria)))&&!ncClavesFixture.has(ncClaveCruce(p.visitante,p.local,ncNormalCat(p.categoria))));
  matches.push(...ncCruces.map(p=>({a:p.local,b:p.visitante,cat:ncNormalCat(p.categoria),court:p.cancha||'—',time:p.hora||'—',fecha:p.fecha||'',status:p.resultado?'Finalizado':'Programado',score:p.resultado?`${p.resultado.setsLocal} – ${p.resultado.setsVisitante}`:'–',zona:'',genero:p.genero||'',instancia:p.instancia||'',partido:p.partido||'',resultado:p.resultado||null,escudoLocal:p.escudoLocal||'',escudoVisitante:p.escudoVisitante||''})));
  ncBufetDisponible=Array.isArray(d.bufet);ncBufet=ncBufetDisponible?d.bufet:[];ncAlojamientos=Array.isArray(d.alojamientos)?d.alojamientos:[];ncArbitros=Array.isArray(d.arbitros)?d.arbitros:[];ncNotificaciones=Array.isArray(d.notificaciones)?[...d.notificaciones].reverse():[];const catsReal=[...new Set([...teams.map(x=>x.cat),...matches.map(x=>x.cat)].filter(Boolean))].sort((a,b)=>Number(a.slice(1))-Number(b.slice(1)));
  cats.splice(0,cats.length,'Todas',...catsReal);if(!cats.includes(category))category='Todas';ncDataPhase='ready';ncDataMessage='';render();if(page==='avisos')ncMarcarTodosAvisosLeidos();
@@ -644,7 +760,8 @@ function ncCambiarFiltroPartidos(valor){if(!['Todos','Jugados','Por jugar'].incl
 function ncFiltroPartidosHTML(){return `<div class="nc-partidos-filter"><label for="nc-partidos-estado"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16l-6.5 7.5V19l-3 1.5v-8L4 5Z"/></svg><span>Filtrar por partidos:</span></label><select id="nc-partidos-estado" aria-label="Filtrar por partidos" onchange="ncCambiarFiltroPartidos(this.value)">${['Todos','Jugados','Por jugar'].map(v=>`<option value="${v}" ${ncFiltroPartidos===v?'selected':''}>${v}</option>`).join('')}</select></div>`;}
 let ncBuscarPartido='';
 function ncNormalizarBusquedaPartido(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();}
-function ncPartidosBuscados(){const q=ncNormalizarBusquedaPartido(ncBuscarPartido);return filterMatches().filter(m=>(ncFiltroPartidos==='Todos'||(ncFiltroPartidos==='Jugados'?completed(m):!completed(m)))&&(!q||[m.a,m.b].some(n=>ncNormalizarBusquedaPartido(n).includes(q)))).sort((a,b)=>a.time.localeCompare(b.time));}
+function ncNumeroCancha(v){const n=Number(String(v||'').match(/\d+/)?.[0]);return Number.isFinite(n)?n:999;}
+function ncPartidosBuscados(){const q=ncNormalizarBusquedaPartido(ncBuscarPartido);return filterMatches().filter(m=>(ncFiltroPartidos==='Todos'||(ncFiltroPartidos==='Jugados'?completed(m):!completed(m)))&&(!q||[m.a,m.b].some(n=>ncNormalizarBusquedaPartido(n).includes(q)))).sort((a,b)=>normalizedDate(a.fecha).localeCompare(normalizedDate(b.fecha))||ncHoraMinutos(a.time)-ncHoraMinutos(b.time)||ncNumeroCancha(a.court)-ncNumeroCancha(b.court)||String(a.a).localeCompare(String(b.a),'es'));}
 function ncBuscarPartidos(v){ncBuscarPartido=v;const lista=document.getElementById('nc-partidos-lista');if(lista)lista.innerHTML=matchRows(ncPartidosBuscados());const limpiar=document.getElementById('nc-partidos-limpiar');if(limpiar)limpiar.hidden=!v;}
 function ncLimpiarBusquedaPartidos(){const campo=document.getElementById('nc-partidos-buscar');if(campo){campo.value='';ncBuscarPartidos('');campo.focus();}}
 partidos=function(){return `${head('Fixture','PROGRAMACIÓN')}${daySelector()}${catTabs()}${ncFiltroPartidosHTML()}<div class="nc-partidos-search">${icon('search')}<input id="nc-partidos-buscar" type="text" placeholder="Buscar equipo..." aria-label="Buscar equipo por nombre" autocomplete="off" value="${ncFotosEsc(ncBuscarPartido)}" oninput="ncBuscarPartidos(this.value)"><button id="nc-partidos-limpiar" type="button" aria-label="Limpiar búsqueda" onclick="ncLimpiarBusquedaPartidos()" ${ncBuscarPartido?'':'hidden'}>×</button></div><div id="nc-partidos-lista">${matchRows(ncPartidosBuscados())}</div>`;};
@@ -894,8 +1011,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  matchRows=function(arr,cruces=false){return arr.length?arr.map(m=>{const done=completed(m),win=winner(m),idx=matches.indexOf(m);return `<article class="sports-card nc-category-card ${done?'nc-finished':''}" style="--nc-category-color:${ncCategoryColor(m.cat)}" ${done?`role="button" tabindex="0" aria-label="Ver resultado de ${safe(m.a)} y ${safe(m.b)}" onclick="ncAbrirResultado(${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ncAbrirResultado(${idx})}"`:''}><div class="when ${done?'final':''}">${safe(m.time)}</div><div><div class="versus"><span class="nc-team-label ${win>0?'nc-winner':''}"><span>${safe(m.a)}${cruces&&win>0?'<small class="nc-cruces-winner">✓ Ganador</small>':''}</span>${ncLogo(m.escudoLocal)}</span><span class="${done?'final-score':'vs'}">${done?safe(m.score):'vs'}</span><span class="nc-team-label nc-team-away ${win<0?'nc-winner':''}">${ncLogo(m.escudoVisitante)}<span>${safe(m.b)}${cruces&&win<0?'<small class="nc-cruces-winner">✓ Ganador</small>':''}</span></span></div><div class="meta">${cruces?(done?'<span class="nc-cruces-result-link">Ver resultado <span aria-hidden="true">›</span></span>':`<span class="nc-cruces-schedule">${safe(courtLabel(m.court))} · ${safe(m.time)} h</span>`):`${safe(courtLabel(m.court))} · ${safe(m.genero||'')} ${safe(m.cat)}${m.zona?' · Zona '+safe(m.zona):''}${done?' · Ver resultado':''}`}</div></div></article>`;}).join(''):`<div class="empty">${ncEmptyData('No hay partidos en esta selección.')}</div>`;};
  window.ncAbrirResultado=function(idx){const m=matches[idx];if(!m||!completed(m))return;ncCerrarResultado();const win=winner(m),sets=resultSets(m.resultado),safeUrl=u=>/^(https?:\/\/|data:image\/(?:png|jpeg|jpg|webp|gif);base64,)/i.test(String(u||''))?safe(u):'';
  const logoA=safeUrl(m.escudoLocal),logoB=safeUrl(m.escudoVisitante);
- const sa=Number(m.resultado.setsLocal),sb=Number(m.resultado.setsVisitante);const puntosA=sa>sb?3:(sa>0?2:1),puntosB=sb>sa?3:(sb>0?2:1);
- const el=document.createElement('div');el.className='nc-result-modal';el.id='nc-result-modal';el.setAttribute('role','presentation');el.innerHTML=`<section class="nc-result-dialog" style="--nc-category-color:${ncCategoryColor(m.cat)}" role="dialog" aria-modal="true" aria-label="Resultado del partido"><div class="nc-result-top"><span>${safe(m.genero||'')} ${safe(m.cat)} ${m.zona?'· Zona '+safe(m.zona):''}</span><button class="nc-result-close" aria-label="Cerrar resultado" onclick="ncCerrarResultado()">×</button></div><div class="nc-result-section-label">SETS GANADOS</div><div class="nc-result-teams"><div class="nc-result-team ${win>0?'nc-winner':''}">${logoA?`<img src="${logoA}" alt="">`:''}<strong>${safe(m.a)}</strong><b>${safe(m.resultado.setsLocal)}</b>${win>0?'<div class="nc-result-winner-tag">GANADOR</div>':''}</div><div class="nc-result-vs">–</div><div class="nc-result-team ${win<0?'nc-winner':''}">${logoB?`<img src="${logoB}" alt="">`:''}<strong>${safe(m.b)}</strong><b>${safe(m.resultado.setsVisitante)}</b>${win<0?'<div class="nc-result-winner-tag">GANADOR</div>':''}</div></div><div class="nc-result-points-table"><span>PUNTOS PARA LA TABLA</span><div><strong>${puntosA}</strong><span>–</span><strong>${puntosB}</strong></div></div><div class="nc-result-divider" aria-hidden="true"></div><div class="nc-result-detail-title">PUNTOS POR SET</div>${sets.length?sets.map(x=>`<div class="nc-result-set"><strong>${safe(x.a)}</strong><span>${safe(x.label)}</span><strong>${safe(x.b)}</strong></div>`).join(''):'<div class="nc-result-no-points">El detalle de puntos no está disponible en los datos publicados.</div>'}<div class="nc-result-foot">${safe(courtLabel(m.court))} · Resultado confirmado</div></section>`;
+ const sa=Number(m.resultado.setsLocal),sb=Number(m.resultado.setsVisitante);const puntosA=sa>sb?3:(sa>0?2:1),puntosB=sb>sa?3:(sb>0?2:1);const esCruce=!!m.instancia;
+ const el=document.createElement('div');el.className='nc-result-modal';el.id='nc-result-modal';el.setAttribute('role','presentation');el.innerHTML=`<section class="nc-result-dialog" style="--nc-category-color:${ncCategoryColor(m.cat)}" role="dialog" aria-modal="true" aria-label="Resultado del partido"><div class="nc-result-top"><span>${safe(m.genero||'')} ${safe(m.cat)} ${m.zona?(esCruce?'· '+safe(m.zona):'· Zona '+safe(m.zona)):''}</span><button class="nc-result-close" aria-label="Cerrar resultado" onclick="ncCerrarResultado()">×</button></div><div class="nc-result-section-label">SETS GANADOS</div><div class="nc-result-teams"><div class="nc-result-team ${win>0?'nc-winner':''}">${logoA?`<img src="${logoA}" alt="">`:''}<span class="nc-cruces-team-name">${safe(m.a)}</span><b>${safe(m.resultado.setsLocal)}</b>${win>0?'<div class="nc-result-winner-tag">GANADOR</div>':''}</div><div class="nc-result-vs">–</div><div class="nc-result-team ${win<0?'nc-winner':''}">${logoB?`<img src="${logoB}" alt="">`:''}<span class="nc-cruces-team-name">${safe(m.b)}</span><b>${safe(m.resultado.setsVisitante)}</b>${win<0?'<div class="nc-result-winner-tag">GANADOR</div>':''}</div></div>${esCruce?'':`<div class="nc-result-points-table"><span>PUNTOS PARA LA TABLA</span><div><strong>${puntosA}</strong><span>–</span><strong>${puntosB}</strong></div></div>`}<div class="nc-result-divider" aria-hidden="true"></div><div class="nc-result-detail-title">PUNTOS POR SET</div>${sets.length?sets.map(x=>`<div class="nc-result-set"><strong>${safe(x.a)}</strong><span>${safe(x.label)}</span><strong>${safe(x.b)}</strong></div>`).join(''):'<div class="nc-result-no-points">El detalle de puntos no está disponible en los datos publicados.</div>'}<div class="nc-result-foot">${safe(courtLabel(m.court))} · Resultado confirmado</div></section>`;
  el.addEventListener('click',e=>{if(e.target===el)ncCerrarResultado()});document.body.appendChild(el);document.body.style.overflow='hidden';el.querySelector('button').focus();};
  window.ncCerrarResultado=function(){document.getElementById('nc-result-modal')?.remove();document.body.style.overflow='';};
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('nc-result-modal'))ncCerrarResultado()});
@@ -987,21 +1104,27 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  const shield=(u,large=false)=>validLogo(u)?`<img class="${large?'nc-pos-large-shield':'nc-pos-shield'}" src="${esc(u)}" alt="Escudo" loading="lazy" onerror="this.style.visibility='hidden'">`:`<span class="nc-pos-placeholder" aria-label="Escudo no disponible">♢</span>`;
  function close(){document.getElementById('nc-pos-modal')?.remove();document.body.style.overflow='';}
  window.ncPosCerrar=close;
- const coeficiente=t=>(t.pts/t.pj).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+ const coeficiente=t=>(t.pj?t.pts/t.pj:0).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
  window.ncPosAbrir=function(id){const t=window.ncPosRows?.[id];if(!t)return;close();const e=document.createElement('div');e.id='nc-pos-modal';e.className='nc-pos-modal';e.setAttribute('role','presentation');e.innerHTML=`<section class="nc-pos-dialog" role="dialog" aria-modal="true" aria-label="Posiciones de ${esc(t.name)}"><button class="nc-pos-close" onclick="ncPosCerrar()" aria-label="Cerrar">×</button>${shield(t.logo,true)}<h2>${esc(t.name)}</h2><div class="nc-pos-sub">${esc(t.cat)} · ${esc(t.zona)}</div><div class="nc-pos-total">${coeficiente(t)}<small>COEFICIENTE</small></div><p class="nc-pos-puesto">Posición en su zona: <strong>${t.puesto}º</strong></p></section>`;e.addEventListener('click',ev=>{if(ev.target===e)close()});document.body.appendChild(e);document.body.style.overflow='hidden';e.querySelector('button').focus();};
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('nc-pos-modal'))close()});
- standings=function(){const groups=new Map(),logos=new Map();for(const m of matches){if(validLogo(m.escudoLocal))logos.set(m.cat+'|'+m.a,m.escudoLocal);if(validLogo(m.escudoVisitante))logos.set(m.cat+'|'+m.b,m.escudoVisitante);}
+ standings=function(){const groups=new Map(),logos=new Map();
+ // La zona oficial pertenece al equipo; las etiquetas de partidos interzonales no crean nuevas tablas.
+ const normalizar=v=>String(v||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('es-AR');
+ const zonasEquipos=new Map();
+ for(const t of teams){const z=String(t.zona||'').trim().replace(/^zona\s+/i,'');if(z)zonasEquipos.set(JSON.stringify([t.cat,normalizar(t.name)]),z);}
+ for(const m of matches){if(validLogo(m.escudoLocal))logos.set(m.cat+'|'+m.a,m.escudoLocal);if(validLogo(m.escudoVisitante))logos.set(m.cat+'|'+m.b,m.escudoVisitante);}
  for(const m of matches.filter(completed)){
+  if(m.instancia||(!String(m.zona||'').trim()))continue; // Cruces excluidos de la fase clasificatoria.
   if(category!=='Todas'&&m.cat!==category)continue;
   const a=Number(m.resultado.setsLocal),b=Number(m.resultado.setsVisitante);
   if(!Number.isFinite(a)||!Number.isFinite(b)||a===b)continue;
   const zona=String(m.zona||'').trim()||'General';
-  const interzonal=/^INTERZONAL\s+(.+?)\s*[×x]\s*(.+)$/i.exec(zona);
-  const zonas=interzonal?interzonal.slice(1).map(z=>z.trim()):[zona,zona];
+  const interzonal=/^INTERZONAL\s+(.+?)\s*[×x]\s*(.+)$/i.exec(zona)||/^([A-Z])\s*[-–]\s*([A-Z])$/i.exec(zona);
+  const zonas=interzonal?interzonal.slice(1).map(z=>z.trim().replace(/^zona\s+/i,'')):[zona.replace(/^zona\s+/i,''),zona.replace(/^zona\s+/i,'')];
   const genero=String(m.genero||'').trim();
   const ps=pairs(m.resultado);
   for(const [lado,name] of [m.a,m.b].entries()){
-   const zonaEquipo=zonas[lado];
+   const zonaEquipo=zonasEquipos.get(JSON.stringify([m.cat,normalizar(name)]))||zonas[lado];
    const key=JSON.stringify([m.cat,genero,zonaEquipo]);
    if(!groups.has(key))groups.set(key,{cat:m.cat,genero,zona:zonaEquipo,items:new Map()});
    const items=groups.get(key).items;
@@ -1031,25 +1154,148 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  };
 })();
 
-/* Cruces publicados: agrupados por categoría, con las tarjetas y resultados existentes. */
+/* Cruces y finales: cuatro instancias desplegables, tarjetas compactas. */
 const ncGenericCrucesAnterior=generic;
+const ncCrucesAbiertos=new Set();
+function ncAlternarInstancia(id){
+ const section=document.getElementById(id);if(!section)return;
+ const body=section.querySelector('.nc-cruces-accordion-body');
+ const btn=section.querySelector('.nc-cruces-accordion-head');
+ if(!body||!btn)return;
+ const open=body.hidden;
+ body.hidden=!open;btn.setAttribute('aria-expanded',String(open));
+ if(open)ncCrucesAbiertos.add(id);else ncCrucesAbiertos.delete(id);
+}
 generic=function(){
  if(page!=='cruces')return ncGenericCrucesAnterior();
  const lista=matches.filter(m=>m.instancia&&(category==='Todas'||m.cat===category));
  const palette={'+40':'#d64da7','+50':'#81B86A','+60':'#78A5D6','+68':'#D98579','+70':'#e5f13c','+75':'#f7a139'};
- const rank=m=>m.instancia==='SEMIFINAL'?0:m.instancia==='TERCER_PUESTO'?1:2;
- const date=m=>normalizedDate(m.fecha)||String(m.fecha||'');
- const dateLabel=d=>/^\d{4}-\d{2}-\d{2}$/.test(d)?new Date(d+'T12:00:00').toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'}).replace(/^./,c=>c.toUpperCase()):d;
- const stageIcon=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${k===2?'<path d="M8 21h8M12 17v4M7 3h10v7a5 5 0 0 1-10 0V3ZM7 5H3v3a4 4 0 0 0 4 4M17 5h4v3a4 4 0 0 1-4 4"/>':k===1?'<circle cx="12" cy="15" r="5"/><path d="m8 11-4-8h5l3 7m4 1 4-8h-5l-3 7"/>':'<path d="M4 5h4l8 14h4M4 19h4l8-14h4m-3-3 3 3-3 3m0 8 3 3-3 3"/>'}</svg>`;
- const ncCruceCard=m=>{const done=completed(m),win=done?Math.sign(Number(m.resultado.setsLocal)-Number(m.resultado.setsVisitante)):0,idx=matches.indexOf(m);const logoHtml=u=>/^(https?:\/\/|data:image\/(?:png|jpeg|jpg|webp|gif);base64,)/i.test(String(u||''))?`<img src="${safe(u)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">`:'<span class="nc-cx-logo-slot" aria-hidden="true"></span>';const team=(name,logo)=>`<div class="nc-cx-team">${logoHtml(logo)}<strong>${safe(name)}</strong></div>`;return `<article class="nc-cx-card ${done?'nc-cx-done':''}"><div class="nc-cx-status">${done?'FINALIZADO':'POR JUGAR'}<span aria-hidden="true">${done?'✓':'◷'}</span></div><div class="nc-cx-teams">${team(m.a,m.escudoLocal)}<div class="nc-cx-center">${done?`<div class="nc-cx-score"><b class="${win>0?'nc-cx-win':''}">${safe(m.resultado.setsLocal)}</b><span>:</span><b class="${win<0?'nc-cx-win':''}">${safe(m.resultado.setsVisitante)}</b></div><small>SETS</small>`:'<span class="nc-cx-vs">VS</span>'}</div>${team(m.b,m.escudoVisitante)}</div>${done?`<button type="button" class="nc-cx-detail" onclick="ncAbrirResultado(${idx})" aria-label="Detalle del partido ${safe(m.a)} y ${safe(m.b)}"><span>▥ &nbsp; Detalle del partido</span><span aria-hidden="true">›</span></button>`:`<div class="nc-cx-schedule"><span>${safe(courtLabel(m.court))}</span><strong>${safe(m.time)} h</strong></div>`}</article>`;};
- const groups=[...new Set(lista.map(m=>m.cat))].sort((a,b)=>String(a).localeCompare(String(b),'es',{numeric:true}));
- return `${head('Cruces y finales','COMPETENCIA')}${catTabs()}${groups.length?groups.map(c=>{
- const items=lista.filter(m=>m.cat===c).sort((a,b)=>date(a).localeCompare(date(b))||rank(a)-rank(b)||Number(a.partido||0)-Number(b.partido||0)||String(a.time).localeCompare(String(b.time)));
- const dates=[...new Set(items.map(date))];
- return `<section class="nc-cruces-group" style="--cruces-color:${palette[c]||'#9DD64A'}"><h2 class="nc-cruces-category">Categoría ${safe(c)}</h2>${dates.map(d=>`<div class="nc-cruces-day">${safe(dateLabel(d))}</div>${items.filter(m=>date(m)===d).map(m=>{const k=rank(m),title=k===0?'Semifinal '+m.partido:k===1?'Tercer puesto':'Final';return `<div class="nc-cruces-stage nc-cruces-stage-${k}"><div class="nc-cruces-heading"><h3>${stageIcon(k)}<span>${safe(title)}</span></h3></div>${ncCruceCard(m)}</div>`;}).join('')}`).join('')}</section>`;
+ const etapas=[
+  {id:'PRELIMINAR',title:'Clasificación a cuartos de final',icon:`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h5l5 6h4"/><path d="M2 18h5l5-6"/><path d="m13 8 4 4-4 4"/></svg>`},
+  {id:'CUARTOS',title:'Cuartos de final',icon:`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx=".5"/><rect x="2" y="17" width="5" height="5" rx=".5"/><rect x="17" y="2" width="5" height="5" rx=".5"/><rect x="17" y="17" width="5" height="5" rx=".5"/><path d="M7 4.5h4v15H7M17 4.5h-4v15h4"/></svg>`},
+  {id:'SEMIFINAL',title:'Semifinales',icon:`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx=".5"/><rect x="2" y="17" width="5" height="5" rx=".5"/><rect x="17" y="9.5" width="5" height="5" rx=".5"/><path d="M7 4.5h5v7.5h5M7 19.5h5V12"/></svg>`},
+  {id:'FINALES',title:'Final y 3.º puesto',icon:`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10v8a5 5 0 0 1-10 0V3Z"/><path d="M7 5H4v3a4 4 0 0 0 4 4M17 5h3v3a4 4 0 0 1-4 4M12 16v4m-4 1h8"/><circle cx="19" cy="18" r="3"/><path d="m17 21-1 2m5-2 1 2"/></svg>`}
+ ];
+ const etapaDe=m=>{const v=String(m.instancia||'').toUpperCase();return v==='FINAL'||v==='TERCER_PUESTO'?'FINALES':v;};
+ const fecha=m=>normalizedDate(m.fecha)||String(m.fecha||'');
+ const ordenar=(a,b)=>fecha(a).localeCompare(fecha(b))||ncHoraMinutos(a.time)-ncHoraMinutos(b.time)||Number(String(a.court||'').match(/\d+/)?.[0]||0)-Number(String(b.court||'').match(/\d+/)?.[0]||0);
+ const tarjeta=m=>{
+  const done=completed(m),idx=matches.indexOf(m),r=m.resultado||{};
+  const setsA=Number(r.setsLocal),setsB=Number(r.setsVisitante);
+  const ganador=done&&Number.isFinite(setsA)&&Number.isFinite(setsB)?Math.sign(setsA-setsB):0;
+  const score=done?`${safe(r.setsLocal)} : ${safe(r.setsVisitante)}`:'';
+  const etiqueta=done?'Finalizado':'Por jugar';
+  return `<button type="button" class="nc-cruces-compact-card nc-cruces-vertical-card" ${done?`onclick="ncAbrirResultado(${idx})" aria-label="Ver resultado de ${safe(m.a)} contra ${safe(m.b)}"`:`disabled aria-label="Partido pendiente: ${safe(m.a)} contra ${safe(m.b)}"`}><span class="nc-cruces-compact-stripe"></span><span class="nc-cruces-compact-main"><span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador>0?'nc-cruces-team-winner':''}">${safe(m.a)}</span></span><span class="nc-cruces-compact-vs">VS</span><span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador<0?'nc-cruces-team-winner':''}">${safe(m.b)}</span></span>${done?`<span class="nc-cruces-compact-score">${score}</span>`:''}<span class="nc-cruces-compact-meta">${safe(m.time||'Horario a confirmar')} · ${safe(courtLabel(m.court||'—'))} · ${etiqueta}</span></span>${done?`<span class="nc-cruces-compact-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>`:''}</button>`;
+ };
+ const ncPodioCruces=(items,todos)=>{
+  // Clasificación por partidos de definición. Nunca ordenar equipos por azar.
+  const norm=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[_-]+/g,' ').replace(/\s+/g,' ').trim();
+  const resultado=m=>{
+   if(!m||!completed(m))return null;
+   const r=m.resultado||{},a=Number(r.setsLocal),b=Number(r.setsVisitante);
+   if(r.setsLocal==null||r.setsVisitante==null||!Number.isFinite(a)||!Number.isFinite(b)||a===b)return null;
+   return a>b?[m.a,m.b]:[m.b,m.a];
+  };
+  const participantes=[...new Map(todos.flatMap(m=>[m.a,m.b]).filter(n=>n&&norm(n)&&!/^por definir|^ganador|^perdedor|^descansa|^libre/i.test(norm(n))).map(n=>[norm(n),n])).values()];
+  const n=participantes.length;
+  if(!n)return '';
+  const puestos=Array(n).fill(null);
+  const porCodigo=new Map();
+  for(const m of items){
+   const v=[m.partido,m.ronda,m.zona].map(norm).join(' ');
+   const match=v.match(/(?:^|\s)(?:cruce|c)\s*(\d{1,2})(?:\s|$)/);
+   if(match&&resultado(m))porCodigo.set(Number(match[1]),m);
+  }
+  const etapas=items.filter(m=>resultado(m));
+  const semis=etapas.filter(m=>norm(m.instancia).includes('semifinal'));
+  const ganadoresSemis=new Set(semis.map(m=>norm(resultado(m)[0])));
+  const perdedoresSemis=new Set(semis.map(m=>norm(resultado(m)[1])));
+  const coincide=(m,grupo)=>grupo.size===2&&[norm(m.a),norm(m.b)].every(x=>grupo.has(x));
+  const decisivos=etapas.filter(m=>['FINAL','TERCER_PUESTO'].includes(String(m.instancia||'').toUpperCase()));
+  const buscarEtiqueta=(re)=>etapas.find(m=>re.test([m.instancia,m.zona,m.ronda,m.partido].map(norm).join(' ')));
+  const final=decisivos.find(m=>coincide(m,ganadoresSemis));
+  // Resolver por participantes de semifinal o por el código de cruce oficial.
+  let f=final||porCodigo.get(n>=13?15:12)||decisivos.find(m=>norm(m.instancia)==='final'&&!/tercer|3\s*puesto/.test([m.zona,m.ronda].map(norm).join(' ')));
+  let t=decisivos.find(m=>coincide(m,perdedoresSemis))||porCodigo.get(n>=13?14:11)||decisivos.find(m=>norm(m.instancia)==='tercer puesto'||norm(m.instancia)==='tercer_puesto');
+  if(!f&&decisivos.length===2&&t)f=decisivos.find(m=>m!==t);
+  if(!t&&decisivos.length===2&&f)t=decisivos.find(m=>m!==f);
+  const asignar=(m,inicio)=>{
+   const r=resultado(m);if(!r||inicio<0||inicio+1>=n)return;
+   if(puestos.some((v,i)=>v&&i!==inicio&&i!==inicio+1&&r.some(x=>norm(x)===norm(v))))return;
+   puestos[inicio]=r[0];puestos[inicio+1]=r[1];
+  };
+  if(f&&t&&f!==t&&new Set([...resultado(f),...resultado(t)].map(norm)).size===4){asignar(f,0);asignar(t,2);}
+  // PDF VI Torneo: definición 5-8, 9-14 por cruces con partidos específicos.
+  if(n>=13){
+   asignar(porCodigo.get(13)||buscarEtiqueta(/5\s*(?:°|º|o)?\s*(?:y|[-/])\s*6/),4);
+   asignar(porCodigo.get(12)||buscarEtiqueta(/7\s*(?:°|º|o)?\s*(?:y|[-/])\s*8/),6);
+   asignar(porCodigo.get(11)||buscarEtiqueta(/9\s*(?:°|º|o)?\s*(?:y|[-/])\s*10/),8);
+   asignar(porCodigo.get(10)||buscarEtiqueta(/11\s*(?:°|º|o)?\s*(?:y|[-/])\s*12/),10);
+   asignar(porCodigo.get(9)||buscarEtiqueta(/13\s*(?:°|º|o)?\s*(?:y|[-/])\s*14/),12);
+  }else if(n>=8){
+   asignar(porCodigo.get(10)||buscarEtiqueta(/5\s*(?:°|º|o)?\s*(?:y|[-/])\s*6/),4);
+   asignar(porCodigo.get(9)||buscarEtiqueta(/7\s*(?:°|º|o)?\s*(?:y|[-/])\s*8/),6);
+  }
+  // Etiquetas explícitas tienen prioridad cuando la numeración no está informada.
+  const pares=[[0,/1\s*(?:°|º|o)?\s*(?:y|[-/])\s*2/],[2,/3\s*(?:°|º|o)?\s*(?:y|[-/])\s*4/],[4,/5\s*(?:°|º|o)?\s*(?:y|[-/])\s*6/],[6,/7\s*(?:°|º|o)?\s*(?:y|[-/])\s*8/],[8,/9\s*(?:°|º|o)?\s*(?:y|[-/])\s*10/],[10,/11\s*(?:°|º|o)?\s*(?:y|[-/])\s*12/],[12,/13\s*(?:°|º|o)?\s*(?:y|[-/])\s*14/]];
+  for(const [inicio,re] of pares)if(!puestos[inicio])asignar(buscarEtiqueta(re),inicio);
+  const iconos=['🏆','🥈','🥉'];
+  return `<div class="nc-cruces-podio" aria-label="Clasificación final de la categoría"><div class="nc-cruces-podio-titulo">CLASIFICACIÓN FINAL · ${n} EQUIPOS</div>${puestos.map((nombre,i)=>`<div class="nc-cruces-podio-fila"><span class="nc-cruces-podio-icono ${i===0?'nc-cruces-podio-oro':i===1?'nc-cruces-podio-plata':i===2?'nc-cruces-podio-bronce':''}">${iconos[i]||String(i+1)+'.º'}</span><span class="${nombre?'':'nc-clasificacion-pendiente'}">${nombre?`<strong>${safe(nombre)}</strong>`:'Por definir'}</span></div>`).join('')}</div>`;
+ };
+ const grupos=[...new Set(lista.map(m=>[m.cat,String(m.genero||'').trim()].join('|')))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
+ return `${head('Cruces y finales','COMPETENCIA')}${catTabs()}${grupos.length?grupos.map((clave,ci)=>{
+  const [cat,genero]=clave.split('|');
+  const items=lista.filter(m=>m.cat===cat&&String(m.genero||'').trim()===genero);
+  return `<section class="nc-cruces-compact-group" style="--cruces-color:${palette[cat]||'#9DD64A'}"><h2 class="nc-cruces-category">${safe(genero?genero+' · ':'')}Categoría ${safe(cat)}</h2>${etapas.map((etapa,ei)=>{
+   const partidos=items.filter(m=>etapaDe(m)===etapa.id).sort(ordenar);
+   const id=`nc-cruces-accordion-${ci}-${ei}`;
+   const abierto=ncCrucesAbiertos.has(id);
+   return `<details id="${id}" class="nc-cruces-accordion nc-cruces-etapa-${ei}" ${abierto?'open':''} ontoggle="if(this.open)ncCrucesAbiertos.add(this.id);else ncCrucesAbiertos.delete(this.id)"><summary class="nc-cruces-accordion-head"><span class="nc-cruces-accordion-label">${safe(etapa.title)}</span><span class="nc-cruces-accordion-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary><div class="nc-cruces-accordion-body">${partidos.length?partidos.map(tarjeta).join(''):'<div class="nc-cruces-no-partidos">Sin partidos publicados en esta instancia.</div>'}</div></details>`;
+  }).join('')}${ncPodioCruces(items,matches.filter(m=>m.cat===cat&&String(m.genero||'').trim()===genero))}</section>`;
  }).join(''):`<div class="empty">${ncEmptyData('Todavía no hay cruces publicados.')}</div>`}`;
 };
 </script>
+<style id="nc-cruces-podio-final-css">
+#view .nc-cruces-podio{margin:15px 0 22px 40px;padding:6px 10px;background:#1d2223;color:#e8ecea;max-width:calc(100% - 40px)}
+#view .nc-cruces-podio-titulo{font-size:12px;font-weight:600;letter-spacing:.06em;color:#bfc8c7;margin:0 0 10px}
+#view .nc-cruces-podio-fila{display:flex;align-items:center;gap:9px;padding:8px 0;font-size:15px;line-height:1.4}
+#view .nc-cruces-podio-fila strong{font-weight:700}
+#view .nc-cruces-podio-icono{width:23px;height:23px;flex:none;display:inline-flex;align-items:center;justify-content:center}
+#view .nc-cruces-podio-icono svg{width:23px;height:23px}
+#view .nc-cruces-podio-oro{color:#f2c52d}
+#view .nc-cruces-podio-plata{color:#c6ccd1}
+#view .nc-cruces-podio-bronce{color:#e38a26}
+#view .nc-cruces-podio-cuarto{color:#92999d}
+#view .nc-clasificacion-pendiente{color:#9aa3a6;font-style:italic}
+#view .nc-cruces-podio-icono{font-size:13px;font-weight:700}
+@media(max-width:420px){#view .nc-cruces-podio{margin-left:28px;max-width:calc(100% - 28px)}#view .nc-cruces-podio-fila{font-size:14px}}
+</style>
+<style id="nc-cruces-compact-accordion-css">
+#view .nc-cruces-compact-group{margin:22px 0 32px}
+#view .nc-cruces-accordion{border:1px solid #394747;border-radius:10px;margin:9px 0;overflow:hidden;background:#1c2527}
+#view .nc-cruces-accordion-head{display:flex;align-items:center;gap:9px;width:100%;padding:13px 12px;color:#f1f5f1;background:#232d2f;border:0;text-align:left;cursor:pointer;font:inherit}
+#view .nc-cruces-accordion-icon{font-size:18px;flex:none;width:24px;text-align:center}
+#view .nc-cruces-accordion-label{flex:1;font-size:13px;font-weight:700;line-height:1.35}
+#view .nc-cruces-accordion-count{background:#364342;color:#d9e6d9;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700}
+#view .nc-cruces-accordion-chevron{color:#9dd64a;font-size:23px;line-height:1;transition:transform .15s}
+#view .nc-cruces-accordion-head[aria-expanded="true"] .nc-cruces-accordion-chevron{transform:rotate(180deg)}
+#view .nc-cruces-accordion-body{padding:8px;display:grid;gap:7px}
+#view .nc-cruces-accordion-body[hidden]{display:none!important}
+#view .nc-cruces-compact-card{display:flex;align-items:center;gap:9px;width:100%;min-height:62px;padding:7px 9px 7px 0;background:#202a2b;border:1px solid #344447;border-radius:8px;color:#f5f5f5;text-align:left;cursor:pointer;font:inherit}
+#view .nc-cruces-compact-stripe{align-self:stretch;width:4px;background:var(--cruces-color);border-radius:0 3px 3px 0;flex:none}
+#view .nc-cruces-compact-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+#view .nc-cruces-compact-teams{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:11px;line-height:1.25}
+#view .nc-cruces-compact-teams strong{font-weight:700;overflow-wrap:anywhere}
+#view .nc-cruces-compact-teams img{width:19px;height:19px;object-fit:contain;flex:none}
+#view .nc-cruces-compact-vs{color:#a3aaa6;font-size:10px;font-weight:400}
+#view .nc-cruces-compact-meta{font-size:10px;color:#a6b2ae;line-height:1.3}
+#view .nc-cruces-compact-score{font-size:13px;color:#a6df6c;white-space:nowrap;flex:none}
+#view .nc-cruces-compact-chevron{font-size:21px;color:#a6df6c;flex:none}
+#view .nc-cruces-no-partidos{font-size:12px;color:#a5b1ac;padding:10px 6px}
+</style>
+<style id="nc-cruces-ux-etapas-css">
+.nc-cruces-round{margin:20px 0 25px}.nc-cruces-round-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 12px}.nc-cruces-round-title h3{margin:0}.nc-cruces-round-count{font-size:11px;color:#9eaaa3;white-space:nowrap}.nc-cruces-round .nc-cruces-stage{margin-bottom:12px}.nc-cruces-round .nc-cruces-stage:last-child{margin-bottom:0}
+</style>
 <style id="nc-posiciones-numeros-grises-css">
 /* Solo números grises de la tabla de posiciones; PTS verde sin cambios. */
 .nc-positions-table tbody td:not(.nc-coef):not(:nth-child(2)) { font-size: 14px !important; }
@@ -1191,8 +1437,6 @@ function ncVistaDesarrollo(){
 
     <p>Sin buscar planillas, descargar archivos ni esperar nuevas publicaciones. <strong>Todo lo que necesitás saber, en una sola aplicación.</strong></p>
 
-    <p>Una aplicación pensada para facilitar la organización y mejorar la experiencia de quienes hacen posible cada torneo.</p>
-
     <div class="nc-desarrollo-contacto">
       <h3>¿Organizás un torneo y querés algo así?</h3>
       <p>Contacto: <a href="tel:+542920411544">2920 411544</a></p>
@@ -1207,4 +1451,122 @@ function ncVistaDesarrollo(){
 }
 </script>
 
+
+<style id="nc-cruces-instancia-colores">
+/* Solo cabeceras de las cuatro instancias. Color de la categoría,
+   progresivamente más intenso al avanzar hacia la final. */
+#view .nc-cruces-compact-group .nc-cruces-accordion-head{
+  background:color-mix(in srgb,var(--cruces-color) 17%,#1e292c)!important;
+  color:#f6fafb!important;
+  font-weight:400!important;
+  transition:background-color .15s ease;
+}
+#view .nc-cruces-compact-group .nc-cruces-etapa-1 .nc-cruces-accordion-head{
+  background:color-mix(in srgb,var(--cruces-color) 30%,#1e292c)!important;
+}
+#view .nc-cruces-compact-group .nc-cruces-etapa-2 .nc-cruces-accordion-head{
+  background:color-mix(in srgb,var(--cruces-color) 52%,#1e292c)!important;
+}
+#view .nc-cruces-compact-group .nc-cruces-etapa-3 .nc-cruces-accordion-head{
+  background:color-mix(in srgb,var(--cruces-color) 72%,#1e292c)!important;
+}
+#view .nc-cruces-compact-group .nc-cruces-accordion-label{font-weight:400!important}
+#view .nc-cruces-compact-group .nc-cruces-accordion-chevron{color:#f6fafb!important}
+</style>
+
+<style id="nc-cruces-bordes-transparentes">
+/* Cards desplegables: fondo transparente, borde fino y uniforme. */
+#view .nc-cruces-compact-group .nc-cruces-accordion{
+  background:transparent!important;
+  border:1px solid var(--line,#394747)!important;
+  border-radius:10px!important;
+}
+#view .nc-cruces-compact-group .nc-cruces-accordion-head,
+#view .nc-cruces-compact-group .nc-cruces-etapa-1 .nc-cruces-accordion-head,
+#view .nc-cruces-compact-group .nc-cruces-etapa-2 .nc-cruces-accordion-head,
+#view .nc-cruces-compact-group .nc-cruces-etapa-3 .nc-cruces-accordion-head{
+  background:transparent!important;
+  color:var(--ink)!important;
+}
+/* Cards de equipos: sin barra/filete lateral izquierdo. */
+#view .nc-cruces-compact-group .nc-cruces-compact-card{
+  border-left:1px solid #344447!important;
+  padding-left:12px!important;
+  background:transparent!important;
+}
+#view .nc-cruces-compact-group .nc-cruces-compact-stripe{display:none!important}
+</style>
+
+<style id="nc-cruces-iconos-y-estados-final">
+/* Iconos lineales SVG y estados sin destellos azules. */
+#view .nc-cruces-accordion-stage-icon{display:flex;align-items:center;justify-content:center;flex:0 0 30px;width:30px;height:30px;color:#b9d4e8;border-right:1px solid #627887;padding-right:9px;box-sizing:content-box}
+#view .nc-cruces-accordion-stage-icon svg{width:25px;height:25px;display:block;flex:none}
+#view .nc-cruces-compact-group .nc-cruces-accordion-head{gap:13px!important;-webkit-tap-highlight-color:transparent!important;outline:none!important;box-shadow:none!important;transition:none!important;user-select:none}
+#view .nc-cruces-compact-group .nc-cruces-accordion-head:hover,
+#view .nc-cruces-compact-group .nc-cruces-accordion-head:active,
+#view .nc-cruces-compact-group .nc-cruces-accordion-head:focus,
+#view .nc-cruces-compact-group .nc-cruces-accordion-head:focus-visible,
+#view .nc-cruces-compact-group .nc-cruces-accordion-head[aria-expanded="true"]{background:transparent!important;background-color:transparent!important;color:var(--ink)!important;box-shadow:none!important;outline:none!important;filter:none!important}
+#view .nc-cruces-compact-group .nc-cruces-accordion-head::before,
+#view .nc-cruces-compact-group .nc-cruces-accordion-head::after{background:transparent!important}
+#view .nc-cruces-compact-group .nc-cruces-accordion-head:focus-visible{outline:1px solid #8fa7b8!important;outline-offset:-2px!important}
+#view .nc-cruces-compact-group .nc-cruces-compact-card{-webkit-tap-highlight-color:transparent!important}
+</style>
+
+<style id="nc-cruces-altura-sistema-visual">
+/* Altura compacta alineada con los selectores del sistema visual. */
+#view .nc-cruces-compact-group .nc-cruces-accordion-head{
+  min-height:47px!important;height:auto!important;padding:8px 11px!important;gap:9px!important;
+  font-size:13px!important;line-height:18px!important;
+}
+#view .nc-cruces-compact-group .nc-cruces-accordion-label{
+  font-size:15px!important;line-height:18px!important;font-weight:300!important;
+}
+#view .nc-cruces-accordion-stage-icon{
+  flex:0 0 22px!important;width:22px!important;height:20px!important;
+  padding-right:7px!important;
+}
+#view .nc-cruces-accordion-stage-icon svg{width:18px!important;height:18px!important}
+#view .nc-cruces-compact-group .nc-cruces-accordion-chevron svg{width:16px!important;height:16px!important}
+#view .nc-cruces-compact-group .nc-cruces-accordion{border-radius:8px!important;margin:7px 0!important}
+</style>
+
+<style id="nc-cruces-resaltar-ganador">
+/* Destacar exclusivamente al ganador de un partido con resultado confirmado. */
+#view .nc-cruces-compact-group .nc-cruces-team-name.nc-cruces-team-winner{color:#FFE500!important;font-weight:600!important}
+</style>
+<style id="nc-copas-svg-fix">
+#view .nc-copas-premios{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex:none}
+#view .nc-copas-premios .nc-copa-vector{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+#view .nc-copa-vector-oro{color:#e6bc45}
+#view .nc-copa-vector-plata{color:#c4cbd3}
+</style>
+<style id="nc-cruces-normalizado-zonas">
+/* Mismo sistema visual y apertura nativa que Zonas. */
+#view .nc-cruces-compact-group{margin:22px 0 26px}
+#view .nc-cruces-compact-group .nc-cruces-category{font-size:17px!important;font-weight:500!important;margin:0 0 12px!important;color:var(--ink)}
+#view .nc-cruces-compact-group .nc-cruces-category::before{display:none!important;content:none!important}
+#view .nc-cruces-compact-group .nc-cruces-category{display:block!important;padding:0!important;border:0!important}
+#view .nc-cruces-compact-group .nc-cruces-accordion{
+  border:1px solid var(--line)!important;
+  border-left:5px solid var(--cruces-color)!important;
+  border-radius:0 12px 12px 0!important;
+  background:transparent!important;
+  margin:0 0 10px!important;
+  overflow:hidden!important;
+}
+#view .nc-cruces-compact-group .nc-cruces-accordion-head{
+  display:flex!important;align-items:center!important;gap:10px!important;
+  min-height:58px!important;padding:10px 13px!important;
+  cursor:pointer!important;list-style:none!important;
+  background:transparent!important;color:var(--ink)!important;
+  font-weight:600!important;width:100%!important;
+}
+#view .nc-cruces-compact-group .nc-cruces-accordion-head::-webkit-details-marker{display:none}
+#view .nc-cruces-compact-group .nc-cruces-accordion-label{font-size:17px!important;font-weight:600!important;flex:1}
+#view .nc-cruces-compact-group .nc-cruces-accordion-chevron{width:20px!important;height:20px!important;flex:none;margin-left:auto}
+#view .nc-cruces-compact-group .nc-cruces-accordion-chevron svg{width:20px!important;height:20px!important}
+#view .nc-cruces-compact-group .nc-cruces-accordion[open] .nc-cruces-accordion-chevron{transform:rotate(180deg)}
+#view .nc-cruces-compact-group .nc-cruces-accordion-head:focus-visible{outline:2px solid var(--cruces-color)!important;outline-offset:-3px!important}
+</style>
 </body></html>
