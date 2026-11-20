@@ -1185,7 +1185,9 @@ generic=function(){
   const ganador=done&&Number.isFinite(setsA)&&Number.isFinite(setsB)?Math.sign(setsA-setsB):0;
   const score=done?`${safe(r.setsLocal)} : ${safe(r.setsVisitante)}`:'';
   const etiqueta=done?'Finalizado':'Por jugar';
-  return `<button type="button" class="nc-cruces-compact-card nc-cruces-vertical-card" ${done?`onclick="ncAbrirResultado(${idx})" aria-label="Ver resultado de ${safe(m.a)} contra ${safe(m.b)}"`:`disabled aria-label="Partido pendiente: ${safe(m.a)} contra ${safe(m.b)}"`}><span class="nc-cruces-compact-stripe"></span><span class="nc-cruces-compact-main"><span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador>0?'nc-cruces-team-winner':''}">${safe(m.a)}</span></span><span class="nc-cruces-compact-vs">VS</span><span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador<0?'nc-cruces-team-winner':''}">${safe(m.b)}</span></span>${done?`<span class="nc-cruces-compact-score">${score}</span>`:''}<span class="nc-cruces-compact-meta">${safe(m.time||'Horario a confirmar')} · ${safe(courtLabel(m.court||'—'))} · ${etiqueta}</span></span>${done?`<span class="nc-cruces-compact-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>`:''}</button>`;
+  const tipoDefinicion=String(m.instancia||'').toUpperCase();
+  const rotuloDefinicion=tipoDefinicion==='FINAL'?'Final':tipoDefinicion==='TERCER_PUESTO'?'Tercer puesto':'';
+  return `<button type="button" class="nc-cruces-compact-card nc-cruces-vertical-card" ${done?`onclick="ncAbrirResultado(${idx})" aria-label="Ver resultado de ${safe(m.a)} contra ${safe(m.b)}"`:`disabled aria-label="Partido pendiente: ${safe(m.a)} contra ${safe(m.b)}"`}><span class="nc-cruces-compact-stripe"></span><span class="nc-cruces-compact-main">${rotuloDefinicion?`<span class="nc-cruces-definicion-label">${rotuloDefinicion}</span>`:''}<span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador>0?'nc-cruces-team-winner':''}">${safe(m.a)}</span></span><span class="nc-cruces-compact-vs">VS</span><span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador<0?'nc-cruces-team-winner':''}">${safe(m.b)}</span></span>${done?`<span class="nc-cruces-compact-score">${score}</span>`:''}<span class="nc-cruces-compact-meta">${safe(m.time||'Horario a confirmar')} · ${safe(courtLabel(m.court||'—'))} · ${etiqueta}</span></span>${done?`<span class="nc-cruces-compact-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>`:''}</button>`;
  };
  const podioDe=items=>{
   const final=items.find(m=>String(m.instancia||'').toUpperCase()==='FINAL'&&completed(m));
@@ -1219,6 +1221,9 @@ generic=function(){
 #view .nc-cruces-podio-fila{display:flex;align-items:center;gap:12px;margin:0;padding:9px 0;font-size:15px;line-height:1.4}
 #view .nc-cruces-podio-fila strong{font-weight:700}
 #view .nc-cruces-podio-icono{display:inline-flex;align-items:center;justify-content:center;width:26px;flex:none;font-size:21px}
+</style>
+<style id="nc-cruces-definiciones-label-css">
+#view .nc-cruces-definicion-label{display:block;font-size:12px;font-weight:700;color:#e9efea;margin:0 0 7px;letter-spacing:.02em}
 </style>
 <style id="nc-cruces-compact-accordion-css">
 #view .nc-cruces-compact-group{margin:22px 0 32px}
