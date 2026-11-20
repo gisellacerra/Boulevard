@@ -1187,64 +1187,60 @@ generic=function(){
   const etiqueta=done?'Finalizado':'Por jugar';
   return `<button type="button" class="nc-cruces-compact-card nc-cruces-vertical-card" ${done?`onclick="ncAbrirResultado(${idx})" aria-label="Ver resultado de ${safe(m.a)} contra ${safe(m.b)}"`:`disabled aria-label="Partido pendiente: ${safe(m.a)} contra ${safe(m.b)}"`}><span class="nc-cruces-compact-stripe"></span><span class="nc-cruces-compact-main"><span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador>0?'nc-cruces-team-winner':''}">${safe(m.a)}</span></span><span class="nc-cruces-compact-vs">VS</span><span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador<0?'nc-cruces-team-winner':''}">${safe(m.b)}</span></span>${done?`<span class="nc-cruces-compact-score">${score}</span>`:''}<span class="nc-cruces-compact-meta">${safe(m.time||'Horario a confirmar')} · ${safe(courtLabel(m.court||'—'))} · ${etiqueta}</span></span>${done?`<span class="nc-cruces-compact-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>`:''}</button>`;
  };
- const ncPodioCruces=items=>{
+ const ncPodioCruces=(items,todos)=>{
+  // Clasificación por partidos de definición. Nunca ordenar equipos por azar.
+  const norm=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[_-]+/g,' ').replace(/\s+/g,' ').trim();
   const resultado=m=>{
    if(!m||!completed(m))return null;
-   const r=m.resultado||{};
-   if(r.setsLocal==null||r.setsVisitante==null||r.setsLocal===''||r.setsVisitante==='')return null;
-   const a=Number(r.setsLocal),b=Number(r.setsVisitante);
-   if(!Number.isFinite(a)||!Number.isFinite(b)||a===b)return null;
+   const r=m.resultado||{},a=Number(r.setsLocal),b=Number(r.setsVisitante);
+   if(r.setsLocal==null||r.setsVisitante==null||!Number.isFinite(a)||!Number.isFinite(b)||a===b)return null;
    return a>b?[m.a,m.b]:[m.b,m.a];
   };
-  // Identificar los dos partidos decisivos sin depender de una sola etiqueta.
-  const normalizar=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[_-]+/g,' ').replace(/\s+/g,' ').trim();
-  const tipo=m=>{
-    const v=[m.instancia,m.zona,m.ronda,m.partido].map(normalizar).join(' ');
-    if(/tercer\s+puesto|3\s*[.°ºo]?\s*puesto|bronce/.test(v))return 'tercero';
-    if(/(^|\s)final(es)?(\s|$)/.test(v))return 'final';
-    return '';
+  const participantes=[...new Map(todos.flatMap(m=>[m.a,m.b]).filter(n=>n&&norm(n)&&!/^por definir|^ganador|^perdedor|^descansa|^libre/i.test(norm(n))).map(n=>[norm(n),n])).values()];
+  const n=participantes.length;
+  if(!n)return '';
+  const puestos=Array(n).fill(null);
+  const porCodigo=new Map();
+  for(const m of items){
+   const v=[m.partido,m.ronda,m.zona].map(norm).join(' ');
+   const match=v.match(/(?:^|\s)(?:cruce|c)\s*(\d{1,2})(?:\s|$)/);
+   if(match&&resultado(m))porCodigo.set(Number(match[1]),m);
+  }
+  const etapas=items.filter(m=>resultado(m));
+  const semis=etapas.filter(m=>norm(m.instancia).includes('semifinal'));
+  const ganadoresSemis=new Set(semis.map(m=>norm(resultado(m)[0])));
+  const perdedoresSemis=new Set(semis.map(m=>norm(resultado(m)[1])));
+  const coincide=(m,grupo)=>grupo.size===2&&[norm(m.a),norm(m.b)].every(x=>grupo.has(x));
+  const decisivos=etapas.filter(m=>['FINAL','TERCER_PUESTO'].includes(String(m.instancia||'').toUpperCase()));
+  const buscarEtiqueta=(re)=>etapas.find(m=>re.test([m.instancia,m.zona,m.ronda,m.partido].map(norm).join(' ')));
+  const final=decisivos.find(m=>coincide(m,ganadoresSemis));
+  // Resolver por participantes de semifinal o por el código de cruce oficial.
+  let f=final||porCodigo.get(n>=13?15:12)||decisivos.find(m=>norm(m.instancia)==='final'&&!/tercer|3\s*puesto/.test([m.zona,m.ronda].map(norm).join(' ')));
+  let t=decisivos.find(m=>coincide(m,perdedoresSemis))||porCodigo.get(n>=13?14:11)||decisivos.find(m=>norm(m.instancia)==='tercer puesto'||norm(m.instancia)==='tercer_puesto');
+  if(!f&&decisivos.length===2&&t)f=decisivos.find(m=>m!==t);
+  if(!t&&decisivos.length===2&&f)t=decisivos.find(m=>m!==f);
+  const asignar=(m,inicio)=>{
+   const r=resultado(m);if(!r||inicio<0||inicio+1>=n)return;
+   if(puestos.some((v,i)=>v&&i!==inicio&&i!==inicio+1&&r.some(x=>norm(x)===norm(v))))return;
+   puestos[inicio]=r[0];puestos[inicio+1]=r[1];
   };
-  const decisivos=items.filter(m=>resultado(m)&&['FINAL','TERCER_PUESTO'].includes(String(m.instancia||'').toUpperCase()));
-  const semifinales=items.filter(m=>String(m.instancia||'').toUpperCase()==='SEMIFINAL').map(resultado).filter(Boolean);
-  const finalistas=new Set(semifinales.map(r=>normalizar(r[0])));
-  const terceros=new Set(semifinales.map(r=>normalizar(r[1])));
-  const son=m=>[normalizar(m.a),normalizar(m.b)];
-  const participantesCoinciden=(m,conjunto)=>conjunto.size===2&&son(m).every(n=>conjunto.has(n));
-  const codigo=m=>{
-    const campos=[m.partido,m.ronda,m.zona].map(normalizar).join(' ');
-    const match=campos.match(/(?:^|\s)c\s*(\d{1,2})(?:\s|$)/);
-    return match?Number(match[1]):null;
-  };
-  let partidoFinal=decisivos.find(m=>String(m.instancia).toUpperCase()==='FINAL'&&tipo(m)!=='tercero'&&decisivos.filter(x=>String(x.instancia).toUpperCase()==='FINAL').length===1);
-  let partidoTercero=decisivos.find(m=>String(m.instancia).toUpperCase()==='TERCER_PUESTO'||tipo(m)==='tercero');
-  // En algunas planillas ambos partidos se registraron con el mismo rótulo.
-  // La definición se basa en los semifinalistas, nunca en nombres de equipos fijos.
-  if(semifinales.length===2){
-    partidoFinal=decisivos.find(m=>participantesCoinciden(m,finalistas))||partidoFinal;
-    partidoTercero=decisivos.find(m=>participantesCoinciden(m,terceros))||partidoTercero;
+  if(f&&t&&f!==t&&new Set([...resultado(f),...resultado(t)].map(norm)).size===4){asignar(f,0);asignar(t,2);}
+  // PDF VI Torneo: definición 5-8, 9-14 por cruces con partidos específicos.
+  if(n>=13){
+   asignar(porCodigo.get(13)||buscarEtiqueta(/5\s*(?:°|º|o)?\s*(?:y|[-/])\s*6/),4);
+   asignar(porCodigo.get(12)||buscarEtiqueta(/7\s*(?:°|º|o)?\s*(?:y|[-/])\s*8/),6);
+   asignar(porCodigo.get(11)||buscarEtiqueta(/9\s*(?:°|º|o)?\s*(?:y|[-/])\s*10/),8);
+   asignar(porCodigo.get(10)||buscarEtiqueta(/11\s*(?:°|º|o)?\s*(?:y|[-/])\s*12/),10);
+   asignar(porCodigo.get(9)||buscarEtiqueta(/13\s*(?:°|º|o)?\s*(?:y|[-/])\s*14/),12);
+  }else if(n>=8){
+   asignar(porCodigo.get(10)||buscarEtiqueta(/5\s*(?:°|º|o)?\s*(?:y|[-/])\s*6/),4);
+   asignar(porCodigo.get(9)||buscarEtiqueta(/7\s*(?:°|º|o)?\s*(?:y|[-/])\s*8/),6);
   }
-  // Identificación oficial por código de partido del PDF VI Torneo.
-  // 8 equipos: C11 tercer puesto, C12 final; 14: C14 tercer puesto, C15 final.
-  if(!partidoTercero||!partidoFinal||partidoTercero===partidoFinal){
-    const porCodigo=new Map(decisivos.filter(m=>codigo(m)!=null).map(m=>[codigo(m),m]));
-    const par=porCodigo.has(15)&&porCodigo.has(14)?[15,14]:porCodigo.has(12)&&porCodigo.has(11)?[12,11]:null;
-    if(par){partidoFinal=porCodigo.get(par[0]);partidoTercero=porCodigo.get(par[1]);}
-  }
-  if(!partidoTercero&&decisivos.length===2&&partidoFinal){
-    partidoTercero=decisivos.find(m=>m!==partidoFinal)||null;
-  }
-  if(!partidoFinal&&decisivos.length===2&&partidoTercero){
-    partidoFinal=decisivos.find(m=>m!==partidoTercero)||null;
-  }
-  if(partidoFinal===partidoTercero)partidoTercero=null;
-  const f=resultado(partidoFinal);
-  const t=resultado(partidoTercero);
-  if(!f||!t)return '';
-  if(new Set([...f,...t].map(normalizar)).size!==4)return '';
-  const copa='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10v8a5 5 0 0 1-10 0V3Z"/><path d="M7 5H4v3a4 4 0 0 0 4 4M17 5h3v3a4 4 0 0 1-4 4M12 16v4m-4 1h8"/></svg>';
-  const medalla='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="15" r="6"/><path d="m8 10-3-7h5l2 6m4 1 3-7h-5l-2 6"/><path d="m12 12 1 2 2 .3-1.5 1.5.4 2.2-1.9-1-1.9 1 .4-2.2L9 14.3l2-.3z"/></svg>';
-  const puestos=[['1.º',f[0],'Oro','oro',copa],['2.º',f[1],'Plata','plata',medalla],['3.º',t[0],'Bronce','bronce',medalla],['4.º',t[1],'','cuarto',medalla]];
-  return `<div class="nc-cruces-podio" aria-label="Clasificación final de la categoría">${puestos.map(([pos,nombre,metal,clase,icono])=>`<div class="nc-cruces-podio-fila"><span class="nc-cruces-podio-icono nc-cruces-podio-${clase}">${icono}</span><span><strong>${pos} ${safe(nombre)}</strong></span></div>`).join('')}</div>`;
+  // Etiquetas explícitas tienen prioridad cuando la numeración no está informada.
+  const pares=[[0,/1\s*(?:°|º|o)?\s*(?:y|[-/])\s*2/],[2,/3\s*(?:°|º|o)?\s*(?:y|[-/])\s*4/],[4,/5\s*(?:°|º|o)?\s*(?:y|[-/])\s*6/],[6,/7\s*(?:°|º|o)?\s*(?:y|[-/])\s*8/],[8,/9\s*(?:°|º|o)?\s*(?:y|[-/])\s*10/],[10,/11\s*(?:°|º|o)?\s*(?:y|[-/])\s*12/],[12,/13\s*(?:°|º|o)?\s*(?:y|[-/])\s*14/]];
+  for(const [inicio,re] of pares)if(!puestos[inicio])asignar(buscarEtiqueta(re),inicio);
+  const iconos=['🏆','🥈','🥉'];
+  return `<div class="nc-cruces-podio" aria-label="Clasificación final de la categoría"><div class="nc-cruces-podio-titulo">CLASIFICACIÓN FINAL · ${n} EQUIPOS</div>${puestos.map((nombre,i)=>`<div class="nc-cruces-podio-fila"><span class="nc-cruces-podio-icono ${i===0?'nc-cruces-podio-oro':i===1?'nc-cruces-podio-plata':i===2?'nc-cruces-podio-bronce':''}">${iconos[i]||String(i+1)+'.º'}</span><span class="${nombre?'':'nc-clasificacion-pendiente'}">${nombre?`<strong>${safe(nombre)}</strong>`:'Por definir'}</span></div>`).join('')}</div>`;
  };
  const grupos=[...new Set(lista.map(m=>[m.cat,String(m.genero||'').trim()].join('|')))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
  return `${head('Cruces y finales','COMPETENCIA')}${catTabs()}${grupos.length?grupos.map((clave,ci)=>{
@@ -1255,7 +1251,7 @@ generic=function(){
    const id=`nc-cruces-accordion-${ci}-${ei}`;
    const abierto=ncCrucesAbiertos.has(id);
    return `<details id="${id}" class="nc-cruces-accordion nc-cruces-etapa-${ei}" ${abierto?'open':''} ontoggle="if(this.open)ncCrucesAbiertos.add(this.id);else ncCrucesAbiertos.delete(this.id)"><summary class="nc-cruces-accordion-head"><span class="nc-cruces-accordion-label">${safe(etapa.title)}</span><span class="nc-cruces-accordion-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary><div class="nc-cruces-accordion-body">${partidos.length?partidos.map(tarjeta).join(''):'<div class="nc-cruces-no-partidos">Sin partidos publicados en esta instancia.</div>'}</div></details>`;
-  }).join('')}${ncPodioCruces(items)}</section>`;
+  }).join('')}${ncPodioCruces(items,matches.filter(m=>m.cat===cat&&String(m.genero||'').trim()===genero))}</section>`;
  }).join(''):`<div class="empty">${ncEmptyData('Todavía no hay cruces publicados.')}</div>`}`;
 };
 </script>
@@ -1270,6 +1266,8 @@ generic=function(){
 #view .nc-cruces-podio-plata{color:#c6ccd1}
 #view .nc-cruces-podio-bronce{color:#e38a26}
 #view .nc-cruces-podio-cuarto{color:#92999d}
+#view .nc-clasificacion-pendiente{color:#9aa3a6;font-style:italic}
+#view .nc-cruces-podio-icono{font-size:13px;font-weight:700}
 @media(max-width:420px){#view .nc-cruces-podio{margin-left:28px;max-width:calc(100% - 28px)}#view .nc-cruces-podio-fila{font-size:14px}}
 </style>
 <style id="nc-cruces-compact-accordion-css">
