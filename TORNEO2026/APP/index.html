@@ -1180,7 +1180,9 @@ generic=function(){
  const fecha=m=>normalizedDate(m.fecha)||String(m.fecha||'');
  const ordenar=(a,b)=>fecha(a).localeCompare(fecha(b))||ncHoraMinutos(a.time)-ncHoraMinutos(b.time)||Number(String(a.court||'').match(/\d+/)?.[0]||0)-Number(String(b.court||'').match(/\d+/)?.[0]||0);
  const tarjeta=m=>{
-  const done=completed(m),idx=matches.indexOf(m),r=m.resultado||{},ganador=winner(m);
+  const done=completed(m),idx=matches.indexOf(m),r=m.resultado||{};
+  const setsA=Number(r.setsLocal),setsB=Number(r.setsVisitante);
+  const ganador=done&&Number.isFinite(setsA)&&Number.isFinite(setsB)?Math.sign(setsA-setsB):0;
   const score=done?`${safe(r.setsLocal)} : ${safe(r.setsVisitante)}`:'';
   const etiqueta=done?'Finalizado':'Por jugar';
   return `<button type="button" class="nc-cruces-compact-card nc-cruces-vertical-card" ${done?`onclick="ncAbrirResultado(${idx})" aria-label="Ver resultado de ${safe(m.a)} contra ${safe(m.b)}"`:`disabled aria-label="Partido pendiente: ${safe(m.a)} contra ${safe(m.b)}"`}><span class="nc-cruces-compact-stripe"></span><span class="nc-cruces-compact-main"><span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador>0?'nc-cruces-team-winner':''}">${safe(m.a)}</span></span><span class="nc-cruces-compact-vs">VS</span><span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador<0?'nc-cruces-team-winner':''}">${safe(m.b)}</span></span>${done?`<span class="nc-cruces-compact-score">${score}</span>`:''}<span class="nc-cruces-compact-meta">${safe(m.time||'Horario a confirmar')} · ${safe(courtLabel(m.court||'—'))} · ${etiqueta}</span></span>${done?`<span class="nc-cruces-compact-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>`:''}</button>`;
@@ -1192,7 +1194,7 @@ generic=function(){
    const partidos=items.filter(m=>etapaDe(m)===etapa.id).sort(ordenar);
    const id=`nc-cruces-accordion-${ci}-${ei}`;
    const abierto=ncCrucesAbiertos.has(id);
-   return `<section id="${id}" class="nc-cruces-accordion nc-cruces-etapa-${ei}"><button type="button" class="nc-cruces-accordion-head" onclick="ncAlternarInstancia('${id}')" aria-expanded="${abierto}">${etapa.id==='FINALES'?`<span class="nc-copas-premios" aria-label="Copa de oro"><span class="nc-copa-oro" title="Copa de oro">🏆</span></span>`:etapa.id==='SEMIFINAL'?`<span class="nc-copas-premios" aria-label="Copa de plata"><span class="nc-copa-plata" title="Copa de plata">🏆</span></span>`:''}<span class="nc-cruces-accordion-label">${safe(etapa.title)}</span><span class="nc-cruces-accordion-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="nc-cruces-accordion-body" ${abierto?'':'hidden'}>${partidos.length?partidos.map(tarjeta).join(''):'<div class="nc-cruces-no-partidos">Sin partidos publicados en esta instancia.</div>'}</div></section>`;
+   return `<section id="${id}" class="nc-cruces-accordion nc-cruces-etapa-${ei}"><button type="button" class="nc-cruces-accordion-head" onclick="ncAlternarInstancia('${id}')" aria-expanded="${abierto}">${etapa.id==='FINALES'?`<span class="nc-copas-premios" aria-label="Copa de oro"><svg class="nc-copa-vector nc-copa-vector-oro" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-trophy"/></svg></span>`:etapa.id==='SEMIFINAL'?`<span class="nc-copas-premios" aria-label="Copa de plata"><svg class="nc-copa-vector nc-copa-vector-plata" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-trophy"/></svg></span>`:''}<span class="nc-cruces-accordion-label">${safe(etapa.title)}</span><span class="nc-cruces-accordion-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="nc-cruces-accordion-body" ${abierto?'':'hidden'}>${partidos.length?partidos.map(tarjeta).join(''):'<div class="nc-cruces-no-partidos">Sin partidos publicados en esta instancia.</div>'}</div></section>`;
   }).join('')}</section>`;
  }).join(''):`<div class="empty">${ncEmptyData('Todavía no hay cruces publicados.')}</div>`}`;
 };
@@ -1460,6 +1462,11 @@ function ncVistaDesarrollo(){
 
 <style id="nc-cruces-resaltar-ganador">
 /* Destacar exclusivamente al ganador de un partido con resultado confirmado. */
-#view .nc-cruces-compact-group .nc-cruces-team-name.nc-cruces-team-winner{color:#FFE500!important;font-weight:800!important}
+#view .nc-cruces-compact-group .nc-cruces-team-name.nc-cruces-team-winner{color:#FFE500!important;font-weight:600!important}
 </style>
-</body></html>
+<style id="nc-copas-svg-fix">
+#view .nc-copas-premios{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex:none}
+#view .nc-copas-premios .nc-copa-vector{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+#view .nc-copa-vector-oro{color:#e6bc45}
+#view .nc-copa-vector-plata{color:#c4cbd3}
+</style></body></html>
