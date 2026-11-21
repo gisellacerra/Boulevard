@@ -1219,6 +1219,7 @@ generic=function(){
   const items=lista.filter(m=>m.cat===cat&&String(m.genero||'').trim()===genero);
   return `<section class="nc-cruces-compact-group" style="--cruces-color:${palette[cat]||'#9DD64A'}"><h2 class="nc-cruces-category">${safe(genero?genero+' · ':'')}Categoría ${safe(cat)}</h2>${etapas.map((etapa,ei)=>{
    const partidos=items.filter(m=>etapaDe(m)===etapa.id).sort(ordenar);
+   if (!partidos.length) return '';
    const id=`nc-cruces-accordion-${ci}-${ei}`;
    const abierto=ncCrucesAbiertos.has(id);
    return `<details id="${id}" class="nc-cruces-accordion nc-cruces-etapa-${ei}" ${abierto?'open':''} ontoggle="if(this.open)ncCrucesAbiertos.add(this.id);else ncCrucesAbiertos.delete(this.id)"><summary class="nc-cruces-accordion-head"><span class="nc-cruces-accordion-label">${safe(etapa.title)}</span><span class="nc-cruces-accordion-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary><div class="nc-cruces-accordion-body">${partidos.length?partidos.map(tarjeta).join(''):'<div class="nc-cruces-no-partidos">Sin partidos publicados en esta instancia.</div>'}</div></details>`;
