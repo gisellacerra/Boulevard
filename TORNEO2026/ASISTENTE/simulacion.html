@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VI Torneo de Newcom · Simulación</title>
+<style>
+:root{color-scheme:light dark}
+body{margin:0;background:light-dark(#f2f6f3,#101614)}
+main{max-width:960px;margin:auto;padding:clamp(8px,3vw,24px)}
+</style>
+</head>
+<body>
+<main>
+<div class="viz-dotted-background"><section id="ncCircuito" lang="es"></section></div>
+<style>
+#ncCircuito{color-scheme:light dark;background:light-dark(#fff,#191d1f);color:light-dark(#17212b,#edf4f0);border:1px solid light-dark(#d8e4db,#42504a);border-radius:14px;padding:16px;font:15px system-ui}
+#ncCircuito h3{margin:0 0 8px}#ncCircuito nav,#ncCircuito .linea{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+#ncCircuito nav button{flex:1}#ncCircuito button,#ncCircuito select,#ncCircuito input{font:inherit;color:inherit;background:light-dark(#eff5f1,#252f2a);border:1px solid light-dark(#bacfc0,#56695e);border-radius:7px;padding:7px;max-width:100%;box-sizing:border-box}
+#ncCircuito button[aria-pressed=true],#ncCircuito button.accion{background:light-dark(#17613e,#a5eb37);color:light-dark(#fff,#141c12)}
+#ncCircuito button:disabled{opacity:.5}#ncCircuito details{border:1px solid light-dark(#d8e4db,#42504a);border-radius:8px;margin:8px 0;padding:9px}
+#ncCircuito summary{font-weight:600}#ncCircuito .campos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:8px}
+#ncCircuito label{display:grid;gap:3px;min-width:0}#ncCircuito table{width:100%;border-collapse:collapse;text-align:left}
+#ncCircuito th,#ncCircuito td{padding:7px 4px;border-bottom:1px solid light-dark(#d8e4db,#42504a);overflow-wrap:anywhere}
+#ncCircuito .estado{color:light-dark(#175e3c,#c0ef83)}#ncCircuito small{display:block;margin:6px 0}
+</style>
+<script>
+(()=>{
+const root=document.getElementById('ncCircuito');
+const padrones={
+ 50:['Almas Libres Newcom','Desacatados','Deportivo Madryn','Indomables','CEC Trelew Newcom','Corsarios','Los Lobitos','Galo Martínez','Boulevard','Quehué','Jaujas','Impacto','El Portal'],
+ 60:['Boulevard','C.A.I. Club Atlético Independiente','Galo Martínez','Impacto','Los Lobos','La Lucinda','Tormenta de Arena'],
+ 68:['Deportivo Viedma','New Lawn','Newcom Roca','C.A.I. Club Atlético Independiente','CEC Trelew Newcom','Los Lobizones de Pueblo Nuevo','Corsarios','Boulevard']
+};
+const estados={};let cat=50,vista=0,publica='Cruces y finales';
+const rondas=['Cuartos de final','Reclasificación','Interzonas E y F','Semifinales','Otros puestos','Final'];
+const crear=(id,titulo,a,b)=>({id,titulo,referencias:[a,b],a:'',b:'',score:'',confirmado:false});
+function plantilla(c){
+ const cuartos=c==50?[['A1','C2'],['D1','B2'],['B1','D2'],['C1','A2']]:c==60?[['B1','A4'],['A2','B3'],['A3','B2']]:[['A1','B4'],['A3','B2'],['A2','B3'],['A4','B1']];
+ const q=cuartos.map(([a,b],i)=>crear('C'+(i+1),'Cuartos '+(i+1),a,b));
+ const r=c==60?[]:[crear('R1','Reclasificación 1','PC1','PC2'),crear('R2','Reclasificación 2','PC3','PC4')];
+ const inter=c==50?[crear('I1','Zona E · Partido 1','E#1','E#2'),crear('I2','Zona E · Partido 2','E#1','E#3'),crear('I3','Zona E · Partido 3','E#2','E#3'),crear('I4','Zona F · Partido 1','F#1','F#2')]:[];
+ const s=[crear('S1','Semifinal 1',c==60?'A1':'GC1',c==60?'GC1':'GC2'),crear('S2','Semifinal 2',c==60?'GC2':'GC3',c==60?'GC3':'GC4')];
+ const p=[crear('P3','3.º y 4.º','PS1','PS2')];
+ if(c==60)p.push(crear('T1','Triangular · Partido 1','PC1','PC2'),crear('T2','Triangular · Partido 2','PC1','PC3'),crear('T3','Triangular · Partido 3','PC2','PC3'));
+ else p.push(crear('P5','5.º y 6.º','GR1','GR2'),crear('P7','7.º y 8.º','PR1','PR2'));
+ if(c==50)p.push(crear('P9','9.º y 10.º','E1','F1'),crear('P11','11.º y 12.º','E2','F2'));
+ return [q,r,inter,s,p,[crear('F','Final','GS1','GS2')]];
+}
+for(const c of [50,60,68]){
+ const zonas=c==50?'AAAABBBCCCDDD':c==60?'AAAABBB':'AAAABBBB';
+ estados[c]={asignadas:[...zonas],sizes:[...new Set(zonas)].map(z=>[...zonas].filter(x=>x===z).length),groups:[...new Set(zonas)],inter:{E:['','',''],F:['','']},zonas:[],etapas:plantilla(c),publicados:new Map(),abiertos:new Map(),mensaje:''};
+}
+const claveGuardado='vi-newcom-simulacion-v1';
+function guardar(){
+ try{
+  const categorias=Object.fromEntries(Object.entries(estados).map(([c,e])=>[c,{
+   ...e,publicados:[...e.publicados],abiertos:[...e.abiertos],mensaje:''
+  }]));
+  localStorage.setItem(claveGuardado,JSON.stringify({cat,vista,publica,categorias}));
+  return true;
+ }catch{return false}
+}
+function recuperar(){
+ try{
+  const guardado=JSON.parse(localStorage.getItem(claveGuardado)||'null');
+  if(!guardado?.categorias)return;
+  for(const c of [50,60,68]){
+   const e=guardado.categorias[c];
+   if(!e)continue;
+   estados[c]={...estados[c],...e,publicados:new Map(e.publicados),abiertos:new Map(e.abiertos)};
+  }
+  if([50,60,68].includes(guardado.cat))cat=guardado.cat;
+  if([0,1,2,3].includes(guardado.vista))vista=guardado.vista;
+  if(['Fixture','Cruces y finales','Posiciones y podio'].includes(guardado.publica))publica=guardado.publica;
+ }catch{}
+}
+recuperar();
+const elem=(tag,txt)=>{const n=document.createElement(tag);if(txt!==undefined)n.textContent=txt;return n};
+const button=(txt,fn,active,primary=false)=>{const n=elem('button',txt);n.type='button';n.onclick=fn;n.className=primary?'accion':'';if(active!==undefined)n.setAttribute('aria-pressed',active);return n};
+const box=(cls,...els)=>{const n=elem('div');n.className=cls;n.append(...els);return n};
+const campo=(txt,node)=>{const l=elem('label',txt);l.append(node);return l};
+function select(txt,opts,val,fn){
+ const n=elem('select');opts.forEach(([v,t])=>n.add(new Option(t,v)));n.value=val;n.onchange=()=>fn(n.value);return campo(txt,n);
+}
+function table(head,rows){
+ const t=elem('table');const h=t.createTHead().insertRow();head.forEach(x=>h.append(elem('th',x)));
+ const body=t.createTBody();rows.forEach(items=>{const tr=body.insertRow();items.forEach(x=>{const td=tr.insertCell();if(x instanceof Node)td.append(x);else td.textContent=x})});return t;
+}
+function detalle(state,id,title,children,initial=false){
+ const d=elem('details');d.open=state.abiertos.get(id)??initial;d.ontoggle=()=>{if(d.isConnected&&state.abiertos.get(id)!==d.open){state.abiertos.set(id,d.open);guardar()}};
+ d.append(elem('summary',title),...children);return d;
+}
+const scoreOptions=[['','Pendiente'],['2–0','2–0'],['2–1','2–1'],['1–2','1–2'],['0–2','0–2']];
+const ganador=m=>m?.score?(m.score.startsWith('2')?m.a:m.b):'';
+const perdedor=m=>ganador(m)?(ganador(m)===m.a?m.b:m.a):'';
+const parejas=xs=>xs.flatMap((a,i)=>xs.slice(i+1).map(b=>[a,b]));
+function ranking(teams,matches){
+ const puntos=new Map(teams.filter(Boolean).map(t=>[t,{t,pts:0,pg:0,dif:0}]));
+ for(const m of matches.filter(x=>x.score)){
+  const [a,b]=m.score.split('–').map(Number);
+  [[m.a,a,b],[m.b,b,a]].forEach(([t,s,r])=>{const x=puntos.get(t);if(x){x.pts+=s===2?3:s===1?2:1;x.pg+=s===2?1:0;x.dif+=s-r}});
+ }
+ return [...puntos.values()].sort((a,b)=>b.pts-a.pts||b.pg-a.pg||b.dif-a.dif||a.t.localeCompare(b.t,'es'));
+}
+const activos=s=>s.etapas.flat();
+function referencia(s,ref){
+ const m=s.publicados.get(ref.slice(1));
+ if(/^[GP]/.test(ref))return [(ref[0]==='G'?'Ganador':'Perdedor')+' de '+(m?.titulo||activos(s).find(x=>x.id===ref.slice(1))?.titulo||ref.slice(1)),ref[0]==='G'?ganador(m):perdedor(m)];
+ const z=ref[0],n=Number(ref.slice(1).replace('#',''))-1;
+ if(ref.includes('#'))return ['Lugar '+(n+1)+' de Zona '+z,s.inter[z][n]];
+ const juegos=z==='E'||z==='F'?[...s.publicados.values()].filter(x=>x.id.startsWith('I')&&x.tituloZona===z):s.zonas.filter(x=>x.z===z);
+ const nombres=s.inter[z]||padrones[cat].filter((_,i)=>s.asignadas[i]===z);
+ const completo=juegos.length===parejas(nombres).length&&juegos.length>0&&juegos.every(x=>x.score);
+ return [(n+1)+'.º de Zona '+z,completo?ranking(nombres,juegos)[n]?.t:''];
+}
+function cambiar(v){vista=v;render()}
+function horarios(m){
+ const hr=elem('input');hr.type='datetime-local';hr.min='2026-11-27T00:00';hr.max='2026-11-29T23:59';hr.value=m.horario||'';hr.onchange=()=>{m.horario=hr.value;render()};
+ return [campo('Fecha y hora',hr),select('Cancha',Array.from({length:4},(_,i)=>[String(i+1),String(i+1)]),m.cancha||'1',v=>{m.cancha=v;render()})];
+}
+function sorteo(s,nombres){
+ return [table(['Equipo','Zona'],nombres.map((t,i)=>[t,select('Zona de '+t,s.groups.map(z=>[z,z]),s.asignadas[i],v=>{if(!s.zonas.length)s.asignadas[i]=v;render()})])),
+ button(s.zonas.length?'Ver fixture de zonas':'Confirmar zonas y armar fixture',()=>{
+  if(!s.zonas.length){
+   if(s.groups.some((z,i)=>s.asignadas.filter(x=>x===z).length!==s.sizes[i])){s.mensaje='Respetá '+s.sizes.join(' + ')+' equipos por zona.';render();return}
+   s.zonas=s.groups.flatMap(z=>parejas(nombres.filter((_,i)=>s.asignadas[i]===z)).map(([a,b])=>({z,a,b,score:''})));
+  }
+  s.mensaje='';cambiar(1);
+ },undefined,true)];
+}
+function zonas(s,nombres){
+ if(!s.zonas.length)return [elem('p','Primero confirmá el sorteo.')];
+ const carga=button('Cargar resultados de ejemplo',()=>{s.zonas.forEach((m,i)=>{if(!m.score)m.score=i%3===0?'2–1':'2–0'});render()});
+ return [box('linea',carga,button('Abrir Cruces',()=>cambiar(2),undefined,true)),...s.groups.map(z=>{
+ const filas=s.zonas.filter(m=>m.z===z);
+ return detalle(s,'zona'+z,'Zona '+z+' · '+filas.filter(m=>m.score).length+'/'+filas.length,[table(['Partido','Sets'],filas.map(m=>[m.a+' vs. '+m.b,select('Sets',scoreOptions,m.score,v=>{m.score=v;render()})])),table(['Equipo','PTS'],ranking(nombres.filter((_,i)=>s.asignadas[i]===z),filas).map(x=>[x.t,x.pts]))],z==='A');
+ })];
+}
+function editar(s,m,nombres){
+ const pub=s.publicados.get(m.id);
+ const titulo=elem('input');titulo.value=m.titulo;titulo.oninput=()=>{m.titulo=titulo.value;guardar()};titulo.onchange=()=>{m.titulo=titulo.value.trim();render()};
+ const controls=['a','b'].map((k,i)=>select('Equipo '+(i+1),[['','Elegí equipo'],...nombres.filter(t=>t!==m[i?'a':'b']).map(t=>[t,t])],m[k],v=>{m[k]=v;m.confirmado=false;render()}));
+ const zonaInter=m.id.startsWith('I')?m.referencias[0][0]:'';
+ const programar=button(pub?'Actualizar fixture':'Confirmar en fixture',()=>{
+  const inicio=Date.parse(m.horario);
+  const otros=[...s.publicados.values()].filter(x=>x.id!==m.id);
+  if(otros.some(x=>Date.parse(x.horario)===inicio&&(String(x.cancha)===String(m.cancha||'1')||[x.a,x.b].some(t=>t===m.a||t===m.b)))){s.mensaje='Ese horario ya está ocupado por la cancha o uno de los equipos.';render();return}
+  s.publicados.set(m.id,{...m,cancha:m.cancha||'1',tituloZona:zonaInter,score:pub&&pub.a===m.a&&pub.b===m.b?pub.score:''});
+  s.mensaje='Partido publicado en la simulación.';render();
+ },undefined,true);
+ programar.disabled=!m.confirmado||!m.titulo||!m.horario||m.horario<'2026-11-27T00:00'||m.horario>'2026-11-29T23:59';
+ const confirmar=button(m.confirmado?'✓ Instancia confirmada':'Confirmar instancia',()=>{m.confirmado=true;render()});
+ confirmar.disabled=m.confirmado||!m.a||!m.b||!m.titulo;
+ const refs=m.referencias.map(r=>referencia(s,r)).map(([label,t])=>label+' · '+(t||'Pendiente'));
+ return detalle(s,m.id,m.titulo+(pub?.score?' · Jugado':pub?' · Programado':''),[
+  elem('small','Ayuda memoria · '+refs.join(' / ')),box('campos',...controls,campo('Título',titulo),...horarios(m)),
+  box('linea',confirmar,programar),
+  ...(pub?[select('Resultado del cruce',scoreOptions,pub.score,v=>{pub.score=v;render()})]:[])
+ ]);
+}
+function cruces(s,nombres){
+ if(!s.zonas.length)return [elem('p','Primero confirmá el sorteo.')];
+ return s.etapas.flatMap((ms,i)=>{
+  if(!ms.length)return [];
+  const inter=i===2?box('campos',...Object.entries(s.inter).flatMap(([z,ts])=>ts.map((t,j)=>select('Zona '+z+' · Lugar '+(j+1),[['','Elegí equipo'],...nombres.filter(x=>x===t||!Object.values(s.inter).flat().includes(x)).map(x=>[x,x])],t,v=>{ts[j]=v;render()})))):null;
+  return [detalle(s,'ronda'+i,rondas[i],[(inter||elem('span')),...ms.map(m=>editar(s,m,nombres))],i===0)];
+ });
+}
+function publicado(s){
+ const partidos=[...s.publicados.values()];
+ const finales=['F','P3','P5','P7','P9','P11'];
+ const puestos=[1,3,5,7,9,11];
+ const clasificacion=new Map();
+ finales.forEach((id,i)=>{const m=s.publicados.get(id);if(ganador(m)){clasificacion.set(puestos[i],ganador(m));clasificacion.set(puestos[i]+1,perdedor(m))}});
+ const triangular=partidos.filter(x=>x.id.startsWith('T'));
+ if(triangular.length===3&&triangular.every(m=>m.score)&&new Set(triangular.flatMap(m=>[m.a,m.b])).size===3){
+  ranking([...new Set(triangular.flatMap(m=>[m.a,m.b]))],triangular).forEach((r,i)=>clasificacion.set(5+i,r.t));
+ }
+ if(cat==50){
+  const [,t]=referencia(s,'E3');if(t)clasificacion.set(13,t);
+ }
+ const card=m=>elem('p',m.titulo+' · '+m.a+' vs. '+m.b+' · '+m.horario.replace('T',' ')+' · Cancha '+m.cancha+(m.score?' · '+m.score:''));
+ const tab=box('linea',...['Fixture','Cruces y finales','Posiciones y podio'].map(t=>button(t,()=>{publica=t;render()},t===publica)));
+ let contenido;
+ if(publica==='Posiciones y podio'){
+  contenido=table(['Puesto','Equipo'],Array.from({length:padrones[cat].length},(_,i)=>[(i<3?['🥇 ','🥈 ','🥉 '][i]:'')+(i+1)+'º',clasificacion.get(i+1)||'Pendiente']));
+ }else if(publica==='Fixture'){
+  contenido=box('',...(s.zonas.length?[detalle(s,'fixture-zonas','Partidos de zona',[table(['Zona','Partido','Resultado'],s.zonas.map(m=>[m.z,m.a+' vs. '+m.b,m.score||'Pendiente']))])]:[]),...partidos.slice().sort((a,b)=>a.horario.localeCompare(b.horario)).map(card));
+ }else{
+  contenido=box('',...s.etapas.flatMap((grupo,i)=>{
+   const jugados=grupo.map(m=>s.publicados.get(m.id)).filter(Boolean);
+   return jugados.length?[detalle(s,'publicada'+i,rondas[i],jugados.map(card),true)]:[];
+  }));
+ }
+ if(!contenido.childNodes.length)contenido.append(elem('p','Todavía no hay partidos confirmados en esta vista.'));
+ return [tab,contenido];
+}
+function render(){
+ const s=estados[cat],nombres=padrones[cat];
+ const nav=elem('nav');nav.setAttribute('aria-label','Categoría');
+ [50,60,68].forEach(c=>nav.append(button('+'+c,()=>{cat=c;render()},c===cat)));
+ const views=elem('nav');views.setAttribute('aria-label','Recorrido');
+ ['Sorteo','Fixture de zonas','Cruces C01','NEWCOM LIVE'].forEach((t,i)=>views.append(button(t,()=>cambiar(i),vista===i)));
+ const ok=guardar();
+ const info=elem('p',ok?s.mensaje:[s.mensaje,'El navegador bloqueó el guardado local.'].filter(Boolean).join(' '));info.className='estado';info.setAttribute('aria-live','polite');
+ const encabezado=elem('h3','VI Torneo de Newcom · Simulación');
+ const zona=elem('small','+'+cat+' Mixto · '+nombres.length+' equipos · '+s.sizes.join(' + ')+(cat==60?' · 1.º A pasa a semifinales':''));
+ root.replaceChildren(encabezado,nav,zona,views,info,...[sorteo,zonas,cruces,publicado][vista](s,nombres));
+}
+render();
+})();
+</script>
+
+</main>
+</body>
+</html>
