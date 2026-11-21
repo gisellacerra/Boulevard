@@ -484,7 +484,7 @@ window.addEventListener('appinstalled', function() { window.ncInstallPrompt = nu
 #view .nc-copa-bronce{filter:sepia(1) saturate(2.8) hue-rotate(330deg) brightness(.8)}
 @media(max-width:370px){#view .nc-copas-premios{font-size:18px;gap:1px}}
 </style>
-</head><body>
+<style>.nc-c01-titulo-partido{display:block;font-weight:600;margin-bottom:5px;overflow-wrap:anywhere}</style></head><body>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none"><symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol><symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11h-6v-7H9v7H3z"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M7 3v4m10-4v4M3 10h18m-13 4h2m4 0h2m-8 4h2"/></symbol><symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 3h10v8a5 5 0 0 1-10 0zM7 5H3v3a4 4 0 0 0 4 4m10-7h4v3a4 4 0 0 1-4 4m-5 4v4m-5 0h10"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6m2 9h2v-2a6 6 0 0 0-4-5.65"/></symbol><symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol><symbol id="i-left" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol><symbol id="i-radio" viewBox="0 0 24 24"><path d="M12 18v4m-4 0h8m-4-9a2 2 0 1 0 0-4 2 2 0 0 0 0 4M6 6a9 9 0 0 0 0 12m12-12a9 9 0 0 1 0 12M9 9a4 4 0 0 0 0 6m6-6a4 4 0 0 1 0 6"/></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="2.5"/></symbol><symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></symbol><symbol id="i-coffee" viewBox="0 0 24 24"><path d="M3 7h14v8a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6zm14 1h3a3 3 0 0 1 0 6h-3M2 22h18"/></symbol><symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 21V7m18 14V7M3 17h18M3 11h18v6M6 11V8h6v3"/></symbol><symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol><symbol id="i-list" viewBox="0 0 24 24"><path d="M9 5h12M9 12h12M9 19h12M3 5h1m-1 7h1m-1 7h1"/></symbol><symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 22V3m0 1c6-3 8 3 15 0v12c-7 3-9-3-15 0"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></symbol><symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></symbol></svg>
 <header class="top"><button aria-label="Abrir menú" onclick="drawer(true)"><svg class="ic"><use href="#i-menu"/></svg></button><div class="nc-live-left"><span class="nc-live-dot"></span><span>EN VIVO</span></div>
 <div class="brand tournament-brand">
@@ -545,7 +545,7 @@ let ncErrorBloque='';
 function ncAplicarDatos(d){
  if(!d||!d.ok||!Array.isArray(d.equipos)||!Array.isArray(d.partidos))throw Error('Datos públicos inválidos');
  teams=(d.equipos||[]).map(t=>({name:t.nombre,cat:ncNormalCat(t.categoria),city:t.ciudad||t.provincia||'',zona:t.zona||'',escudo:t.escudo||''}));
- matches=(d.partidos||[]).map(p=>({a:p.local,b:p.visitante,cat:ncNormalCat(p.categoria),court:p.cancha||'—',time:p.hora||'—',fecha:p.fecha||'',status:p.resultado?'Finalizado':'Programado',score:p.resultado?`${p.resultado.setsLocal} – ${p.resultado.setsVisitante}`:'–',zona:p.zona||'',ronda:p.ronda||'',genero:p.genero||'',resultado:p.resultado||null,escudoLocal:p.escudoLocal||p.logoLocal||'',escudoVisitante:p.escudoVisitante||p.logoVisitante||''}));
+ matches=(d.partidos||[]).map(p=>({a:p.local,b:p.visitante,cat:ncNormalCat(p.categoria),court:p.cancha||'—',time:p.hora||'—',fecha:p.fecha||'',status:p.resultado?'Finalizado':'Programado',score:p.resultado?`${p.resultado.setsLocal} – ${p.resultado.setsVisitante}`:'–',zona:p.zona||'',ronda:p.ronda||'',genero:p.genero||'',instancia:p.instancia||'',titulo:p.titulo||'',c01Id:p.c01Id||'',resultado:p.resultado||null,escudoLocal:p.escudoLocal||p.logoLocal||'',escudoVisitante:p.escudoVisitante||p.logoVisitante||''}));
  // En la planilla actual los cruces también se confirman en FIXTURE con zona 'Semifinales' / 'Final y 3°'.
  // Conservar su resultado vinculado a RESULTADOS_ADMIN, sin depender de hojas CRUCES vacías.
  // Identificar etapas tanto por zona como por ronda; los nombres pueden venir con prefijos y tildes.
@@ -575,20 +575,20 @@ function ncAplicarDatos(d){
  const ncNombreCruce=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLocaleLowerCase('es-AR').replace(/\s+/g,' ');
  const ncCruces60Claves=new Map([...ncCruces60_2026].map(([pareja,etapa])=>[pareja.split('|').map(ncNombreCruce).sort().join('|'),etapa]));
  for(const m of matches){
-  let instancia=ncEtapaDetectar(m.zona,m.ronda);
+  let instancia=m.instancia||ncEtapaDetectar(m.zona,m.ronda);
   const ronda=Number(m.ronda);
   const fecha=normalizedDate(m.fecha);
   if(!instancia&&m.cat==='+60'&&ncEtapaNormalizar(m.genero)==='mixto'&&fecha==='2026-11-22'&&[15,16,17,18,19,22].includes(ronda)){
    instancia=ncCruces60Claves.get([ncNombreCruce(m.a),ncNombreCruce(m.b)].sort().join('|'))||'';
   }
-  if(instancia){m.instancia=instancia;m.partido='';}
+  if(instancia){m.instancia=instancia;m.partido=m.titulo||'';}
  }
 
  ncCruces=Array.isArray(d.cruces)?d.cruces:[];
  // Si el mismo partido está en FIXTURE y CRUCES_ADMIN, mostrarlo una sola vez.
  const ncClaveCruce=(a,b,cat)=>[cat,String(a||'').trim().toLowerCase(),String(b||'').trim().toLowerCase()].join('|');
  const ncClavesFixture=new Set(matches.filter(m=>m.instancia).map(m=>ncClaveCruce(m.a,m.b,m.cat)));
- ncCruces=ncCruces.filter(p=>!ncClavesFixture.has(ncClaveCruce(p.local,p.visitante,ncNormalCat(p.categoria)))&&!ncClavesFixture.has(ncClaveCruce(p.visitante,p.local,ncNormalCat(p.categoria))));
+ ncCruces=ncCruces.filter(p=>p.origen!=='FIXTURE'&&!ncClavesFixture.has(ncClaveCruce(p.local,p.visitante,ncNormalCat(p.categoria)))&&!ncClavesFixture.has(ncClaveCruce(p.visitante,p.local,ncNormalCat(p.categoria))));
  matches.push(...ncCruces.map(p=>({a:p.local,b:p.visitante,cat:ncNormalCat(p.categoria),court:p.cancha||'—',time:p.hora||'—',fecha:p.fecha||'',status:p.resultado?'Finalizado':'Programado',score:p.resultado?`${p.resultado.setsLocal} – ${p.resultado.setsVisitante}`:'–',zona:'',genero:p.genero||'',instancia:p.instancia||'',partido:p.partido||'',resultado:p.resultado||null,escudoLocal:p.escudoLocal||'',escudoVisitante:p.escudoVisitante||''})));
  ncBufetDisponible=Array.isArray(d.bufet);ncBufet=ncBufetDisponible?d.bufet:[];ncAlojamientos=Array.isArray(d.alojamientos)?d.alojamientos:[];ncArbitros=Array.isArray(d.arbitros)?d.arbitros:[];ncNotificaciones=Array.isArray(d.notificaciones)?[...d.notificaciones].reverse():[];const catsReal=[...new Set([...teams.map(x=>x.cat),...matches.map(x=>x.cat)].filter(Boolean))].sort((a,b)=>Number(a.slice(1))-Number(b.slice(1)));
  cats.splice(0,cats.length,'Todas',...catsReal);if(!cats.includes(category))category='Todas';ncDataPhase='ready';ncDataMessage='';render();if(page==='avisos')ncMarcarTodosAvisosLeidos();
@@ -614,6 +614,7 @@ function ncConsultarRespaldo(){return new Promise((resolve,reject)=>{
  tag.src=NC_DATOS_API+(NC_DATOS_API.includes('?')?'&':'?')+'api=datos&callback='+cb;
  document.head.appendChild(tag);
 });}
+let ncUltimoDeportivoAPI=0;
 async function ncDatosCargar(silencioso=false){
  if(ncDatosEnCurso){ncDatosPendientes=true;return;}
  ncDatosEnCurso=true;
@@ -621,22 +622,29 @@ async function ncDatosCargar(silencioso=false){
  ncErrorBloque='';
  if(!silencioso&&ncDataPhase!=='ready'){ncDataPhase='loading';ncDataMessage='';render();}
  try{
-  const versiones=await ncConsultarSupabase('bloque,version');
-  const mapa=Object.fromEntries(versiones.map(r=>[r.bloque,r.version]));
-  const necesarios=['deportivo','equipos',...(servicio?[servicio]:[])];
   let cambio=false;
-  // Descargar secuencialmente para evitar picos de transferencia por dispositivo.
-  for(const bloque of necesarios){
-   if(!mapa[bloque])throw Error('Bloque sin publicar: '+bloque);
-   if(ncVersiones[bloque]===mapa[bloque]&&ncBloques[bloque])continue;
-   const [fila]=await ncConsultarSupabase('bloque,datos,version',bloque);
-   if(fila.bloque!==bloque||!fila.version||!fila.datos||typeof fila.datos!=='object')throw Error('Bloque inválido: '+bloque);
-   if(bloque==='deportivo'&&(!fila.datos.ok||!Array.isArray(fila.datos.partidos)))throw Error('Datos deportivos inválidos');
-   if(bloque!=='deportivo'&&!Array.isArray(fila.datos[bloque]))throw Error('Datos inválidos: '+bloque);
-   ncBloques[bloque]=fila.datos;ncVersiones[bloque]=fila.version;cambio=true;
+  if(!ncBloques.deportivo||Date.now()-ncUltimoDeportivoAPI>=30000||!silencioso){
+   const datos=await ncConsultarRespaldo();
+   if(datos?.ok!==true||!Array.isArray(datos.partidos)||!Array.isArray(datos.equipos))throw Error('Datos deportivos inválidos');
+   const {equipos,partidos,cruces,sede,notificaciones}=datos;
+   ncBloques.deportivo={ok:true,partidos,cruces,sede,notificaciones};
+   ncBloques.equipos={equipos};
+   ncUltimoDeportivoAPI=Date.now();cambio=true;
+   // Mostrar el fixture sin esperar los servicios de otras pantallas.
+   ncAplicarDatos(Object.assign({},...Object.values(ncBloques)));
   }
-  if(cambio||ncDataPhase!=='ready')ncAplicarDatos(Object.assign({},...Object.values(ncBloques)));
-  else if(servicio)render();
+  if(servicio){
+   const versiones=await ncConsultarSupabase('bloque,version',servicio);
+   const version=versiones.find(r=>r.bloque===servicio)?.version;
+   if(!version)throw Error('Bloque sin publicar: '+servicio);
+   if(ncVersiones[servicio]!==version||!ncBloques[servicio]){
+    const [fila]=await ncConsultarSupabase('bloque,datos,version',servicio);
+    if(fila?.bloque!==servicio||!fila.version||!Array.isArray(fila.datos?.[servicio]))throw Error('Datos inválidos: '+servicio);
+    ncBloques[servicio]=fila.datos;
+    ncVersiones[servicio]=fila.version;
+    ncAplicarDatos(Object.assign({},...Object.values(ncBloques)));
+   }else if(!cambio)render();
+  }
  }catch(e){
   if(ncBloques.deportivo&&ncBloques.equipos){
    ncErrorBloque=servicio&&!ncBloques[servicio]?servicio:'';
@@ -644,8 +652,7 @@ async function ncDatosCargar(silencioso=false){
   }else if(ncDataPhase==='ready'){
    if(servicio&&!ncBloques[servicio]){ncErrorBloque=servicio;render();}
   }else{
-   // Respaldo únicamente mediante reintento explícito, para no saturar Apps Script.
-   ncEstado('No se pudieron cargar los datos del torneo. Intentá nuevamente.');
+   ncEstado('No se pudieron cargar los datos del torneo desde Apps Script. Intentá nuevamente.');
   }
  }finally{
   ncDatosEnCurso=false;
@@ -746,7 +753,7 @@ function chooseDate(d){selectedDate=d;render();}
 filterMatches=function(){return matches.filter(m=>(category==='Todas'||m.cat===category)&&(!selectedDate||normalizedDate(m.fecha)===selectedDate));};
 function completed(m){return m.status==='Finalizado'&&m.resultado!=null;}
 function courtLabel(v){return /^cancha\b/i.test(String(v))?String(v):'Cancha '+v;}
-matchRows=function(arr){return arr.length?arr.map(m=>{const done=completed(m);return `<article class="sports-card"><div class="when ${done?'final':''}">${safe(m.time)}</div><div><div class="versus"><span>${safe(m.a)}</span><span class="${done?'final-score':'vs'}">${done?safe(m.score):'vs'}</span><span>${safe(m.b)}</span></div><div class="meta">${safe(courtLabel(m.court))} · ${safe(m.genero||'')} ${safe(m.cat)}${m.zona?' · Zona '+safe(m.zona):''}${m.instancia?' · '+safe(m.instancia==='SEMIFINAL'?'Semifinal '+m.partido:m.instancia==='TERCER_PUESTO'?'Tercer puesto':'Final'):''}</div></div></article>`;}).join(''):`<div class="empty">${ncEmptyData('No hay partidos en esta selección.')}</div>`;};
+matchRows=function(arr){return arr.length?arr.map(m=>{const done=completed(m);return `<article class="sports-card"><div class="when ${done?'final':''}">${safe(m.time)}</div><div>${m.titulo?`<div class="nc-c01-titulo-partido">${safe(m.titulo)}</div>`:''}<div class="versus"><span>${safe(m.a)}</span><span class="${done?'final-score':'vs'}">${done?safe(m.score):'vs'}</span><span>${safe(m.b)}</span></div><div class="meta">${safe(courtLabel(m.court))} · ${safe(m.genero||'')} ${safe(m.cat)}${m.zona?' · Zona '+safe(m.zona):''}${m.instancia?' · '+safe(m.instancia==='SEMIFINAL'?'Semifinal '+m.partido:m.instancia==='TERCER_PUESTO'?'Tercer puesto':'Final'):''}</div></div></article>`;}).join(''):`<div class="empty">${ncEmptyData('No hay partidos en esta selección.')}</div>`;};
 function carouselPhotos(){return ncFotosPublicas.map(p=>({url:p.url||p.imagen||p.foto||'',titulo:p.titulo||p.nombre||'',detalle:p.ciudad||p.localidad||''})).filter(p=>/^(https?:\/\/|data:image\/(jpeg|png|webp);base64,)/i.test(p.url));}
 function ncCarouselPaint(){const target=document.getElementById('somos-carousel');if(!target)return;const photos=carouselPhotos();if(!photos.length){target.innerHTML=`<div class="carousel-photo"><div class="gallery-empty"><strong>Somos Newcom</strong><p>${photoLoadState==='loading'?'Cargando fotografías…':'Las fotografías aparecerán cuando estén disponibles desde el asistente.'}</p></div></div>`;return;}photoIndex=((photoIndex%photos.length)+photos.length)%photos.length;const p=photos[photoIndex];target.innerHTML=`<div class="carousel-photo" id="carousel-touch"><img src="${safe(p.url)}" alt="${safe(p.titulo||'Fotografía del torneo')}" decoding="async">${photos.length>1?`<button class="prev" aria-label="Fotografía anterior" onclick="photoMove(-1)">${icon('left')}</button><button class="next" aria-label="Fotografía siguiente" onclick="photoMove(1)">${icon('chevron')}</button>`:''}</div><div class="carousel-caption"><div class="dots">${photos.map((_,i)=>`<button class="${i===photoIndex?'active':''}" aria-label="Ver fotografía ${i+1}" aria-pressed="${i===photoIndex}" onclick="photoGo(${i})"></button>`).join('')}</div><strong>${safe(p.titulo)}</strong>${p.detalle?`<p>${safe(p.detalle)}</p>`:''}</div>`;let start;const touch=$('#carousel-touch');touch.addEventListener('touchstart',e=>{start=e.changedTouches[0].clientX},{passive:true});touch.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-start;if(Math.abs(dx)>45)photoMove(dx<0?1:-1)},{passive:true});}
 function photoGo(i){photoIndex=i;ncCarouselPaint();}function photoMove(step){photoGo(photoIndex+step);}
@@ -1008,7 +1015,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  function winner(m){if(!completed(m))return 0;const a=Number(m.resultado.setsLocal),b=Number(m.resultado.setsVisitante);return Number.isFinite(a)&&Number.isFinite(b)?Math.sign(a-b):0;}
  function ncCategoryColor(cat){const c=String(cat||'').match(/\+?(40|50|60|68|70|75)/);return c?({40:'#d64da7',50:'#81B86A',60:'#78A5D6',68:'#D98579',70:'#e5f13c',75:'#f7a139'}[c[1]]):'#9DD64A';}
  function ncLogo(url){const u=String(url||'');return /^(https?:\/\/|data:image\/(?:png|jpeg|jpg|webp|gif);base64,)/i.test(u)?`<img class="nc-team-crest" src="${safe(u)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">`:'<span class="nc-team-crest nc-crest-slot" aria-hidden="true"></span>';}
- matchRows=function(arr,cruces=false){return arr.length?arr.map(m=>{const done=completed(m),win=winner(m),idx=matches.indexOf(m);return `<article class="sports-card nc-category-card ${done?'nc-finished':''}" style="--nc-category-color:${ncCategoryColor(m.cat)}" ${done?`role="button" tabindex="0" aria-label="Ver resultado de ${safe(m.a)} y ${safe(m.b)}" onclick="ncAbrirResultado(${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ncAbrirResultado(${idx})}"`:''}><div class="when ${done?'final':''}">${safe(m.time)}</div><div><div class="versus"><span class="nc-team-label ${win>0?'nc-winner':''}"><span>${safe(m.a)}${cruces&&win>0?'<small class="nc-cruces-winner">✓ Ganador</small>':''}</span>${ncLogo(m.escudoLocal)}</span><span class="${done?'final-score':'vs'}">${done?safe(m.score):'vs'}</span><span class="nc-team-label nc-team-away ${win<0?'nc-winner':''}">${ncLogo(m.escudoVisitante)}<span>${safe(m.b)}${cruces&&win<0?'<small class="nc-cruces-winner">✓ Ganador</small>':''}</span></span></div><div class="meta">${cruces?(done?'<span class="nc-cruces-result-link">Ver resultado <span aria-hidden="true">›</span></span>':`<span class="nc-cruces-schedule">${safe(courtLabel(m.court))} · ${safe(m.time)} h</span>`):`${safe(courtLabel(m.court))} · ${safe(m.genero||'')} ${safe(m.cat)}${m.zona?' · Zona '+safe(m.zona):''}${done?' · Ver resultado':''}`}</div></div></article>`;}).join(''):`<div class="empty">${ncEmptyData('No hay partidos en esta selección.')}</div>`;};
+ matchRows=function(arr,cruces=false){return arr.length?arr.map(m=>{const done=completed(m),win=winner(m),idx=matches.indexOf(m);return `<article class="sports-card nc-category-card ${done?'nc-finished':''}" style="--nc-category-color:${ncCategoryColor(m.cat)}" ${done?`role="button" tabindex="0" aria-label="Ver resultado de ${safe(m.a)} y ${safe(m.b)}" onclick="ncAbrirResultado(${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ncAbrirResultado(${idx})}"`:''}><div class="when ${done?'final':''}">${safe(m.time)}</div><div>${m.titulo?`<div class="nc-c01-titulo-partido">${safe(m.titulo)}</div>`:''}<div class="versus"><span class="nc-team-label ${win>0?'nc-winner':''}"><span>${safe(m.a)}${cruces&&win>0?'<small class="nc-cruces-winner">✓ Ganador</small>':''}</span>${ncLogo(m.escudoLocal)}</span><span class="${done?'final-score':'vs'}">${done?safe(m.score):'vs'}</span><span class="nc-team-label nc-team-away ${win<0?'nc-winner':''}">${ncLogo(m.escudoVisitante)}<span>${safe(m.b)}${cruces&&win<0?'<small class="nc-cruces-winner">✓ Ganador</small>':''}</span></span></div><div class="meta">${cruces?(done?'<span class="nc-cruces-result-link">Ver resultado <span aria-hidden="true">›</span></span>':`<span class="nc-cruces-schedule">${safe(courtLabel(m.court))} · ${safe(m.time)} h</span>`):`${safe(courtLabel(m.court))} · ${safe(m.genero||'')} ${safe(m.cat)}${m.zona?' · Zona '+safe(m.zona):''}${done?' · Ver resultado':''}`}</div></div></article>`;}).join(''):`<div class="empty">${ncEmptyData('No hay partidos en esta selección.')}</div>`;};
  window.ncAbrirResultado=function(idx){const m=matches[idx];if(!m||!completed(m))return;ncCerrarResultado();const win=winner(m),sets=resultSets(m.resultado),safeUrl=u=>/^(https?:\/\/|data:image\/(?:png|jpeg|jpg|webp|gif);base64,)/i.test(String(u||''))?safe(u):'';
  const logoA=safeUrl(m.escudoLocal),logoB=safeUrl(m.escudoVisitante);
  const sa=Number(m.resultado.setsLocal),sb=Number(m.resultado.setsVisitante);const puntosA=sa>sb?3:(sa>0?2:1),puntosB=sb>sa?3:(sb>0?2:1);const esCruce=!!m.instancia;
@@ -1176,7 +1183,11 @@ generic=function(){
   {id:'SEMIFINAL',title:'Semifinales',icon:`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx=".5"/><rect x="2" y="17" width="5" height="5" rx=".5"/><rect x="17" y="9.5" width="5" height="5" rx=".5"/><path d="M7 4.5h5v7.5h5M7 19.5h5V12"/></svg>`},
   {id:'FINALES',title:'Final y 3.º puesto',icon:`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10v8a5 5 0 0 1-10 0V3Z"/><path d="M7 5H4v3a4 4 0 0 0 4 4M17 5h3v3a4 4 0 0 1-4 4M12 16v4m-4 1h8"/><circle cx="19" cy="18" r="3"/><path d="m17 21-1 2m5-2 1 2"/></svg>`}
  ];
- const etapaDe=m=>{const v=String(m.instancia||'').toUpperCase();return v==='FINAL'||v==='TERCER_PUESTO'?'FINALES':v;};
+ etapas.splice(2,0,{id:'RECLASIFICACION',title:'Reclasificación'});
+ etapas.splice(3,0,{id:'INTERZONAS',title:'Interzonas'});
+ etapas.splice(etapas.length-1,0,{id:'PUESTOS',title:'Definición de puestos'});
+ const conocidos=new Set(etapas.map(e=>e.id));
+ const etapaDe=m=>{const v=String(m.instancia||'').toUpperCase();return v==='FINAL'||v==='TERCER_PUESTO'?'FINALES':conocidos.has(v)?v:m.c01Id?'PUESTOS':v;};
  const fecha=m=>normalizedDate(m.fecha)||String(m.fecha||'');
  const ordenar=(a,b)=>fecha(a).localeCompare(fecha(b))||ncHoraMinutos(a.time)-ncHoraMinutos(b.time)||Number(String(a.court||'').match(/\d+/)?.[0]||0)-Number(String(b.court||'').match(/\d+/)?.[0]||0);
  const tarjeta=m=>{
@@ -1200,7 +1211,7 @@ generic=function(){
   );
   const copa=esTercero?'gris':instancia==='FINAL'?'oro':'';
   const premio=(lado)=>copa&&ganador===lado?`<span class="nc-cruces-premio nc-cruces-premio-${copa}" aria-label="${copa==='oro'?'Campeón (1.º puesto)':'Tercer puesto (3.º)'}" title="${copa==='oro'?'Campeón (1.º puesto)':'Tercer puesto (3.º)'}">${copa==='oro'?`<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 3h10v8a5 5 0 0 1-10 0V3Z" fill="currentColor"/><path d="M7 5H4v3a4 4 0 0 0 4 4M17 5h3v3a4 4 0 0 1-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 16v4M8 21h8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>`:`<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 2.2 2.95 6.02 6.64.97-4.8 4.68 1.13 6.61L12 17.36l-5.92 3.12 1.13-6.61-4.8-4.68 6.64-.97L12 2.2Z" fill="currentColor"/><path d="m12 6.8 1.55 3.16 3.49.51-2.52 2.46.6 3.48L12 14.77l-3.12 1.64.6-3.48-2.52-2.46 3.49-.51L12 6.8Z" fill="#68727a" opacity=".38"/></svg>`}<span class="nc-cruces-premio-texto">${copa==='oro'?'1.º PUESTO':'3.º PUESTO'}</span></span>`:'';
-  return `<button type="button" class="nc-cruces-compact-card nc-cruces-vertical-card" ${done?`onclick="ncAbrirResultado(${idx})" aria-label="Ver resultado de ${safe(m.a)} contra ${safe(m.b)}"`:`disabled aria-label="Partido pendiente: ${safe(m.a)} contra ${safe(m.b)}"`}><span class="nc-cruces-compact-stripe"></span><span class="nc-cruces-compact-main">${premio(ganador)}<span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador>0?'nc-cruces-team-winner':''}">${safe(m.a)}</span></span><span class="nc-cruces-compact-vs">VS</span><span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador<0?'nc-cruces-team-winner':''}">${safe(m.b)}</span></span>${done?`<span class="nc-cruces-compact-score">${score}</span>`:''}<span class="nc-cruces-compact-meta">${safe(m.time||'Horario a confirmar')} · ${safe(courtLabel(m.court||'—'))} · ${etiqueta}</span></span>${done?`<span class="nc-cruces-compact-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>`:''}</button>`;
+  return `<button type="button" class="nc-cruces-compact-card nc-cruces-vertical-card" ${done?`onclick="ncAbrirResultado(${idx})" aria-label="Ver resultado de ${safe(m.a)} contra ${safe(m.b)}"`:`disabled aria-label="Partido pendiente: ${safe(m.a)} contra ${safe(m.b)}"`}><span class="nc-cruces-compact-stripe"></span><span class="nc-cruces-compact-main">${premio(ganador)}${m.titulo?`<span class="nc-c01-titulo-partido">${safe(m.titulo)}</span>`:''}<span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador>0?'nc-cruces-team-winner':''}">${safe(m.a)}</span></span><span class="nc-cruces-compact-vs">VS</span><span class="nc-cruces-team nc-cruces-vertical-team"><span class="nc-cruces-team-name ${ganador<0?'nc-cruces-team-winner':''}">${safe(m.b)}</span></span>${done?`<span class="nc-cruces-compact-score">${score}</span>`:''}<span class="nc-cruces-compact-meta">${safe(m.time||'Horario a confirmar')} · ${safe(courtLabel(m.court||'—'))} · ${etiqueta}</span></span>${done?`<span class="nc-cruces-compact-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>`:''}</button>`;
  };
  const grupos=[...new Set(lista.map(m=>[m.cat,String(m.genero||'').trim()].join('|')))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
  return `${head('Cruces y finales','COMPETENCIA')}${catTabs()}${grupos.length?grupos.map((clave,ci)=>{
