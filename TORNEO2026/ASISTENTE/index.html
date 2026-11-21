@@ -3362,7 +3362,7 @@ function ncP13EsCruce(p,zonasValidas){
 }
 let posiciones13Filtro='todas';
 function posiciones13Render(){
- const partidos=resultados12Partidos();
+ const partidos=resultados12Partidos().filter(p=>!p.c01Id);
  const grupos=new Map();
  function agregarPartido(cat,genero,zona,partido,lados){
   const clave=JSON.stringify([cat,genero,zona]);
@@ -3471,7 +3471,7 @@ function posiciones13Activar(){const b=$('#p13Actualizar');if(b)b.onclick=()=>re
 
  // ETAPA 14 — Vista previa de clasificados y cruces. Solo lectura, sin guardar ni publicar.
  function etapa14Clasificacion(){
-  const partidos=resultados12Partidos(), salida=[];
+  const partidos=resultados12Partidos().filter(p=>!p.c01Id), salida=[];
   const claves=[...new Set(partidos.map(p=>'+'+String(p.categoria).replace(/^\+/, '')+'|'+String(p.genero||'Mixto')))];
   for(const clave of claves){
    const [cat,genero]=clave.split('|');
@@ -4496,7 +4496,7 @@ function ncCokiConfirmar(){
    ncFixtureLimpiarPendiente();
    ncEditorBorradorManual=false;
    ncCokiInicializado=ncCokiClave();
-   fixture=filas.filter(x=>String(x.anio)===String(settings.anio)&&String(x.edicion)===String(settings.edicion)).map(x=>({categoria:'+'+String(x.categoria||'').replace(/^\+/,''),genero:x.genero,zona:x.zona,ronda:x.ronda,local:x.local,visitante:x.visitante,fecha:String(x.fecha||'').slice(0,10),hora:String(x.hora||'').slice(0,5),cancha:Number(x.cancha)}));
+   fixture=filas.filter(x=>String(x.anio)===String(settings.anio)&&String(x.edicion)===String(settings.edicion)).map(x=>({categoria:'+'+String(x.categoria||'').replace(/^\+/,''),genero:x.genero,zona:x.zona,ronda:x.ronda,local:x.local,visitante:x.visitante,fecha:String(x.fecha||'').slice(0,10),hora:String(x.hora||'').slice(0,5),cancha:Number(x.cancha),c01Id:x.c01Id,titulo:x.titulo,instancia:x.instancia}));
    ncAplicarFixtureConsultado(datos);
    saveDraft();
    render();
@@ -5542,12 +5542,10 @@ const c01Prio=t=>{
  return i>=0?i:/^final(?:\s|$)/.test(n)?99:6;
 };
 function c01EstadoPartido(id){
- const p=fixture.find(x=>x.c01Id===id)||c01FixtureLeido?.partidos.find(x=>x.c01Id===id);
+ const oficial=resultados12Partidos().find(x=>x.c01Id===id)
+  ||fixtureSnapshot?.filas?.find(x=>x.c01Id===id&&String(x.anio)===String(settings.anio)&&x.edicion===settings.edicion);
+ const p=oficial||fixture.find(x=>x.c01Id===id)||c01FixtureLeido?.partidos.find(x=>x.c01Id===id);
  if(!p)return null;
- const oficial=resultados12Partidos().find(x=>
-  String(x.categoria).replace(/^\+/,'')===String(p.categoria).replace(/^\+/,'')&&
-  x.genero===p.genero&&x.local===p.local&&x.visitante===p.visitante&&
-  ncFxFecha(x.fecha)===ncFxFecha(p.fecha)&&String(x.hora).slice(0,5)===String(p.hora).slice(0,5)&&Number(x.cancha)===Number(p.cancha));
  const resultado=oficial&&resultados12Existente(oficial);
  return {...p,resultado:String(resultado?.estado||'').trim()==='CONFIRMADO'?resultado:null};
 }
@@ -5760,6 +5758,7 @@ function c01Montar(conservar=false) {
  }
  const clasifica=seccion('Zonas y clasificación','zonas',true);
  const ranking=etapa14Clasificacion().find(x=>x.clave===c01Competencia);
+ const plantillaC01=c01Plantilla(equipos.filter(t=>t.activo)).partidos;
  const controlesZona=el('div',undefined,'nc-c01-zonas');
  controlesZona.setAttribute('role','group');
  controlesZona.setAttribute('aria-label','Zonas');
@@ -5887,7 +5886,11 @@ function c01Montar(conservar=false) {
     const [,tipo,etapa,a,b]=dependencia;
     const base=etapa.toLowerCase()==='semifinales'?'Semifinal':etapa;
     for(const n of [a||1,b||2]){
-     const anterior=datos.partidos.find(p=>p.titulo.toLowerCase()===(base+' '+n).toLowerCase());
+     const esCuarto=etapa.toLowerCase()==='cuartos';
+     const referenciaBase=plantillaC01.find(p=>p.titulo.toLowerCase()===(base+' '+n).toLowerCase())?.referencia;
+     const porTitulo=datos.partidos.find(p=>p.titulo.toLowerCase()===(base+' '+n).toLowerCase());
+     const porReferencia=referenciaBase?datos.partidos.filter(p=>p.etapa===(esCuarto?'cuartos':'definiciones')&&p.referencia===referenciaBase):[];
+     const anterior=porTitulo||(porReferencia.length===1?porReferencia[0]:null);
      const estado=anterior&&c01EstadoPartido(anterior.id);
      const ganador=estado?.resultado?.ganador;
      const pierde=ganador===estado?.local?estado?.visitante:ganador===estado?.visitante?estado?.local:null;
