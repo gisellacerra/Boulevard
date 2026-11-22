@@ -5975,9 +5975,10 @@ function c01Montar(conservar=false) {
      const etiqueta=esReclasificacion
       ?(referenciaBase||'Origen por definir')
       :anterior?.titulo?.trim()||base+' '+n;
-     const nombre=tipo.toLowerCase()==='ganadores'?ganador:pierde;
+     const esGanador=tipo.toLowerCase()==='ganadores';
+     const nombre=esGanador?ganador:pierde;
      const situacion=nombre||((estado||anterior)?'Pendiente de resultado':'Cruce sin identificar');
-     if(esReclasificacion)filasReclasificacion.push({etiqueta,local:estado?.local,visitante:estado?.visitante,nombre,situacion});
+     if(esReclasificacion)filasReclasificacion.push({etiqueta,local:estado?.local,visitante:estado?.visitante,nombre,situacion,rol:esGanador?'Ganador':'Perdedor'});
      else candidatos.push({etiqueta,nombre,situacion});
     }
    }
@@ -6010,10 +6011,11 @@ function c01Montar(conservar=false) {
    d.append(el('small','Ayuda memoria','muted'));
    if(dependencia?.[2].toLowerCase()==='reclasificación'){
     const lista=el('ul',undefined,'nc-c01-ayuda');
-    for(const {etiqueta,local,visitante,nombre,situacion} of filasReclasificacion){
+    for(const {etiqueta,local,visitante,nombre,situacion,rol} of filasReclasificacion){
      const fila=el('li',etiqueta+' · ');
      if(local&&visitante)fila.append(el('span',local,'nc-c01-equipo-ayuda'),' vs. ',el('span',visitante,'nc-c01-equipo-ayuda'),' · ');
-     fila.append(nombre?el('span',nombre,'nc-c01-equipo-ayuda'):situacion);
+     if(nombre)fila.append(rol+': ',el('span',nombre,'nc-c01-equipo-ayuda'));
+     else fila.append(situacion);
      lista.append(fila);
     }
     d.append(lista);
