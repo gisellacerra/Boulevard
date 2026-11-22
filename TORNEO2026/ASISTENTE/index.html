@@ -5926,7 +5926,8 @@ function c01Montar(conservar=false) {
    }
    const candidatos=[...m.referencia.matchAll(/(\d+)\s*\.?[º°]?\s+(?:Zona\s+)?([A-F])\b/gi)].map(([,puesto,zona])=>{
     const grupo=ranking?.grupos.find(g=>g.zona===zona.toUpperCase());
-    return puesto+'.º Zona '+zona.toUpperCase()+' · '+(grupo?.completo?(grupo.ranking[Number(puesto)-1]?.nombre||'Pendiente'):'Pendiente de resultados');
+    const nombre=grupo?.completo?grupo.ranking[Number(puesto)-1]?.nombre:null;
+    return {etiqueta:puesto+'.º Zona '+zona.toUpperCase(),nombre,situacion:grupo?.completo?'Pendiente':'Pendiente de resultados'};
    });
    function reclasificacionDesdeFixture(n){
     const [categoria,genero]=c01Competencia.split('|');
@@ -5977,7 +5978,7 @@ function c01Montar(conservar=false) {
      const nombre=tipo.toLowerCase()==='ganadores'?ganador:pierde;
      const situacion=nombre||((estado||anterior)?'Pendiente de resultado':'Cruce sin identificar');
      if(esReclasificacion)filasReclasificacion.push({etiqueta,local:estado?.local,visitante:estado?.visitante,nombre,situacion});
-     else candidatos.push(etiqueta+' · '+situacion);
+     else candidatos.push({etiqueta,nombre,situacion});
     }
    }
    const sugerencias7={
@@ -6001,7 +6002,11 @@ function c01Montar(conservar=false) {
    actualizarBoton();
    if(programado)confirmar.disabled=true;
    actualizarResumen();
-   const ayuda=el('p',candidatos.join(' vs. ')||referenciaDeFila()||'Referencia pendiente','nc-c01-ayuda');
+   const ayuda=el('p',candidatos.length?undefined:referenciaDeFila()||'Referencia pendiente','nc-c01-ayuda');
+   candidatos.forEach(({etiqueta,nombre,situacion},i)=>{
+    if(i)ayuda.append(' vs. ');
+    ayuda.append(etiqueta+' · ',nombre?el('span',nombre,'nc-c01-equipo-ayuda'):situacion);
+   });
    d.append(el('small','Ayuda memoria','muted'));
    if(dependencia?.[2].toLowerCase()==='reclasificación'){
     const lista=el('ul',undefined,'nc-c01-ayuda');
