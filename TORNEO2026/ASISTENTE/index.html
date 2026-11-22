@@ -5930,6 +5930,7 @@ function c01Montar(conservar=false) {
    const dependencia=/^(Ganadores|Perdedores) de (cuartos|semifinales|reclasificación)(?: (\d+) y (\d+))?$/i.exec(m.referencia.trim());
    if(dependencia){
     const [,tipo,etapa,a,b]=dependencia;
+    const esReclasificacion=etapa.toLowerCase()==='reclasificación';
     const base=etapa.toLowerCase()==='semifinales'?'Semifinal':etapa;
     for(const n of [a||1,b||2]){
      const esCuarto=etapa.toLowerCase()==='cuartos';
@@ -5940,7 +5941,12 @@ function c01Montar(conservar=false) {
      const estado=anterior&&c01EstadoPartido(anterior.id);
      const ganador=estado?.resultado?.ganador;
      const pierde=ganador===estado?.local?estado?.visitante:ganador===estado?.visitante?estado?.local:null;
-     candidatos.push(base+' '+n+' · '+((tipo.toLowerCase()==='ganadores'?ganador:pierde)||'Pendiente de resultado'));
+     const etiqueta=esReclasificacion
+      ?'Reclasificación '+n+' ('+(referenciaBase||'origen por definir')+')'
+      :anterior?.titulo?.trim()||base+' '+n;
+     const nombre=tipo.toLowerCase()==='ganadores'?ganador:pierde;
+     const situacion=nombre||(anterior?'Pendiente de resultado':'Cruce sin identificar');
+     candidatos.push(etiqueta+' · '+situacion);
     }
    }
    const sugerencias7={
@@ -5965,7 +5971,12 @@ function c01Montar(conservar=false) {
    if(programado)confirmar.disabled=true;
    actualizarResumen();
    const ayuda=el('p',candidatos.join(' vs. ')||referenciaDeFila()||'Referencia pendiente','nc-c01-ayuda');
-   d.append(el('small','Ayuda memoria','muted'),ayuda);
+   d.append(el('small','Ayuda memoria','muted'));
+   if(dependencia?.[2].toLowerCase()==='reclasificación'){
+    const lista=el('ul',undefined,'nc-c01-ayuda');
+    candidatos.forEach(texto=>lista.append(el('li',texto)));
+    d.append(lista);
+   }else d.append(ayuda);
    if(programado)d.append(el('small',ncFxFecha(programado.fecha)+' · '+programado.hora+' · Cancha '+programado.cancha,'muted'));
    d.append(par,field('Título del partido',tituloInput),field('Referencia',referencia),acciones);
   }
