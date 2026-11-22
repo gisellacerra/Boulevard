@@ -899,24 +899,9 @@ nav .nav-item.activo img{
   filter:brightness(0) saturate(100%) invert(83%) sepia(91%) saturate(1128%) hue-rotate(8deg) brightness(104%) contrast(102%);
 }
 </style>
-<style>
-#ncNuevaVersion{position:fixed;inset:0;margin:auto;height:fit-content;max-height:calc(100% - 36px);text-align:center;width:min(calc(100% - 36px),420px);box-sizing:border-box;border:1px solid #363c3f;border-radius:16px;padding:22px;background:#202425;color:#f5f6f7}
-#ncNuevaVersion::backdrop{background:rgba(0,0,0,.65)}
-#ncNuevaVersion .instalar-acciones{justify-content:center}
-#ncNuevaVersion h2{font-size:20px;line-height:1.3;margin:0 0 18px}
-#ncNuevaVersion .nc-version-etiqueta{display:block;margin-top:10px;color:#adb5c1;font-size:12px}
-#ncVersionDescargar{background:#9dd64a;color:#101719;text-decoration:none}
-</style>
 </head>
 
 <body>
-<dialog id="ncNuevaVersion" aria-labelledby="ncNuevaVersionTitulo">
-  <h2 id="ncNuevaVersionTitulo">Descargate la nueva versión de esta app</h2>
-  <div class="instalar-acciones">
-    <a class="instalar-btn" id="ncVersionDescargar" href="https://gisellacerra.github.io/Boulevard/TORNEO2026/APP/index.html" target="_blank" rel="noopener">Descarga</a>
-  </div>
-  <small class="nc-version-etiqueta">Versión 1.5</small>
-</dialog>
 <div id="instalarOverlay" class="instalar-overlay" role="dialog" aria-modal="true" aria-labelledby="instalarTitulo">
   <div class="instalar-card">
     <img class="instalar-logo" src="assets/iconos/icon-192.png" alt="">
@@ -1611,22 +1596,10 @@ const estaInstalada = () =>
   window.matchMedia('(display-mode: standalone)').matches ||
   window.navigator.standalone === true;
 
-const avisoVersion=document.getElementById('ncNuevaVersion');
-const enlaceNuevaApp=document.getElementById('ncVersionDescargar');
-if(/Android/i.test(navigator.userAgent)){
-  const destino=new URL(enlaceNuevaApp.href);
-  enlaceNuevaApp.href='intent://'+destino.host+destino.pathname+
-    '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url='+
-    encodeURIComponent(destino.href)+';end';
-  enlaceNuevaApp.removeAttribute('target');
-}
-avisoVersion.showModal();
-avisoVersion.addEventListener('cancel',e=>e.preventDefault());
-
 window.addEventListener('beforeinstallprompt', (evento) => {
   evento.preventDefault();
   eventoInstalacion = evento;
-  if (!avisoVersion.open && !estaInstalada() && !sessionStorage.getItem('vi_torneo_instalacion_oculta')) {
+  if (!estaInstalada() && !sessionStorage.getItem('vi_torneo_instalacion_oculta')) {
     instalarOverlay.classList.add('visible');
   }
 });
