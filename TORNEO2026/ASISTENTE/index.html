@@ -1925,7 +1925,7 @@ body[data-nc-theme="dark"] #view .nc-aloj-enlaces a{color:#a5eb37}
 </style>
 <style>
 .nc-c01-detalle{padding:12px;border:1px solid var(--sp-border,#89958e);border-radius:10px;margin:8px 0}
-.nc-c01-detalle>summary{font-weight:650}
+#c01Editor .nc-c01-detalle>summary{font-weight:500}
 .nc-c01-detalle[open]>summary{margin-bottom:10px}
 .nc-c01-campos{min-width:0;border:0;padding:0}
 .nc-c01-pares{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))}
@@ -1945,8 +1945,9 @@ body[data-nc-theme="dark"] #c01Editor button[aria-pressed=true]{color:#141816}
 #c01Editor .nc-c01-detalle>:last-child:not(summary){margin-bottom:14px}
 #c01Editor .nc-c01-detalle .nc-c01-detalle{border-radius:10px}
 #c01Editor .nc-c01-resumen{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 12px;cursor:pointer}
-#c01Editor .nc-c01-resumen strong::before{content:'▸';margin-right:8px}
-#c01Editor details[open]>.nc-c01-resumen strong::before{content:'▾'}
+#c01Editor .nc-c01-nombre{font-weight:400;line-height:1.4;overflow-wrap:anywhere}
+#c01Editor .nc-c01-nombre::before{content:'▸';margin-right:8px}
+#c01Editor details[open]>.nc-c01-resumen .nc-c01-nombre::before{content:'▾'}
 #c01Editor .nc-c01-resumen small{grid-column:1;grid-row:2;padding-left:16px;overflow-wrap:anywhere}
 #c01Editor .nc-c01-resumen small:empty{display:none}
 #c01Editor .nc-c01-marca{grid-column:2;grid-row:1;font-size:.82em;font-weight:500}
@@ -5876,7 +5877,7 @@ function c01Montar(conservar=false) {
    const d=seccion(m.titulo||'Partido sin título',m.id,false,bloque);
    const resumen=d.querySelector('summary');
    resumen.classList.add('nc-c01-resumen');
-   const nombre=el('strong');
+   const nombre=el('span',undefined,'nc-c01-nombre');
    const origen=el('small',undefined,'muted');
    const marca=el('span',undefined,'nc-c01-marca');
    resumen.replaceChildren(nombre,origen,marca);
