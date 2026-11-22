@@ -5972,7 +5972,7 @@ function c01Montar(conservar=false) {
      const ganador=estado?.resultado?.ganador;
      const pierde=ganador===estado?.local?estado?.visitante:ganador===estado?.visitante?estado?.local:null;
      const etiqueta=esReclasificacion
-      ?'Reclasificación '+n+' ('+(referenciaBase||'origen por definir')+')'
+      ?(referenciaBase||'Origen por definir')
       :anterior?.titulo?.trim()||base+' '+n;
      const nombre=tipo.toLowerCase()==='ganadores'?ganador:pierde;
      const situacion=nombre||((estado||anterior)?'Pendiente de resultado':'Cruce sin identificar');
