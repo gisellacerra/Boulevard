@@ -1945,6 +1945,7 @@ body[data-nc-theme="dark"] #c01Editor button[aria-pressed=true]{color:#141816}
 #c01Editor .nc-c01-detalle>:last-child:not(summary){margin-bottom:14px}
 #c01Editor .nc-c01-detalle .nc-c01-detalle{border-radius:10px}
 #c01Editor .nc-c01-resumen{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 12px;cursor:pointer}
+#c01Editor .nc-c01-equipo-ayuda{color:#a5e851}
 #c01Editor .nc-c01-nombre{font-weight:400;line-height:1.4;overflow-wrap:anywhere}
 #c01Editor .nc-c01-nombre::before{content:'▸';margin-right:8px}
 #c01Editor details[open]>.nc-c01-resumen .nc-c01-nombre::before{content:'▾'}
@@ -5956,6 +5957,7 @@ function c01Montar(conservar=false) {
     return cruces.length===1?{...cruces[0],resultado:resultado(cruces[0])}:null;
    }
    const dependencia=/^(Ganadores|Perdedores) de (cuartos|semifinales|reclasificación)(?: (\d+) y (\d+))?$/i.exec(m.referencia.trim());
+   const filasReclasificacion=[];
    if(dependencia){
     const [,tipo,etapa,a,b]=dependencia;
     const esReclasificacion=etapa.toLowerCase()==='reclasificación';
@@ -5974,8 +5976,8 @@ function c01Montar(conservar=false) {
       :anterior?.titulo?.trim()||base+' '+n;
      const nombre=tipo.toLowerCase()==='ganadores'?ganador:pierde;
      const situacion=nombre||((estado||anterior)?'Pendiente de resultado':'Cruce sin identificar');
-     const partido=esReclasificacion&&estado?.local&&estado?.visitante?' · '+estado.local+' vs. '+estado.visitante:'';
-     candidatos.push(etiqueta+partido+' · '+situacion);
+     if(esReclasificacion)filasReclasificacion.push({etiqueta,local:estado?.local,visitante:estado?.visitante,nombre,situacion});
+     else candidatos.push(etiqueta+' · '+situacion);
     }
    }
    const sugerencias7={
@@ -6003,7 +6005,12 @@ function c01Montar(conservar=false) {
    d.append(el('small','Ayuda memoria','muted'));
    if(dependencia?.[2].toLowerCase()==='reclasificación'){
     const lista=el('ul',undefined,'nc-c01-ayuda');
-    candidatos.forEach(texto=>lista.append(el('li',texto)));
+    for(const {etiqueta,local,visitante,nombre,situacion} of filasReclasificacion){
+     const fila=el('li',etiqueta+' · ');
+     if(local&&visitante)fila.append(el('span',local,'nc-c01-equipo-ayuda'),' vs. ',el('span',visitante,'nc-c01-equipo-ayuda'),' · ');
+     fila.append(nombre?el('span',nombre,'nc-c01-equipo-ayuda'):situacion);
+     lista.append(fila);
+    }
     d.append(lista);
    }else d.append(ayuda);
    if(programado)d.append(el('small',ncFxFecha(programado.fecha)+' · '+programado.hora+' · Cancha '+programado.cancha,'muted'));
