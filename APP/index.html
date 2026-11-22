@@ -904,7 +904,7 @@ nav .nav-item.activo img{
 #ncNuevaVersion::backdrop{background:rgba(0,0,0,.65)}
 #ncNuevaVersion .instalar-acciones{justify-content:center}
 #ncNuevaVersion h2{font-size:20px;line-height:1.3;margin:0 0 18px}
-#ncNuevaVersion #ncVersionAhoraNo{color:#f5f6f7}
+#ncNuevaVersion .nc-version-etiqueta{display:block;margin-top:10px;color:#adb5c1;font-size:12px}
 #ncVersionDescargar{background:#9dd64a;color:#101719;text-decoration:none}
 </style>
 </head>
@@ -913,9 +913,9 @@ nav .nav-item.activo img{
 <dialog id="ncNuevaVersion" aria-labelledby="ncNuevaVersionTitulo">
   <h2 id="ncNuevaVersionTitulo">Descargate la nueva versión de esta app</h2>
   <div class="instalar-acciones">
-    <button type="button" class="instalar-btn instalar-ahora-no" id="ncVersionAhoraNo">Ahora no</button>
     <a class="instalar-btn" id="ncVersionDescargar" href="https://gisellacerra.github.io/Boulevard/TORNEO2026/APP/index.html" target="_blank" rel="noopener">Descarga</a>
   </div>
+  <small class="nc-version-etiqueta">Versión 1.5</small>
 </dialog>
 <div id="instalarOverlay" class="instalar-overlay" role="dialog" aria-modal="true" aria-labelledby="instalarTitulo">
   <div class="instalar-card">
@@ -1612,18 +1612,8 @@ const estaInstalada = () =>
   window.navigator.standalone === true;
 
 const avisoVersion=document.getElementById('ncNuevaVersion');
-const clavePospuesta='nc-migracion-torneo2026-pospuesta';
-let avisoPospuesto=false;
-try{avisoPospuesto=sessionStorage.getItem(clavePospuesta)==='1'}catch{}
-if(!avisoPospuesto)avisoVersion.showModal();
-
-function posponerVersion(){
-  try{sessionStorage.setItem(clavePospuesta,'1')}catch{}
-  avisoVersion.close();
-}
-document.getElementById('ncVersionAhoraNo').addEventListener('click',posponerVersion);
-document.getElementById('ncVersionDescargar').addEventListener('click',posponerVersion);
-avisoVersion.addEventListener('cancel',e=>{e.preventDefault();posponerVersion()});
+avisoVersion.showModal();
+avisoVersion.addEventListener('cancel',e=>e.preventDefault());
 
 window.addEventListener('beforeinstallprompt', (evento) => {
   evento.preventDefault();
