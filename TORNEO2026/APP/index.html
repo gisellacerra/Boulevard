@@ -1348,7 +1348,9 @@ generic=function(){
   return `<button type="button" class="nc-cruces-compact-card nc-cruces-vertical-card" ${done?`onclick="ncAbrirResultado(${idx})" aria-label="Ver resultado de ${safe(m.a)} contra ${safe(m.b)}"`:`disabled aria-label="Partido pendiente: ${safe(m.a)} contra ${safe(m.b)}"`}><span class="nc-cruces-compact-stripe"></span><span class="nc-cruces-compact-main">${subcampeon?'':premio(ganador)}${ncCrucesTituloUX(m)?`<span class="nc-c01-titulo-partido">${safe(ncCrucesTituloUX(m))}</span>`:''}${equipo(m.a,m.escudoLocal,1)}<span class="nc-cruces-compact-vs">VS</span>${equipo(m.b,m.escudoVisitante,-1)}${done?`<span class="nc-cruces-compact-score">${score}</span>`:''}<span class="nc-cruces-compact-meta">${safe(m.time||'Horario a confirmar')} · ${safe(courtLabel(m.court||'—'))} · ${etiqueta}</span></span>${done?`<span class="nc-cruces-compact-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>`:''}</button>`;
  };
  const grupos=[...new Set(lista.map(m=>[m.cat,String(m.genero||'').trim()].join('|')))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
- return `${head('Cruces y finales','COMPETENCIA')}${catTabs()}${grupos.length?grupos.map((clave,ci)=>{
+ const etiqueta=category==='Todas'?'Ver clasificación final':'Ver clasificación final de '+category;
+ const acceso=`<div class="nc-clasificacion-acceso"><button type="button" class="nc-clasificacion-enlace" data-categoria="${safe(category)}" onclick="ncAbrirClasificacionFinal(this.dataset.categoria)">${safe(etiqueta)}</button></div>`;
+ return `${head('Cruces y finales','COMPETENCIA')}${catTabs()}${acceso}${grupos.length?grupos.map((clave,ci)=>{
   const [cat,genero]=clave.split('|');
   const items=lista.filter(m=>m.cat===cat&&String(m.genero||'').trim()===genero);
   return `<section class="nc-cruces-compact-group" style="--cruces-color:${palette[cat]||'#9DD64A'}"><h2 class="nc-cruces-category">${safe(genero?genero+' · ':'')}Categoría ${safe(cat)}</h2>${etapas.map((etapa,ei)=>{
@@ -1359,11 +1361,13 @@ generic=function(){
    const id=`nc-cruces-accordion-${encodeURIComponent(clave)}-${etapa.id}`;
    const abierto=ncCrucesAbiertos.has(id);
    return `<details id="${id}" class="nc-cruces-accordion nc-cruces-etapa-${ei}" ${abierto?'open':''} ontoggle="if(this.open)ncCrucesAbiertos.add(this.id);else ncCrucesAbiertos.delete(this.id)"><summary class="nc-cruces-accordion-head"><span class="nc-cruces-accordion-label">${safe(etapa.title)}</span><span class="nc-cruces-accordion-count">${partidos.length}</span><span class="nc-cruces-accordion-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary><div class="nc-cruces-accordion-body">${partidos.length?partidos.map(tarjeta).join(''):'<div class="nc-cruces-no-partidos">Sin partidos publicados en esta instancia.</div>'}</div></details>`;
-  }).join('')}${items.some(m=>etapaDe(m,0)==='FINAL')?`<button type="button" class="nc-clasificacion-enlace" data-categoria="${safe(cat)}" onclick="ncAbrirClasificacionFinal(this.dataset.categoria)">Ver clasificación final de ${safe(cat)}</button>`:''}</section>`;
+  }).join('')}</section>`;
  }).join(''):`<div class="empty">${ncEmptyData('Todavía no hay cruces publicados.')}</div>`}`;
 };
 </script>
 <style id="nc-cruces-compact-accordion-css">
+.nc-clasificacion-acceso{margin:10px 0 16px}
+.nc-clasificacion-acceso .nc-clasificacion-enlace{margin-top:0}
 .nc-clasificacion-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
 .nc-clasificacion-tabs button,.nc-clasificacion-enlace{padding:8px 12px;border:1px solid #394747;border-radius:8px;background:#232d2f;color:#f1f5f1;font-weight: 400;margin-top: 15px;font:inherit;font-size:13px;cursor:pointer}
 .nc-clasificacion-tabs button[aria-pressed="true"]{background:#9dd64a;color:#101719;border-color:#9dd64a}
