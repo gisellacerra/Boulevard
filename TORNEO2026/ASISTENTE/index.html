@@ -5274,10 +5274,22 @@ function ncEditorFixtureEnlazar(){
  document.getElementById('nc-ef-reprogramar')?.addEventListener('click',()=>{const card=buscarTarjeta();if(card){const btn=document.createElement('button');btn.dataset.ncReprogramar=card.dataset.ncResultado;ncReprogramarIndividual(btn)}else avisoIntegrado('No se encontró el partido confirmado para reprogramarlo. Actualizá la grilla.');});
  document.getElementById('nc-ef-resultado')?.addEventListener('click',()=>{const card=buscarTarjeta();if(card)ncAbrirResultadoDesdeFixture(card);else avisoIntegrado('No se encontró el partido seleccionado.');});
  const form=document.getElementById('nc-ef-form');if(!form)return;
+ const c01=active==='fixture'&&!seleccionado?c01PorProgramar:null;
+ const zonasParaEditor=(cat,gen)=>{
+  const filas=ncEditorZonasDisponibles(cat,gen);
+  if(!c01||cat!==c01.categoria||gen!==c01.genero)return filas;
+  const confirmados=[
+   {nombre:c01.local,zona:c01.zonaLocal},
+   {nombre:c01.visitante,zona:c01.zonaVisitante}
+  ].map(t=>({...t,zona:String(t.zona||'').replace(/^Zona\s+/i,'').trim()||
+   filas.find(f=>ncEditorNormTexto(f.nombre)===ncEditorNormTexto(t.nombre))?.zona||''}));
+  return [...filas.filter(f=>!confirmados.some(t=>t.zona&&ncEditorNormTexto(t.nombre)===ncEditorNormTexto(f.nombre))),
+   ...confirmados.filter(t=>t.zona)];
+ };
  const valorRadio=nombre=>form.querySelector(`input[name="${nombre}"]:checked`)?.value||'';
  const refrescarEquipos=(resetZonas=false)=>{
   const cat=valorRadio('categoria'),gen=valorRadio('genero');
-  const rows=ncEditorZonasDisponibles(cat,gen);
+  const rows=zonasParaEditor(cat,gen);
   for(const [zonaCampo,equipoCampo] of [['zonaLocal','local'],['zonaVisitante','visitante']]){
    const cont=form.querySelector(`[data-zonagrupo="${zonaCampo}"]`),tsel=form.elements[equipoCampo];
    const zonaAnterior=resetZonas?'':valorRadio(zonaCampo),equipoAnterior=resetZonas?'':tsel.value;
@@ -5294,12 +5306,11 @@ function ncEditorFixtureEnlazar(){
   if(nombre==='categoria'||nombre==='genero')refrescarEquipos(true);
   if(nombre==='zonaLocal'||nombre==='zonaVisitante'){
    const campo=nombre==='zonaLocal'?'local':'visitante';
-   const nombres=[...new Set(ncEditorZonasDisponibles(valorRadio('categoria'),valorRadio('genero')).filter(r=>r.zona===valorRadio(nombre)).map(r=>r.nombre))];
+   const nombres=[...new Set(zonasParaEditor(valorRadio('categoria'),valorRadio('genero')).filter(r=>r.zona===valorRadio(nombre)).map(r=>r.nombre))];
    form.elements[campo].innerHTML='<option value="">Seleccionar equipo</option>'+nombres.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
   }
  });
  refrescarEquipos();
- const c01=active==='fixture'&&!seleccionado?c01PorProgramar:null;
  if(c01){
   const elegirRadio=(nombre,valor)=>{
    const radio=[...form.querySelectorAll('input[type="radio"]')].find(x=>x.name===nombre&&x.value===valor);
@@ -5309,7 +5320,7 @@ function ncEditorFixtureEnlazar(){
   };
   elegirRadio('categoria',c01.categoria);
   elegirRadio('genero',c01.genero);
-  const zonasC01=ncEditorZonasDisponibles(c01.categoria,c01.genero);
+  const zonasC01=zonasParaEditor(c01.categoria,c01.genero);
   for(const [campo,zona] of [['local','zonaLocal'],['visitante','zonaVisitante']]){
    elegirRadio(zona,zonasC01.find(z=>z.nombre===c01[campo])?.zona||'');
    form.elements[campo].value=c01[campo];
@@ -5809,7 +5820,7 @@ function c01Programar(m, equipos, competencia) {
  const [local,visitante]=m.equipos.map(id=>equipos.find(t=>t.id===id&&t.activo));
  if(!m.confirmado||!local||!visitante)return;
  if(c01EstadoPartido(m.id))return;
- c01PorProgramar={id:m.id,categoria,genero,titulo:m.titulo,local:local.nombre,visitante:visitante.nombre};
+ c01PorProgramar={id:m.id,categoria,genero,titulo:m.titulo,local:local.nombre,visitante:visitante.nombre,zonaLocal:local.zona,zonaVisitante:visitante.zona};
  ncEditorFixtureSeleccion=null;
  ncEditorBloqueSeleccionado=null;
  navigate('fixture');
