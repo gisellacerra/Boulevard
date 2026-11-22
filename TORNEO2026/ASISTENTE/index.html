@@ -1944,6 +1944,13 @@ body[data-nc-theme="dark"] #c01Editor button[aria-pressed=true]{color:#141816}
 #c01Editor .nc-c01-detalle>:not(summary){margin-inline:14px}
 #c01Editor .nc-c01-detalle>:last-child:not(summary){margin-bottom:14px}
 #c01Editor .nc-c01-detalle .nc-c01-detalle{border-radius:10px}
+#c01Editor .nc-c01-resumen{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 12px;cursor:pointer}
+#c01Editor .nc-c01-resumen strong::before{content:'▸';margin-right:8px}
+#c01Editor details[open]>.nc-c01-resumen strong::before{content:'▾'}
+#c01Editor .nc-c01-resumen small{grid-column:1;grid-row:2;padding-left:16px;overflow-wrap:anywhere}
+#c01Editor .nc-c01-resumen small:empty{display:none}
+#c01Editor .nc-c01-marca{grid-column:2;grid-row:1;font-size:.82em;font-weight:500}
+#c01Editor .nc-c01-marca[data-listo="true"]{color:#a5e851}
 #c01Editor .nc-c01-detalle .nc-c01-detalle summary{font-size:14px;padding:10px 14px}
 #c01Editor .nc-c01-zonas{display:flex;flex-wrap:wrap;gap:6px;margin-block:12px}
 #c01Editor .nc-c01-tabla{overflow:auto}
@@ -5535,12 +5542,32 @@ function arbEnlazar(){document.getElementById('arbActualizar').onclick=arbLeer;c
 let c01PorProgramar = null;
 const c01ZonaVisible = new Map(),c01Abiertos=new Map();
 let c01FixtureLeido=null;
-const c01Prio=t=>{
- const n=String(t).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
- const orden=[/^reclasificacion/,/^semifinal/,/^3\D+4/,/^5\D+6/,/^7\D+8/];
- const i=orden.findIndex(r=>r.test(n));
- return i>=0?i:/^final(?:\s|$)/.test(n)?99:6;
-};
+
+const ncCrucesEtapasUX=[
+ ['PRELIMINAR','Clasificación a cuartos de final'],
+ ['CUARTOS','Cuartos de final'],
+ ['RECLASIFICACION','Puestos 5.º al 8.º'],
+ ['SEMIFINAL','Semifinales'],
+ ['INTERZONAS','Interzonas E y F'],
+ ['TRIANGULAR_5','Triangular · Puestos 5.º al 7.º'],
+ ['TRIANGULAR_9','Triangular · Puestos 9.º al 11.º'],
+ ['PUESTOS','Otros puestos'],
+ ['FINAL','Final']
+];
+function ncCrucesGrupoUX(instancia,titulo,cantidad){
+ const t=String(titulo||'').normalize('NFD').replace(/[̀-ͯ]/g,'').trim().toLowerCase();
+ if(['CUARTOS','PRELIMINAR','INTERZONAS'].includes(instancia))return instancia;
+ if(instancia==='TERCER_PUESTO'||/^3\D+4|^tercer\s+puesto/.test(t))return 'PUESTOS';
+ if(instancia==='RECLASIFICACION'||/^reclasificacion|^perdedores de cuartos [1-4] y [1-4]$/.test(t))return 'RECLASIFICACION';
+ if(instancia==='SEMIFINAL'||/^semifinal|^ganadores de cuartos/.test(t))return 'SEMIFINAL';
+ if(instancia==='FINAL'||/^final(?:\W|$)/.test(t))return 'FINAL';
+ if(/^triangular/.test(t)&&cantidad===7)return 'TRIANGULAR_5';
+ if(/^triangular/.test(t)&&cantidad===11)return 'TRIANGULAR_9';
+ return 'PUESTOS';
+}
+function ncCrucesOrdenUX(titulo){
+ return Number(String(titulo||'').match(/\d+/)?.[0]||0);
+}
 function c01EstadoPartido(id){
  const oficial=resultados12Partidos().find(x=>x.c01Id===id)
   ||fixtureSnapshot?.filas?.find(x=>x.c01Id===id&&String(x.anio)===String(settings.anio)&&x.edicion===settings.edicion);
@@ -5794,11 +5821,24 @@ function c01Montar(conservar=false) {
   for(const opcion of input.options) opcion.disabled=!!opcion.value&&opcion.value!==valor&&excluidos.includes(opcion.value);
   return input;
  }
- for(const [etapa,titulo] of [['cuartos','Cuartos de final'],['interzonas','Interzonas E y F'],['definiciones','Semifinales, finales y definición de puestos']]){
-  const bloque=seccion(titulo,etapa,true);
-  if(etapa==='definiciones'&&(opciones.length===9||opciones.length>=13&&opciones.length%2===1)){
-   bloque.append(el('p',opciones.length===9?'Referencia de prueba · El equipo fuera de cuartos queda 9.º.':'Si conservás la distribución sugerida, el último equipo de E queda '+opciones.length+'.º.','muted'));
-  }
+ const grupoDe=m=>{
+  if(m.etapa==='cuartos')return 'CUARTOS';
+  if(m.etapa==='interzonas')return 'INTERZONAS';
+  if(/^Ganadores de semifinales$/i.test(m.referencia.trim()))return 'FINAL';
+  const porTitulo=ncCrucesGrupoUX('',m.titulo,opciones.length);
+  return porTitulo==='PUESTOS'&&!/^\d/.test(m.titulo)
+   ?ncCrucesGrupoUX('',m.referencia,opciones.length):porTitulo;
+ };
+ for(const [grupo,titulo] of ncCrucesEtapasUX){
+  const partidos=datos.partidos.filter(m=>grupoDe(m)===grupo);
+  if(!partidos.length&&!['CUARTOS','PUESTOS'].includes(grupo)&&!(grupo==='INTERZONAS'&&(datos.grupos.length||opciones.length>8)))continue;
+  const etapa=grupo==='CUARTOS'?'cuartos':grupo==='INTERZONAS'?'interzonas':'definiciones';
+  const bloque=seccion(titulo,'grupo-'+grupo,true);
+  const siete=opciones.length===7&&zonas.get('A')?.length===4&&zonas.get('B')?.length===3;
+  if(siete&&grupo==='CUARTOS')bloque.append(el('p','Pase directo sugerido · 1.º de Zona A a Semifinal 1.','muted'));
+  if(siete&&grupo==='TRIANGULAR_5')bloque.append(el('p','Juegan los tres perdedores de cuartos. La tabla del triangular define los puestos 5.º, 6.º y 7.º.','muted'));
+  if(grupo==='INTERZONAS'&&opciones.length===13&&datos.grupos.map(g=>g.length).join(',')==='3,2')
+   bloque.append(el('p','1.º E vs. 1.º F por 9.º y 10.º · 2.º E vs. 2.º F por 11.º y 12.º · 3.º E queda 13.º.','muted'));
   if(etapa==='interzonas'){
    const limite=Math.max(0,opciones.length-8);
    const opcionesGrupos=[['','Sin interzonas']];
@@ -5826,15 +5866,20 @@ function c01Montar(conservar=false) {
     grupo.forEach((valor,j)=>{
      const input=equipoInput(valor,datos.grupos.flatMap((g,k)=>g.filter((_,l)=>k!==i||j!==l)));
      input.onchange=()=>{grupo[j]=input.value;c01Cambiar(local);c01Montar(true)};
-     pares.append(field('Lugar '+(j+1),input));
+     pares.append(field('Equipo '+(j+1),input));
     });
     bloque.append(pares);
    });
   }
-  const partidos=datos.partidos.filter(m=>m.etapa===etapa);
-  if(etapa==='definiciones')partidos.sort((a,b)=>c01Prio(a.titulo)-c01Prio(b.titulo));
+  if(grupo==='PUESTOS')partidos.sort((a,b)=>ncCrucesOrdenUX(a.titulo)-ncCrucesOrdenUX(b.titulo));
   for(const m of partidos){
    const d=seccion(m.titulo||'Partido sin título',m.id,false,bloque);
+   const resumen=d.querySelector('summary');
+   resumen.classList.add('nc-c01-resumen');
+   const nombre=el('strong');
+   const origen=el('small',undefined,'muted');
+   const marca=el('span',undefined,'nc-c01-marca');
+   resumen.replaceChildren(nombre,origen,marca);
    const par=el('div',undefined,'nc-c01-pares');
    const nombres=m.equipos.map((id,i)=>equipoInput(id,[m.equipos[1-i]]));
    nombres.forEach((s,i)=>{
@@ -5847,18 +5892,18 @@ function c01Montar(conservar=false) {
    });
    const tituloInput=el('input');tituloInput.value=m.titulo;tituloInput.maxLength=160;
    const referencia=el('input');referencia.value=m.referencia;referencia.maxLength=240;
-   tituloInput.oninput=()=>{m.titulo=tituloInput.value;d.querySelector('summary').textContent=m.titulo||'Partido sin título';modificar()};
+   tituloInput.oninput=()=>{m.titulo=tituloInput.value;modificar()};
    referencia.oninput=()=>{m.referencia=referencia.value;modificar()};
-   function modificar(){m.confirmado=false;programar.disabled=true;c01Cambiar(local);actualizarBoton();}
+   function modificar(){m.confirmado=false;programar.disabled=true;c01Cambiar(local);actualizarBoton();actualizarResumen();}
    const confirmar=button('Confirmar instancia',()=>{
     c01Cambiar(local);m.confirmado=true;
-    c01Guardar(local,estado,()=>{m.confirmado=false;actualizarBoton()});
+    c01Guardar(local,estado,()=>{m.confirmado=false;actualizarBoton();actualizarResumen()});
+    actualizarResumen();
    },'primary');
    function actualizarBoton(){
     confirmar.textContent=m.confirmado?'✓ Confirmado':'Confirmar instancia';
     confirmar.disabled=m.confirmado||!m.titulo.trim()||m.equipos[0]===m.equipos[1]||m.equipos.some(id=>!opciones.some(o=>o[0]===id));
    }
-   actualizarBoton();
    const eliminar=button('Eliminar instancia',async()=>{
     if(!await dialogoEquipo('Eliminar instancia','¿Quitar «'+m.titulo+'»?',true)) return;
     datos.partidos.splice(datos.partidos.indexOf(m),1);c01Cambiar(local);c01Montar(true);
@@ -5875,7 +5920,7 @@ function c01Montar(conservar=false) {
     confirmar.disabled=true;
     eliminar.disabled=true;
     for(const control of [...nombres,tituloInput,referencia])control.disabled=true;
-    d.querySelector('summary').append(' · '+(programado.resultado?'Jugado':'Programado'));
+
    }
    const candidatos=[...m.referencia.matchAll(/(\d+)\s*\.?[º°]?\s+(?:Zona\s+)?([A-F])\b/gi)].map(([,puesto,zona])=>{
     const grupo=ranking?.grupos.find(g=>g.zona===zona.toUpperCase());
@@ -5897,14 +5942,38 @@ function c01Montar(conservar=false) {
      candidatos.push(base+' '+n+' · '+((tipo.toLowerCase()==='ganadores'?ganador:pierde)||'Pendiente de resultado'));
     }
    }
-   const ayuda=el('p',candidatos.join(' vs. ')||m.referencia||'Referencia pendiente','nc-c01-ayuda');
+   const sugerencias7={
+    'Cuartos 1':'1.º B vs. 4.º A',
+    'Cuartos 2':'2.º A vs. 3.º B',
+    'Cuartos 3':'3.º A vs. 2.º B',
+    'Semifinal 1':'1.º A vs. ganador de Cuartos 1',
+    'Semifinal 2':'Ganador de Cuartos 2 vs. ganador de Cuartos 3',
+    'Triangular · Partido 1':'Perdedor de Cuartos 1 vs. perdedor de Cuartos 2',
+    'Triangular · Partido 2':'Perdedor de Cuartos 1 vs. perdedor de Cuartos 3',
+    'Triangular · Partido 3':'Perdedor de Cuartos 2 vs. perdedor de Cuartos 3'
+   };
+   const referenciaDeFila=()=>siete&&(!m.referencia||['Ganadores de cuartos y pases directos','Puestos 5.º al 7.º'].includes(m.referencia))
+    ?sugerencias7[m.titulo]||m.referencia:m.referencia;
+   function actualizarResumen(){
+    nombre.textContent=m.titulo||'Partido sin título';
+    origen.textContent=m.referencia===m.titulo?'':referenciaDeFila();
+    marca.textContent=programado?(programado.resultado?'Jugado':'Programado'):m.confirmado?'Confirmado':'Por definir';
+    marca.dataset.listo=String(!!programado||m.confirmado);
+   }
+   actualizarBoton();
+   if(programado)confirmar.disabled=true;
+   actualizarResumen();
+   const ayuda=el('p',candidatos.join(' vs. ')||referenciaDeFila()||'Referencia pendiente','nc-c01-ayuda');
    d.append(el('small','Ayuda memoria','muted'),ayuda);
    if(programado)d.append(el('small',ncFxFecha(programado.fecha)+' · '+programado.hora+' · Cancha '+programado.cancha,'muted'));
    d.append(par,field('Título del partido',tituloInput),field('Referencia',referencia),acciones);
   }
+  if(grupo==='FINAL'&&partidos.length)continue;
+  const nuevoTitulo={CUARTOS:'Cuartos',SEMIFINAL:'Semifinal',RECLASIFICACION:'Reclasificación',TRIANGULAR_5:'Triangular · Partido',TRIANGULAR_9:'Triangular · Partido'}[grupo];
   bloque.append(button('Agregar partido',()=>{
-   const m=c01Nuevo(etapa,'Nuevo partido');datos.partidos.push(m);c01Cambiar(local);c01Montar(true);
-   const detalle=root.querySelector('[data-c01-panel="'+m.id+'"]');detalle.open=true;detalle.querySelector('input')?.focus();
+   const numero=Math.max(0,...partidos.map(p=>ncCrucesOrdenUX(p.titulo)))+1;
+   const m=c01Nuevo(etapa,nuevoTitulo?nuevoTitulo+' '+numero:grupo==='FINAL'?'Final':'Nuevo partido');datos.partidos.push(m);c01Cambiar(local);c01Montar(true);
+   const detalle=[...root.querySelectorAll('[data-c01-panel]')].find(p=>p.dataset.c01Panel===m.id);if(detalle){detalle.parentElement.open=true;detalle.open=true;detalle.querySelector('input')?.focus();}
   }));
  }
  form.append(button('Guardar borrador',()=>c01Guardar(local,estado),'primary'));
