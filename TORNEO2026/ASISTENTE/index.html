@@ -5927,6 +5927,34 @@ function c01Montar(conservar=false) {
     const grupo=ranking?.grupos.find(g=>g.zona===zona.toUpperCase());
     return puesto+'.º Zona '+zona.toUpperCase()+' · '+(grupo?.completo?(grupo.ranking[Number(puesto)-1]?.nombre||'Pendiente'):'Pendiente de resultados');
    });
+   function reclasificacionDesdeFixture(n){
+    const [categoria,genero]=c01Competencia.split('|');
+    const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase();
+    const clave=v=>norm(v).replace(/[^a-z0-9]/g,'');
+    const titulo=p=>norm(p.titulo||p.tituloCruce);
+    const oficiales=resultados12Partidos().filter(p=>clave(p.categoria)===clave(categoria)&&norm(p.genero)===norm(genero));
+    const resultado=p=>{
+     const r=resultados12Existente(p);
+     return String(r?.estado||'').trim()==='CONFIRMADO'?r:null;
+    };
+    const pierde=p=>{
+     const gana=norm(resultado(p)?.ganador);
+     return gana&&gana===norm(p.local)?p.visitante:gana&&gana===norm(p.visitante)?p.local:'';
+    };
+    const inicio=(Number(n)-1)*2+1;
+    const perdedores=[inicio,inicio+1].map(i=>{
+     const plantilla=plantillaC01.find(p=>p.titulo==='Cuartos '+i);
+     const ref=clave(plantilla?.referencia);
+     const coincide=oficiales.filter(p=>/^cuartos?\b/.test(titulo(p))&&
+      (titulo(p)==='cuartos '+i||(ref&&clave(titulo(p)).endsWith(ref))));
+     return coincide.length===1?pierde(coincide[0]):'';
+    });
+    if(perdedores.some(x=>!x)||norm(perdedores[0])===norm(perdedores[1]))return null;
+    const pareja=JSON.stringify(perdedores.map(norm).sort());
+    const cruces=oficiales.filter(p=>/^(reclasificacion|perdedores de cuartos)\b/.test(titulo(p))&&
+     JSON.stringify([p.local,p.visitante].map(norm).sort())===pareja);
+    return cruces.length===1?{...cruces[0],resultado:resultado(cruces[0])}:null;
+   }
    const dependencia=/^(Ganadores|Perdedores) de (cuartos|semifinales|reclasificación)(?: (\d+) y (\d+))?$/i.exec(m.referencia.trim());
    if(dependencia){
     const [,tipo,etapa,a,b]=dependencia;
@@ -5938,15 +5966,16 @@ function c01Montar(conservar=false) {
      const porTitulo=datos.partidos.find(p=>p.titulo.toLowerCase()===(base+' '+n).toLowerCase());
      const porReferencia=referenciaBase?datos.partidos.filter(p=>p.etapa===(esCuarto?'cuartos':'definiciones')&&p.referencia===referenciaBase):[];
      const anterior=porTitulo||(porReferencia.length===1?porReferencia[0]:null);
-     const estado=anterior&&c01EstadoPartido(anterior.id);
+     const estado=(anterior&&c01EstadoPartido(anterior.id))||(esReclasificacion?reclasificacionDesdeFixture(n):null);
      const ganador=estado?.resultado?.ganador;
      const pierde=ganador===estado?.local?estado?.visitante:ganador===estado?.visitante?estado?.local:null;
      const etiqueta=esReclasificacion
       ?'Reclasificación '+n+' ('+(referenciaBase||'origen por definir')+')'
       :anterior?.titulo?.trim()||base+' '+n;
      const nombre=tipo.toLowerCase()==='ganadores'?ganador:pierde;
-     const situacion=nombre||(anterior?'Pendiente de resultado':'Cruce sin identificar');
-     candidatos.push(etiqueta+' · '+situacion);
+     const situacion=nombre||((estado||anterior)?'Pendiente de resultado':'Cruce sin identificar');
+     const partido=esReclasificacion&&estado?.local&&estado?.visitante?' · '+estado.local+' vs. '+estado.visitante:'';
+     candidatos.push(etiqueta+partido+' · '+situacion);
     }
    }
    const sugerencias7={
