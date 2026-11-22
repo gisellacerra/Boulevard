@@ -900,11 +900,12 @@ nav .nav-item.activo img{
 }
 </style>
 <style>
-#ncNuevaVersion{width:min(calc(100% - 36px),420px);box-sizing:border-box;border:1px solid #363c3f;border-radius:16px;padding:22px;background:#202425;color:#f5f6f7}
+#ncNuevaVersion{position:fixed;inset:0;margin:auto;height:fit-content;max-height:calc(100% - 36px);text-align:center;width:min(calc(100% - 36px),420px);box-sizing:border-box;border:1px solid #363c3f;border-radius:16px;padding:22px;background:#202425;color:#f5f6f7}
 #ncNuevaVersion::backdrop{background:rgba(0,0,0,.65)}
+#ncNuevaVersion .instalar-acciones{justify-content:center}
 #ncNuevaVersion h2{font-size:20px;line-height:1.3;margin:0 0 18px}
 #ncNuevaVersion #ncVersionAhoraNo{color:#f5f6f7}
-#ncVersionDescargar{background:#9dd64a;color:#101719}
+#ncVersionDescargar{background:#9dd64a;color:#101719;text-decoration:none}
 </style>
 </head>
 
@@ -913,7 +914,7 @@ nav .nav-item.activo img{
   <h2 id="ncNuevaVersionTitulo">Descargate la nueva versión de esta app</h2>
   <div class="instalar-acciones">
     <button type="button" class="instalar-btn instalar-ahora-no" id="ncVersionAhoraNo">Ahora no</button>
-    <button type="button" class="instalar-btn" id="ncVersionDescargar">Descarga</button>
+    <a class="instalar-btn" id="ncVersionDescargar" href="https://gisellacerra.github.io/Boulevard/APP/TORNEO2026/index.html" target="_blank" rel="noopener">Descarga</a>
   </div>
 </dialog>
 <div id="instalarOverlay" class="instalar-overlay" role="dialog" aria-modal="true" aria-labelledby="instalarTitulo">
@@ -1610,52 +1611,19 @@ const estaInstalada = () =>
   window.matchMedia('(display-mode: standalone)').matches ||
   window.navigator.standalone === true;
 
-const versionAviso='2026-11-22.135213';
-const claveAviso='nc-version-atendida:'+versionAviso;
-const clavePospuesta='nc-version-pospuesta:'+versionAviso;
 const avisoVersion=document.getElementById('ncNuevaVersion');
-const descargaVersion=document.getElementById('ncVersionDescargar');
-const leerAviso=(medio,clave)=>{try{return window[medio].getItem(clave)}catch{return null}};
-const guardarAviso=(medio,clave)=>{try{window[medio].setItem(clave,'1')}catch{}};
-const urlVersion=new URL(location.href);
-
-if(urlVersion.searchParams.get('nc-version')===versionAviso){
-  guardarAviso('localStorage',claveAviso);
-}else if(!leerAviso('localStorage',claveAviso)&&!leerAviso('sessionStorage',clavePospuesta)){
-  avisoVersion.showModal();
-}
+const clavePospuesta='nc-migracion-torneo2026-pospuesta';
+let avisoPospuesto=false;
+try{avisoPospuesto=sessionStorage.getItem(clavePospuesta)==='1'}catch{}
+if(!avisoPospuesto)avisoVersion.showModal();
 
 function posponerVersion(){
-  guardarAviso('sessionStorage',clavePospuesta);
+  try{sessionStorage.setItem(clavePospuesta,'1')}catch{}
   avisoVersion.close();
 }
 document.getElementById('ncVersionAhoraNo').addEventListener('click',posponerVersion);
+document.getElementById('ncVersionDescargar').addEventListener('click',posponerVersion);
 avisoVersion.addEventListener('cancel',e=>{e.preventDefault();posponerVersion()});
-descargaVersion.addEventListener('click',async()=>{
-  descargaVersion.disabled=true;
-  try{
-    if(eventoInstalacion&&!estaInstalada()){
-      const evento=eventoInstalacion;
-      eventoInstalacion=null;
-      await evento.prompt();
-      const respuesta=await evento.userChoice;
-      if(respuesta.outcome==='accepted')guardarAviso('localStorage',claveAviso);
-      else guardarAviso('sessionStorage',clavePospuesta);
-      avisoVersion.close();
-      return;
-    }
-    if('serviceWorker' in navigator){
-      const actualizar=async()=>{
-        const registro=await navigator.serviceWorker.getRegistration();
-        if(registro)await registro.update();
-      };
-      await Promise.race([actualizar(),new Promise(resolve=>setTimeout(resolve,2500))]);
-    }
-  }catch(error){console.warn('Actualización de la app:',error)}
-  finally{descargaVersion.disabled=false}
-  urlVersion.searchParams.set('nc-version',versionAviso);
-  location.replace(urlVersion.href);
-});
 
 window.addEventListener('beforeinstallprompt', (evento) => {
   evento.preventDefault();
